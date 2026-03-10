@@ -14,7 +14,10 @@ Only build if projected composite (6 x TAM) >= 18. Currently requires **TAM 3**.
 8. ~~**bootcamp-evaluator** — 6/6 — TAM 1 — Composite 6 — SHIPPED~~
 9. ~~**haunted-domain-checker** — 6/6 — TAM 0 — Composite 0 — SHIPPED~~
 
+10. ~~**freelancer-deduction-finder** — 6/6 — TAM 3 — Composite 18 — SHIPPED~~
+11. ~~**regulatory-compliance-briefing** — 6/6 — TAM 3 — Composite 18 — SHIPPED~~
+
+12. ~~**property-tax-appeal-advisor** — 6/6 — TAM 3 — Composite 18 — SHIPPED~~
+
 ### Next Up
-1. ~~**freelancer-deduction-finder** — 6/6 — TAM 3 — Composite 18 — SHIPPED~~
-2. **permit-research-agent** — 3/3 — TAM 3 — Composite 18 — queued (gap weakening)
-3. **cell-plan-optimizer** — 3/3 — TAM 3 — Composite 18 — queued (WhistleOut competitor)
+(Empty — need TAM 4+ ideas to beat threshold. Research more.)
