@@ -1,19 +1,20 @@
-## Build Queue (sorted by score × TAM)
+## Build Queue (sorted by composite = venture x TAM)
+
+**Threshold: 18** (job-scam-detector: venture 6 x TAM 3)
+Only build if projected composite (6 x TAM) >= 18. Currently requires **TAM 3**.
 
 ### Built
-1. ~~**job-scam-detector** — 6/6 — TAM 3 — SHIPPED~~
-2. ~~**rental-scam-detector** — 6/6 — TAM 3 — SHIPPED~~
-3. ~~**company-briefing-agent** — 6/6 — TAM 2 — SHIPPED~~
-4. ~~**contractor-trust-checker** — 6/6 — TAM 2 — SHIPPED~~
-5. ~~**dep-changelog-summarizer** — 6/6 — TAM 1 — SHIPPED~~
-6. ~~**repo-health-scanner** — 6/6 — TAM 1 — SHIPPED~~
-7. ~~**npm-trust-checker** — 6/6 — TAM 1 — SHIPPED~~
-8. ~~**haunted-domain-checker** — 6/6 — TAM 0 — SHIPPED~~
-
-9. ~~**bootcamp-evaluator** — 6/6 — TAM 1 — SHIPPED~~
+1. ~~**job-scam-detector** — 6/6 — TAM 3 — Composite 18 — SHIPPED~~
+2. ~~**rental-scam-detector** — 6/6 — TAM 3 — Composite 18 — SHIPPED~~
+3. ~~**company-briefing-agent** — 6/6 — TAM 2 — Composite 12 — SHIPPED~~
+4. ~~**contractor-trust-checker** — 6/6 — TAM 2 — Composite 12 — SHIPPED~~
+5. ~~**dep-changelog-summarizer** — 6/6 — TAM 1 — Composite 6 — SHIPPED~~
+6. ~~**repo-health-scanner** — 6/6 — TAM 1 — Composite 6 — SHIPPED~~
+7. ~~**npm-trust-checker** — 6/6 — TAM 1 — Composite 6 — SHIPPED~~
+8. ~~**bootcamp-evaluator** — 6/6 — TAM 1 — Composite 6 — SHIPPED~~
+9. ~~**haunted-domain-checker** — 6/6 — TAM 0 — Composite 0 — SHIPPED~~
 
 ### Next Up
-1. **daycare-trust-checker** — 3/3 — TAM 2 — Pre-enrollment daycare/childcare due diligence (license, inspections, violations, reviews, complaints)
-2. **wedding-vendor-checker** — 3/3 — TAM 2 — Pre-booking wedding vendor trust check (reviews, BBB, business verification, scam reports)
-3. **auto-shop-trust-checker** — 3/3 — TAM 2 — Pre-service auto repair shop vetting (ASE certification, BBB, reviews, complaints, pricing)
-4. **property-tax-appeal-researcher** — 3/3 — TAM 2 — Property tax appeal research (comparable sales, assessment ratios, filing instructions)
+1. ~~**freelancer-deduction-finder** — 6/6 — TAM 3 — Composite 18 — SHIPPED~~
+2. **permit-research-agent** — 3/3 — TAM 3 — Composite 18 — queued (gap weakening)
+3. **cell-plan-optimizer** — 3/3 — TAM 3 — Composite 18 — queued (WhistleOut competitor)

@@ -241,3 +241,20 @@ After deep validation, the **revised ranking** of non-trust-checker candidates:
 4. **Cell Phone Plan Optimizer** — MODERATE. Massive TAM (330M+), WhistleOut is the main competitor but not conversational AI. The hard part is keeping plan data current.
 
 5. ~~Relocation Research Agent~~ — DEFERRED. CityMatch.ai + 10+ free calculators narrow the gap too much.
+
+---
+
+## 2026-03-10 — Session 5 (Round 10) — Final GAP Validation + Build
+
+### Additional GAP Validation (web search)
+- **Home Repair Cost Estimator**: **REJECTED (GAP=0)**. HomeGuide, Homewyse, HomeAdvisor, Thumbtack, Planner5D, Houzz, Angi ALL provide detailed free cost breakdowns. Thumbtack even accepts inspection report uploads. Too many free tools.
+- **Local Permit Research**: **WEAKENED**. Govstream.ai PermitGuide and Permio/Mio AI exist as B2G tools. Not consumer-facing, but closing the gap. Also found CodeComply, CivCheck, PermitFlow, PermitZen.
+- **Freelancer Tax Deduction Finder**: **GAP CONFIRMED**. Keeper Tax costs $20/mo (free trial only). FlyFin is paid + requires bank OAuth. FreeTaxUSA is a filing tool, not deduction finder. No free, no-bank-connection, conversational AI deduction guidance tool exists.
+- **Benefits Eligibility Navigator**: Skipped — previously rejected in summary.md (GAP: 0).
+
+### Decision: Build freelancer-deduction-finder
+- Strongest GAP of all candidates
+- TAM 3 (72M+ freelancers)
+- Genuinely different architecture: PROFILE → ANALYZE → RECOMMEND
+- Tools: search-deductions, analyze-profile, estimate-savings, write-deduction-report
+- **Status**: BUILDING
