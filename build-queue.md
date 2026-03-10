@@ -37,5 +37,7 @@ Only build if projected composite (6 x TAM) >= 24. Currently requires **TAM 4**.
 
 21. ~~**student-loan-forgiveness-navigator** — 6/6 — TAM 4 — Composite 24 — SHIPPED~~
 
+22. ~~**digital-estate-planning-advisor** — 6/6 — TAM 4 — Composite 24 — SHIPPED~~
+
 ### Next Up
-- **digital-estate-planning-advisor** — 6/6 — TAM 4 — Composite 24
+(Empty — need TAM 4+ ideas to match threshold of 24. Research more.)
