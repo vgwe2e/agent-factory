@@ -33,5 +33,8 @@ Only build if projected composite (6 x TAM) >= 24. Currently requires **TAM 4**.
 
 19. ~~**disability-accommodation-advisor** — 6/6 — TAM 4 — Composite 24 — SHIPPED~~
 
+20. ~~**tenant-dispute-advisor** — 6/6 — TAM 4 — Composite 24 — SHIPPED~~
+
 ### Next Up
-(Empty — need TAM 4+ ideas to match threshold of 24. Research more.)
+- **student-loan-forgiveness-navigator** — 6/6 — TAM 4 — Composite 24
+- **digital-estate-planning-advisor** — 6/6 — TAM 4 — Composite 24

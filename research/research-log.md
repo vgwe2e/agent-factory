@@ -216,3 +216,38 @@ Searched 8 problem areas across regulated domains, episodic problems, and profes
 | Gig worker tax advisor | GAP: 0-1 — too close to freelancer-deduction-finder already built (#10) | 4 |
 | Inheritance/probate navigator | TAM: 1-2 — only 2.8M deaths/year, most don't need complex probate | 1 |
 | Nursing home quality advisor | TAM: 2-3 — only 1-2M annual admissions; CMS Nursing Home Compare exists | 2 |
+
+### Research Round 7: Healthcare, family law, tech rights, financial regulation
+
+Searched 8 more problem areas. Hit rate holding at ~37% (3 of 8 buildable).
+
+### Finding: Tenant Dispute Advisor ✅ QUEUED
+- **Source**: JCHS Harvard rental housing report, Eviction Lab, Shelterforce tenant tech article
+- **Signal**: 45.3M rental households in US. 2.7M eviction filings annually. 92% of low-income renters lack legal representation. Common disputes: habitability, security deposits, improper evictions, landlord harassment.
+- **Current solutions**: Lease analysis tools exist (LeaseChat, LeaseRights.ai, goHeather) but analyze DOCUMENTS, not DISPUTES. DefendMyRent generates demand letters but skips diagnostic step. Rentervention (IL-only), TenantGuard AI (Vercel prototype). No free AI tool that takes a tenant's dispute description, analyzes it against state-specific habitability/eviction/deposit laws, diagnoses the legal situation, and generates a personalized action plan.
+- **Agent design**: GATHER (tenant's description of dispute, state, lease terms) → ANALYZE (classify dispute type, determine applicable state laws, assess tenant's legal position) → RESEARCH (state-specific tenant rights, relevant case law) → GENERATE (personalized action plan with notice letters, rent withholding guidance, repair-and-deduct instructions, small claims filing guide)
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 4 (45M+ renters) | Composite: 24
+- **Status**: queued → building → SHIPPED
+
+### Finding: Student Loan Forgiveness Navigator ✅ QUEUED
+- **Source**: StudentAid.gov, CFPB guides, Savi/NEA partnership research
+- **Signal**: 34M+ borrowers with federal student loan debt. SAVE plan enrollment halted by lawsuits. PSLF rules updated Jan 2025, new regulations effective July 2026. Constant Reddit confusion about eligibility across 5+ forgiveness programs.
+- **Current solutions**: StudentAid.gov PSLF Help Tool exists but only covers PSLF. No free AI tool combines PSLF + SAVE + IDR + TEACH + Borrower Defense eligibility analysis with personalized strategy and application guidance.
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 4 (34M+ borrowers) | Composite: 24
+- **Status**: queued
+
+### Finding: Digital Estate Planning Advisor ✅ QUEUED
+- **Source**: Trust & Will estate planning report, Justia digital legacy guide
+- **Signal**: $105T wealth transfer over 25 years. Only 24% of Americans have a will. Digital assets (social media, email, crypto, subscriptions) are fragmented across platforms with different succession policies. No comprehensive free tool for digital estate planning.
+- **Current solutions**: FreeWill for basic wills. Sunset for automated asset finding. Individual platform tools (Google Inactive Account Manager, Facebook Legacy Contact). No free AI tool that generates a comprehensive digital estate plan across all platforms.
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 4 (200M+ adults) | Composite: 24
+- **Status**: queued
+
+### Rejected Ideas (this round)
+
+| Idea | Reason | TAM |
+|------|--------|-----|
+| Insurance denial appeal | GAP: 0 — Counterforce Health (free, 70% success), FightHealthInsurance, AppealArmor | 4 |
+| Child support calculation | GAP: 0 — childsupportcalculator.io, state-certified calculators in every state | 2 |
+| Veteran benefits advisor | GAP: partial, TAM: 3 — VA Wayfinder, AARP navigator exist; below TAM threshold | 3 |
+| Elder abuse recognition | GAP: 0 — EAI, ATDEA, QualCare professional screening instruments exist | 3 |
