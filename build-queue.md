@@ -35,6 +35,7 @@ Only build if projected composite (6 x TAM) >= 24. Currently requires **TAM 4**.
 
 20. ~~**tenant-dispute-advisor** — 6/6 — TAM 4 — Composite 24 — SHIPPED~~
 
+21. ~~**student-loan-forgiveness-navigator** — 6/6 — TAM 4 — Composite 24 — SHIPPED~~
+
 ### Next Up
-- **student-loan-forgiveness-navigator** — 6/6 — TAM 4 — Composite 24
 - **digital-estate-planning-advisor** — 6/6 — TAM 4 — Composite 24
