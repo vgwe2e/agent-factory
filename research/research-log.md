@@ -11,7 +11,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Signal**: 4 in 10 Americans received job scam texts in 2025 (Resume.org survey). LinkedIn job scams surging in 2026. AI-generated fake postings increasingly sophisticated. Constant complaints on Reddit about fake listings.
 - **Current solutions**: Norton Genie (generic scam detector, not job-specific). Resumly AI (paid). Manual checklist articles. No free, focused, AI-powered job posting analyzer.
 - **Agent design**: Tool 1 (GATHER): web_fetch to grab job posting page. Tool 2 (PROCESS): web_search to verify company existence, check domain, find reviews. Tool 3 (OUTPUT): file_write risk report with specific red flags.
-- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 3 (~6M active job seekers/month in US alone, global scale) | Total: 3/3
 - **Status**: built (venture 6/6)
 - **Notes**: Broad audience. Emotional appeal. Very testable — paste a URL, get a risk score. Red flags: vague descriptions, unrealistic salary, grammar issues, missing company info, generic email domains, payment requests. BUILD: TypeScript clean, Next.js build passes. 3 specialized tools: fetch_job_posting, verify_employer, generate_risk_report.
 
@@ -20,7 +20,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Signal**: "Updating packages leads to questioning career choices at 2 AM." Developers miss breaking changes constantly. Dependabot/Renovate create PRs but don't summarize what changed.
 - **Current solutions**: Dependabot (creates PRs, no summaries). Renovate Bot (same). Manual changelog reading. GitHub releases page (per-repo visits).
 - **Agent design**: Tool 1 (GATHER): file_read package.json, web_fetch GitHub release notes. Tool 2 (PROCESS): Summarize changelogs, highlight breaking changes, rate urgency. Tool 3 (OUTPUT): file_write structured update report.
-- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 1 (~500k devs with complex dependency trees) | Total: 3/3
 - **Status**: built (venture 6/6)
 - **Notes**: Clear gap vs existing tools. Dependabot tells you WHAT to update, not WHY or what breaks. Works with any package manager. BUILD: TypeScript clean, Next.js build passes. 3 tools: scan_dependencies, fetch_changelogs, write_update_report.
 
@@ -29,7 +29,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Signal**: Developers evaluate repos before adopting. Common: Is it maintained? Good docs? Active community? Responsive to issues?
 - **Current solutions**: NxCode web tool (limited). GitHub Code Quality (preview, own repos only). readme-score (outdated). Manual evaluation (slow).
 - **Agent design**: Tool 1 (GATHER): web_fetch GitHub repo page + API. Tool 2 (PROCESS): Score health (README, commits, issues, stars, license, CI). Tool 3 (OUTPUT): file_write health report.
-- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 1 (~200-500k devs regularly evaluating OSS) | Total: 3/3
 - **Status**: built (venture 6/6)
 - **Notes**: Useful for any developer evaluating dependencies. Also for maintainers improving their repos. BUILD: TypeScript clean, Next.js build passes. 3 tools: fetch_repo_info, analyze_community, write_health_report.
 
@@ -37,7 +37,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: Reddit (r/webdev, r/entrepreneur), HN, indie hacker communities
 - **Signal**: Common pain — people want landing page feedback.
 - **Current solutions**: Roastd.io (free). NxCode (free tier). Multiple free options emerging.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~millions of website owners) | Total: 2/3
 - **Status**: deferred
 - **Notes**: Gap closing fast. Roastd.io already does this well for free.
 
@@ -45,7 +45,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: Reddit marketing communities, Sprout Social
 - **Signal**: 94% of marketers repurpose content.
 - **Current solutions**: Planable (free, unlimited). Repurpose.io. Many free options.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~millions of content marketers) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Market saturated. Planable offers this free and unlimited.
 
@@ -53,7 +53,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: VentureBeat, TechCrunch, general web
 - **Signal**: People care when TOS changes but specific tool request is niche.
 - **Current solutions**: Visualping (general). TOSBack (shut down). No focused free tracker.
-- **Score**: SIGNAL: 0 | GAP: 1 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 0 | GAP: 1 | FEASIBLE: 1 | TAM: 1 (~100-500k privacy-conscious users) | Total: 2/3
 - **Status**: deferred
 - **Notes**: Gap exists but signal is weak.
 
@@ -61,7 +61,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: HN, Reddit freelancer communities
 - **Signal**: Freelancers worry about contracts. Commercial tools expensive.
 - **Current solutions**: Spellbook, Ironclad, goHeather (all expensive/enterprise).
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 1 (~500k-1M active freelancers) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Doesn't leverage tools — just LLM text analysis. Base harness already does this.
 
@@ -74,7 +74,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Signal**: Every job seeker needs to research companies before interviews. Multiple guides (OSU, InterviewGuys) confirm this is standard advice. Reddit career communities constantly discuss this. People manually check 5-6 sources (website, Glassdoor, Crunchbase, news, LinkedIn, funding).
 - **Current solutions**: Manual research (tedious, 15-20 min per company). No automated "one-click company briefing" tool exists. Glassdoor gives reviews but not a complete briefing. Crunchbase gives funding but requires account.
 - **Agent design**: Tool 1 (GATHER): web_fetch company website + careers page. Tool 2 (PROCESS): web_search for Glassdoor reviews, recent news, funding, key people, culture. Tool 3 (OUTPUT): file_write one-page briefing with talking points.
-- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 2 (~1-3M job seekers who actively prep for interviews) | Total: 3/3
 - **Status**: built (venture 6/6)
 - **Notes**: Great companion to job-scam-detector. Same audience (job seekers). Extremely practical — saves 15-20 min of manual research per interview. Output is immediately usable.
 
@@ -82,7 +82,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: ValidatorAI, IdeaProof, FounderPal, DimeADozen, Reddit indie hacker communities
 - **Signal**: Very high demand from indie hackers and entrepreneurs.
 - **Current solutions**: ValidatorAI (free), IdeaProof (free), FounderPal (free), DimeADozen (free). Market is saturated with free tools.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 1 (~500k aspiring entrepreneurs) | Total: 2/3
 - **Status**: rejected
 - **Notes**: At least 5 free tools already do this well. No differentiation possible.
 
@@ -90,7 +90,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: Reddit, Gumloop blog, marketing communities
 - **Signal**: Small businesses want to track brand mentions.
 - **Current solutions**: Google Alerts (free), Octolens, Alertly, Awario, BrandMentions. Well-served market.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~1-5M small businesses) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Google Alerts is free and sufficient for most use cases.
 
@@ -98,7 +98,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: Various spam check tool websites
 - **Signal**: Email marketers care about deliverability.
 - **Current solutions**: mail-tester.com, MailGenius, TestMailScore, IPQS, Unspam.email — all free.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 1 (~500k email marketers) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Extremely well-served. 10+ free tools exist.
 
@@ -106,7 +106,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: W3C, AccessibilityChecker.org, WCAG compliance guides
 - **Signal**: High regulatory pressure (European Accessibility Act June 2025, US gov April 2026).
 - **Current solutions**: AccessibilityChecker.org, WAVE, axe, accessScan — many free tools.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~1-5M web developers) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Strong signal but gap is zero. Many mature free tools.
 
@@ -142,7 +142,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Signal**: Malicious npm packages surged to 2,168 reports in 2024, Snyk found 3,000+ in 2024 alone. Shai-Hulud worm (Sep+Nov 2025) backdoored 796 packages with 20M weekly downloads. CISA issued an alert. Typosquatting is rampant (@acitons/artifact got 206K downloads). Supply chain security is a top developer concern.
 - **Current solutions**: npm audit (post-install only, CVEs only). npq (CLI, blocks on heuristics but requires install). Socket CLI (paid for teams). Snyk (free tier limited). OSSF Scorecard (GitHub-focused, complex). No simple "paste a package name, get a trust report" web tool.
 - **Agent design**: Tool 1 (GATHER): Fetch npm registry data (downloads, versions, maintainers, publish dates). Tool 2 (PROCESS): Search for CVEs, check GitHub repo health, look for malicious behavior reports. Tool 3 (OUTPUT): Write a trust report with score and install recommendation.
-- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 1 (~300k security-conscious JS devs) | Total: 3/3
 - **Status**: built (venture 6/6)
 - **Notes**: Extremely timely given recent supply chain attacks. Developer-focused (diversifies from job-seeker tools). Uses both npm registry API and GitHub API — perfect for the harness.
 
@@ -150,7 +150,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: GitHub Agentic Workflows (Jan 2026), Dosu.dev, Probot, GitHub Docs
 - **Signal**: Maintainers report 50-100 emails daily. Issue triage is a major pain.
 - **Current solutions**: GitHub just launched AI issue triage workflow (Jan 2026). Dosu.dev automates this. Probot has a triage app. Multiple solutions emerging fast.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 0 (~50-100k OSS maintainers) | Total: 2/3
 - **Status**: rejected
 - **Notes**: GitHub's own AI triage launched in Jan 2026. Gap closed. Too many competitors entering.
 
@@ -158,7 +158,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: UnrollNow, ThreadReader, etc.
 - **Signal**: Common need.
 - **Current solutions**: UnrollNow, ThreadReader, PingThread, Twittethread, Xunroll — all free.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~millions of Twitter users) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Extremely well-served. 10+ free tools.
 
@@ -166,7 +166,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: Emergent Mind, HN Show HN posts
 - **Signal**: Researchers and developers want simplified paper explanations.
 - **Current solutions**: Emergent Mind (free), semantic arXiv search tools, ChatGPT (general).
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 1 (~500k researchers and ML practitioners) | Total: 2/3
 - **Status**: deferred
 - **Notes**: Emergent Mind does this well. Could revisit with a more specific angle (e.g., "explain this paper for a product manager").
 
@@ -178,7 +178,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: Web search for plain language TOS tools
 - **Signal**: People don't read TOS. General interest.
 - **Current solutions**: ToS;DR (free, crowdsourced, covers major services). Guard.io browser extension. Various AI summarizers.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 3 (~10M+ internet users concerned about privacy) | Total: 2/3
 - **Status**: rejected
 - **Notes**: ToS;DR is well-established and free. Gap closed.
 
@@ -186,7 +186,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: Web search for free social media tools
 - **Signal**: Small businesses want content ideas.
 - **Current solutions**: Buffer (free tier), ContentStudio, Hootsuite, Planable, Canva content planner — all have free tiers.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~millions of marketers and small businesses) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Extremely saturated market. Multiple mature free tools.
 
@@ -194,7 +194,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: Web search for developer API testing tools
 - **Signal**: Developers need mock APIs for testing.
 - **Current solutions**: Mockoon (free, open source), Beeceptor (free tier), Postman mock servers, WireMock, json-server. Many free options.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 1 (~500k backend devs) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Well-served by multiple open source tools.
 
@@ -202,7 +202,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: Web search for website technology detection tools
 - **Signal**: Developers and marketers want to know what technologies a website uses.
 - **Current solutions**: Wappalyzer (free extension), BuiltWith (free tier), Hexomatic, Stackcrawler, SEOmator, Enricher.io — extremely mature market.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 1 (~500k devs and marketers) | Total: 2/3
 - **Status**: rejected
 - **Notes**: BuiltWith has been doing this since 2007. Wappalyzer browser extension is free and excellent. No gap.
 
@@ -210,7 +210,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: GitHub (FLICT, Licensetry), npm (license-checker, license-report), Google js-green-licenses
 - **Signal**: Developers care about license compliance, especially in enterprise.
 - **Current solutions**: license-checker (npm, free), LicenseFinder (multi-language, free), FLICT (free), Google js-green-licenses (free). All CLI tools but widely available.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 1 (~200-500k enterprise devs) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Multiple free CLI tools exist. Web version would add convenience but core problem is solved.
 
@@ -218,7 +218,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: SaaS Price Pulse, SaaStr pricing analysis
 - **Signal**: High — 1,800+ pricing changes across top 500 SaaS in 2025 alone. 20% average price increases.
 - **Current solutions**: SaaS Price Pulse launched Jan 2026. Tracks 260+ SaaS pages with AI extraction and Slack/email alerts.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 1 (~100-500k SaaS procurement decision-makers) | Total: 2/3
 - **Status**: rejected
 - **Notes**: SaaS Price Pulse already does exactly this. Gap closed in Jan 2026.
 
@@ -226,7 +226,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: DEV Community, DigitalOcean, Augment Code roundups
 - **Signal**: Every developer wants better PR reviews.
 - **Current solutions**: CodeRabbit, Copilot, Graphite, Greptile, BugBot, Semgrep, SonarCloud, PR-Agent — extremely competitive space.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 3 (~10M+ developers worldwide) | Total: 2/3
 - **Status**: rejected
 - **Notes**: One of the most competitive spaces in dev tools. GitHub Copilot alone covers this.
 
@@ -235,7 +235,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Signal**: Real financial pain — people buy domains and discover they're blacklisted by Google, email servers, social media platforms, corporate firewalls. One HN user's organic search traffic "dropped to zero" after buying a haunted domain. FTC/spam filters retain old categorizations for years. Domain buyers routinely open 5+ tabs (Wayback Machine, VirusTotal, MxToolbox, Spamhaus, Google Safe Browsing) to vet a domain.
 - **Current solutions**: Individual tools exist: MxToolbox (email/DNS), VirusTotal (malware), Wayback Machine (history), Spamhaus (spam), EasyDMARC (email reputation), IPVoid (blacklists). But each checks ONE dimension. No free tool runs ALL checks and produces a single consolidated "buy or skip" report. Paid tools (DomainTools, SEMrush, Ahrefs) offer some of this but cost $100+/month.
 - **Agent design**: Tool 1 (GATHER): Fetch WHOIS/RDAP data, Wayback Machine CDX API for historical snapshots, DNS records. Tool 2 (PROCESS): Search for blacklists, malware reports, Google Safe Browsing status, email reputation, spam reports. Tool 3 (OUTPUT): Write a consolidated domain health report with buy/skip recommendation.
-- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 0 (domain buyers + SEO agencies, ~50-100k) | Total: 3/3
 - **Status**: built (venture 6/6)
 - **Notes**: Classic compound search problem — users currently open 5+ tabs to research a domain. Perfect for the harness. Developer/webmaster audience diversifies from job seekers. All data sources are publicly accessible. HN thread had strong engagement. BUILD: TypeScript clean, Next.js build passes. 3 tools: fetch_domain_info (RDAP + Wayback CDX + DNS-over-HTTPS), check_domain_reputation (6 DuckDuckGo searches for blacklists/malware/phishing/spam/email/history), write_domain_report (scored 1-10 with buy/skip recommendation).
 
@@ -244,7 +244,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Signal**: 50% of rental scams reported to FTC started with fake Facebook ads. CNBC published "how to know if a rental listing is a scam" in Jan 2025. Real financial harm to renters.
 - **Current solutions**: No free automated tool. Only manual checklists (FTC, Zillow guides). Scam-detector.com has articles but no automated analysis. Property records are county-specific and fragmented.
 - **Agent design**: Tool 1 (GATHER): Fetch listing URL, extract address/price/contact info. Tool 2 (PROCESS): Verify address exists, search for landlord/management company, check phone/email against scam databases. Tool 3 (OUTPUT): Write risk report.
-- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 3 (~10M+ people apartment hunting per year in US) | Total: 3/3
 - **Status**: built (venture 6/6)
 - **Notes**: Strong emotional appeal, similar to job-scam-detector. Consumer audience. BUILD: TypeScript clean, Next.js build passes. 3 tools: fetch_rental_listing (URL fetch + platform risk analysis + text red flag scan), verify_rental_listing (address verification + landlord lookup + contact check + scam database search + price comparison), write_risk_assessment (risk score 1-10 with next steps and reporting resources).
 
@@ -252,7 +252,7 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Source**: Security Boulevard, Doppler blog, GitGuardian
 - **Signal**: GhostAction attack (Sep 2025) exposed 3,325 secrets across 817 GitHub repos. Real problem.
 - **Current solutions**: Infisical (free, open source), Envault, EnvManager, Doppler, HashiCorp Vault. Well-served.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~1-5M developers managing secrets) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Infisical is free and open source. Gap closed.
 
@@ -292,7 +292,7 @@ Every successful agent passes the same test: "Would a person open 5+ browser tab
 - **Source**: VinAudit, VinCheckUp, U.S. News, Edmunds
 - **Signal**: Everyone buying a used car wants a VIN report.
 - **Current solutions**: Carfax ($39.99), AutoCheck ($24.99), VinAudit ($9.99), NICB VINCheck (free), iSeeCars (free partial). Many options across price ranges.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 3 (~40M used cars sold per year in US) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Very well-served market. Free NICB tool + multiple cheap alternatives.
 
@@ -301,7 +301,7 @@ Every successful agent passes the same test: "Would a person open 5+ browser tab
 - **Signal**: Every homeowner researches contractors before hiring. Standard advice: check license, BBB, reviews, insurance. People open 5+ tabs: state license board, BBB, Google reviews, Yelp, Angi, NextDoor. Especially critical for expensive projects (roofing, plumbing, electrical).
 - **Current solutions**: LicensedCheck (free, license verification across 50 states). BBB (free, complaints). Angi (free tier, reviews). Google Reviews. BUT each is a separate lookup. No single tool produces a consolidated "should I hire this contractor?" report combining license + BBB + reviews + complaints.
 - **Agent design**: Tool 1 (GATHER): Search for the contractor/company across the web — find website, license info, BBB profile. Tool 2 (PROCESS): Verify license status, check BBB rating, aggregate reviews from Google/Yelp/Angi, search for complaints/lawsuits. Tool 3 (OUTPUT): Write a trust report with hire/avoid recommendation.
-- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 2 (~1-5M homeowners hiring contractors per year) | Total: 3/3
 - **Status**: built (venture 6/6)
 - **Notes**: Classic compound search pattern. Homeowner audience diversifies from dev + job seeker tools. BUILD: TypeScript clean, Next.js build passes. 3 tools: search_contractor (4 DuckDuckGo searches for web presence/license/BBB/reviews), verify_contractor (6 searches for complaints/lawsuits/insurance/history + website quality check), write_contractor_report (trust score 1-10 with hire/avoid recommendation + scam checklist).
 
@@ -309,7 +309,7 @@ Every successful agent passes the same test: "Would a person open 5+ browser tab
 - **Source**: FINRA BrokerCheck, SEC EDGAR, Bitget, SoFi
 - **Signal**: Crypto scams surging in 2025-2026. $14M+ misappropriated via WhatsApp investment clubs.
 - **Current solutions**: FINRA BrokerCheck (free, comprehensive for registered). SEC EDGAR (free). Etherscan/Solscan (free for crypto). Gap mainly for unregistered schemes.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 0 | Total: 1/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 0 | TAM: 3 (~10M+ retail investors) | Total: 1/3
 - **Status**: rejected
 - **Notes**: BrokerCheck is very comprehensive for registered investments. Can't programmatically access FINRA/SEC. Crypto verification is wallet-address-specific — different problem shape.
 
@@ -317,7 +317,7 @@ Every successful agent passes the same test: "Would a person open 5+ browser tab
 - **Source**: IRS Tax Exempt Org Search, Charity Navigator, GuideStar, BBB Wise Giving
 - **Signal**: Donors want to verify charities, especially after disasters.
 - **Current solutions**: IRS TEOS (free, official), Charity Navigator (free), GuideStar (free), BBB Wise Giving Alliance (free). Extremely well-served.
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~1-5M charitable donors) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Multiple free government and independent tools. No gap.
 
@@ -325,7 +325,7 @@ Every successful agent passes the same test: "Would a person open 5+ browser tab
 - **Source**: ScamAdviser, ScamDoc, URLVoid, F-Secure
 - **Signal**: Shoppers want to verify unfamiliar online stores.
 - **Current solutions**: ScamAdviser (6.5M monthly users, free), ScamDoc (free), URLVoid (free), Scamvoid (free), F-Secure Shopping Checker (free), McAfee WebAdvisor (free).
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 3 (~100M+ online shoppers) | Total: 2/3
 - **Status**: rejected
 - **Notes**: ScamAdviser alone serves 6.5M users/month. No gap.
 
@@ -333,6 +333,110 @@ Every successful agent passes the same test: "Would a person open 5+ browser tab
 - **Source**: Recalls.gov, FDA dashboard, FoodSafety.gov
 - **Signal**: Consumer safety concern, especially for parents.
 - **Current solutions**: Recalls.gov (government consolidated, free), FDA Recall Dashboard (free), FoodSafety.gov (free), Ckiki Alert app (free).
-- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 3 (~10M+ consumers checking recalls) | Total: 2/3
 - **Status**: rejected
 - **Notes**: Government already provides excellent free consolidated tools.
+
+### Finding: Academic Researcher Credibility Checker
+- **Source**: Google Scholar, university library guides, Scopus, Web of Science
+- **Signal**: Academics and journalists want to verify researcher credibility.
+- **Current solutions**: Google Scholar (free h-index and citations), Scopus (subscription), Web of Science (subscription). Google Scholar covers basic needs for free.
+- **Score**: SIGNAL: 0 | GAP: 0 | FEASIBLE: 1 | TAM: 0 (~50-100k academics and journalists) | Total: 1/3
+- **Status**: rejected
+- **Notes**: Google Scholar is comprehensive and free. Niche audience.
+
+### Finding: Competitor Analysis Tool
+- **Source**: Visualping, Crayon, Klue, Semrush
+- **Signal**: Every business wants competitor intelligence.
+- **Current solutions**: Crayon, Klue, Kompyte, Semrush, Ahrefs, Similarweb, SpyFu, Google Alerts. Extremely saturated.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~1-5M businesses) | Total: 2/3
+- **Status**: rejected
+- **Notes**: Over 15 tools compete in this space. No gap.
+
+### Finding: Travel Safety Researcher
+- **Source**: State Department, Riskline, STEP
+- **Signal**: Travelers want safety information before trips.
+- **Current solutions**: US State Department advisories (free), Riskline free risk maps, Smart Traveler Enrollment Program, numerous travel safety apps.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 3 (~80M+ international travelers from US per year) | Total: 2/3
+- **Status**: rejected
+- **Notes**: Government provides excellent free tools. Riskline offers free maps.
+
+### Finding: Supplement Safety Checker
+- **Source**: FDA, ConsumerLab, Recalls.gov
+- **Signal**: Consumers concerned about supplement safety. Recent recalls (MK-677, meloxicam).
+- **Current solutions**: FDA Health Fraud Product Database (free), Recalls.gov (free), ConsumerLab (paid for deep testing).
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 0 | TAM: 2 (~1-5M supplement users checking safety) | Total: 1/3
+- **Status**: rejected
+- **Notes**: FDA database covers safety alerts. Drug interaction checks have medical liability concerns.
+
+---
+
+## 2026-03-10 — Session 3 (Round 6)
+
+### Finding: Property Tax Appeal Researcher
+- **Source**: AppealDesk, PropGap.ai, JerseyAppeal.tax, TaxNetUSA, Kensington Research, county assessor guides
+- **Signal**: National average success rate for property tax appeals is 40-60%. DIY appeals take 15-40 hours of research. Multiple paid services ($49-$100+) have emerged specifically for evidence packets (AppealDesk, PropGap, AppealSeal). Homeowners routinely open 5+ tabs: county assessor site, Zillow for comps, Redfin for recent sales, tax maps, assessment ratio calculators. Cook County alone has hundreds of thousands of appeals filed annually.
+- **Current solutions**: AppealDesk ($49 flat fee). PropGap.ai (NJ & TX only, freemium). JerseyAppeal.tax (NJ only, free preview). TaxNetUSA QuickAppeal (paid). County assessor sites (free but raw data only). No free tool that automates the compound research: find comparable sales, calculate assessment ratios, identify overvaluation, and produce a formatted evidence packet.
+- **Agent design**: Tool 1 (GATHER): Web search for property address + county assessor data, Zillow/Redfin recent comparable sales, tax assessment records. Tool 2 (PROCESS): Cross-reference assessed value vs. comparable recent sales, calculate assessment ratio, identify discrepancies, find jurisdiction-specific appeal deadlines and procedures. Tool 3 (OUTPUT): Write a property tax appeal research report with comps, ratios, estimated overassessment, and filing instructions.
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 2 (~2-5M homeowners who could benefit from appeals annually) | Total: 3/3
+- **Status**: queued
+- **Notes**: Classic 5-tab problem. Paid services prove demand. The gap is a FREE automated research tool that gathers comps and assessment data from public sources. Feasible because Zillow, Redfin, and county assessor websites are all web-fetchable. Homeowner audience diversifies portfolio. High emotional appeal — people overpaying taxes.
+
+### Finding: Daycare / Childcare Trust Checker
+- **Source**: Winnie, Childcare.gov, Care.com, TrustedCare, state licensing databases (TX HHS, NY OCFS, CO Shines, NJ, etc.)
+- **Signal**: Every parent researches daycares before enrolling. Data is fragmented across 50+ state licensing systems, each with different interfaces. Parents currently open 5+ tabs: state license lookup, Google reviews, Yelp, BBB, local parent forums. Button Law Firm (TX) built a daycare injury database because parents couldn't find consolidated violation data. Winnie tries to aggregate but only links to state databases. Real financial and safety stakes — children's wellbeing.
+- **Current solutions**: Winnie (partial — shows license numbers, links to state databases, but doesn't pull violation details into one view). Care.com (license lookup by state, links only). Childcare.gov (general guidance, no facility-specific search). State databases (free but each state has a completely different UI and data format). No single free tool consolidates: license verification + inspection violations + parent reviews + complaints + BBB status into one report.
+- **Agent design**: Tool 1 (GATHER): Search for the daycare by name/location, find state licensing page, fetch inspection reports and violation history. Tool 2 (PROCESS): Search for parent reviews (Google, Yelp), BBB complaints, news articles about incidents, verify current license status. Tool 3 (OUTPUT): Write a trust report with license status, violation summary, review sentiment, and enroll/caution recommendation.
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 2 (~3-5M parents searching for childcare annually in US) | Total: 3/3
+- **Status**: queued
+- **Notes**: Extremely high emotional stakes — parents choosing who cares for their children. Classic compound search across fragmented data sources. The 50-state fragmentation is exactly the kind of problem the harness solves well. Similar pattern to contractor-trust-checker but for a much larger audience.
+
+### Finding: Wedding Vendor Trust Checker
+- **Source**: The Knot 2026 Real Weddings Study, WeddingWire, Norton, Bitdefender, BBB, ConsumerNotice.org
+- **Signal**: 2026 study shows 89% of couples hire a photographer, 85% a caterer. Average US wedding costs $35,000+. Wedding vendor scams are rising — fake photographers with stolen portfolios, vendors who ghost after deposit. Norton published a specific guide on wedding vendor fraud. Couples currently research across 5+ sources: The Knot reviews, WeddingWire reviews, Google reviews, BBB, vendor's own website, social media presence.
+- **Current solutions**: The Knot (reviews from verified couples). WeddingWire (166,000+ reviewed vendors). BBB (complaints). Google Reviews. But each is a separate lookup. No free tool produces a consolidated "should I book this vendor?" report combining reviews across platforms + BBB complaints + business registration verification + portfolio authenticity + social media presence.
+- **Agent design**: Tool 1 (GATHER): Search for the vendor by name/location, fetch their website, find profiles on The Knot, WeddingWire, Google. Tool 2 (PROCESS): Aggregate reviews across platforms, check BBB for complaints, verify business registration, assess website quality and social media presence, search for scam reports. Tool 3 (OUTPUT): Write a trust report with review summary, red flags, and book/avoid recommendation.
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 2 (~2M couples planning weddings per year in US) | Total: 3/3
+- **Status**: queued
+- **Notes**: High-stakes financial decision (deposits often $1,000-$10,000+). Classic compound search problem. Emotional appeal — protecting someone's wedding day. Extends the "trust checker" archetype (like contractor-trust-checker) to a new domain. All data sources are publicly accessible.
+
+### Finding: Auto Repair Shop Trust Checker
+- **Source**: BBB, ASE.com, Consumer Reports, CarParts.com, Quora
+- **Signal**: Auto repair shops rank 16th on BBB's most-complained-about businesses list. Every car owner needs to find a trustworthy mechanic. People currently check 5+ sources: Google reviews, Yelp, BBB, ASE certification lookup, word of mouth. ASE certification requires verification through their website. Common scams: unnecessary repairs, inflated estimates, bait-and-switch pricing.
+- **Current solutions**: Google Reviews (general). Yelp (general). BBB (complaints). ASE website (certification lookup only). CarFax Service Shop locator (basic). RepairPal (estimates + ratings). Each is a separate check. No free tool consolidates: ASE certification verification + BBB complaints + multi-platform review aggregation + pricing fairness + scam report search into one report.
+- **Agent design**: Tool 1 (GATHER): Search for the shop by name/location, find website, Google/Yelp/BBB profiles. Tool 2 (PROCESS): Check ASE certification status, aggregate reviews, search for complaints and scam reports, verify business registration, assess website professionalism. Tool 3 (OUTPUT): Write a trust report with certification status, review summary, complaint history, and use/avoid recommendation.
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | TAM: 2 (~5-10M car owners seeking new mechanics per year) | Total: 3/3
+- **Status**: queued
+- **Notes**: Very large audience — nearly every car owner. Same "trust checker" archetype. Compound search across ASE + BBB + reviews + complaints. Real financial pain (repair bills can be $500-$5,000+). Diversifies into automotive vertical.
+
+### Finding: Doctor / Physician Credential Checker
+- **Source**: DocInfo.org, ProPublica, FSMB, Healthgrades, state medical boards, NewsNation
+- **Signal**: ProPublica built a "Nursing Home Inspect" and "Investigating Doctors" tool. People do check doctors before appointments. Real concern about malpractice and disciplinary history.
+- **Current solutions**: DocInfo.org (free, comprehensive — license + disciplinary from FSMB data). Healthgrades (free — malpractice, sanctions, board actions, reviews, hospital affiliations). State medical board websites (free, license + disciplinary). ProPublica Investigating Doctors tool (free). Multiple free tools already provide consolidated views.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 3 (~10M+ patients checking doctors per year) | Total: 2/3
+- **Status**: rejected
+- **Notes**: DocInfo.org and Healthgrades already consolidate license, disciplinary, and malpractice data for free. No meaningful gap to fill.
+
+### Finding: Neighborhood Move-In Researcher
+- **Source**: AreaVibes, Niche.com, City-Data, NeighborhoodScout, SafeWise, Walk Score
+- **Signal**: Everyone researches neighborhoods before moving. Very common pain point.
+- **Current solutions**: AreaVibes (free — crime, schools, cost of living, amenities, livability score). Niche.com (free — A-F grades on safety, schools, nightlife, cost of living). City-Data (free — extensive demographics, crime, housing). Walk Score (free — walkability, transit, bike scores). SpotCrime (free — real-time crime data). GreatSchools.org (free — school ratings). Multiple mature free tools provide comprehensive neighborhood data.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 3 (~10M+ people moving per year) | Total: 2/3
+- **Status**: rejected
+- **Notes**: AreaVibes alone provides a consolidated livability score combining crime, schools, amenities, and cost of living — for free. Niche.com gives A-F grades. Market is very well served.
+
+### Finding: Natural Hazard Risk Assessment for Home Buyers
+- **Source**: FEMA National Risk Index, RiskFactor.com (First Street Foundation), ClimateCheck.com, Cal MyHazards, Freddie Mac
+- **Signal**: Growing concern about climate risk in real estate. 14 states don't require flood disclosure to buyers. Real financial impact — flood insurance averaging $1,152/year.
+- **Current solutions**: RiskFactor.com (free — flood, fire, heat, wind, air quality scores by address). ClimateCheck.com (free report — heat, flood, storm, drought, fire ratings through 2050). FEMA National Risk Index (free — 18 hazards by community). FEMA Flood Map Service (free — flood zone by address). Cal MyHazards (free, CA only — earthquake, wildfire, flood). Multiple free tools already provide multi-hazard risk assessment.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~5M home buyers per year) | Total: 2/3
+- **Status**: rejected
+- **Notes**: RiskFactor.com already provides a free consolidated multi-hazard report by address. ClimateCheck offers a free report with climate projections through 2050. Gap closed by First Street Foundation's free tool.
+
+### Finding: Trademark Availability Researcher
+- **Source**: USPTO, Trademarkia, LegalZoom, Trademark Engine, Markavo, PQAI
+- **Signal**: Small businesses need to check trademark availability before launching.
+- **Current solutions**: USPTO Patent Public Search (free, official). Trademarkia (free, user-friendly search of USPTO database). LegalZoom (free exact match search). Trademark Engine (free preliminary search). Markavo (free attorney-led search). Multiple free tools with good UX.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | TAM: 2 (~1-3M small businesses registering trademarks) | Total: 2/3
+- **Status**: rejected
+- **Notes**: Trademarkia provides excellent free USPTO search. LegalZoom and Trademark Engine also offer free searches. No gap.
