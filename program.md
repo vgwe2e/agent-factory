@@ -151,7 +151,7 @@ Each tool should do ONE thing well. If a tool is doing too much, split it. If yo
 **Build steps:**
 
 1. Create a new directory: `builds/<agent-name>/`
-2. Copy the seed harness: `cp -r seed/* builds/<agent-name>/`
+2. Copy the seed harness (including dotfiles): `cp -r seed/. builds/<agent-name>/`
 3. Write the specialized tools in `lib/tools/`
 4. Write the system prompt in `config.ts`
 5. Write a clear README.md explaining what this agent does, who it's for, and how to use it
