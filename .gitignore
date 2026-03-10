@@ -1,0 +1,6 @@
+.env
+node_modules/
+builds/*/node_modules/
+builds/*/.next/
+builds/*/tsconfig.tsbuildinfo
+.DS_Store
