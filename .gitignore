@@ -1,9 +1,7 @@
 .env
 node_modules/
 .next/
-builds/*/node_modules/
-builds/*/.next/
-builds/*/tsconfig.tsbuildinfo
+builds/
 .DS_Store
 
 # Research data — generated per-session, not part of the public repo
