@@ -4,3 +4,6 @@ dep-changelog-summarizer	3	3	6	shipped	scan-dependencies|fetch-changelogs|write-
 repo-health-scanner	3	3	6	shipped	fetch-repo-info|analyze-community|write-health-report	Evaluates GitHub repo health (docs, maintenance, community) and produces graded report
 company-briefing-agent	3	3	6	shipped	fetch-company-profile|research-reputation|write-briefing	Generates interview prep briefings with company overview, culture, news, talking points
 npm-trust-checker	3	3	6	shipped	check-npm-registry|assess-package-security|write-trust-report	Pre-install npm package trust assessment (CVEs, malware, repo health, typosquatting)
+haunted-domain-checker	3	3	6	shipped	fetch-domain-info|check-domain-reputation|write-domain-report	Pre-purchase domain reputation audit (RDAP, Wayback, blacklists, malware, email rep)
+rental-scam-detector	3	3	6	shipped	fetch-rental-listing|verify-rental-listing|write-risk-assessment	Rental listing scam analysis (platform risk, address verification, landlord checks, pricing)
+contractor-trust-checker	3	3	6	shipped	search-contractor|verify-contractor|write-contractor-report	Pre-hire contractor due diligence (license, BBB, reviews, complaints, insurance)

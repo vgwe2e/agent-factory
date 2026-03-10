@@ -169,3 +169,170 @@ Ongoing record of problems discovered, scored, and evaluated for the agent-facto
 - **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
 - **Status**: deferred
 - **Notes**: Emergent Mind does this well. Could revisit with a more specific angle (e.g., "explain this paper for a product manager").
+
+---
+
+## 2026-03-10 — Session 2 (Round 4)
+
+### Finding: Privacy Policy / TOS Plain-Language Summarizer
+- **Source**: Web search for plain language TOS tools
+- **Signal**: People don't read TOS. General interest.
+- **Current solutions**: ToS;DR (free, crowdsourced, covers major services). Guard.io browser extension. Various AI summarizers.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: ToS;DR is well-established and free. Gap closed.
+
+### Finding: Social Media Content Calendar Generator
+- **Source**: Web search for free social media tools
+- **Signal**: Small businesses want content ideas.
+- **Current solutions**: Buffer (free tier), ContentStudio, Hootsuite, Planable, Canva content planner — all have free tiers.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: Extremely saturated market. Multiple mature free tools.
+
+### Finding: API Mock/Test Endpoint Generator
+- **Source**: Web search for developer API testing tools
+- **Signal**: Developers need mock APIs for testing.
+- **Current solutions**: Mockoon (free, open source), Beeceptor (free tier), Postman mock servers, WireMock, json-server. Many free options.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: Well-served by multiple open source tools.
+
+### Finding: Tech Stack Detector
+- **Source**: Web search for website technology detection tools
+- **Signal**: Developers and marketers want to know what technologies a website uses.
+- **Current solutions**: Wappalyzer (free extension), BuiltWith (free tier), Hexomatic, Stackcrawler, SEOmator, Enricher.io — extremely mature market.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: BuiltWith has been doing this since 2007. Wappalyzer browser extension is free and excellent. No gap.
+
+### Finding: License Compatibility Checker
+- **Source**: GitHub (FLICT, Licensetry), npm (license-checker, license-report), Google js-green-licenses
+- **Signal**: Developers care about license compliance, especially in enterprise.
+- **Current solutions**: license-checker (npm, free), LicenseFinder (multi-language, free), FLICT (free), Google js-green-licenses (free). All CLI tools but widely available.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: Multiple free CLI tools exist. Web version would add convenience but core problem is solved.
+
+### Finding: SaaS Pricing Change Tracker
+- **Source**: SaaS Price Pulse, SaaStr pricing analysis
+- **Signal**: High — 1,800+ pricing changes across top 500 SaaS in 2025 alone. 20% average price increases.
+- **Current solutions**: SaaS Price Pulse launched Jan 2026. Tracks 260+ SaaS pages with AI extraction and Slack/email alerts.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: SaaS Price Pulse already does exactly this. Gap closed in Jan 2026.
+
+### Finding: Code Review Assistant
+- **Source**: DEV Community, DigitalOcean, Augment Code roundups
+- **Signal**: Every developer wants better PR reviews.
+- **Current solutions**: CodeRabbit, Copilot, Graphite, Greptile, BugBot, Semgrep, SonarCloud, PR-Agent — extremely competitive space.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: One of the most competitive spaces in dev tools. GitHub Copilot alone covers this.
+
+### Finding: Haunted Domain Checker (Domain Reputation Auditor)
+- **Source**: HN thread "Before you buy a domain, first check to see if it's haunted" (400+ comments), GoDaddy 2026 guide, DomCop guide
+- **Signal**: Real financial pain — people buy domains and discover they're blacklisted by Google, email servers, social media platforms, corporate firewalls. One HN user's organic search traffic "dropped to zero" after buying a haunted domain. FTC/spam filters retain old categorizations for years. Domain buyers routinely open 5+ tabs (Wayback Machine, VirusTotal, MxToolbox, Spamhaus, Google Safe Browsing) to vet a domain.
+- **Current solutions**: Individual tools exist: MxToolbox (email/DNS), VirusTotal (malware), Wayback Machine (history), Spamhaus (spam), EasyDMARC (email reputation), IPVoid (blacklists). But each checks ONE dimension. No free tool runs ALL checks and produces a single consolidated "buy or skip" report. Paid tools (DomainTools, SEMrush, Ahrefs) offer some of this but cost $100+/month.
+- **Agent design**: Tool 1 (GATHER): Fetch WHOIS/RDAP data, Wayback Machine CDX API for historical snapshots, DNS records. Tool 2 (PROCESS): Search for blacklists, malware reports, Google Safe Browsing status, email reputation, spam reports. Tool 3 (OUTPUT): Write a consolidated domain health report with buy/skip recommendation.
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Status**: built (venture 6/6)
+- **Notes**: Classic compound search problem — users currently open 5+ tabs to research a domain. Perfect for the harness. Developer/webmaster audience diversifies from job seekers. All data sources are publicly accessible. HN thread had strong engagement. BUILD: TypeScript clean, Next.js build passes. 3 tools: fetch_domain_info (RDAP + Wayback CDX + DNS-over-HTTPS), check_domain_reputation (6 DuckDuckGo searches for blacklists/malware/phishing/spam/email/history), write_domain_report (scored 1-10 with buy/skip recommendation).
+
+### Finding: Rental Listing Scam Detector
+- **Source**: FTC consumer advice, CNBC, Zillow, ApartmentAdvisor
+- **Signal**: 50% of rental scams reported to FTC started with fake Facebook ads. CNBC published "how to know if a rental listing is a scam" in Jan 2025. Real financial harm to renters.
+- **Current solutions**: No free automated tool. Only manual checklists (FTC, Zillow guides). Scam-detector.com has articles but no automated analysis. Property records are county-specific and fragmented.
+- **Agent design**: Tool 1 (GATHER): Fetch listing URL, extract address/price/contact info. Tool 2 (PROCESS): Verify address exists, search for landlord/management company, check phone/email against scam databases. Tool 3 (OUTPUT): Write risk report.
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Status**: built (venture 6/6)
+- **Notes**: Strong emotional appeal, similar to job-scam-detector. Consumer audience. BUILD: TypeScript clean, Next.js build passes. 3 tools: fetch_rental_listing (URL fetch + platform risk analysis + text red flag scan), verify_rental_listing (address verification + landlord lookup + contact check + scam database search + price comparison), write_risk_assessment (risk score 1-10 with next steps and reporting resources).
+
+### Finding: .env / Secrets Management
+- **Source**: Security Boulevard, Doppler blog, GitGuardian
+- **Signal**: GhostAction attack (Sep 2025) exposed 3,325 secrets across 817 GitHub repos. Real problem.
+- **Current solutions**: Infisical (free, open source), Envault, EnvManager, Doppler, HashiCorp Vault. Well-served.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: Infisical is free and open source. Gap closed.
+
+---
+
+## Meta-Reflection #2 — After builds 1-5
+
+### Hit rate
+- **Round 1**: 7 researched → 3 built (43%)
+- **Round 2**: 5 researched → 1 built (20%)
+- **Round 3**: 4 researched → 1 built (25%)
+- **Round 4**: 9 researched → 2 queued (22%)
+- **Overall**: 25 problems researched → 7 with 3/3 score (28%)
+
+### Pattern: the "5-tab test"
+Every successful agent passes the same test: "Would a person open 5+ browser tabs to solve this manually?" If yes, the harness adds real value by automating the compound search. If no, a chatbot already handles it.
+- **Pass**: job-scam-detector (fetch listing + verify employer + scam reports), company-briefing (website + Glassdoor + news + funding + leadership), npm-trust-checker (registry + CVEs + repo + community), haunted-domain-checker (Wayback + blacklists + malware + email + DNS)
+- **Fail**: contract reviewer (just text analysis), TOS summarizer (single page read), content repurposer (text transformation)
+
+### What changed since reflection #1
+- **Developer tools are the strongest category.** 3 of 5 built agents are developer-focused (dep-changelog, repo-health, npm-trust). They build fastest because the data sources (npm registry, GitHub API) are structured and predictable.
+- **"Scam detector" is a repeatable template.** Job scams, rental scams, domain scams — the pattern is: fetch target → cross-reference → produce risk score. This is our strongest archetype.
+- **GAP=0 remains the #1 kill reason.** 18 of 25 ideas died because free tools already exist. The market for simple AI-wrapped utilities is saturated. The harness wins when it GATHERS from multiple sources, not when it just analyzes text.
+- **Build speed is consistent.** ~15 min per agent. The seed copy + 3 tools + config + route + README pattern is fully systematized.
+
+### Adjusted strategy for next 5
+- **Double down on the "scam detector" archetype.** Rental scam detector is queued. Could extend to: investment scam checker, e-commerce seller trustworthiness, charity verification.
+- **Explore "pre-purchase research" broadly.** Domain checker, used car VIN check, contractor/plumber vetting — any domain where someone does manual multi-source research before spending money.
+- **Try non-English-web data sources.** Government databases (FDA recalls, SEC filings, FCC complaints) are underutilized and freely accessible.
+- **Consider agents that combine 2+ existing agent outputs.** E.g., a "full security audit" that chains npm-trust-checker + repo-health-scanner for comprehensive dependency review.
+
+---
+
+## 2026-03-10 — Session 2 (Round 5)
+
+### Finding: Used Car VIN History Report
+- **Source**: VinAudit, VinCheckUp, U.S. News, Edmunds
+- **Signal**: Everyone buying a used car wants a VIN report.
+- **Current solutions**: Carfax ($39.99), AutoCheck ($24.99), VinAudit ($9.99), NICB VINCheck (free), iSeeCars (free partial). Many options across price ranges.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: Very well-served market. Free NICB tool + multiple cheap alternatives.
+
+### Finding: Contractor Due Diligence Agent
+- **Source**: LicensedCheck, Angi, CSLB, BBB, homeowner forums
+- **Signal**: Every homeowner researches contractors before hiring. Standard advice: check license, BBB, reviews, insurance. People open 5+ tabs: state license board, BBB, Google reviews, Yelp, Angi, NextDoor. Especially critical for expensive projects (roofing, plumbing, electrical).
+- **Current solutions**: LicensedCheck (free, license verification across 50 states). BBB (free, complaints). Angi (free tier, reviews). Google Reviews. BUT each is a separate lookup. No single tool produces a consolidated "should I hire this contractor?" report combining license + BBB + reviews + complaints.
+- **Agent design**: Tool 1 (GATHER): Search for the contractor/company across the web — find website, license info, BBB profile. Tool 2 (PROCESS): Verify license status, check BBB rating, aggregate reviews from Google/Yelp/Angi, search for complaints/lawsuits. Tool 3 (OUTPUT): Write a trust report with hire/avoid recommendation.
+- **Score**: SIGNAL: 1 | GAP: 1 | FEASIBLE: 1 | Total: 3/3
+- **Status**: built (venture 6/6)
+- **Notes**: Classic compound search pattern. Homeowner audience diversifies from dev + job seeker tools. BUILD: TypeScript clean, Next.js build passes. 3 tools: search_contractor (4 DuckDuckGo searches for web presence/license/BBB/reviews), verify_contractor (6 searches for complaints/lawsuits/insurance/history + website quality check), write_contractor_report (trust score 1-10 with hire/avoid recommendation + scam checklist).
+
+### Finding: Investment / Crypto Scam Checker
+- **Source**: FINRA BrokerCheck, SEC EDGAR, Bitget, SoFi
+- **Signal**: Crypto scams surging in 2025-2026. $14M+ misappropriated via WhatsApp investment clubs.
+- **Current solutions**: FINRA BrokerCheck (free, comprehensive for registered). SEC EDGAR (free). Etherscan/Solscan (free for crypto). Gap mainly for unregistered schemes.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 0 | Total: 1/3
+- **Status**: rejected
+- **Notes**: BrokerCheck is very comprehensive for registered investments. Can't programmatically access FINRA/SEC. Crypto verification is wallet-address-specific — different problem shape.
+
+### Finding: Charity / Nonprofit Verification
+- **Source**: IRS Tax Exempt Org Search, Charity Navigator, GuideStar, BBB Wise Giving
+- **Signal**: Donors want to verify charities, especially after disasters.
+- **Current solutions**: IRS TEOS (free, official), Charity Navigator (free), GuideStar (free), BBB Wise Giving Alliance (free). Extremely well-served.
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: Multiple free government and independent tools. No gap.
+
+### Finding: Online Store Scam Checker
+- **Source**: ScamAdviser, ScamDoc, URLVoid, F-Secure
+- **Signal**: Shoppers want to verify unfamiliar online stores.
+- **Current solutions**: ScamAdviser (6.5M monthly users, free), ScamDoc (free), URLVoid (free), Scamvoid (free), F-Secure Shopping Checker (free), McAfee WebAdvisor (free).
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: ScamAdviser alone serves 6.5M users/month. No gap.
+
+### Finding: FDA / Product Recall Checker
+- **Source**: Recalls.gov, FDA dashboard, FoodSafety.gov
+- **Signal**: Consumer safety concern, especially for parents.
+- **Current solutions**: Recalls.gov (government consolidated, free), FDA Recall Dashboard (free), FoodSafety.gov (free), Ckiki Alert app (free).
+- **Score**: SIGNAL: 1 | GAP: 0 | FEASIBLE: 1 | Total: 2/3
+- **Status**: rejected
+- **Notes**: Government already provides excellent free consolidated tools.
