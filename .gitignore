@@ -1,6 +1,17 @@
 .env
 node_modules/
+.next/
 builds/*/node_modules/
 builds/*/.next/
 builds/*/tsconfig.tsbuildinfo
 .DS_Store
+
+# Research data — generated per-session, not part of the public repo
+research/research-log.md
+research/summary.md
+research/archive/
+research/next-session.md
+research/session-*.log
+build-queue.md
+results.tsv
+results-dashboard.html
