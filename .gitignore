@@ -5,11 +5,10 @@ builds/
 .DS_Store
 
 # Research data — generated per-session, not part of the public repo
-research/research-log.md
-research/summary.md
-research/archive/
-research/next-session.md
-research/session-*.log
+research/*
+!research/.gitkeep
+research/archive/*
+!research/archive/.gitkeep
 build-queue.md
 results.tsv
 results-dashboard.html
