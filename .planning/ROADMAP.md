@@ -187,7 +187,10 @@ Plans:
   4. Running the full pipeline produces evaluation/adoption-risk.md on disk
   5. Running the full pipeline produces evaluation/tier1-report.md on disk
 
-Plans: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 10-01-PLAN.md -- Wire writeEvaluation into pipeline-runner with integration tests
 
 ### Phase 11: Wire Simulation Pipeline into Pipeline Runner
 **Goal**: Simulation pipeline runs during pipeline execution, producing real artifacts and passing real results to final reports
@@ -201,7 +204,10 @@ Plans: TBD
   4. writeFinalReports receives real SimulationPipelineResult (not hardcoded empty) with accurate counts
   5. evaluation/summary.md contains non-zero simulation metrics reflecting actual simulation results
 
-Plans: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 10-01-PLAN.md -- Wire writeEvaluation into pipeline-runner with integration tests
 
 ## Progress
 
