@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 7: Pipeline Orchestration** - Two-model strategy, logging, unattended mode, context management (completed 2026-03-11)
 - [x] **Phase 8: Resilience & Recovery** - Error handling, crash recovery, checkpointing, git auto-commit (completed 2026-03-11)
 - [x] **Phase 9: Final Reports & Reflection** - Executive summary, dead zones, meta-reflection, simulation bundles (completed 2026-03-11)
-- [ ] **Phase 10: Wire writeEvaluation into Pipeline** - Connect Phase 5 output formatters to pipeline-runner.ts (gap closure)
+- [x] **Phase 10: Wire writeEvaluation into Pipeline** - Connect Phase 5 output formatters to pipeline-runner.ts (gap closure) (completed 2026-03-11)
 - [ ] **Phase 11: Wire Simulation Pipeline into Pipeline Runner** - Connect Phase 6 simulation pipeline to pipeline-runner.ts with adapter (gap closure)
 
 ## Phase Details
@@ -225,5 +225,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9 > 10 > 11
 | 7. Pipeline Orchestration | 3/3 | Complete | 2026-03-11 |
 | 8. Resilience & Recovery | 3/3 | Complete | 2026-03-11 |
 | 9. Final Reports & Reflection | 3/3 | Complete | 2026-03-11 |
-| 10. Wire writeEvaluation | 0/0 | Pending | -- |
+| 10. Wire writeEvaluation | 1/1 | Complete   | 2026-03-11 |
 | 11. Wire Simulation Pipeline | 0/0 | Pending | -- |

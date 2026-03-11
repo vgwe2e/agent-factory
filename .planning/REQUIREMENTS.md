@@ -20,8 +20,8 @@
 - [x] **SCOR-04**: Engine computes weighted composite score (Technical 0.30, Adoption 0.45, Value 0.25) -- 0.0 to 1.0 range
 - [x] **SCOR-05**: Engine applies ratcheting threshold -- only promotes opportunities with composite >= 0.60 to simulation
 - [x] **SCOR-06**: Engine classifies each opportunity by archetype (DETERMINISTIC, AGENTIC, GENERATIVE) and routes to appropriate evaluation patterns
-- [ ] **SCOR-07**: Engine outputs scored opportunities as TSV with all dimension breakdowns
-- [ ] **SCOR-08**: Engine outputs scored opportunities as markdown report with analysis
+- [x] **SCOR-07**: Engine outputs scored opportunities as TSV with all dimension breakdowns
+- [x] **SCOR-08**: Engine outputs scored opportunities as markdown report with analysis
 
 ### Red Flags
 
@@ -34,7 +34,7 @@
 ### Triage
 
 - [x] **TRIG-01**: Engine bins opportunities into Tier 1 (quick_win + value > $5M), Tier 2 (high AI suitability), Tier 3 (everything else)
-- [ ] **TRIG-02**: Engine outputs triage results as TSV sorted by tier
+- [x] **TRIG-02**: Engine outputs triage results as TSV sorted by tier
 - [x] **TRIG-03**: Engine processes Tier 1 opportunities first, then Tier 2, then Tier 3
 
 ### Simulation
@@ -64,10 +64,10 @@
 
 ### Output
 
-- [ ] **OUTP-01**: Engine produces evaluation/triage.tsv with all opportunities tier-sorted
-- [ ] **OUTP-02**: Engine produces evaluation/feasibility-scores.tsv with 9-dimension breakdown
-- [ ] **OUTP-03**: Engine produces evaluation/adoption-risk.md with red flags and dead zones
-- [ ] **OUTP-04**: Engine produces evaluation/tier1-report.md with deep analysis of top-tier opportunities
+- [x] **OUTP-01**: Engine produces evaluation/triage.tsv with all opportunities tier-sorted
+- [x] **OUTP-02**: Engine produces evaluation/feasibility-scores.tsv with 9-dimension breakdown
+- [x] **OUTP-03**: Engine produces evaluation/adoption-risk.md with red flags and dead zones
+- [x] **OUTP-04**: Engine produces evaluation/tier1-report.md with deep analysis of top-tier opportunities
 - [ ] **OUTP-05**: Engine produces evaluation/simulations/<skill-name>/ with decision flows, component maps, mock tests
 - [ ] **OUTP-06**: Engine produces evaluation/summary.md with executive summary of top 10 opportunities
 - [x] **OUTP-07**: Engine produces evaluation/dead-zones.md with areas explicitly recommended against
@@ -113,15 +113,15 @@
 | SCOR-04 | Phase 4 | Complete |
 | SCOR-05 | Phase 4 | Complete |
 | SCOR-06 | Phase 4 | Complete |
-| SCOR-07 | Phase 10 | Pending |
-| SCOR-08 | Phase 10 | Pending |
+| SCOR-07 | Phase 10 | Complete |
+| SCOR-08 | Phase 10 | Complete |
 | FLAG-01 | Phase 3 | Complete |
 | FLAG-02 | Phase 3 | Complete |
 | FLAG-03 | Phase 3 | Complete |
 | FLAG-04 | Phase 3 | Complete |
 | FLAG-05 | Phase 3 | Complete |
 | TRIG-01 | Phase 3 | Complete |
-| TRIG-02 | Phase 10 | Pending |
+| TRIG-02 | Phase 10 | Complete |
 | TRIG-03 | Phase 3 | Complete |
 | SIMU-01 | Phase 11 | Pending |
 | SIMU-02 | Phase 11 | Pending |
@@ -139,10 +139,10 @@
 | INFR-06 | Phase 1 | Complete |
 | INFR-07 | Phase 7 | Complete |
 | INFR-08 | Phase 8 | Complete |
-| OUTP-01 | Phase 10 | Pending |
-| OUTP-02 | Phase 10 | Pending |
-| OUTP-03 | Phase 10 | Pending |
-| OUTP-04 | Phase 10 | Pending |
+| OUTP-01 | Phase 10 | Complete |
+| OUTP-02 | Phase 10 | Complete |
+| OUTP-03 | Phase 10 | Complete |
+| OUTP-04 | Phase 10 | Complete |
 | OUTP-05 | Phase 11 | Pending |
 | OUTP-06 | Phase 11 | Pending |
 | OUTP-07 | Phase 9 | Complete |
