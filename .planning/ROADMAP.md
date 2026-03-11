@@ -117,14 +117,13 @@ Plans:
   3. Engine creates mock decision tests with sample inputs and expected outputs using actual client financials from the export
   4. Engine maps integration surfaces (source systems to Aera to process to UI) for each simulated opportunity
   5. Every component reference in generated maps and specs exists in the bundled Aera knowledge base (no hallucinated components)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
-- [ ] 06-03: TBD
-- [ ] 06-04: TBD
-- [ ] 06-05: TBD
+- [ ] 06-01-PLAN.md -- Simulation types, Zod schemas, validators (Mermaid structural + KNOW-04 knowledge base)
+- [ ] 06-02-PLAN.md -- Decision flow and component map generators with LLM prompts and retry
+- [ ] 06-03-PLAN.md -- Mock test and integration surface generators with LLM prompts and retry
+- [ ] 06-04-PLAN.md -- Simulation pipeline orchestrator wiring all generators with file output
 
 ### Phase 7: Pipeline Orchestration
 **Goal**: The full pipeline runs end-to-end with proper model switching, structured logging, and context management across hundreds of evaluations
@@ -191,7 +190,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | 3. Triage & Red Flags | 3/3 | Complete | 2026-03-11 |
 | 4. Scoring Engine | 0/3 | Not started | - |
 | 5. Scoring Output | 0/3 | Not started | - |
-| 6. Simulation | 0/5 | Not started | - |
+| 6. Simulation | 0/4 | Not started | - |
 | 7. Pipeline Orchestration | 0/5 | Not started | - |
 | 8. Resilience & Recovery | 0/5 | Not started | - |
 | 9. Final Reports & Reflection | 0/5 | Not started | - |
