@@ -1,0 +1,152 @@
+{
+  "name": "label",
+  "category": "display",
+  "description": "Display text with various styles",
+  "pages": {
+    "start": 62,
+    "end": 69
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier",
+          "page": 62
+        },
+        {
+          "property": "Text",
+          "field": "Text",
+          "description": "Label text content",
+          "page": 63
+        },
+        {
+          "property": "Text Variable",
+          "field": "TextVariable",
+          "description": "Process variable for dynamic text",
+          "page": 64
+        }
+      ],
+      "property_count": 3
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Text Style",
+          "field": "TextStyle",
+          "description": "H1, H2, H3, Body, Caption",
+          "page": 65
+        },
+        {
+          "property": "Font Size",
+          "field": "FontSize",
+          "description": "Font size in pixels",
+          "page": 66
+        },
+        {
+          "property": "Font Weight",
+          "field": "FontWeight",
+          "description": "Normal, Bold",
+          "page": 66
+        },
+        {
+          "property": "Text Color",
+          "field": "TextColor",
+          "description": "Text color",
+          "page": 67
+        },
+        {
+          "property": "Text Align",
+          "field": "TextAlign",
+          "description": "Left, Center, Right",
+          "page": 67
+        }
+      ],
+      "property_count": 5
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 62
+    },
+    {
+      "name": "Text",
+      "field": "Text",
+      "type": "string",
+      "tab": "general",
+      "page": 63
+    },
+    {
+      "name": "Text Variable",
+      "field": "TextVariable",
+      "type": "variable",
+      "tab": "general",
+      "page": 64
+    },
+    {
+      "name": "Text Style",
+      "field": "TextStyle",
+      "type": "enum",
+      "options": [
+        "H1",
+        "H2",
+        "H3",
+        "Body",
+        "Caption"
+      ],
+      "tab": "style",
+      "default": "Body",
+      "page": 65
+    },
+    {
+      "name": "Font Size",
+      "field": "FontSize",
+      "type": "number",
+      "tab": "style",
+      "page": 66
+    },
+    {
+      "name": "Font Weight",
+      "field": "FontWeight",
+      "type": "enum",
+      "options": [
+        "Normal",
+        "Bold"
+      ],
+      "tab": "style",
+      "default": "Normal",
+      "page": 66
+    },
+    {
+      "name": "Text Color",
+      "field": "TextColor",
+      "type": "string",
+      "tab": "style",
+      "page": 67
+    },
+    {
+      "name": "Text Align",
+      "field": "TextAlign",
+      "type": "enum",
+      "options": [
+        "Left",
+        "Center",
+        "Right"
+      ],
+      "tab": "style",
+      "default": "Left",
+      "page": 67
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "paragraph",
+    "input_field"
+  ]
+}

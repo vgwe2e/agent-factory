@@ -1,0 +1,156 @@
+{
+  "name": "attachment",
+  "category": "input",
+  "description": "File upload and attachment handling",
+  "pages": {
+    "start": 119,
+    "end": 128
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the attachment component",
+          "page": 119
+        },
+        {
+          "property": "Variable",
+          "field": "Variable",
+          "description": "Variable to store uploaded file information",
+          "page": 120
+        },
+        {
+          "property": "Accept",
+          "field": "Accept",
+          "description": "Accepted file types (MIME types)",
+          "page": 121
+        },
+        {
+          "property": "Max Size",
+          "field": "MaxSize",
+          "description": "Maximum file size in MB",
+          "page": 122
+        },
+        {
+          "property": "Multiple",
+          "field": "Multiple",
+          "description": "Allow multiple file uploads",
+          "page": 123
+        }
+      ],
+      "property_count": 5
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Button Text",
+          "field": "ButtonText",
+          "description": "Text for upload button",
+          "page": 124
+        },
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Component width",
+          "page": 125
+        }
+      ],
+      "property_count": 2
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide attachment component",
+          "page": 127
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable file upload",
+          "page": 127
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 119
+    },
+    {
+      "name": "Variable",
+      "field": "Variable",
+      "type": "variable",
+      "tab": "general",
+      "page": 120
+    },
+    {
+      "name": "Accept",
+      "field": "Accept",
+      "type": "string",
+      "tab": "general",
+      "page": 121
+    },
+    {
+      "name": "Max Size",
+      "field": "MaxSize",
+      "type": "number",
+      "tab": "general",
+      "default": 10,
+      "page": 122
+    },
+    {
+      "name": "Multiple",
+      "field": "Multiple",
+      "type": "boolean",
+      "tab": "general",
+      "default": false,
+      "page": 123
+    },
+    {
+      "name": "Button Text",
+      "field": "ButtonText",
+      "type": "string",
+      "tab": "style",
+      "default": "Upload File",
+      "page": 124
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "style",
+      "page": 125
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 127
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 127
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "image",
+    "button"
+  ]
+}

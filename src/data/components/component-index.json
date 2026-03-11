@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "total_components": 21,
+  "total_properties": 209,
+  "categories": {
+    "layout": {
+      "description": "Container and structural components for organizing UI elements",
+      "components": ["section", "popup"]
+    },
+    "display": {
+      "description": "Text and media display components for presenting information",
+      "components": ["label", "paragraph", "image"]
+    },
+    "input": {
+      "description": "User input components for data entry and interaction",
+      "components": ["textarea", "input_field", "dropdown", "attachment", "link", "button", "icon_button", "checkbox", "radio_buttons"]
+    },
+    "container": {
+      "description": "Special container components for organizing content",
+      "components": ["tabs"]
+    },
+    "visualization": {
+      "description": "Data display and analysis components for charts, tables, and dashboards",
+      "components": ["table", "discovery", "report", "chart", "dashboard"]
+    },
+    "interaction": {
+      "description": "Interactive components for filtering and user engagement",
+      "components": ["filter"]
+    }
+  }
+}

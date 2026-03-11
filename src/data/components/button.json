@@ -1,0 +1,192 @@
+{
+  "name": "button",
+  "category": "input",
+  "description": "Action buttons for triggers and navigation",
+  "pages": {
+    "start": 150,
+    "end": 163
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier",
+          "page": 150
+        },
+        {
+          "property": "Text",
+          "field": "Text",
+          "description": "Button text",
+          "page": 151
+        },
+        {
+          "property": "Toggle Variable",
+          "field": "ToggleVariable",
+          "description": "Variable to toggle on click",
+          "page": 152
+        },
+        {
+          "property": "Open URL",
+          "field": "OpenUrl",
+          "description": "URL to navigate to",
+          "page": 153
+        },
+        {
+          "property": "Open Modal",
+          "field": "OpenModal",
+          "description": "Modal/popup to open",
+          "page": 154
+        }
+      ],
+      "property_count": 5
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Button Type",
+          "field": "Type",
+          "description": "Solid, Outline, Text",
+          "page": 155
+        },
+        {
+          "property": "Button Color",
+          "field": "ButtonColor",
+          "description": "Button color",
+          "page": 155
+        },
+        {
+          "property": "Size",
+          "field": "Size",
+          "description": "Small, Medium, Large",
+          "page": 156
+        },
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Button width",
+          "page": 157
+        }
+      ],
+      "property_count": 4
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide button",
+          "page": 160
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable button",
+          "page": 160
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 150
+    },
+    {
+      "name": "Text",
+      "field": "Text",
+      "type": "string",
+      "tab": "general",
+      "page": 151
+    },
+    {
+      "name": "Toggle Variable",
+      "field": "ToggleVariable",
+      "type": "variable",
+      "tab": "general",
+      "page": 152
+    },
+    {
+      "name": "Open URL",
+      "field": "OpenUrl",
+      "type": "string",
+      "tab": "general",
+      "page": 153
+    },
+    {
+      "name": "Open Modal",
+      "field": "OpenModal",
+      "type": "string",
+      "tab": "general",
+      "page": 154
+    },
+    {
+      "name": "Button Type",
+      "field": "Type",
+      "type": "enum",
+      "options": [
+        "Solid",
+        "Outline",
+        "Text"
+      ],
+      "tab": "style",
+      "default": "Solid",
+      "page": 155
+    },
+    {
+      "name": "Button Color",
+      "field": "ButtonColor",
+      "type": "string",
+      "tab": "style",
+      "default": "#0090ea",
+      "page": 155
+    },
+    {
+      "name": "Size",
+      "field": "Size",
+      "type": "enum",
+      "options": [
+        "Small",
+        "Medium",
+        "Large"
+      ],
+      "tab": "style",
+      "default": "Medium",
+      "page": 156
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "style",
+      "page": 157
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 160
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 160
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "icon_button",
+    "link"
+  ]
+}

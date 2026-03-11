@@ -1,0 +1,143 @@
+{
+  "name": "discovery",
+  "category": "visualization",
+  "description": "Embedding Discovery sheets",
+  "pages": {
+    "start": 263,
+    "end": 272
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the discovery component",
+          "page": 263
+        },
+        {
+          "property": "Discovery ID",
+          "field": "DiscoveryId",
+          "description": "ID of the discovery sheet to embed",
+          "page": 264
+        },
+        {
+          "property": "Variable",
+          "field": "Variable",
+          "description": "Variable for dynamic discovery selection",
+          "page": 265
+        },
+        {
+          "property": "Filter Variables",
+          "field": "FilterVariables",
+          "description": "Variables to apply as filters",
+          "page": 266
+        }
+      ],
+      "property_count": 4
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Component width",
+          "page": 267
+        },
+        {
+          "property": "Height",
+          "field": "Height",
+          "description": "Component height",
+          "page": 268
+        },
+        {
+          "property": "Show Header",
+          "field": "ShowHeader",
+          "description": "Display discovery header",
+          "page": 269
+        }
+      ],
+      "property_count": 3
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide discovery component",
+          "page": 271
+        }
+      ],
+      "property_count": 1
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 263
+    },
+    {
+      "name": "Discovery ID",
+      "field": "DiscoveryId",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 264
+    },
+    {
+      "name": "Variable",
+      "field": "Variable",
+      "type": "variable",
+      "tab": "general",
+      "page": 265
+    },
+    {
+      "name": "Filter Variables",
+      "field": "FilterVariables",
+      "type": "array",
+      "tab": "general",
+      "page": 266
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "style",
+      "page": 267
+    },
+    {
+      "name": "Height",
+      "field": "Height",
+      "type": "number",
+      "tab": "style",
+      "default": 600,
+      "page": 268
+    },
+    {
+      "name": "Show Header",
+      "field": "ShowHeader",
+      "type": "boolean",
+      "tab": "style",
+      "default": true,
+      "page": 269
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 271
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "report",
+    "dashboard",
+    "filter"
+  ]
+}

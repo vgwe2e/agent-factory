@@ -1,0 +1,143 @@
+{
+  "name": "report",
+  "category": "visualization",
+  "description": "Embedding Report components",
+  "pages": {
+    "start": 273,
+    "end": 281
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the report component",
+          "page": 273
+        },
+        {
+          "property": "Report ID",
+          "field": "ReportId",
+          "description": "ID of the report to embed",
+          "page": 274
+        },
+        {
+          "property": "Variable",
+          "field": "Variable",
+          "description": "Variable for dynamic report selection",
+          "page": 275
+        },
+        {
+          "property": "Filter Variables",
+          "field": "FilterVariables",
+          "description": "Variables to apply as filters",
+          "page": 276
+        }
+      ],
+      "property_count": 4
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Component width",
+          "page": 277
+        },
+        {
+          "property": "Height",
+          "field": "Height",
+          "description": "Component height",
+          "page": 278
+        },
+        {
+          "property": "Show Header",
+          "field": "ShowHeader",
+          "description": "Display report header",
+          "page": 279
+        }
+      ],
+      "property_count": 3
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide report component",
+          "page": 280
+        }
+      ],
+      "property_count": 1
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 273
+    },
+    {
+      "name": "Report ID",
+      "field": "ReportId",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 274
+    },
+    {
+      "name": "Variable",
+      "field": "Variable",
+      "type": "variable",
+      "tab": "general",
+      "page": 275
+    },
+    {
+      "name": "Filter Variables",
+      "field": "FilterVariables",
+      "type": "array",
+      "tab": "general",
+      "page": 276
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "style",
+      "page": 277
+    },
+    {
+      "name": "Height",
+      "field": "Height",
+      "type": "number",
+      "tab": "style",
+      "default": 600,
+      "page": 278
+    },
+    {
+      "name": "Show Header",
+      "field": "ShowHeader",
+      "type": "boolean",
+      "tab": "style",
+      "default": true,
+      "page": 279
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 280
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "discovery",
+    "dashboard",
+    "filter"
+  ]
+}

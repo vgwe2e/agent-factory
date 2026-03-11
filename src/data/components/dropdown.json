@@ -1,0 +1,172 @@
+{
+  "name": "dropdown",
+  "category": "input",
+  "description": "Single or multi-select dropdown",
+  "pages": {
+    "start": 108,
+    "end": 118
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier",
+          "page": 108
+        },
+        {
+          "property": "Selection Type",
+          "field": "SelectionType",
+          "description": "Single or Multi-select",
+          "page": 109
+        },
+        {
+          "property": "Options Dataset",
+          "field": "OptionsDataset",
+          "description": "Dataset for dropdown options",
+          "page": 110
+        },
+        {
+          "property": "Display Field",
+          "field": "DisplayField",
+          "description": "Field to display in dropdown",
+          "page": 111
+        },
+        {
+          "property": "Value Field",
+          "field": "ValueField",
+          "description": "Field for selected value",
+          "page": 111
+        },
+        {
+          "property": "Selected Variable",
+          "field": "SelectedVariable",
+          "description": "Variable to store selection",
+          "page": 112
+        },
+        {
+          "property": "Placeholder",
+          "field": "Placeholder",
+          "description": "Placeholder text",
+          "page": 113
+        }
+      ],
+      "property_count": 7
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Dropdown width",
+          "page": 115
+        }
+      ],
+      "property_count": 1
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide dropdown",
+          "page": 117
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable dropdown",
+          "page": 117
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 108
+    },
+    {
+      "name": "Selection Type",
+      "field": "SelectionType",
+      "type": "enum",
+      "options": [
+        "Single",
+        "Multi"
+      ],
+      "tab": "general",
+      "default": "Single",
+      "page": 109
+    },
+    {
+      "name": "Options Dataset",
+      "field": "OptionsDataset",
+      "type": "dataset",
+      "tab": "general",
+      "page": 110
+    },
+    {
+      "name": "Display Field",
+      "field": "DisplayField",
+      "type": "string",
+      "tab": "general",
+      "page": 111
+    },
+    {
+      "name": "Value Field",
+      "field": "ValueField",
+      "type": "string",
+      "tab": "general",
+      "page": 111
+    },
+    {
+      "name": "Selected Variable",
+      "field": "SelectedVariable",
+      "type": "variable",
+      "tab": "general",
+      "page": 112
+    },
+    {
+      "name": "Placeholder",
+      "field": "Placeholder",
+      "type": "string",
+      "tab": "general",
+      "page": 113
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "style",
+      "page": 115
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 117
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 117
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "input_field",
+    "radio_buttons",
+    "checkbox"
+  ]
+}

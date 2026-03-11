@@ -1,0 +1,185 @@
+{
+  "name": "icon_button",
+  "category": "input",
+  "description": "Icon-based button component",
+  "pages": {
+    "start": 164,
+    "end": 173
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier",
+          "page": 164
+        },
+        {
+          "property": "Icon",
+          "field": "Icon",
+          "description": "Icon name or identifier",
+          "page": 165
+        },
+        {
+          "property": "Tooltip",
+          "field": "Tooltip",
+          "description": "Tooltip text shown on hover",
+          "page": 166
+        },
+        {
+          "property": "Toggle Variable",
+          "field": "ToggleVariable",
+          "description": "Variable to toggle on click",
+          "page": 167
+        },
+        {
+          "property": "Open URL",
+          "field": "OpenUrl",
+          "description": "URL to navigate to",
+          "page": 168
+        },
+        {
+          "property": "Open Modal",
+          "field": "OpenModal",
+          "description": "Modal/popup to open",
+          "page": 169
+        }
+      ],
+      "property_count": 6
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Button Type",
+          "field": "Type",
+          "description": "Solid, Outline, Text",
+          "page": 170
+        },
+        {
+          "property": "Color",
+          "field": "Color",
+          "description": "Icon and button color",
+          "page": 170
+        },
+        {
+          "property": "Size",
+          "field": "Size",
+          "description": "Button size",
+          "page": 171
+        }
+      ],
+      "property_count": 3
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide icon button",
+          "page": 172
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable icon button",
+          "page": 172
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 164
+    },
+    {
+      "name": "Icon",
+      "field": "Icon",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 165
+    },
+    {
+      "name": "Tooltip",
+      "field": "Tooltip",
+      "type": "string",
+      "tab": "general",
+      "page": 166
+    },
+    {
+      "name": "Toggle Variable",
+      "field": "ToggleVariable",
+      "type": "variable",
+      "tab": "general",
+      "page": 167
+    },
+    {
+      "name": "Open URL",
+      "field": "OpenUrl",
+      "type": "string",
+      "tab": "general",
+      "page": 168
+    },
+    {
+      "name": "Open Modal",
+      "field": "OpenModal",
+      "type": "string",
+      "tab": "general",
+      "page": 169
+    },
+    {
+      "name": "Button Type",
+      "field": "Type",
+      "type": "enum",
+      "options": ["Solid", "Outline", "Text"],
+      "tab": "style",
+      "default": "Solid",
+      "page": 170
+    },
+    {
+      "name": "Color",
+      "field": "Color",
+      "type": "string",
+      "tab": "style",
+      "default": "#0090ea",
+      "page": 170
+    },
+    {
+      "name": "Size",
+      "field": "Size",
+      "type": "enum",
+      "options": ["Small", "Medium", "Large"],
+      "tab": "style",
+      "default": "Medium",
+      "page": 171
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 172
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 172
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "button",
+    "link"
+  ]
+}

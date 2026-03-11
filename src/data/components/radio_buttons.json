@@ -1,0 +1,184 @@
+{
+  "name": "radio_buttons",
+  "category": "input",
+  "description": "Radio button groups for single selection",
+  "pages": {
+    "start": 182,
+    "end": 196
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the radio button group",
+          "page": 182
+        },
+        {
+          "property": "Variable",
+          "field": "Variable",
+          "description": "Variable to bind selected value",
+          "page": 183
+        },
+        {
+          "property": "Dataset Variable",
+          "field": "DatasetVariable",
+          "description": "Dataset for dynamic radio options",
+          "page": 184
+        },
+        {
+          "property": "Value Field",
+          "field": "ValueField",
+          "description": "Field to use as option value",
+          "page": 185
+        },
+        {
+          "property": "Label Field",
+          "field": "LabelField",
+          "description": "Field to use as option label",
+          "page": 186
+        },
+        {
+          "property": "Default Value",
+          "field": "DefaultValue",
+          "description": "Default selected value",
+          "page": 187
+        }
+      ],
+      "property_count": 6
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Orientation",
+          "field": "Orientation",
+          "description": "Horizontal or Vertical layout",
+          "page": 188
+        },
+        {
+          "property": "Size",
+          "field": "Size",
+          "description": "Radio button size",
+          "page": 189
+        },
+        {
+          "property": "Color",
+          "field": "Color",
+          "description": "Radio button color when selected",
+          "page": 190
+        }
+      ],
+      "property_count": 3
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide radio button group",
+          "page": 194
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable radio button group",
+          "page": 194
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 182
+    },
+    {
+      "name": "Variable",
+      "field": "Variable",
+      "type": "variable",
+      "tab": "general",
+      "page": 183
+    },
+    {
+      "name": "Dataset Variable",
+      "field": "DatasetVariable",
+      "type": "dataset",
+      "tab": "general",
+      "page": 184
+    },
+    {
+      "name": "Value Field",
+      "field": "ValueField",
+      "type": "string",
+      "tab": "general",
+      "page": 185
+    },
+    {
+      "name": "Label Field",
+      "field": "LabelField",
+      "type": "string",
+      "tab": "general",
+      "page": 186
+    },
+    {
+      "name": "Default Value",
+      "field": "DefaultValue",
+      "type": "string",
+      "tab": "general",
+      "page": 187
+    },
+    {
+      "name": "Orientation",
+      "field": "Orientation",
+      "type": "enum",
+      "options": ["Horizontal", "Vertical"],
+      "tab": "style",
+      "default": "Vertical",
+      "page": 188
+    },
+    {
+      "name": "Size",
+      "field": "Size",
+      "type": "enum",
+      "options": ["Small", "Medium", "Large"],
+      "tab": "style",
+      "default": "Medium",
+      "page": 189
+    },
+    {
+      "name": "Color",
+      "field": "Color",
+      "type": "string",
+      "tab": "style",
+      "default": "#0090ea",
+      "page": 190
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 194
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 194
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "checkbox",
+    "dropdown"
+  ]
+}

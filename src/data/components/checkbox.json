@@ -1,0 +1,144 @@
+{
+  "name": "checkbox",
+  "category": "input",
+  "description": "Boolean checkbox selection",
+  "pages": {
+    "start": 174,
+    "end": 181
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the checkbox",
+          "page": 174
+        },
+        {
+          "property": "Label",
+          "field": "Label",
+          "description": "Text label displayed next to checkbox",
+          "page": 175
+        },
+        {
+          "property": "Variable",
+          "field": "Variable",
+          "description": "Variable to bind checkbox state",
+          "page": 176
+        },
+        {
+          "property": "Default Checked",
+          "field": "DefaultChecked",
+          "description": "Initial checked state",
+          "page": 177
+        }
+      ],
+      "property_count": 4
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Size",
+          "field": "Size",
+          "description": "Checkbox size (Small, Medium, Large)",
+          "page": 178
+        },
+        {
+          "property": "Color",
+          "field": "Color",
+          "description": "Checkbox color when checked",
+          "page": 179
+        }
+      ],
+      "property_count": 2
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide checkbox",
+          "page": 180
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable checkbox",
+          "page": 180
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 174
+    },
+    {
+      "name": "Label",
+      "field": "Label",
+      "type": "string",
+      "tab": "general",
+      "page": 175
+    },
+    {
+      "name": "Variable",
+      "field": "Variable",
+      "type": "variable",
+      "tab": "general",
+      "page": 176
+    },
+    {
+      "name": "Default Checked",
+      "field": "DefaultChecked",
+      "type": "boolean",
+      "tab": "general",
+      "default": false,
+      "page": 177
+    },
+    {
+      "name": "Size",
+      "field": "Size",
+      "type": "enum",
+      "options": ["Small", "Medium", "Large"],
+      "tab": "style",
+      "default": "Medium",
+      "page": 178
+    },
+    {
+      "name": "Color",
+      "field": "Color",
+      "type": "string",
+      "tab": "style",
+      "default": "#0090ea",
+      "page": 179
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 180
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 180
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "radio_buttons",
+    "dropdown"
+  ]
+}

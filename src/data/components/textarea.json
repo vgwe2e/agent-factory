@@ -1,0 +1,182 @@
+{
+  "name": "textarea",
+  "category": "input",
+  "description": "Multi-line text input field",
+  "pages": {
+    "start": 79,
+    "end": 87
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the textarea",
+          "page": 79
+        },
+        {
+          "property": "Variable",
+          "field": "Variable",
+          "description": "Variable to bind textarea value",
+          "page": 80
+        },
+        {
+          "property": "Placeholder",
+          "field": "Placeholder",
+          "description": "Placeholder text shown when empty",
+          "page": 81
+        },
+        {
+          "property": "Default Value",
+          "field": "DefaultValue",
+          "description": "Default value for textarea",
+          "page": 82
+        },
+        {
+          "property": "Required",
+          "field": "Required",
+          "description": "Whether input is required",
+          "page": 83
+        }
+      ],
+      "property_count": 5
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Textarea width",
+          "page": 84
+        },
+        {
+          "property": "Height",
+          "field": "Height",
+          "description": "Textarea height",
+          "page": 84
+        },
+        {
+          "property": "Rows",
+          "field": "Rows",
+          "description": "Number of visible text rows",
+          "page": 85
+        }
+      ],
+      "property_count": 3
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide textarea",
+          "page": 86
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable textarea",
+          "page": 86
+        },
+        {
+          "property": "Read Only",
+          "field": "ReadOnly",
+          "description": "Make textarea read-only",
+          "page": 87
+        }
+      ],
+      "property_count": 3
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 79
+    },
+    {
+      "name": "Variable",
+      "field": "Variable",
+      "type": "variable",
+      "tab": "general",
+      "page": 80
+    },
+    {
+      "name": "Placeholder",
+      "field": "Placeholder",
+      "type": "string",
+      "tab": "general",
+      "page": 81
+    },
+    {
+      "name": "Default Value",
+      "field": "DefaultValue",
+      "type": "string",
+      "tab": "general",
+      "page": 82
+    },
+    {
+      "name": "Required",
+      "field": "Required",
+      "type": "boolean",
+      "tab": "general",
+      "default": false,
+      "page": 83
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "style",
+      "page": 84
+    },
+    {
+      "name": "Height",
+      "field": "Height",
+      "type": "number",
+      "tab": "style",
+      "page": 84
+    },
+    {
+      "name": "Rows",
+      "field": "Rows",
+      "type": "number",
+      "tab": "style",
+      "default": 3,
+      "page": 85
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 86
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 86
+    },
+    {
+      "name": "Read Only",
+      "field": "ReadOnly",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": false,
+      "page": 87
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "input_field",
+    "paragraph"
+  ]
+}

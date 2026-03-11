@@ -1,0 +1,159 @@
+{
+  "name": "tabs",
+  "category": "container",
+  "description": "Tabbed content organization",
+  "pages": {
+    "start": 197,
+    "end": 208
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the tabs component",
+          "page": 197
+        },
+        {
+          "property": "Tab Items",
+          "field": "TabItems",
+          "description": "Array of tab configurations",
+          "page": 198
+        },
+        {
+          "property": "Default Tab",
+          "field": "DefaultTab",
+          "description": "Index of initially selected tab",
+          "page": 199
+        },
+        {
+          "property": "Variable",
+          "field": "Variable",
+          "description": "Variable to track active tab",
+          "page": 200
+        }
+      ],
+      "property_count": 4
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Orientation",
+          "field": "Orientation",
+          "description": "Horizontal or Vertical tab layout",
+          "page": 201
+        },
+        {
+          "property": "Tab Style",
+          "field": "TabStyle",
+          "description": "Visual style of tabs",
+          "page": 202
+        },
+        {
+          "property": "Active Color",
+          "field": "ActiveColor",
+          "description": "Color of active tab",
+          "page": 203
+        },
+        {
+          "property": "Height",
+          "field": "Height",
+          "description": "Content area height",
+          "page": 204
+        }
+      ],
+      "property_count": 4
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide tabs component",
+          "page": 206
+        }
+      ],
+      "property_count": 1
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 197
+    },
+    {
+      "name": "Tab Items",
+      "field": "TabItems",
+      "type": "array",
+      "tab": "general",
+      "required": true,
+      "page": 198
+    },
+    {
+      "name": "Default Tab",
+      "field": "DefaultTab",
+      "type": "number",
+      "tab": "general",
+      "default": 0,
+      "page": 199
+    },
+    {
+      "name": "Variable",
+      "field": "Variable",
+      "type": "variable",
+      "tab": "general",
+      "page": 200
+    },
+    {
+      "name": "Orientation",
+      "field": "Orientation",
+      "type": "enum",
+      "options": ["Horizontal", "Vertical"],
+      "tab": "style",
+      "default": "Horizontal",
+      "page": 201
+    },
+    {
+      "name": "Tab Style",
+      "field": "TabStyle",
+      "type": "enum",
+      "options": ["Default", "Boxed", "Pills"],
+      "tab": "style",
+      "default": "Default",
+      "page": 202
+    },
+    {
+      "name": "Active Color",
+      "field": "ActiveColor",
+      "type": "string",
+      "tab": "style",
+      "default": "#0090ea",
+      "page": 203
+    },
+    {
+      "name": "Height",
+      "field": "Height",
+      "type": "number",
+      "tab": "style",
+      "page": 204
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 206
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "section",
+    "popup"
+  ]
+}

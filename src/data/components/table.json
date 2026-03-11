@@ -1,0 +1,255 @@
+{
+  "name": "table",
+  "category": "visualization",
+  "description": "Data table with sorting, pagination, and custom interactions",
+  "pages": {
+    "start": 209,
+    "end": 262
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier",
+          "page": 209
+        },
+        {
+          "property": "Dataset",
+          "field": "Dataset",
+          "description": "Data source for table",
+          "page": 210
+        },
+        {
+          "property": "Show Pagination",
+          "field": "ShowPagination",
+          "description": "Enable pagination",
+          "page": 249
+        },
+        {
+          "property": "Rows Per Page",
+          "field": "RowsPerPage",
+          "description": "Number of rows per page",
+          "page": 249
+        },
+        {
+          "property": "Separate Header Dataset",
+          "field": "SeparateHeaderDataset",
+          "description": "Use separate dataset for headers",
+          "page": 229
+        }
+      ],
+      "property_count": 5
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Table Style",
+          "field": "TableStyle",
+          "description": "Table visual style",
+          "page": 215
+        },
+        {
+          "property": "Row Height",
+          "field": "RowHeight",
+          "description": "Height of table rows",
+          "page": 216
+        },
+        {
+          "property": "Header Style",
+          "field": "HeaderStyle",
+          "description": "Header styling",
+          "page": 217
+        }
+      ],
+      "property_count": 3
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Enable Sorting",
+          "field": "EnableSorting",
+          "description": "Allow column sorting",
+          "page": 250
+        },
+        {
+          "property": "Row Selection",
+          "field": "RowSelection",
+          "description": "Enable row selection",
+          "page": 235
+        },
+        {
+          "property": "Selected Rows Variable",
+          "field": "SelectedRowsVariable",
+          "description": "Variable for selected rows",
+          "page": 236
+        },
+        {
+          "property": "Enable Row Menu",
+          "field": "EnableRowMenu",
+          "description": "Show row action menu",
+          "page": 254
+        },
+        {
+          "property": "Freeze Columns",
+          "field": "FreezeColumns",
+          "description": "Number of columns to freeze",
+          "page": 253
+        }
+      ],
+      "property_count": 5
+    },
+    "advanced": {
+      "properties": [
+        {
+          "property": "Column Configuration",
+          "field": "ColumnConfiguration",
+          "description": "Advanced column settings",
+          "page": 239
+        },
+        {
+          "property": "Custom Interactions",
+          "field": "CustomInteractions",
+          "description": "Custom cell/row interactions",
+          "page": 258
+        },
+        {
+          "property": "Download Data",
+          "field": "DownloadData",
+          "description": "Enable data download",
+          "page": 228
+        }
+      ],
+      "property_count": 3
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 209
+    },
+    {
+      "name": "Dataset",
+      "field": "Dataset",
+      "type": "dataset",
+      "tab": "general",
+      "required": true,
+      "page": 210
+    },
+    {
+      "name": "Show Pagination",
+      "field": "ShowPagination",
+      "type": "boolean",
+      "tab": "general",
+      "default": true,
+      "page": 249
+    },
+    {
+      "name": "Rows Per Page",
+      "field": "RowsPerPage",
+      "type": "number",
+      "tab": "general",
+      "default": 10,
+      "page": 249
+    },
+    {
+      "name": "Separate Header Dataset",
+      "field": "SeparateHeaderDataset",
+      "type": "dataset",
+      "tab": "general",
+      "page": 229
+    },
+    {
+      "name": "Table Style",
+      "field": "TableStyle",
+      "type": "string",
+      "tab": "style",
+      "page": 215
+    },
+    {
+      "name": "Row Height",
+      "field": "RowHeight",
+      "type": "number",
+      "tab": "style",
+      "page": 216
+    },
+    {
+      "name": "Header Style",
+      "field": "HeaderStyle",
+      "type": "string",
+      "tab": "style",
+      "page": 217
+    },
+    {
+      "name": "Enable Sorting",
+      "field": "EnableSorting",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 250
+    },
+    {
+      "name": "Row Selection",
+      "field": "RowSelection",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": false,
+      "page": 235
+    },
+    {
+      "name": "Selected Rows Variable",
+      "field": "SelectedRowsVariable",
+      "type": "variable",
+      "tab": "interaction",
+      "page": 236
+    },
+    {
+      "name": "Enable Row Menu",
+      "field": "EnableRowMenu",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": false,
+      "page": 254
+    },
+    {
+      "name": "Freeze Columns",
+      "field": "FreezeColumns",
+      "type": "number",
+      "tab": "interaction",
+      "default": 0,
+      "page": 253
+    },
+    {
+      "name": "Column Configuration",
+      "field": "ColumnConfiguration",
+      "type": "object",
+      "tab": "advanced",
+      "page": 239
+    },
+    {
+      "name": "Custom Interactions",
+      "field": "CustomInteractions",
+      "type": "object",
+      "tab": "advanced",
+      "page": 258
+    },
+    {
+      "name": "Download Data",
+      "field": "DownloadData",
+      "type": "boolean",
+      "tab": "advanced",
+      "default": false,
+      "page": 228
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "filter",
+    "dashboard"
+  ]
+}

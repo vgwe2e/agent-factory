@@ -1,0 +1,198 @@
+{
+  "name": "chart",
+  "category": "visualization",
+  "description": "Manual and JSON chart configuration with multiple chart types",
+  "pages": {
+    "start": 296,
+    "end": 323
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier",
+          "page": 296
+        },
+        {
+          "property": "Configuration Type",
+          "field": "ConfigurationType",
+          "description": "Manual or JSON",
+          "page": 297
+        },
+        {
+          "property": "Chart Type",
+          "field": "ChartType",
+          "description": "Bar, Line, Pie, etc.",
+          "page": 313
+        },
+        {
+          "property": "Data Source",
+          "field": "DataSource",
+          "description": "Dataset for chart",
+          "page": 300
+        },
+        {
+          "property": "X Axis Field",
+          "field": "XAxisField",
+          "description": "Field for X axis",
+          "page": 304
+        },
+        {
+          "property": "Y Axis Field",
+          "field": "YAxisField",
+          "description": "Field for Y axis",
+          "page": 304
+        }
+      ],
+      "property_count": 6
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Chart Color",
+          "field": "ChartColor",
+          "description": "Primary chart color",
+          "page": 307
+        },
+        {
+          "property": "Show Legend",
+          "field": "ShowLegend",
+          "description": "Display chart legend",
+          "page": 308
+        },
+        {
+          "property": "Legend Position",
+          "field": "LegendPosition",
+          "description": "Legend placement",
+          "page": 308
+        }
+      ],
+      "property_count": 3
+    },
+    "advanced": {
+      "properties": [
+        {
+          "property": "JSON Configuration",
+          "field": "JsonConfiguration",
+          "description": "Full JSON chart spec",
+          "page": 297
+        },
+        {
+          "property": "Axis Configuration",
+          "field": "AxisConfiguration",
+          "description": "Advanced axis settings",
+          "page": 304
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 296
+    },
+    {
+      "name": "Configuration Type",
+      "field": "ConfigurationType",
+      "type": "enum",
+      "options": [
+        "Manual",
+        "JSON"
+      ],
+      "tab": "general",
+      "default": "Manual",
+      "page": 297
+    },
+    {
+      "name": "Chart Type",
+      "field": "ChartType",
+      "type": "enum",
+      "options": [
+        "Bar",
+        "Line",
+        "Pie",
+        "Area",
+        "Scatter"
+      ],
+      "tab": "general",
+      "default": "Bar",
+      "page": 313
+    },
+    {
+      "name": "Data Source",
+      "field": "DataSource",
+      "type": "dataset",
+      "tab": "general",
+      "page": 300
+    },
+    {
+      "name": "X Axis Field",
+      "field": "XAxisField",
+      "type": "string",
+      "tab": "general",
+      "page": 304
+    },
+    {
+      "name": "Y Axis Field",
+      "field": "YAxisField",
+      "type": "string",
+      "tab": "general",
+      "page": 304
+    },
+    {
+      "name": "Chart Color",
+      "field": "ChartColor",
+      "type": "string",
+      "tab": "style",
+      "page": 307
+    },
+    {
+      "name": "Show Legend",
+      "field": "ShowLegend",
+      "type": "boolean",
+      "tab": "style",
+      "default": true,
+      "page": 308
+    },
+    {
+      "name": "Legend Position",
+      "field": "LegendPosition",
+      "type": "enum",
+      "options": [
+        "Top",
+        "Bottom",
+        "Left",
+        "Right"
+      ],
+      "tab": "style",
+      "default": "Bottom",
+      "page": 308
+    },
+    {
+      "name": "JSON Configuration",
+      "field": "JsonConfiguration",
+      "type": "string",
+      "tab": "advanced",
+      "page": 297
+    },
+    {
+      "name": "Axis Configuration",
+      "field": "AxisConfiguration",
+      "type": "object",
+      "tab": "advanced",
+      "page": 304
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "dashboard",
+    "table"
+  ]
+}

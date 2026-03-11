@@ -1,0 +1,189 @@
+{
+  "name": "input_field",
+  "category": "input",
+  "description": "Single-line text or numeric input",
+  "pages": {
+    "start": 88,
+    "end": 107
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier",
+          "page": 88
+        },
+        {
+          "property": "Input Type",
+          "field": "InputType",
+          "description": "String, Number, Date, DateTime",
+          "page": 89
+        },
+        {
+          "property": "Placeholder",
+          "field": "Placeholder",
+          "description": "Placeholder text",
+          "page": 90
+        },
+        {
+          "property": "Default Value",
+          "field": "DefaultValue",
+          "description": "Initial value",
+          "page": 91
+        },
+        {
+          "property": "Variable",
+          "field": "Variable",
+          "description": "Process variable binding",
+          "page": 92
+        },
+        {
+          "property": "Required",
+          "field": "Required",
+          "description": "Require value before submission",
+          "page": 93
+        }
+      ],
+      "property_count": 6
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Input width",
+          "page": 95
+        },
+        {
+          "property": "Font Size",
+          "field": "FontSize",
+          "description": "Font size",
+          "page": 96
+        }
+      ],
+      "property_count": 2
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide input",
+          "page": 100
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable input",
+          "page": 100
+        },
+        {
+          "property": "Read Only",
+          "field": "ReadOnly",
+          "description": "Make input read-only",
+          "page": 101
+        }
+      ],
+      "property_count": 3
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 88
+    },
+    {
+      "name": "Input Type",
+      "field": "InputType",
+      "type": "enum",
+      "options": [
+        "String",
+        "Number",
+        "Date",
+        "DateTime"
+      ],
+      "tab": "general",
+      "default": "String",
+      "page": 89
+    },
+    {
+      "name": "Placeholder",
+      "field": "Placeholder",
+      "type": "string",
+      "tab": "general",
+      "page": 90
+    },
+    {
+      "name": "Default Value",
+      "field": "DefaultValue",
+      "type": "mixed",
+      "tab": "general",
+      "page": 91
+    },
+    {
+      "name": "Variable",
+      "field": "Variable",
+      "type": "variable",
+      "tab": "general",
+      "page": 92
+    },
+    {
+      "name": "Required",
+      "field": "Required",
+      "type": "boolean",
+      "tab": "general",
+      "default": false,
+      "page": 93
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "style",
+      "page": 95
+    },
+    {
+      "name": "Font Size",
+      "field": "FontSize",
+      "type": "number",
+      "tab": "style",
+      "page": 96
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 100
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 100
+    },
+    {
+      "name": "Read Only",
+      "field": "ReadOnly",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": false,
+      "page": 101
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "label",
+    "dropdown",
+    "textarea"
+  ]
+}

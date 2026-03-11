@@ -1,0 +1,156 @@
+{
+  "name": "image",
+  "category": "display",
+  "description": "Display images in UI",
+  "pages": {
+    "start": 139,
+    "end": 149
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the image",
+          "page": 139
+        },
+        {
+          "property": "Source",
+          "field": "Source",
+          "description": "Image URL or variable",
+          "page": 140
+        },
+        {
+          "property": "Alt Text",
+          "field": "AltText",
+          "description": "Alternative text for accessibility",
+          "page": 141
+        },
+        {
+          "property": "Click Action",
+          "field": "ClickAction",
+          "description": "Action to perform on click",
+          "page": 142
+        }
+      ],
+      "property_count": 4
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Image width",
+          "page": 143
+        },
+        {
+          "property": "Height",
+          "field": "Height",
+          "description": "Image height",
+          "page": 144
+        },
+        {
+          "property": "Object Fit",
+          "field": "ObjectFit",
+          "description": "How image should be resized (contain, cover, fill)",
+          "page": 145
+        },
+        {
+          "property": "Border Radius",
+          "field": "BorderRadius",
+          "description": "Rounded corners",
+          "page": 146
+        }
+      ],
+      "property_count": 4
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide image",
+          "page": 148
+        }
+      ],
+      "property_count": 1
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 139
+    },
+    {
+      "name": "Source",
+      "field": "Source",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 140
+    },
+    {
+      "name": "Alt Text",
+      "field": "AltText",
+      "type": "string",
+      "tab": "general",
+      "page": 141
+    },
+    {
+      "name": "Click Action",
+      "field": "ClickAction",
+      "type": "string",
+      "tab": "general",
+      "page": 142
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "style",
+      "page": 143
+    },
+    {
+      "name": "Height",
+      "field": "Height",
+      "type": "number",
+      "tab": "style",
+      "page": 144
+    },
+    {
+      "name": "Object Fit",
+      "field": "ObjectFit",
+      "type": "enum",
+      "options": ["contain", "cover", "fill", "none", "scale-down"],
+      "tab": "style",
+      "default": "contain",
+      "page": 145
+    },
+    {
+      "name": "Border Radius",
+      "field": "BorderRadius",
+      "type": "number",
+      "tab": "style",
+      "default": 0,
+      "page": 146
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 148
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "attachment",
+    "link"
+  ]
+}

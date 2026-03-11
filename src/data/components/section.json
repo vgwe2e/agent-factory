@@ -1,0 +1,184 @@
+{
+  "name": "section",
+  "category": "layout",
+  "description": "Fundamental container for all dashboard elements",
+  "pages": {
+    "start": 29,
+    "end": 44
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the section",
+          "page": 29
+        },
+        {
+          "property": "Layout Type",
+          "field": "LayoutType",
+          "description": "Responsive or Fixed layout",
+          "page": 30
+        },
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Section width in pixels or percentage",
+          "page": 31
+        },
+        {
+          "property": "Height",
+          "field": "Height",
+          "description": "Section height in pixels or percentage",
+          "page": 31
+        },
+        {
+          "property": "Background Color",
+          "field": "BackgroundColor",
+          "description": "Background color of the section",
+          "page": 32
+        }
+      ],
+      "property_count": 5
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Padding",
+          "field": "Padding",
+          "description": "Internal spacing around section content",
+          "page": 35
+        },
+        {
+          "property": "Margin",
+          "field": "Margin",
+          "description": "External spacing around section",
+          "page": 35
+        },
+        {
+          "property": "Border",
+          "field": "Border",
+          "description": "Border style, width, and color",
+          "page": 36
+        },
+        {
+          "property": "Background Image",
+          "field": "BackgroundImage",
+          "description": "Background image configuration",
+          "page": 37
+        }
+      ],
+      "property_count": 4
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide section",
+          "page": 40
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable section",
+          "page": 40
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 29
+    },
+    {
+      "name": "Layout Type",
+      "field": "LayoutType",
+      "type": "enum",
+      "options": [
+        "Responsive",
+        "Fixed"
+      ],
+      "tab": "general",
+      "default": "Responsive",
+      "page": 30
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "general",
+      "page": 31
+    },
+    {
+      "name": "Height",
+      "field": "Height",
+      "type": "number",
+      "tab": "general",
+      "page": 31
+    },
+    {
+      "name": "Background Color",
+      "field": "BackgroundColor",
+      "type": "string",
+      "tab": "general",
+      "page": 32
+    },
+    {
+      "name": "Padding",
+      "field": "Padding",
+      "type": "number",
+      "tab": "style",
+      "page": 35
+    },
+    {
+      "name": "Margin",
+      "field": "Margin",
+      "type": "number",
+      "tab": "style",
+      "page": 35
+    },
+    {
+      "name": "Border",
+      "field": "Border",
+      "type": "string",
+      "tab": "style",
+      "page": 36
+    },
+    {
+      "name": "Background Image",
+      "field": "BackgroundImage",
+      "type": "string",
+      "tab": "style",
+      "page": 37
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 40
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 40
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "popup",
+    "tabs"
+  ]
+}

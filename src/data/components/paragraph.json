@@ -1,0 +1,159 @@
+{
+  "name": "paragraph",
+  "category": "display",
+  "description": "Multi-line text with variables and links",
+  "pages": {
+    "start": 70,
+    "end": 78
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the paragraph",
+          "page": 70
+        },
+        {
+          "property": "Content",
+          "field": "Content",
+          "description": "Text content with variable interpolation",
+          "page": 71
+        },
+        {
+          "property": "Variables",
+          "field": "Variables",
+          "description": "Variables to interpolate in content",
+          "page": 72
+        }
+      ],
+      "property_count": 3
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Font Size",
+          "field": "FontSize",
+          "description": "Text size",
+          "page": 73
+        },
+        {
+          "property": "Font Weight",
+          "field": "FontWeight",
+          "description": "Text weight (normal, bold)",
+          "page": 74
+        },
+        {
+          "property": "Color",
+          "field": "Color",
+          "description": "Text color",
+          "page": 75
+        },
+        {
+          "property": "Line Height",
+          "field": "LineHeight",
+          "description": "Spacing between lines",
+          "page": 76
+        },
+        {
+          "property": "Text Align",
+          "field": "TextAlign",
+          "description": "Horizontal alignment",
+          "page": 77
+        }
+      ],
+      "property_count": 5
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide paragraph",
+          "page": 78
+        }
+      ],
+      "property_count": 1
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 70
+    },
+    {
+      "name": "Content",
+      "field": "Content",
+      "type": "string",
+      "tab": "general",
+      "page": 71
+    },
+    {
+      "name": "Variables",
+      "field": "Variables",
+      "type": "array",
+      "tab": "general",
+      "page": 72
+    },
+    {
+      "name": "Font Size",
+      "field": "FontSize",
+      "type": "number",
+      "tab": "style",
+      "default": 14,
+      "page": 73
+    },
+    {
+      "name": "Font Weight",
+      "field": "FontWeight",
+      "type": "enum",
+      "options": ["normal", "bold"],
+      "tab": "style",
+      "default": "normal",
+      "page": 74
+    },
+    {
+      "name": "Color",
+      "field": "Color",
+      "type": "string",
+      "tab": "style",
+      "default": "#000000",
+      "page": 75
+    },
+    {
+      "name": "Line Height",
+      "field": "LineHeight",
+      "type": "number",
+      "tab": "style",
+      "default": 1.5,
+      "page": 76
+    },
+    {
+      "name": "Text Align",
+      "field": "TextAlign",
+      "type": "enum",
+      "options": ["left", "center", "right", "justify"],
+      "tab": "style",
+      "default": "left",
+      "page": 77
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 78
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "label",
+    "textarea"
+  ]
+}

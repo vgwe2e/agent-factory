@@ -1,0 +1,141 @@
+{
+  "name": "popup",
+  "category": "layout",
+  "description": "Creating and configuring pop-up components",
+  "pages": {
+    "start": 45,
+    "end": 61
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the popup",
+          "page": 45
+        },
+        {
+          "property": "Template",
+          "field": "Template",
+          "description": "Accept Recommendation or Dismiss Recommendation template",
+          "page": 46
+        },
+        {
+          "property": "Title",
+          "field": "Title",
+          "description": "Popup title text",
+          "page": 47
+        },
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Popup width",
+          "page": 48
+        },
+        {
+          "property": "Height",
+          "field": "Height",
+          "description": "Popup height",
+          "page": 48
+        }
+      ],
+      "property_count": 5
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Control popup visibility",
+          "page": 55
+        },
+        {
+          "property": "Modal",
+          "field": "Modal",
+          "description": "Modal behavior (blocks interaction with parent)",
+          "page": 56
+        },
+        {
+          "property": "Close on ESC",
+          "field": "CloseOnEsc",
+          "description": "Allow closing with ESC key",
+          "page": 57
+        }
+      ],
+      "property_count": 3
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 45
+    },
+    {
+      "name": "Template",
+      "field": "Template",
+      "type": "enum",
+      "options": [
+        "Accept Recommendation",
+        "Dismiss Recommendation",
+        "Custom"
+      ],
+      "tab": "general",
+      "page": 46
+    },
+    {
+      "name": "Title",
+      "field": "Title",
+      "type": "string",
+      "tab": "general",
+      "page": 47
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "general",
+      "page": 48
+    },
+    {
+      "name": "Height",
+      "field": "Height",
+      "type": "number",
+      "tab": "general",
+      "page": 48
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": false,
+      "page": 55
+    },
+    {
+      "name": "Modal",
+      "field": "Modal",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 56
+    },
+    {
+      "name": "Close on ESC",
+      "field": "CloseOnEsc",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 57
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "button",
+    "section"
+  ]
+}

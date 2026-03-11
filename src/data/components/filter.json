@@ -1,0 +1,198 @@
+{
+  "name": "filter",
+  "category": "interaction",
+  "description": "Interactive filter component for dashboards",
+  "pages": {
+    "start": 282,
+    "end": 295
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the filter",
+          "page": 282
+        },
+        {
+          "property": "Filter Type",
+          "field": "FilterType",
+          "description": "Type of filter (Dimension, Measure, Date)",
+          "page": 283
+        },
+        {
+          "property": "Linked Components",
+          "field": "LinkedComponents",
+          "description": "Components to apply filter to",
+          "page": 284
+        },
+        {
+          "property": "Dimension",
+          "field": "Dimension",
+          "description": "Dimension to filter on",
+          "page": 285
+        },
+        {
+          "property": "Measure",
+          "field": "Measure",
+          "description": "Measure to filter on",
+          "page": 286
+        },
+        {
+          "property": "Variable",
+          "field": "Variable",
+          "description": "Variable to store filter value",
+          "page": 287
+        },
+        {
+          "property": "Default Value",
+          "field": "DefaultValue",
+          "description": "Default filter value",
+          "page": 288
+        }
+      ],
+      "property_count": 7
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Display Type",
+          "field": "DisplayType",
+          "description": "Dropdown, Multi-select, Date Range",
+          "page": 289
+        },
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Filter component width",
+          "page": 290
+        },
+        {
+          "property": "Label",
+          "field": "Label",
+          "description": "Filter label text",
+          "page": 291
+        }
+      ],
+      "property_count": 3
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide filter",
+          "page": 293
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable filter",
+          "page": 293
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 282
+    },
+    {
+      "name": "Filter Type",
+      "field": "FilterType",
+      "type": "enum",
+      "options": ["Dimension", "Measure", "Date"],
+      "tab": "general",
+      "required": true,
+      "page": 283
+    },
+    {
+      "name": "Linked Components",
+      "field": "LinkedComponents",
+      "type": "array",
+      "tab": "general",
+      "page": 284
+    },
+    {
+      "name": "Dimension",
+      "field": "Dimension",
+      "type": "string",
+      "tab": "general",
+      "page": 285
+    },
+    {
+      "name": "Measure",
+      "field": "Measure",
+      "type": "string",
+      "tab": "general",
+      "page": 286
+    },
+    {
+      "name": "Variable",
+      "field": "Variable",
+      "type": "variable",
+      "tab": "general",
+      "page": 287
+    },
+    {
+      "name": "Default Value",
+      "field": "DefaultValue",
+      "type": "mixed",
+      "tab": "general",
+      "page": 288
+    },
+    {
+      "name": "Display Type",
+      "field": "DisplayType",
+      "type": "enum",
+      "options": ["Dropdown", "Multi-select", "Date Range", "Search"],
+      "tab": "style",
+      "default": "Dropdown",
+      "page": 289
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "style",
+      "page": 290
+    },
+    {
+      "name": "Label",
+      "field": "Label",
+      "type": "string",
+      "tab": "style",
+      "page": 291
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 293
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 293
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "discovery",
+    "report",
+    "table",
+    "chart"
+  ]
+}

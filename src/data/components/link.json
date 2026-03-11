@@ -1,0 +1,171 @@
+{
+  "name": "link",
+  "category": "input",
+  "description": "Hyperlink component",
+  "pages": {
+    "start": 129,
+    "end": 138
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier for the link",
+          "page": 129
+        },
+        {
+          "property": "Text",
+          "field": "Text",
+          "description": "Link text to display",
+          "page": 130
+        },
+        {
+          "property": "URL",
+          "field": "URL",
+          "description": "Destination URL",
+          "page": 131
+        },
+        {
+          "property": "Target",
+          "field": "Target",
+          "description": "Open in same or new window",
+          "page": 132
+        },
+        {
+          "property": "Open Modal",
+          "field": "OpenModal",
+          "description": "Modal/popup to open instead of URL",
+          "page": 133
+        }
+      ],
+      "property_count": 5
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Color",
+          "field": "Color",
+          "description": "Link text color",
+          "page": 134
+        },
+        {
+          "property": "Underline",
+          "field": "Underline",
+          "description": "Show underline decoration",
+          "page": 135
+        },
+        {
+          "property": "Font Size",
+          "field": "FontSize",
+          "description": "Text size",
+          "page": 136
+        }
+      ],
+      "property_count": 3
+    },
+    "interaction": {
+      "properties": [
+        {
+          "property": "Visible",
+          "field": "Visible",
+          "description": "Show or hide link",
+          "page": 137
+        },
+        {
+          "property": "Enabled",
+          "field": "Enabled",
+          "description": "Enable or disable link",
+          "page": 137
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 129
+    },
+    {
+      "name": "Text",
+      "field": "Text",
+      "type": "string",
+      "tab": "general",
+      "page": 130
+    },
+    {
+      "name": "URL",
+      "field": "URL",
+      "type": "string",
+      "tab": "general",
+      "page": 131
+    },
+    {
+      "name": "Target",
+      "field": "Target",
+      "type": "enum",
+      "options": ["_self", "_blank"],
+      "tab": "general",
+      "default": "_self",
+      "page": 132
+    },
+    {
+      "name": "Open Modal",
+      "field": "OpenModal",
+      "type": "string",
+      "tab": "general",
+      "page": 133
+    },
+    {
+      "name": "Color",
+      "field": "Color",
+      "type": "string",
+      "tab": "style",
+      "default": "#0090ea",
+      "page": 134
+    },
+    {
+      "name": "Underline",
+      "field": "Underline",
+      "type": "boolean",
+      "tab": "style",
+      "default": true,
+      "page": 135
+    },
+    {
+      "name": "Font Size",
+      "field": "FontSize",
+      "type": "number",
+      "tab": "style",
+      "default": 14,
+      "page": 136
+    },
+    {
+      "name": "Visible",
+      "field": "Visible",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 137
+    },
+    {
+      "name": "Enabled",
+      "field": "Enabled",
+      "type": "boolean",
+      "tab": "interaction",
+      "default": true,
+      "page": 137
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "button",
+    "paragraph"
+  ]
+}

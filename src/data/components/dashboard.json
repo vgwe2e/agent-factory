@@ -1,0 +1,124 @@
+{
+  "name": "dashboard",
+  "category": "visualization",
+  "description": "Primary component for embedding dashboards",
+  "pages": {
+    "start": 324,
+    "end": 331
+  },
+  "tabs": {
+    "general": {
+      "properties": [
+        {
+          "property": "Name",
+          "field": "Name",
+          "description": "Unique identifier",
+          "page": 324
+        },
+        {
+          "property": "Dashboard ID",
+          "field": "DashboardId",
+          "description": "ID of dashboard to embed",
+          "page": 325
+        },
+        {
+          "property": "Filter Variables",
+          "field": "FilterVariables",
+          "description": "Link filter variables to process",
+          "page": 326
+        },
+        {
+          "property": "Auto Refresh",
+          "field": "AutoRefresh",
+          "description": "Enable auto-refresh",
+          "page": 327
+        },
+        {
+          "property": "Refresh Interval",
+          "field": "RefreshInterval",
+          "description": "Refresh interval in seconds",
+          "page": 327
+        }
+      ],
+      "property_count": 5
+    },
+    "style": {
+      "properties": [
+        {
+          "property": "Width",
+          "field": "Width",
+          "description": "Dashboard width",
+          "page": 329
+        },
+        {
+          "property": "Height",
+          "field": "Height",
+          "description": "Dashboard height",
+          "page": 329
+        }
+      ],
+      "property_count": 2
+    }
+  },
+  "properties": [
+    {
+      "name": "Name",
+      "field": "Name",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 324
+    },
+    {
+      "name": "Dashboard ID",
+      "field": "DashboardId",
+      "type": "string",
+      "tab": "general",
+      "required": true,
+      "page": 325
+    },
+    {
+      "name": "Filter Variables",
+      "field": "FilterVariables",
+      "type": "object",
+      "tab": "general",
+      "page": 326
+    },
+    {
+      "name": "Auto Refresh",
+      "field": "AutoRefresh",
+      "type": "boolean",
+      "tab": "general",
+      "default": false,
+      "page": 327
+    },
+    {
+      "name": "Refresh Interval",
+      "field": "RefreshInterval",
+      "type": "number",
+      "tab": "general",
+      "default": 60,
+      "page": 327
+    },
+    {
+      "name": "Width",
+      "field": "Width",
+      "type": "number",
+      "tab": "style",
+      "page": 329
+    },
+    {
+      "name": "Height",
+      "field": "Height",
+      "type": "number",
+      "tab": "style",
+      "page": 329
+    }
+  ],
+  "examples": [],
+  "relatedComponents": [
+    "filter",
+    "chart",
+    "table"
+  ]
+}
