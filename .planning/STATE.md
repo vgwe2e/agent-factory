@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 06-01 (Simulation foundation types, schemas, validators)
-last_updated: "2026-03-11T12:17:46.202Z"
-last_activity: 2026-03-11 -- Completed 05-03 (Write evaluation orchestrator)
+stopped_at: Completed 06-03 (Mock test and integration surface generators)
+last_updated: "2026-03-11T12:23:20.484Z"
+last_activity: 2026-03-11 -- Completed 06-03 (Mock test and integration surface generators)
 progress:
   total_phases: 9
   completed_phases: 5
   total_plans: 25
-  completed_plans: 17
-  percent: 64
+  completed_plans: 18
+  percent: 72
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 6: Simulation -- Plan 01 complete, ready for Plan 02.
+**Current focus:** Phase 6: Simulation -- Plan 03 complete, ready for Plan 02 (wave 2 dependency).
 
 ## Current Position
 
 Phase: 6 of 9 (Simulation)
-Plan: 1 of 3 in current phase
-Status: Plan 06-01 complete, ready for 06-02
-Last activity: 2026-03-11 -- Completed 06-01 (Simulation foundation types, schemas, validators)
+Plan: 3 of 3 in current phase
+Status: Plan 06-03 complete, 06-02 still pending
+Last activity: 2026-03-11 -- Completed 06-03 (Mock test and integration surface generators)
 
-Progress: [███████░░░] 68%
+Progress: [███████░░░] 72%
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Progress: [███████░░░] 68%
 | Phase 05 P02 | 4min | 2 tasks | 4 files |
 | Phase 05 P03 | 2min | 2 tasks | 2 files |
 | Phase 06 P01 | 4min | 2 tasks | 9 files |
+| Phase 06 P03 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,7 @@ Recent decisions affecting current work:
 - [Phase 06]: Aera concept index skips entries that already exist as PB/UI nodes to prevent collision overwrites
 - [Phase 06]: Subgraph context tracking in Mermaid validator avoids false positives on subgraph end keywords
 - [Phase 06]: parseAndValidateYaml made async to support future retry/streaming patterns
+- [Phase 06]: Type assertion for IntegrationSurface due to Zod .default() making status optional in output type
 
 ### Pending Todos
 
@@ -123,6 +125,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T12:17:46.197Z
-Stopped at: Completed 06-01 (Simulation foundation types, schemas, validators)
+Last session: 2026-03-11T12:23:20.481Z
+Stopped at: Completed 06-03 (Mock test and integration surface generators)
 Resume file: None
