@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Project Foundation** - CLI entry point, Zod-validated ingestion, Ollama connectivity (completed 2026-03-11)
 - [x] **Phase 2: Knowledge Base** - Bundle Aera UI, Process Builder, and orchestration references (completed 2026-03-11)
-- [ ] **Phase 3: Triage & Red Flags** - Tier binning with 8B model and automatic disqualification filters
+- [x] **Phase 3: Triage & Red Flags** - Tier binning with 8B model and automatic disqualification filters (completed 2026-03-11)
 - [ ] **Phase 4: Scoring Engine** - Three-lens scoring with weighted composite and threshold gate
 - [ ] **Phase 5: Scoring Output** - TSV and markdown reports for scores, triage, and analysis
 - [ ] **Phase 6: Simulation** - Decision flows, component maps, mock tests, integration surfaces
@@ -191,7 +191,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 |-------|----------------|--------|-----------|
 | 1. Project Foundation | 0/3 | Complete    | 2026-03-11 |
 | 2. Knowledge Base | 3/3 | Complete   | 2026-03-11 |
-| 3. Triage & Red Flags | 1/3 | In progress | - |
+| 3. Triage & Red Flags | 3/3 | Complete | 2026-03-11 |
 | 4. Scoring Engine | 0/6 | Not started | - |
 | 5. Scoring Output | 0/3 | Not started | - |
 | 6. Simulation | 0/5 | Not started | - |

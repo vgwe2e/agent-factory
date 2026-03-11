@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 03-03 (TSV output formatting)
-last_updated: "2026-03-11T04:15:39.905Z"
-last_activity: 2026-03-11 -- Completed 03-03 (TSV output formatting)
+stopped_at: Completed 03-02 (Tier engine & triage pipeline)
+last_updated: "2026-03-11T04:18:23Z"
+last_activity: 2026-03-11 -- Completed 03-02 (Tier engine & triage pipeline)
 progress:
   total_phases: 9
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 12
-  completed_plans: 8
-  percent: 67
+  completed_plans: 9
+  percent: 75
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 3: Triage & Red Flags -- IN PROGRESS
+**Current focus:** Phase 3: Triage & Red Flags -- COMPLETE
 
 ## Current Position
 
-Phase: 3 of 9 (Triage & Red Flags) -- IN PROGRESS
-Plan: 3 of 3 in current phase
-Status: Plan 03-03 complete, 03-02 still pending
-Last activity: 2026-03-11 -- Completed 03-03 (TSV output formatting)
+Phase: 3 of 9 (Triage & Red Flags) -- COMPLETE
+Plan: 3 of 3 in current phase (all complete)
+Status: Phase 3 complete, ready for Phase 4
+Last activity: 2026-03-11 -- Completed 03-02 (Tier engine & triage pipeline)
 
-Progress: [███████░░░] 67%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [███████░░░] 67%
 | Phase 02 P02 | 2min | 2 tasks | 8 files |
 | Phase 02 P03 | 3min | 2 tasks | 5 files |
 | Phase 03 P01 | 2min | 2 tasks | 3 files |
+| Phase 03 P02 | 4min | 2 tasks | 4 files |
 | Phase 03 P03 | 1min | 1 tasks | 2 files |
 
 ## Accumulated Context
@@ -81,6 +82,8 @@ Recent decisions affecting current work:
 - [Phase 03]: Flag action "flag" maps to "process" in action resolution -- flagged items still get processed
 - [Phase 03]: L4-dependent flags skipped when l4s array is empty to avoid false dead zone detection
 - [Phase 03]: Confidence gap uses strict >50% threshold (not >=50%)
+- [Phase 03]: Tier 1 checked before Tier 2 to establish priority ordering
+- [Phase 03]: compareTriage exported for reuse in downstream sorting
 
 ### Pending Todos
 
@@ -94,6 +97,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T04:15:39.899Z
-Stopped at: Completed 03-03 (TSV output formatting)
-Resume file: None
+Last session: 2026-03-11T04:18:23Z
+Stopped at: Completed 03-02 (Tier engine & triage pipeline)
+Resume file: .planning/phases/03-triage-red-flags/03-02-SUMMARY.md
