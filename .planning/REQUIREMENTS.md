@@ -55,12 +55,12 @@
 
 - [x] **INFR-01**: Engine recovers gracefully from individual LLM call failures (retry, fallback prompt, skip-and-log)
 - [x] **INFR-02**: Engine logs progress with pino structured logging (pipeline stage + opportunity ID)
-- [ ] **INFR-03**: Engine auto-commits evaluation artifacts to git after each evaluation cycle
+- [x] **INFR-03**: Engine auto-commits evaluation artifacts to git after each evaluation cycle
 - [x] **INFR-04**: Engine uses two-model strategy (8B for bulk triage, 32B for reasoning/scoring/simulation)
 - [x] **INFR-05**: Engine manages context across evaluations (summarize, archive, reset between iterations)
 - [x] **INFR-06**: Engine runs fully locally via Ollama with zero cloud API dependency
 - [x] **INFR-07**: Engine runs unattended overnight without user interaction
-- [ ] **INFR-08**: Engine checkpoints progress so a crashed run can resume from last completed evaluation
+- [x] **INFR-08**: Engine checkpoints progress so a crashed run can resume from last completed evaluation
 
 ### Output
 

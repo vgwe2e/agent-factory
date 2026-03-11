@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 08-01 (Retry policy with three-tier resilience)
-last_updated: "2026-03-11T13:11:34.690Z"
-last_activity: 2026-03-11 -- Completed 08-01 (Retry policy with three-tier resilience)
+stopped_at: Completed 08-02 (Checkpoint persistence and git auto-commit)
+last_updated: "2026-03-11T13:11:57.000Z"
+last_activity: 2026-03-11 -- Completed 08-02 (Checkpoint persistence and git auto-commit)
 progress:
   total_phases: 9
   completed_phases: 8
   total_plans: 27
-  completed_plans: 25
-  percent: 89
+  completed_plans: 26
+  percent: 96
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 8: Resilience & Recovery -- Plan 01 complete.
+**Current focus:** Phase 8: Resilience & Recovery -- Complete. Phase 9 next.
 
 ## Current Position
 
 Phase: 8 of 9 (Resilience & Recovery)
-Plan: 1 in current phase (01 complete)
-Status: In progress
-Last activity: 2026-03-11 -- Completed 08-01 (Retry policy with three-tier resilience)
+Plan: 2 of 2 in current phase (01, 02 complete)
+Status: Phase 8 complete
+Last activity: 2026-03-11 -- Completed 08-02 (Checkpoint persistence and git auto-commit)
 
-Progress: [█████████░] 89%
+Progress: [█████████░] 96%
 
 ## Performance Metrics
 
@@ -73,6 +73,7 @@ Progress: [█████████░] 89%
 | Phase 07 P01 | 4min | 2 tasks | 7 files |
 | Phase 07 P03 | 6min | 2 tasks | 3 files |
 | Phase 08 P01 | 3min | 1 tasks | 2 files |
+| Phase 08 P02 | 2min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -131,6 +132,8 @@ Recent decisions affecting current work:
 - [Phase 07]: parseExportFn injectable in PipelineOptions for test isolation without file I/O
 - [Phase 07]: ModelManager switchDelayMs set to 0 inside pipeline runner (caller controls)
 - [Phase 08]: scoreWithRetry reused as-is for both primary and fallback tiers (no wrapper duplication)
+- [Phase 08]: Zod safeParse for checkpoint validation with null fallback on any failure
+- [Phase 08]: Git commit failures are non-fatal, returning error string instead of throwing
 
 ### Pending Todos
 
@@ -144,6 +147,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T13:11:34.685Z
-Stopped at: Completed 08-01 (Retry policy with three-tier resilience)
+Last session: 2026-03-11T13:11:57Z
+Stopped at: Completed 08-02 (Checkpoint persistence and git auto-commit)
 Resume file: None

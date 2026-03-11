@@ -154,7 +154,7 @@ Plans:
 
 Plans:
 - [ ] 08-01-PLAN.md -- Three-tier resilient LLM call wrapper (retry, fallback prompt, skip-and-log)
-- [ ] 08-02-PLAN.md -- Checkpoint persistence for crash recovery and git auto-commit for evaluation artifacts
+- [x] 08-02-PLAN.md -- Checkpoint persistence for crash recovery and git auto-commit for evaluation artifacts
 
 ### Phase 9: Final Reports & Reflection
 **Goal**: User gets a complete evaluation bundle with executive summary, dead zone warnings, catalog-level insights, and organized simulation output
