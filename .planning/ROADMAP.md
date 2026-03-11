@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Scoring Output** - TSV and markdown reports for scores, triage, and analysis (completed 2026-03-11)
 - [x] **Phase 6: Simulation** - Decision flows, component maps, mock tests, integration surfaces (completed 2026-03-11)
 - [ ] **Phase 7: Pipeline Orchestration** - Two-model strategy, logging, unattended mode, context management
-- [ ] **Phase 8: Resilience & Recovery** - Error handling, crash recovery, checkpointing, git auto-commit
+- [x] **Phase 8: Resilience & Recovery** - Error handling, crash recovery, checkpointing, git auto-commit (completed 2026-03-11)
 - [ ] **Phase 9: Final Reports & Reflection** - Executive summary, dead zones, meta-reflection, simulation bundles
 
 ## Phase Details
@@ -185,5 +185,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | 5. Scoring Output | 3/3 | Complete   | 2026-03-11 |
 | 6. Simulation | 4/4 | Complete   | 2026-03-11 |
 | 7. Pipeline Orchestration | 2/3 | In Progress|  |
-| 8. Resilience & Recovery | 0/2 | Planned | - |
+| 8. Resilience & Recovery | 2/2 | Complete   | 2026-03-11 |
 | 9. Final Reports & Reflection | 0/2 | Planned | - |

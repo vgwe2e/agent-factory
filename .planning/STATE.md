@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 07-03 (Pipeline runner and CLI integration)
-last_updated: "2026-03-11T13:08:02.491Z"
-last_activity: 2026-03-11 -- Completed 07-03 (Pipeline runner and CLI integration)
+stopped_at: Completed 08-01 (Retry policy with three-tier resilience)
+last_updated: "2026-03-11T13:11:34.690Z"
+last_activity: 2026-03-11 -- Completed 08-01 (Retry policy with three-tier resilience)
 progress:
   total_phases: 9
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 27
-  completed_plans: 23
-  percent: 85
+  completed_plans: 25
+  percent: 89
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 7: Pipeline Orchestration -- Plans 01-03 complete, one plan remaining (04).
+**Current focus:** Phase 8: Resilience & Recovery -- Plan 01 complete.
 
 ## Current Position
 
-Phase: 7 of 9 (Pipeline Orchestration)
-Plan: 3 of 4 in current phase (01, 02, 03 complete)
+Phase: 8 of 9 (Resilience & Recovery)
+Plan: 1 in current phase (01 complete)
 Status: In progress
-Last activity: 2026-03-11 -- Completed 07-03 (Pipeline runner and CLI integration)
+Last activity: 2026-03-11 -- Completed 08-01 (Retry policy with three-tier resilience)
 
-Progress: [████████░░] 85%
+Progress: [█████████░] 89%
 
 ## Performance Metrics
 
@@ -72,6 +72,7 @@ Progress: [████████░░] 85%
 | Phase 07 P02 | 2min | 1 tasks | 2 files |
 | Phase 07 P01 | 4min | 2 tasks | 7 files |
 | Phase 07 P03 | 6min | 2 tasks | 3 files |
+| Phase 08 P01 | 3min | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -129,6 +130,7 @@ Recent decisions affecting current work:
 - [Phase 07]: Logger type re-exported from pino for downstream consumer convenience
 - [Phase 07]: parseExportFn injectable in PipelineOptions for test isolation without file I/O
 - [Phase 07]: ModelManager switchDelayMs set to 0 inside pipeline runner (caller controls)
+- [Phase 08]: scoreWithRetry reused as-is for both primary and fallback tiers (no wrapper duplication)
 
 ### Pending Todos
 
@@ -142,6 +144,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T13:04:00Z
-Stopped at: Completed 07-03 (Pipeline runner and CLI integration)
+Last session: 2026-03-11T13:11:34.685Z
+Stopped at: Completed 08-01 (Retry policy with three-tier resilience)
 Resume file: None

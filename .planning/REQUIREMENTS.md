@@ -53,7 +53,7 @@
 
 ### Infrastructure
 
-- [ ] **INFR-01**: Engine recovers gracefully from individual LLM call failures (retry, fallback prompt, skip-and-log)
+- [x] **INFR-01**: Engine recovers gracefully from individual LLM call failures (retry, fallback prompt, skip-and-log)
 - [x] **INFR-02**: Engine logs progress with pino structured logging (pipeline stage + opportunity ID)
 - [ ] **INFR-03**: Engine auto-commits evaluation artifacts to git after each evaluation cycle
 - [x] **INFR-04**: Engine uses two-model strategy (8B for bulk triage, 32B for reasoning/scoring/simulation)
@@ -131,7 +131,7 @@
 | KNOW-02 | Phase 2 | Complete |
 | KNOW-03 | Phase 2 | Complete |
 | KNOW-04 | Phase 6 | Complete |
-| INFR-01 | Phase 8 | Pending |
+| INFR-01 | Phase 8 | Complete |
 | INFR-02 | Phase 7 | Complete |
 | INFR-03 | Phase 8 | Pending |
 | INFR-04 | Phase 7 | Complete |
