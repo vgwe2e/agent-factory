@@ -33,6 +33,7 @@ import type { Checkpoint } from "../infra/checkpoint.js";
 import { callWithResilience } from "../infra/retry-policy.js";
 import { autoCommitEvaluation } from "../infra/git-commit.js";
 import { writeFinalReports } from "../output/write-final-reports.js";
+import { writeEvaluation } from "../output/write-evaluation.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
 
 // -- Types --
@@ -254,6 +255,20 @@ export async function runPipeline(
   // 10. Final archive flush
   await archiveAndReset(ctx, options.outputDir);
 
+  // 10a. Write evaluation output files
+  const companyName = data.company_context.company_name;
+  const evalResult = await writeEvaluation(
+    options.outputDir,
+    allScoredResults,
+    triageResults,
+    companyName,
+  );
+  if (evalResult.success) {
+    logger.info({ files: evalResult.files.length }, "Evaluation files written");
+  } else {
+    logger.warn({ error: evalResult.error }, "Evaluation files failed (non-fatal)");
+  }
+
   // 10b. Auto-commit evaluation artifacts
   const gitResult = autoCommitEvaluation({
     outputDir: options.outputDir,
@@ -273,7 +288,6 @@ export async function runPipeline(
     totalConfirmed: 0,
     totalInferred: 0,
   };
-  const companyName = data.company_context.company_name;
   const reportResult = await writeFinalReports(
     options.outputDir,
     allScoredResults,
