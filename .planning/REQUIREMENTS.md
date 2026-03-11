@@ -14,9 +14,9 @@
 
 ### Scoring
 
-- [ ] **SCOR-01**: Engine scores each opportunity on Technical Feasibility lens (Data Readiness, Aera Platform Fit, Archetype Confidence) -- 0-9 scale
-- [ ] **SCOR-02**: Engine scores each opportunity on Adoption Realism lens (Decision Density, Financial Gravity, Impact Proximity, Confidence Signal) -- 0-12 scale
-- [ ] **SCOR-03**: Engine scores each opportunity on Value & Efficiency lens (Value Density, Simulation Viability) -- 0-6 scale
+- [x] **SCOR-01**: Engine scores each opportunity on Technical Feasibility lens (Data Readiness, Aera Platform Fit, Archetype Confidence) -- 0-9 scale
+- [x] **SCOR-02**: Engine scores each opportunity on Adoption Realism lens (Decision Density, Financial Gravity, Impact Proximity, Confidence Signal) -- 0-12 scale
+- [x] **SCOR-03**: Engine scores each opportunity on Value & Efficiency lens (Value Density, Simulation Viability) -- 0-6 scale
 - [x] **SCOR-04**: Engine computes weighted composite score (Technical 0.30, Adoption 0.45, Value 0.25) -- 0.0 to 1.0 range
 - [x] **SCOR-05**: Engine applies ratcheting threshold -- only promotes opportunities with composite >= 0.60 to simulation
 - [x] **SCOR-06**: Engine classifies each opportunity by archetype (DETERMINISTIC, AGENTIC, GENERATIVE) and routes to appropriate evaluation patterns
@@ -107,9 +107,9 @@
 | INGST-02 | Phase 1 | Complete |
 | INGST-03 | Phase 1 | Complete |
 | INGST-04 | Phase 1 | Complete |
-| SCOR-01 | Phase 4 | Pending |
-| SCOR-02 | Phase 4 | Pending |
-| SCOR-03 | Phase 4 | Pending |
+| SCOR-01 | Phase 4 | Complete |
+| SCOR-02 | Phase 4 | Complete |
+| SCOR-03 | Phase 4 | Complete |
 | SCOR-04 | Phase 4 | Complete |
 | SCOR-05 | Phase 4 | Complete |
 | SCOR-06 | Phase 4 | Complete |
