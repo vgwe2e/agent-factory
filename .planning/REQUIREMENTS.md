@@ -34,7 +34,7 @@
 ### Triage
 
 - [ ] **TRIG-01**: Engine bins opportunities into Tier 1 (quick_win + value > $5M), Tier 2 (high AI suitability), Tier 3 (everything else)
-- [ ] **TRIG-02**: Engine outputs triage results as TSV sorted by tier
+- [x] **TRIG-02**: Engine outputs triage results as TSV sorted by tier
 - [ ] **TRIG-03**: Engine processes Tier 1 opportunities first, then Tier 2, then Tier 3
 
 ### Simulation
@@ -121,7 +121,7 @@
 | FLAG-04 | Phase 3 | Complete |
 | FLAG-05 | Phase 3 | Complete |
 | TRIG-01 | Phase 3 | Pending |
-| TRIG-02 | Phase 3 | Pending |
+| TRIG-02 | Phase 3 | Complete |
 | TRIG-03 | Phase 3 | Pending |
 | SIMU-01 | Phase 6 | Pending |
 | SIMU-02 | Phase 6 | Pending |
