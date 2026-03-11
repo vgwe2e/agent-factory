@@ -90,13 +90,13 @@ describe("getComponentProperties", () => {
     assert.deepEqual(props, []);
   });
 
-  it("total properties across all components sums to 209", () => {
+  it("total properties across all components sums to 208", () => {
     const all = getAllComponents();
     const total = all.reduce(
       (sum, c) => sum + getComponentProperties(c.name).length,
       0,
     );
-    assert.equal(total, 209);
+    assert.equal(total, 208);
   });
 });
 
@@ -105,6 +105,6 @@ describe("getComponentIndex", () => {
     const index = getComponentIndex();
     assert.equal(index.version, "1.0");
     assert.equal(index.total_components, 21);
-    assert.equal(index.total_properties, 209);
+    assert.equal(index.total_properties, 208);
   });
 });

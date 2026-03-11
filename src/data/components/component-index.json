@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "total_components": 21,
-  "total_properties": 209,
+  "total_properties": 208,
   "categories": {
     "layout": {
       "description": "Container and structural components for organizing UI elements",
