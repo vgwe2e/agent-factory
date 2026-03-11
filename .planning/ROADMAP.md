@@ -165,14 +165,11 @@ Plans:
   2. Engine produces evaluation/summary.md with an executive summary of the top 10 opportunities
   3. Engine produces evaluation/dead-zones.md explicitly recommending against specific areas with reasoning
   4. Engine produces evaluation/meta-reflection.md with catalog-level pattern analysis surfacing cross-cutting insights across all evaluated opportunities
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: TBD
-- [ ] 09-02: TBD
-- [ ] 09-03: TBD
-- [ ] 09-04: TBD
-- [ ] 09-05: TBD
+- [ ] 09-01-PLAN.md -- Three pure formatters: executive summary, dead zones report, meta-reflection with catalog statistics
+- [ ] 09-02-PLAN.md -- writeFinalReports orchestrator wiring formatters + simulation directory structure
 
 ## Progress
 
@@ -189,4 +186,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | 6. Simulation | 4/4 | Complete   | 2026-03-11 |
 | 7. Pipeline Orchestration | 0/3 | Planned | - |
 | 8. Resilience & Recovery | 0/2 | Planned | - |
-| 9. Final Reports & Reflection | 0/5 | Not started | - |
+| 9. Final Reports & Reflection | 0/2 | Not started | - |
