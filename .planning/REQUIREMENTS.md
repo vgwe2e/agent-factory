@@ -69,9 +69,9 @@
 - [x] **OUTP-03**: Engine produces evaluation/adoption-risk.md with red flags and dead zones
 - [x] **OUTP-04**: Engine produces evaluation/tier1-report.md with deep analysis of top-tier opportunities
 - [ ] **OUTP-05**: Engine produces evaluation/simulations/<skill-name>/ with decision flows, component maps, mock tests
-- [ ] **OUTP-06**: Engine produces evaluation/summary.md with executive summary of top 10 opportunities
-- [ ] **OUTP-07**: Engine produces evaluation/dead-zones.md with areas explicitly recommended against
-- [ ] **OUTP-08**: Engine produces evaluation/meta-reflection.md with catalog-level pattern analysis
+- [x] **OUTP-06**: Engine produces evaluation/summary.md with executive summary of top 10 opportunities
+- [x] **OUTP-07**: Engine produces evaluation/dead-zones.md with areas explicitly recommended against
+- [x] **OUTP-08**: Engine produces evaluation/meta-reflection.md with catalog-level pattern analysis
 
 ## v2 Requirements
 
@@ -144,9 +144,9 @@
 | OUTP-03 | Phase 5 | Complete |
 | OUTP-04 | Phase 5 | Complete |
 | OUTP-05 | Phase 9 | Pending |
-| OUTP-06 | Phase 9 | Pending |
-| OUTP-07 | Phase 9 | Pending |
-| OUTP-08 | Phase 9 | Pending |
+| OUTP-06 | Phase 9 | Complete |
+| OUTP-07 | Phase 9 | Complete |
+| OUTP-08 | Phase 9 | Complete |
 
 **Coverage:**
 - v1 requirements: 44 total
