@@ -401,6 +401,31 @@ describe("pipeline-runner", () => {
     assert.ok(cp!.entries.every((e) => e.status === "scored"), "all entries scored");
   });
 
+  it("writes evaluation output files after scoring completes", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+
+    await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    const evalDir = path.join(tmpDir, "evaluation");
+    assert.ok(fs.existsSync(path.join(evalDir, "triage.tsv")), "triage.tsv exists");
+    assert.ok(fs.existsSync(path.join(evalDir, "feasibility-scores.tsv")), "feasibility-scores.tsv exists");
+    assert.ok(fs.existsSync(path.join(evalDir, "adoption-risk.md")), "adoption-risk.md exists");
+    assert.ok(fs.existsSync(path.join(evalDir, "tier1-report.md")), "tier1-report.md exists");
+  });
+
   it("writes final report files after scoring completes", async () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
