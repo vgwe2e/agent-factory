@@ -12,3 +12,4 @@ research/archive/*
 build-queue.md
 results.tsv
 results-dashboard.html
+.planning/ford_hierarchy_v2_export.json

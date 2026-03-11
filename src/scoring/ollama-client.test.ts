@@ -64,10 +64,10 @@ describe("ollamaChat", () => {
     await ollamaChat(
       [{ role: "user", content: "test" }],
       { type: "object" },
-      "qwen2.5:7b",
+      "qwen3:8b",
     );
 
-    assert.equal(fetchCalls[0].body.model, "qwen2.5:7b");
+    assert.equal(fetchCalls[0].body.model, "qwen3:8b");
   });
 });
 

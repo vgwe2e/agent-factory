@@ -20,7 +20,7 @@ import { getIntegrationPatterns } from "../../knowledge/orchestration.js";
 // -- Constants --
 
 const OLLAMA_CHAT_API = "http://localhost:11434/api/chat";
-const MODEL = "qwen2.5:32b";
+const MODEL = "qwen3:30b";
 const TEMPERATURE = 0.3;
 const MAX_ATTEMPTS = 3;
 const TIMEOUT_MS = 180_000;

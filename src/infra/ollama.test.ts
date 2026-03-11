@@ -30,8 +30,8 @@ describe("checkOllama", () => {
       new Response(
         JSON.stringify({
           models: [
-            { name: "qwen2.5:7b", size: 4_700_000_000, modified_at: "2026-01-01T00:00:00Z" },
-            { name: "qwen2.5:32b", size: 18_000_000_000, modified_at: "2026-01-01T00:00:00Z" },
+            { name: "qwen3:8b", size: 4_700_000_000, modified_at: "2026-01-01T00:00:00Z" },
+            { name: "qwen3:30b", size: 18_000_000_000, modified_at: "2026-01-01T00:00:00Z" },
           ],
         }),
         { status: 200 },
@@ -65,7 +65,7 @@ describe("checkOllama", () => {
       new Response(
         JSON.stringify({
           models: [
-            { name: "qwen2.5:7b", size: 4_700_000_000, modified_at: "2026-01-01T00:00:00Z" },
+            { name: "qwen3:8b", size: 4_700_000_000, modified_at: "2026-01-01T00:00:00Z" },
           ],
         }),
         { status: 200 },
@@ -73,11 +73,11 @@ describe("checkOllama", () => {
     );
 
     const { checkOllama } = await import("./ollama.js");
-    const status = await checkOllama(["qwen2.5:7b", "qwen2.5:32b"]);
+    const status = await checkOllama(["qwen3:8b", "qwen3:30b"]);
 
     assert.equal(status.connected, true);
     assert.equal(status.missingModels.length, 1);
-    assert.ok(status.missingModels.includes("qwen2.5:32b"));
+    assert.ok(status.missingModels.includes("qwen3:30b"));
   });
 
   it("never calls any non-localhost URL", async () => {
@@ -104,7 +104,7 @@ describe("checkOllama", () => {
       new Response(
         JSON.stringify({
           models: [
-            { name: "qwen2.5:7b", size: 4_700_000_000, modified_at: "2026-01-15T10:30:00Z" },
+            { name: "qwen3:8b", size: 4_700_000_000, modified_at: "2026-01-15T10:30:00Z" },
           ],
         }),
         { status: 200 },
@@ -112,9 +112,9 @@ describe("checkOllama", () => {
     );
 
     const { checkOllama } = await import("./ollama.js");
-    const status = await checkOllama(["qwen2.5:7b"]);
+    const status = await checkOllama(["qwen3:8b"]);
 
-    assert.equal(status.models[0].name, "qwen2.5:7b");
+    assert.equal(status.models[0].name, "qwen3:8b");
     assert.equal(status.models[0].size, 4_700_000_000);
     assert.equal(status.models[0].modified_at, "2026-01-15T10:30:00Z");
   });
@@ -126,7 +126,7 @@ describe("formatOllamaStatus", () => {
     const output = formatOllamaStatus({
       connected: false,
       models: [],
-      missingModels: ["qwen2.5:7b"],
+      missingModels: ["qwen3:8b"],
       error: "Ollama is not running. Start it with: ollama serve",
     });
 
@@ -139,8 +139,8 @@ describe("formatOllamaStatus", () => {
     const output = formatOllamaStatus({
       connected: true,
       models: [
-        { name: "qwen2.5:7b", size: 4_700_000_000, modified_at: "2026-01-01T00:00:00Z" },
-        { name: "qwen2.5:32b", size: 18_000_000_000, modified_at: "2026-01-01T00:00:00Z" },
+        { name: "qwen3:8b", size: 4_700_000_000, modified_at: "2026-01-01T00:00:00Z" },
+        { name: "qwen3:30b", size: 18_000_000_000, modified_at: "2026-01-01T00:00:00Z" },
       ],
       missingModels: [],
     });
@@ -154,12 +154,12 @@ describe("formatOllamaStatus", () => {
     const output = formatOllamaStatus({
       connected: true,
       models: [
-        { name: "qwen2.5:7b", size: 4_700_000_000, modified_at: "2026-01-01T00:00:00Z" },
+        { name: "qwen3:8b", size: 4_700_000_000, modified_at: "2026-01-01T00:00:00Z" },
       ],
-      missingModels: ["qwen2.5:32b"],
+      missingModels: ["qwen3:30b"],
     });
 
     assert.ok(output.includes("missing"));
-    assert.ok(output.includes("ollama pull qwen2.5:32b"));
+    assert.ok(output.includes("ollama pull qwen3:30b"));
   });
 });

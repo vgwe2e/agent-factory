@@ -1,0 +1,50 @@
+{
+    "version": "1.0",
+    "routes": ["process", "agentic_ai", "hybrid"],
+    "decision_criteria": {
+        "process": [
+            { "criterion": "deterministic_workflows", "description": "No LLM variability needed", "example": "ETL pipeline with fixed transformations" },
+            { "criterion": "structured_data", "description": "SQL-based processing", "example": "STREAMS -> Subject Area loading" },
+            { "criterion": "transaction_control", "description": "ACID compliance required", "example": "Financial data updates with rollback" },
+            { "criterion": "scheduling", "description": "Time-based execution", "example": "Nightly forecast refresh" },
+            { "criterion": "performance_critical", "description": "No LLM latency overhead", "example": "High-volume data processing" },
+            { "criterion": "rule_based_logic", "description": "IF/THEN deterministic rules", "example": "Approval thresholds" }
+        ],
+        "agentic_ai": [
+            { "criterion": "natural_language", "description": "User intent interpretation", "example": "Chat-based report requests" },
+            { "criterion": "unstructured_data", "description": "LLM extraction/understanding", "example": "PDF invoice processing" },
+            { "criterion": "adaptive_reasoning", "description": "Context-dependent decisions", "example": "Exception analysis" },
+            { "criterion": "multi_agent", "description": "Specialized expertise coordination", "example": "Data -> Analysis -> Recommendation pipeline" },
+            { "criterion": "conversational", "description": "Dialog-based workflow", "example": "Voice-activated inventory queries" },
+            { "criterion": "autonomous", "description": "Minimal human oversight decisions", "example": "Self-healing data pipelines" }
+        ],
+        "hybrid": [
+            { "criterion": "llm_orchestrates_procedural", "description": "Agent Function wraps Process", "example": "Conversational ETL triggering" },
+            { "criterion": "conversational_control", "description": "LLM Agent -> Agent Function -> Process", "example": "Chat-based report generation" },
+            { "criterion": "process_needs_reasoning", "description": "Process -> Agent Team Node -> Agents", "example": "CWB with exception analysis" },
+            { "criterion": "agent_results_persist", "description": "Agent -> STREAMS", "example": "Compliance audit trail" },
+            { "criterion": "ai_via_chat", "description": "Cortex -> Agent Function -> LLM Agent", "example": "Conversational forecasting" }
+        ]
+    },
+    "scenarios": [
+        { "name": "ETL Pipeline", "recommendation": "process", "reason": "Deterministic transformations, SQL-based, scheduling, no LLM needed", "components": ["STREAMS", "Process (Interface, Data View nodes)", "Subject Area"] },
+        { "name": "Chat-Based Reporting", "recommendation": "hybrid", "reason": "NL understanding required, wraps existing report process with LLM", "components": ["LLM Agent", "Agent Function", "Process Builder", "Aera Chat"] },
+        { "name": "CWB Approval Workflow", "recommendation": "process", "reason": "Deterministic approval logic, UI-driven, transaction control, no LLM", "components": ["STREAMS (CWB lifecycle)", "Process", "UI Screen Node"] },
+        { "name": "CWB with Exception Analysis", "recommendation": "hybrid", "reason": "Deterministic flow + adaptive reasoning for exceptions", "components": ["Process Builder", "Agent Team Node", "LLM Agents", "UI Screen Node"] },
+        { "name": "Invoice Processing from PDFs", "recommendation": "agentic_ai", "reason": "Unstructured data, LLM extraction, NL understanding", "components": ["LLM Agent", "Agent Functions", "STREAMS"] },
+        { "name": "Autonomous Compliance Checking", "recommendation": "agentic_ai", "reason": "Multi-step reasoning, independent decisions, minimal human oversight", "components": ["Autonomous Agent", "Agent Functions", "Validation Controls", "STREAMS"] },
+        { "name": "Multi-Step Analysis Pipeline", "recommendation": "agentic_ai", "reason": "Multiple specialized steps, coordinated output", "components": ["Agent Team", "Function Agent", "LLM Agent"] },
+        { "name": "Performance-Critical Batch Processing", "recommendation": "process", "reason": "No LLM latency, scheduling, deterministic, transaction control", "components": ["Process", "Asynchronous Node", "Interface nodes", "Transaction"] }
+    ],
+    "integration_patterns": [
+        { "name": "Agent Function Wraps Process", "flow": "User Request -> LLM Agent -> Agent Function -> Process -> Result", "use_case": "Conversational control of existing workflows" },
+        { "name": "Process Calls Agent Team", "flow": "Process Start -> Nodes -> Agent Team Node -> Agent Team -> Nodes -> End", "use_case": "Structured workflow with adaptive reasoning step" },
+        { "name": "Multi-Agent Pipeline", "flow": "Input -> Agent Team -> [Agent 1 -> Agent 2 -> Agent 3] -> Output", "use_case": "Complex multi-step analysis requiring specialized agents" },
+        { "name": "Autonomous Workflow", "flow": "Trigger -> Autonomous Agent -> Agent Functions -> Validation -> Result", "use_case": "Independent multi-step tasks with safety controls" }
+    ],
+    "archetype_mapping": {
+        "DETERMINISTIC": { "primary_route": "process", "secondary_route": "hybrid", "rationale": "Deterministic archetypes map to procedural Process Builder workflows; hybrid when LLM enhancement adds value" },
+        "AGENTIC": { "primary_route": "agentic_ai", "secondary_route": "hybrid", "rationale": "Agentic archetypes require LLM capabilities; hybrid when existing processes need agent augmentation" },
+        "GENERATIVE": { "primary_route": "agentic_ai", "secondary_route": "hybrid", "rationale": "Generative archetypes need NL/creative capabilities; hybrid when combined with structured workflows" }
+    }
+}

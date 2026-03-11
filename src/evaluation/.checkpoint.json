@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "inputFile": "../.planning/ford_hierarchy_v2_export.json",
+  "startedAt": "2026-03-11T18:49:14.778Z",
+  "entries": [
+    {
+      "l3Name": "Warranty Performance Monitoring & Analytics",
+      "completedAt": "2026-03-11T18:52:17.472Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Material Handling & Preparation",
+      "completedAt": "2026-03-11T18:55:00.394Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Service Parts Network Strategy & Optimization",
+      "completedAt": "2026-03-11T18:57:58.960Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Service Network Performance & Quality Management",
+      "completedAt": "2026-03-11T19:01:24.565Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Commercial Change Management",
+      "completedAt": "2026-03-11T19:16:27.645Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Executive S&OP / IBP Review & Decision Making",
+      "completedAt": "2026-03-11T19:19:35.350Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Body-In-White (BIW) Assembly Execution",
+      "completedAt": "2026-03-11T19:22:19.588Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Dealer Claims Submission & Front-End Validation",
+      "completedAt": "2026-03-11T19:37:22.698Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Supplier Quality Strategy & Governance",
+      "completedAt": "2026-03-11T19:40:58.645Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Order to Production Scheduling Integration",
+      "completedAt": "2026-03-11T19:43:37.857Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Supplier Acknowledgment & Communication",
+      "completedAt": "2026-03-11T19:46:19.431Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Indirect Sourcing Strategy & Planning",
+      "completedAt": "2026-03-11T20:01:22.506Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Customs",
+      "completedAt": "2026-03-11T20:04:25.428Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Packaging Compliance & Sustainability",
+      "completedAt": "2026-03-11T20:07:15.256Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Finished Goods Handling & Dispatch",
+      "completedAt": "2026-03-11T20:09:45.880Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Asset Lifecycle Management & Tracking",
+      "completedAt": "2026-03-11T20:13:31.739Z",
+      "status": "scored"
+    }
+  ]
+}

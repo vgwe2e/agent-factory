@@ -12,7 +12,7 @@ import type { SimulationInput } from "../../types/simulation.js";
 import type { MockTest } from "../../types/simulation.js";
 
 const DEFAULT_OLLAMA_URL = "http://localhost:11434";
-const MODEL = "qwen2.5:32b";
+const MODEL = "qwen3:30b";
 const TEMPERATURE = 0.3;
 const MAX_ATTEMPTS = 3;
 const TIMEOUT_MS = 120_000;

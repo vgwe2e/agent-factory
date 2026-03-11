@@ -1,0 +1,49 @@
+/**
+ * Evaluation output orchestrator.
+ *
+ * Creates the evaluation/ directory and writes all 4 output files:
+ * triage.tsv, feasibility-scores.tsv, adoption-risk.md, tier1-report.md.
+ *
+ * Single entry point for the pipeline to produce all Phase 5 output artifacts.
+ * Phase 7 (pipeline orchestration) will call this function.
+ */
+import fs from "node:fs/promises";
+import path from "node:path";
+import { formatTriageTsv } from "./format-triage-tsv.js";
+import { formatScoresTsv } from "./format-scores-tsv.js";
+import { formatAdoptionRisk } from "./format-adoption-risk.js";
+import { formatTier1Report } from "./format-tier1-report.js";
+export async function writeEvaluation(outputDir, scoredOpportunities, triagedOpportunities, companyName, date) {
+    try {
+        const evalDir = path.join(outputDir, "evaluation");
+        await fs.mkdir(evalDir, { recursive: true });
+        // Derive tier 1 names from triage data
+        const tier1Names = new Set(triagedOpportunities
+            .filter(o => o.tier === 1)
+            .map(o => o.l3Name));
+        // Generate content from formatters
+        const triageTsv = formatTriageTsv(triagedOpportunities);
+        const scoresTsv = formatScoresTsv(scoredOpportunities);
+        const adoptionRisk = formatAdoptionRisk(triagedOpportunities, date);
+        const tier1Report = formatTier1Report(scoredOpportunities, tier1Names, companyName, date);
+        // Define output files
+        const files = [
+            { name: "triage.tsv", content: triageTsv },
+            { name: "feasibility-scores.tsv", content: scoresTsv },
+            { name: "adoption-risk.md", content: adoptionRisk },
+            { name: "tier1-report.md", content: tier1Report },
+        ];
+        // Write all files
+        const writtenPaths = [];
+        for (const file of files) {
+            const filePath = path.join(evalDir, file.name);
+            await fs.writeFile(filePath, file.content, "utf-8");
+            writtenPaths.push(filePath);
+        }
+        return { success: true, files: writtenPaths };
+    }
+    catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return { success: false, error: message };
+    }
+}

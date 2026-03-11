@@ -88,12 +88,12 @@ export class ModelManager {
     this.logger.info({ model }, "Model loaded successfully");
   }
 
-  /** Load the triage model (e.g., qwen2.5:7b). */
+  /** Load the triage model (e.g., qwen3:8b). */
   async ensureTriageModel(): Promise<void> {
     await this.switchTo(this.config.triageModel);
   }
 
-  /** Load the scoring model (e.g., qwen2.5:32b). */
+  /** Load the scoring model (e.g., qwen3:30b). */
   async ensureScoringModel(): Promise<void> {
     await this.switchTo(this.config.scoringModel);
   }

@@ -20,13 +20,13 @@ export interface OllamaStatus {
 }
 
 const OLLAMA_API = "http://localhost:11434/api/tags";
-const DEFAULT_REQUIRED_MODELS = ["qwen2.5:7b", "qwen2.5:32b"];
+const DEFAULT_REQUIRED_MODELS = ["qwen3:8b", "qwen3:30b"];
 const TIMEOUT_MS = 5000;
 
 /**
  * Check Ollama connectivity and model availability.
  *
- * @param requiredModels - Model names to check for (default: qwen2.5:7b, qwen2.5:32b)
+ * @param requiredModels - Model names to check for (default: qwen3:8b, qwen3:30b)
  * @returns OllamaStatus with connection state and model information
  */
 export async function checkOllama(
