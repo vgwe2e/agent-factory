@@ -69,7 +69,7 @@ export interface L4Activity {
   rating_confidence: RatingConfidence;
   ai_suitability: AiSuitability | null;
   decision_exists: boolean;
-  decision_articulation: string;
+  decision_articulation: string | null;
   escalation_flag: string | null;
   skills: unknown[];
 }
@@ -79,11 +79,11 @@ export interface L3Opportunity {
   l2_name: string;
   l1_name: string;
   opportunity_exists: boolean;
-  opportunity_name: string;
-  opportunity_summary: string;
+  opportunity_name: string | null;
+  opportunity_summary: string | null;
   lead_archetype: LeadArchetype | null;
   supporting_archetypes: string[];
-  combined_max_value: number;
+  combined_max_value: number | null;
   implementation_complexity: ImplementationComplexity | null;
   quick_win: boolean;
   competitive_positioning: string | null;
