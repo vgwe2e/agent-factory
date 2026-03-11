@@ -134,14 +134,12 @@ Plans:
   2. Engine logs progress with pino structured logging showing pipeline stage and opportunity ID
   3. Engine summarizes, archives, and resets context between evaluation iterations to prevent context window overflow
   4. Engine runs the full pipeline unattended without requiring any user interaction after the initial command
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 07-01: TBD
-- [ ] 07-02: TBD
-- [ ] 07-03: TBD
-- [ ] 07-04: TBD
-- [ ] 07-05: TBD
+- [ ] 07-01-PLAN.md -- pino logger factory, ModelManager for Ollama model lifecycle, ollamaChat model parameter refactor
+- [ ] 07-02-PLAN.md -- Context tracker with archive-to-disk and memory reset
+- [ ] 07-03-PLAN.md -- Pipeline runner orchestrator and CLI wiring with --log-level and --output-dir flags
 
 ### Phase 8: Resilience & Recovery
 **Goal**: Engine can survive failures during long overnight runs -- retrying, recovering, and resuming without losing completed work
@@ -191,6 +189,6 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | 4. Scoring Engine | 3/3 | Complete   | 2026-03-11 |
 | 5. Scoring Output | 0/3 | Not started | - |
 | 6. Simulation | 0/4 | Not started | - |
-| 7. Pipeline Orchestration | 0/5 | Not started | - |
+| 7. Pipeline Orchestration | 0/3 | Not started | - |
 | 8. Resilience & Recovery | 0/5 | Not started | - |
 | 9. Final Reports & Reflection | 0/5 | Not started | - |
