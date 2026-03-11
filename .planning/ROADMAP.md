@@ -194,7 +194,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Project Foundation | 0/3 | Complete    | 2026-03-11 |
-| 2. Knowledge Base | 1/3 | In progress | - |
+| 2. Knowledge Base | 2/3 | In Progress|  |
 | 3. Triage & Red Flags | 0/5 | Not started | - |
 | 4. Scoring Engine | 0/6 | Not started | - |
 | 5. Scoring Output | 0/5 | Not started | - |
