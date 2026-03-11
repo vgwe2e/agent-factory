@@ -8,6 +8,7 @@
 
 import { Command } from "commander";
 import { parseExport } from "./ingestion/parse-export.js";
+import { checkOllama, formatOllamaStatus } from "./infra/ollama.js";
 
 const RED = "\x1b[31m";
 const RESET = "\x1b[0m";
@@ -66,6 +67,13 @@ program
     console.log(`L3 Opportunities: ${l3_opportunities.length}`);
     console.log(`Domains:       ${domains.join(", ")}`);
     console.log();
+
+    // Ollama connectivity check (informational -- does not block)
+    const ollamaStatus = await checkOllama();
+    console.log("=== Ollama ===");
+    console.log(formatOllamaStatus(ollamaStatus));
+    console.log();
+
     console.log("=== Ready for Processing ===");
 
     process.exit(0);
