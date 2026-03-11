@@ -1,0 +1,160 @@
+{
+  "version": "1.0",
+  "total_nodes": 22,
+  "nodes": [
+    {
+      "name": "Process",
+      "purpose": "Entry point, variable definition",
+      "documentation_file": "fundamentals.md",
+      "documentation_section": "Process Node",
+      "category": "core"
+    },
+    {
+      "name": "Interface",
+      "purpose": "Database/API integration",
+      "documentation_file": "fundamentals.md",
+      "documentation_section": "Using Interface Node",
+      "category": "data"
+    },
+    {
+      "name": "Report Data",
+      "purpose": "Extract data from reports",
+      "documentation_file": "advanced.md",
+      "documentation_section": "Report Data Node",
+      "category": "data"
+    },
+    {
+      "name": "Data View",
+      "purpose": "Direct access to data without SQL",
+      "documentation_file": "advanced.md",
+      "documentation_section": "Data View Node",
+      "category": "data"
+    },
+    {
+      "name": "IF",
+      "purpose": "Conditional branching",
+      "documentation_file": "advanced.md",
+      "documentation_section": "IF Node",
+      "category": "control_flow"
+    },
+    {
+      "name": "While",
+      "purpose": "Pre-condition loops",
+      "documentation_file": "advanced.md",
+      "documentation_section": "While Node",
+      "category": "control_flow"
+    },
+    {
+      "name": "Do While",
+      "purpose": "Post-condition loops",
+      "documentation_file": "advanced.md",
+      "documentation_section": "Do While Node",
+      "category": "control_flow"
+    },
+    {
+      "name": "Script",
+      "purpose": "Custom Java scripting",
+      "documentation_file": "advanced.md",
+      "documentation_section": "Script Node",
+      "category": "control_flow"
+    },
+    {
+      "name": "Transaction",
+      "purpose": "Atomic transaction groups",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Transaction Node",
+      "category": "transaction"
+    },
+    {
+      "name": "Rollback Transaction",
+      "purpose": "Transaction rollback",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Rollback Transaction Node",
+      "category": "transaction"
+    },
+    {
+      "name": "Wait",
+      "purpose": "Parallel branch coordination",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Wait Node",
+      "category": "parallel"
+    },
+    {
+      "name": "Asynchronous",
+      "purpose": "Parallel execution",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Asynchronous Node",
+      "category": "parallel"
+    },
+    {
+      "name": "Branch",
+      "purpose": "Process organization",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Branch Node",
+      "category": "core"
+    },
+    {
+      "name": "Rules",
+      "purpose": "Business rule execution",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Rules Node",
+      "category": "control_flow"
+    },
+    {
+      "name": "Notification",
+      "purpose": "Email notifications",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Notification Node",
+      "category": "communication"
+    },
+    {
+      "name": "Subprocess",
+      "purpose": "Call another process",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Subprocess Node",
+      "category": "orchestration"
+    },
+    {
+      "name": "Dynamic Subprocess",
+      "purpose": "Dynamic process call",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Dynamic Subprocess Node",
+      "category": "orchestration"
+    },
+    {
+      "name": "Stream",
+      "purpose": "Streaming data management",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Stream Node",
+      "category": "data"
+    },
+    {
+      "name": "Action Item",
+      "purpose": "Inbox recommendations",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Action Item Node",
+      "category": "communication"
+    },
+    {
+      "name": "Data Science",
+      "purpose": "ML/Analytics integration",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "Data Science Node",
+      "category": "integration"
+    },
+    {
+      "name": "UI Screen",
+      "purpose": "UI integration",
+      "documentation_file": "nodes-integration.md",
+      "documentation_section": "UI Screen Node",
+      "category": "integration"
+    },
+    {
+      "name": "Agent Team",
+      "purpose": "Agent execution",
+      "documentation_file": "fundamentals.md",
+      "documentation_section": "Using Agent Team Node",
+      "category": "integration"
+    }
+  ]
+}

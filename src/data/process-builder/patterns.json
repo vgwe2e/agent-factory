@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "patterns": [
+    {
+      "name": "ETL Pattern",
+      "description": "Extract, transform, load data pipeline",
+      "node_sequence": ["Data View", "Script", "Interface"],
+      "use_case": "Data View Node -> Script Node -> Interface Node (Write)",
+      "references": ["advanced.md > Data View Node", "advanced.md > Script Node", "fundamentals.md > Using Interface Node"]
+    },
+    {
+      "name": "Decision Workflow",
+      "description": "Conditional routing with notification outcomes",
+      "node_sequence": ["Process", "IF", "Notification"],
+      "use_case": "Process -> IF Node -> Branch 1 (Approve) / Branch 2 (Reject) -> Notification",
+      "references": ["advanced.md > IF Node", "nodes-integration.md > Notification Node"]
+    },
+    {
+      "name": "Parallel Processing",
+      "description": "Concurrent execution with result aggregation",
+      "node_sequence": ["Process", "Wait", "Asynchronous"],
+      "use_case": "Process -> Wait Node -> Multiple Asynchronous Nodes -> Combine Results",
+      "references": ["nodes-integration.md > Wait Node", "nodes-integration.md > Asynchronous Node"]
+    },
+    {
+      "name": "Iterative Processing",
+      "description": "Batch processing with loop control",
+      "node_sequence": ["While", "Data View"],
+      "use_case": "While Node -> Data View -> Process Batch -> Update Counter",
+      "references": ["advanced.md > While Node", "advanced.md > Data View Node"]
+    },
+    {
+      "name": "Transactional Update",
+      "description": "Atomic multi-step updates with rollback on error",
+      "node_sequence": ["Transaction", "Interface", "Rollback Transaction"],
+      "use_case": "Transaction -> Interface (Update 1) -> Interface (Update 2) -> Rollback Transaction (on error)",
+      "references": ["nodes-integration.md > Transaction Node", "nodes-integration.md > Rollback Transaction Node"]
+    },
+    {
+      "name": "UI-Driven Process",
+      "description": "Interactive user-driven workflow with screen integration",
+      "node_sequence": ["Process", "UI Screen", "While"],
+      "use_case": "Process -> UI Screen -> While Loop -> User Actions -> Data Processing",
+      "references": ["nodes-integration.md > UI Screen Node", "advanced.md > While Node"]
+    },
+    {
+      "name": "ML Integration",
+      "description": "Machine learning pipeline with decision routing",
+      "node_sequence": ["Data View", "Data Science", "Action Item"],
+      "use_case": "Data View -> Data Science (Forecast/RCA) -> Decision Logic -> Action Item",
+      "references": ["nodes-integration.md > Data Science Node", "nodes-integration.md > Action Item Node"]
+    }
+  ]
+}
