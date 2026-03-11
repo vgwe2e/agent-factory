@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-02 (Ollama client & lens prompts)
-last_updated: "2026-03-11T04:30:47.788Z"
-last_activity: 2026-03-11 -- Completed 04-01 (Scoring types, composite, confidence, archetype router)
+stopped_at: Completed 04-03 (Lens scorers & scoring pipeline)
+last_updated: "2026-03-11T04:36:40.681Z"
+last_activity: 2026-03-11 -- Completed 04-03 (Lens scorers & scoring pipeline)
 progress:
   total_phases: 9
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 19
-  completed_plans: 11
-  percent: 53
+  completed_plans: 12
+  percent: 63
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 4: Scoring Engine -- IN PROGRESS
+**Current focus:** Phase 4: Scoring Engine -- COMPLETE
 
 ## Current Position
 
-Phase: 4 of 9 (Scoring Engine) -- IN PROGRESS
-Plan: 1 of 3 in current phase (04-01 complete)
-Status: Phase 4 in progress, 04-01 complete
-Last activity: 2026-03-11 -- Completed 04-01 (Scoring types, composite, confidence, archetype router)
+Phase: 4 of 9 (Scoring Engine) -- COMPLETE
+Plan: 3 of 3 in current phase (all complete)
+Status: Phase 4 complete, ready for Phase 5
+Last activity: 2026-03-11 -- Completed 04-03 (Lens scorers & scoring pipeline)
 
-Progress: [█████░░░░░] 53%
+Progress: [██████░░░░] 63%
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Progress: [█████░░░░░] 53%
 | Phase 03 P03 | 1min | 1 tasks | 2 files |
 | Phase 04 P01 | 3min | 2 tasks | 10 files |
 | Phase 04 P02 | 4min | 2 tasks | 6 files |
+| Phase 04 P03 | 4min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,9 @@ Recent decisions affecting current work:
 - [Phase 04]: Archetype inference heuristic: decisionPct/aiPct thresholds at 0.3/0.5/0.6
 - [Phase 04]: Type assertion (as never) for zodToJsonSchema calls to work around Zod 3.25.x type incompatibility
 - [Phase 04]: L4 truncation threshold at 8 activities for prompt context window management
+- [Phase 04]: chatFn dependency injection for all scorers and pipeline (defaults to ollamaChat)
+- [Phase 04]: Promise.all for parallel lens scoring within each opportunity
+- [Phase 04]: Async generator pattern for incremental pipeline result consumption
 
 ### Pending Todos
 
@@ -105,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T04:30:47.782Z
-Stopped at: Completed 04-02 (Ollama client & lens prompts)
+Last session: 2026-03-11T04:36:00Z
+Stopped at: Completed 04-03 (Lens scorers & scoring pipeline)
 Resume file: None
