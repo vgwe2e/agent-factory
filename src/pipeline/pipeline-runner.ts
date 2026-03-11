@@ -14,6 +14,7 @@ import type { ChatResult } from "../scoring/ollama-client.js";
 import type { ScoringResult } from "../types/scoring.js";
 import type { ParseResult } from "../ingestion/parse-export.js";
 
+import { z } from "zod";
 import { parseExport } from "../ingestion/parse-export.js";
 import { triageOpportunities } from "../triage/triage-pipeline.js";
 import { scoreOneOpportunity } from "../scoring/scoring-pipeline.js";
@@ -27,6 +28,10 @@ import {
 } from "./context-tracker.js";
 import { buildKnowledgeContext } from "../scoring/knowledge-context.js";
 import { groupL4sByL3 } from "../triage/red-flags.js";
+import { loadCheckpoint, saveCheckpoint, getCompletedNames } from "../infra/checkpoint.js";
+import type { Checkpoint } from "../infra/checkpoint.js";
+import { callWithResilience } from "../infra/retry-policy.js";
+import { autoCommitEvaluation } from "../infra/git-commit.js";
 
 // -- Types --
 
@@ -44,6 +49,8 @@ export interface PipelineOptions {
   fetchFn?: typeof globalThis.fetch;
   /** Inject parseExport for testing (avoids file I/O in tests). */
   parseExportFn?: (path: string) => Promise<ParseResult>;
+  /** Enable git auto-commit after pipeline completes (default true) */
+  gitCommit?: boolean;
 }
 
 export interface PipelineResult {
@@ -52,6 +59,7 @@ export interface PipelineResult {
   promotedCount: number;
   skippedCount: number;
   errorCount: number;
+  resumedCount: number;
   totalDurationMs: number;
   errors: string[];
 }
@@ -105,6 +113,19 @@ export async function runPipeline(
     },
     "Export parsed",
   );
+
+  // 1b. Load checkpoint for resume support
+  const existingCheckpoint = loadCheckpoint(options.outputDir);
+  const completed = getCompletedNames(existingCheckpoint);
+  const checkpoint: Checkpoint = existingCheckpoint && existingCheckpoint.inputFile === inputPath
+    ? existingCheckpoint
+    : { version: 1, inputFile: inputPath, startedAt: new Date().toISOString(), entries: [] };
+
+  if (completed.size > 0) {
+    logger.info({ resuming: completed.size }, "Resuming from checkpoint");
+  }
+
+  const resumedCount = completed.size;
 
   // 2. Triage (pure function, no model needed)
   logger.info("Running triage");
@@ -174,43 +195,48 @@ export async function runPipeline(
     const l4s = l4Map.get(triage.l3Name) ?? [];
     const childLog = logger.child({ oppId: triage.l3Name, tier: triage.tier });
 
+    // Skip already-completed opportunities (resume support)
+    if (completed.has(triage.l3Name)) {
+      childLog.info("Skipping (already completed in previous run)");
+      continue;
+    }
+
     childLog.info("Scoring opportunity");
 
-    try {
-      const result = await scoreOneOpportunity(
-        opp,
-        l4s,
-        data.company_context,
-        knowledgeContext,
-        options.chatFn,
-      );
+    // Use callWithResilience for three-tier error handling
+    const resilient = await callWithResilience({
+      primaryCall: async () => {
+        const r = await scoreOneOpportunity(opp, l4s, data.company_context, knowledgeContext, options.chatFn);
+        if ("error" in r) throw new Error(r.error);
+        return JSON.stringify(r);
+      },
+      schema: z.any(),  // We validate via scoreOneOpportunity internally; this is a pass-through wrapper
+      label: triage.l3Name,
+      maxRetries: 1,  // scoreOneOpportunity already has internal retries via scoreWithRetry
+    });
 
-      if ("composite" in result) {
-        const sr = result as ScoringResult;
-        addResult(ctx, sr);
-        scoredCount++;
-        if (sr.promotedToSimulation) promotedCount++;
-        childLog.info(
-          {
-            composite: sr.composite.toFixed(2),
-            promoted: sr.promotedToSimulation,
-          },
-          "Scored",
-        );
-      } else {
-        // Error result from scoreOneOpportunity
-        const errResult = result as { error: string; l3Name: string };
-        addError(ctx, errResult.l3Name, "scoring", errResult.error);
-        errors.push(errResult.error);
-        childLog.warn({ error: errResult.error }, "Scoring error");
-      }
-    } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : String(err);
-      addError(ctx, triage.l3Name, "scoring", msg);
-      errors.push(msg);
-      childLog.error({ error: msg }, "Scoring exception");
+    if (resilient.result.success) {
+      const sr = resilient.result.data as unknown as ScoringResult;
+      addResult(ctx, sr);
+      scoredCount++;
+      if (sr.promotedToSimulation) promotedCount++;
+      childLog.info(
+        { composite: sr.composite.toFixed(2), promoted: sr.promotedToSimulation, resolvedVia: resilient.resolvedVia },
+        "Scored",
+      );
+    } else {
+      addError(ctx, triage.l3Name, "scoring", resilient.skipReason ?? resilient.result.error);
+      errors.push(resilient.skipReason ?? resilient.result.error);
+      childLog.warn({ error: resilient.skipReason, resolvedVia: "skipped" }, "Scoring skipped");
     }
+
+    // Save checkpoint after each opportunity
+    checkpoint.entries.push({
+      l3Name: triage.l3Name,
+      completedAt: new Date().toISOString(),
+      status: resilient.result.success ? "scored" : "error",
+    });
+    saveCheckpoint(options.outputDir, checkpoint);
 
     sinceLastArchive++;
     if (sinceLastArchive >= archiveThreshold) {
@@ -222,6 +248,17 @@ export async function runPipeline(
 
   // 10. Final archive flush
   await archiveAndReset(ctx, options.outputDir);
+
+  // 10b. Auto-commit evaluation artifacts
+  const gitResult = autoCommitEvaluation({
+    outputDir: options.outputDir,
+    enabled: options.gitCommit !== false,
+  });
+  if (gitResult.committed) {
+    logger.info("Evaluation artifacts committed to git");
+  } else if (gitResult.error) {
+    logger.warn({ error: gitResult.error }, "Git auto-commit failed (non-fatal)");
+  }
 
   // 11. Unload models
   await modelManager.unloadAll();
@@ -236,6 +273,7 @@ export async function runPipeline(
     promotedCount,
     skippedCount: skipped.length,
     errorCount: errors.length,
+    resumedCount,
     totalDurationMs,
     errors,
   };
