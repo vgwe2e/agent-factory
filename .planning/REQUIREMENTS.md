@@ -59,7 +59,7 @@
 - [x] **INFR-04**: Engine uses two-model strategy (8B for bulk triage, 32B for reasoning/scoring/simulation)
 - [x] **INFR-05**: Engine manages context across evaluations (summarize, archive, reset between iterations)
 - [x] **INFR-06**: Engine runs fully locally via Ollama with zero cloud API dependency
-- [ ] **INFR-07**: Engine runs unattended overnight without user interaction
+- [x] **INFR-07**: Engine runs unattended overnight without user interaction
 - [ ] **INFR-08**: Engine checkpoints progress so a crashed run can resume from last completed evaluation
 
 ### Output
@@ -137,7 +137,7 @@
 | INFR-04 | Phase 7 | Complete |
 | INFR-05 | Phase 7 | Complete |
 | INFR-06 | Phase 1 | Complete |
-| INFR-07 | Phase 7 | Pending |
+| INFR-07 | Phase 7 | Complete |
 | INFR-08 | Phase 8 | Pending |
 | OUTP-01 | Phase 5 | Complete |
 | OUTP-02 | Phase 5 | Complete |
