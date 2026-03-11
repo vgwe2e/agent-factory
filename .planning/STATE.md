@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-03 (Lens scorers & scoring pipeline)
-last_updated: "2026-03-11T04:36:40.681Z"
-last_activity: 2026-03-11 -- Completed 04-03 (Lens scorers & scoring pipeline)
+stopped_at: Completed 04-04 (CLI pipeline wiring)
+last_updated: "2026-03-11T09:06:33Z"
+last_activity: 2026-03-11 -- Completed 04-04 (CLI pipeline wiring)
 progress:
   total_phases: 9
   completed_phases: 4
   total_plans: 19
-  completed_plans: 12
-  percent: 63
+  completed_plans: 13
+  percent: 68
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 4: Scoring Engine -- COMPLETE
+**Current focus:** Phase 4: Scoring Engine -- COMPLETE (including gap closure)
 
 ## Current Position
 
 Phase: 4 of 9 (Scoring Engine) -- COMPLETE
-Plan: 3 of 3 in current phase (all complete)
+Plan: 4 of 4 in current phase (all complete, including gap closure)
 Status: Phase 4 complete, ready for Phase 5
-Last activity: 2026-03-11 -- Completed 04-03 (Lens scorers & scoring pipeline)
+Last activity: 2026-03-11 -- Completed 04-04 (CLI pipeline wiring)
 
-Progress: [██████░░░░] 63%
+Progress: [██████░░░░] 68%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [██████░░░░] 63%
 | Phase 04 P01 | 3min | 2 tasks | 10 files |
 | Phase 04 P02 | 4min | 2 tasks | 6 files |
 | Phase 04 P03 | 4min | 2 tasks | 4 files |
+| Phase 04 P04 | 2min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -96,6 +97,8 @@ Recent decisions affecting current work:
 - [Phase 04]: chatFn dependency injection for all scorers and pipeline (defaults to ollamaChat)
 - [Phase 04]: Promise.all for parallel lens scoring within each opportunity
 - [Phase 04]: Async generator pattern for incremental pipeline result consumption
+- [Phase 04]: PB nodes serialized with purpose field (not description) matching actual PBNode type
+- [Phase 04]: Component names are lowercase matching bundled data files
 
 ### Pending Todos
 
@@ -109,6 +112,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T04:36:00Z
-Stopped at: Completed 04-03 (Lens scorers & scoring pipeline)
+Last session: 2026-03-11T09:06:33Z
+Stopped at: Completed 04-04 (CLI pipeline wiring)
 Resume file: None
