@@ -49,12 +49,12 @@ Plans:
   1. Engine can look up any of the 21 UI components and their 209 properties from its bundled data
   2. Engine can look up any of the 22 Process Builder nodes with their procedures and patterns
   3. Engine can query the orchestration decision guide to determine Process vs Agent vs Hybrid routing for a given opportunity type
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md -- Bundle 21 UI component JSONs with typed query layer for component lookups
+- [ ] 02-02-PLAN.md -- Bundle Process Builder node reference with typed query layer for node and pattern lookups
+- [ ] 02-03-PLAN.md -- Bundle orchestration decision guide with typed query layer for routing decisions
 
 ### Phase 3: Triage & Red Flags
 **Goal**: Engine rapidly bins all opportunities into priority tiers and automatically disqualifies or demotes bad candidates before expensive scoring
@@ -194,7 +194,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Project Foundation | 0/3 | Planning complete | - |
-| 2. Knowledge Base | 0/3 | Not started | - |
+| 2. Knowledge Base | 0/3 | Planning complete | - |
 | 3. Triage & Red Flags | 0/5 | Not started | - |
 | 4. Scoring Engine | 0/6 | Not started | - |
 | 5. Scoring Output | 0/5 | Not started | - |
