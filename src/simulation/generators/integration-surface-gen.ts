@@ -70,7 +70,7 @@ export async function generateIntegrationSurface(
       if (validated.success) {
         return {
           success: true,
-          data: { integrationSurface: validated.data, attempts: attempt },
+          data: { integrationSurface: validated.data as IntegrationSurface, attempts: attempt },
         };
       }
 
