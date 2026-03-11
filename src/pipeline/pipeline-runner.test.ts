@@ -401,6 +401,60 @@ describe("pipeline-runner", () => {
     assert.ok(cp!.entries.every((e) => e.status === "scored"), "all entries scored");
   });
 
+  it("writes final report files after scoring completes", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+
+    await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    const evalDir = path.join(tmpDir, "evaluation");
+    assert.ok(fs.existsSync(path.join(evalDir, "summary.md")), "summary.md exists");
+    assert.ok(fs.existsSync(path.join(evalDir, "dead-zones.md")), "dead-zones.md exists");
+    assert.ok(fs.existsSync(path.join(evalDir, "meta-reflection.md")), "meta-reflection.md exists");
+    assert.ok(fs.existsSync(path.join(evalDir, "simulations")), "simulations/ dir exists");
+  });
+
+  it("pipeline succeeds even if writeFinalReports fails", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+
+    // Use a read-only directory to force writeFinalReports to fail
+    const readOnlyDir = path.join(tmpDir, "readonly");
+    fs.mkdirSync(readOnlyDir);
+    // Create the evaluation dir as a FILE to block mkdir inside writeFinalReports
+    fs.writeFileSync(path.join(readOnlyDir, "evaluation"), "block");
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: readOnlyDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Pipeline should still return a valid result (non-fatal)
+    assert.equal(result.scoredCount, 3, "3 scored despite report failure");
+    assert.equal(result.errorCount, 0, "writeFinalReports failure is not counted as pipeline error");
+  });
+
   it("git auto-commit disabled via option", async () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
