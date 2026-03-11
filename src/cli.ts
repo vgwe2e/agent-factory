@@ -4,19 +4,21 @@
  * Aera Skill Feasibility Engine -- CLI entry point.
  *
  * Usage: npx tsx cli.ts --input <path-to-hierarchy-export.json>
+ *        npx tsx cli.ts --input export.json --log-level debug --output-dir ./results
  */
 
 import { Command } from "commander";
 import { parseExport } from "./ingestion/parse-export.js";
 import { checkOllama, formatOllamaStatus } from "./infra/ollama.js";
-import { triageOpportunities } from "./triage/triage-pipeline.js";
-import { scoreOpportunities } from "./scoring/scoring-pipeline.js";
-import { buildKnowledgeContext } from "./scoring/knowledge-context.js";
-import type { ScoringResult } from "./types/scoring.js";
+import { createLogger } from "./infra/logger.js";
+import { runPipeline } from "./pipeline/pipeline-runner.js";
 
 const RED = "\x1b[31m";
+const GREEN = "\x1b[32m";
 const RESET = "\x1b[0m";
 const BOLD = "\x1b[1m";
+
+const LOG_LEVELS = ["silent", "fatal", "error", "warn", "info", "debug", "trace"] as const;
 
 const program = new Command();
 
@@ -26,11 +28,22 @@ program
     "Aera Skill Feasibility Engine -- evaluate hierarchy exports",
   )
   .requiredOption("--input <path>", "Path to hierarchy JSON export file")
-  .action(async (opts: { input: string }) => {
+  .option(
+    "--log-level <level>",
+    `Structured log level (${LOG_LEVELS.join(", ")})`,
+    "info",
+  )
+  .option(
+    "--output-dir <path>",
+    "Output directory for evaluation results",
+    "./evaluation",
+  )
+  .action(async (opts: { input: string; logLevel: string; outputDir: string }) => {
     console.log(`${BOLD}Aera Skill Feasibility Engine v0.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
 
+    // Pre-flight: parse and display export info
     const result = await parseExport(opts.input);
 
     if (!result.success) {
@@ -78,57 +91,40 @@ program
     console.log(formatOllamaStatus(ollamaStatus));
     console.log();
 
-    // --- Triage step ---
-    const triageResults = triageOpportunities(result.data);
+    // --- Run full pipeline ---
+    const logger = createLogger(opts.logLevel);
 
-    const tier1 = triageResults.filter((t) => t.tier === 1).length;
-    const tier2 = triageResults.filter((t) => t.tier === 2).length;
-    const tier3 = triageResults.filter((t) => t.tier === 3).length;
-    const skipped = triageResults.filter((t) => t.action === "skip" || t.action === "demote").length;
-    const processable = triageResults.filter((t) => t.action === "process").length;
-
-    console.log("=== Triage ===");
-    console.log(`Total:     ${triageResults.length} opportunities`);
-    console.log(`Tier 1:    ${tier1} (quick wins, high value)`);
-    console.log(`Tier 2:    ${tier2} (high AI suitability)`);
-    console.log(`Tier 3:    ${tier3} (default)`);
-    console.log(`Skipped:   ${skipped}`);
-    console.log(`Scoring:   ${processable} opportunities to process`);
+    console.log("=== Pipeline ===");
+    console.log(`Log level:   ${opts.logLevel}`);
+    console.log(`Output dir:  ${opts.outputDir}`);
     console.log();
 
-    // --- Scoring step ---
-    const knowledgeContext = buildKnowledgeContext();
+    const pipelineResult = await runPipeline(
+      opts.input,
+      {
+        outputDir: opts.outputDir,
+        logLevel: opts.logLevel,
+      },
+      logger,
+    );
 
-    let scored = 0;
-    let errors = 0;
-    let promoted = 0;
+    // Print summary
+    const durationSec = (pipelineResult.totalDurationMs / 1000).toFixed(1);
+    console.log();
+    console.log("=== Pipeline Complete ===");
+    console.log(`Triaged:   ${pipelineResult.triageCount} opportunities`);
+    console.log(`Skipped:   ${pipelineResult.skippedCount}`);
+    console.log(`Scored:    ${pipelineResult.scoredCount}`);
+    console.log(`Promoted:  ${pipelineResult.promotedCount} to simulation`);
+    console.log(`Errors:    ${pipelineResult.errorCount}`);
+    console.log(`Duration:  ${durationSec}s`);
 
-    console.log("=== Scoring ===");
-    for await (const scoringResult of scoreOpportunities({
-      hierarchyExport: result.data,
-      triageResults,
-      knowledgeContext,
-    })) {
-      if ("composite" in scoringResult) {
-        const sr = scoringResult as ScoringResult;
-        const tier = triageResults.find((t) => t.l3Name === sr.l3Name)?.tier ?? "?";
-        const simTag = sr.promotedToSimulation ? " -> SIMULATION" : "";
-        console.log(
-          `[Tier ${tier}] ${sr.l3Name} — composite: ${sr.composite.toFixed(2)} (${sr.overallConfidence})${simTag}`,
-        );
-        scored++;
-        if (sr.promotedToSimulation) promoted++;
-      } else {
-        console.log(`[ERR] ${scoringResult.l3Name} — ${scoringResult.error}`);
-        errors++;
-      }
+    if (pipelineResult.errorCount > 0 && pipelineResult.scoredCount === 0) {
+      console.error(`${RED}All opportunities errored. Check logs for details.${RESET}`);
+      process.exit(1);
     }
 
-    console.log();
-    console.log("=== Scoring Complete ===");
-    console.log(`Scored:    ${scored}/${processable} opportunities`);
-    console.log(`Errors:    ${errors}`);
-    console.log(`Promoted:  ${promoted} to simulation (composite >= 0.60)`);
+    console.log(`${GREEN}Results written to ${opts.outputDir}${RESET}`);
   });
 
 program.parse();
