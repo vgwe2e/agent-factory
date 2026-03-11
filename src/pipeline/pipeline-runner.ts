@@ -32,6 +32,8 @@ import { loadCheckpoint, saveCheckpoint, getCompletedNames } from "../infra/chec
 import type { Checkpoint } from "../infra/checkpoint.js";
 import { callWithResilience } from "../infra/retry-policy.js";
 import { autoCommitEvaluation } from "../infra/git-commit.js";
+import { writeFinalReports } from "../output/write-final-reports.js";
+import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
 
 // -- Types --
 
@@ -67,8 +69,8 @@ export interface PipelineResult {
 // -- Defaults --
 
 const DEFAULT_ARCHIVE_THRESHOLD = 25;
-const DEFAULT_TRIAGE_MODEL = "qwen2.5:7b";
-const DEFAULT_SCORING_MODEL = "qwen2.5:32b";
+const DEFAULT_TRIAGE_MODEL = "qwen3:8b";
+const DEFAULT_SCORING_MODEL = "qwen3:30b";
 const MODEL_TIMEOUT_MS = 120_000;
 
 // -- Public API --
@@ -94,6 +96,7 @@ export async function runPipeline(
   const parseFn = options.parseExportFn ?? parseExport;
 
   const errors: string[] = [];
+  const allScoredResults: ScoringResult[] = [];
   let scoredCount = 0;
   let promotedCount = 0;
 
@@ -219,6 +222,7 @@ export async function runPipeline(
     if (resilient.result.success) {
       const sr = resilient.result.data as unknown as ScoringResult;
       addResult(ctx, sr);
+      allScoredResults.push(sr);
       scoredCount++;
       if (sr.promotedToSimulation) promotedCount++;
       childLog.info(
@@ -259,6 +263,28 @@ export async function runPipeline(
     logger.info("Evaluation artifacts committed to git");
   } else if (gitResult.error) {
     logger.warn({ error: gitResult.error }, "Git auto-commit failed (non-fatal)");
+  }
+
+  // 10c. Write final reports (summary, dead-zones, meta-reflection)
+  const emptySimResult: SimulationPipelineResult = {
+    results: [],
+    totalSimulated: 0,
+    totalFailed: 0,
+    totalConfirmed: 0,
+    totalInferred: 0,
+  };
+  const companyName = data.company_context.company_name;
+  const reportResult = await writeFinalReports(
+    options.outputDir,
+    allScoredResults,
+    triageResults,
+    emptySimResult,
+    companyName,
+  );
+  if (reportResult.success) {
+    logger.info({ files: reportResult.files.length }, "Final reports written");
+  } else {
+    logger.warn({ error: reportResult.error }, "Final reports failed (non-fatal)");
   }
 
   // 11. Unload models
