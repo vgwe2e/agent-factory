@@ -35,13 +35,13 @@ describe("buildKnowledgeContext", () => {
   });
 
   it("components string contains known component names", () => {
-    assert.ok(ctx.components.includes("Table"), "Should contain Table");
-    assert.ok(ctx.components.includes("Dashboard"), "Should contain Dashboard");
-    assert.ok(ctx.components.includes("Chart"), "Should contain Chart");
+    assert.ok(ctx.components.includes("table"), "Should contain table");
+    assert.ok(ctx.components.includes("dashboard"), "Should contain dashboard");
+    assert.ok(ctx.components.includes("chart"), "Should contain chart");
   });
 
   it("processBuilder string contains known PB node names", () => {
     assert.ok(ctx.processBuilder.includes("Interface"), "Should contain Interface");
-    assert.ok(ctx.processBuilder.includes("If"), "Should contain If");
+    assert.ok(ctx.processBuilder.includes("IF"), "Should contain IF");
   });
 });
