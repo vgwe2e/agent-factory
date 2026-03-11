@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 06-03 (Mock test and integration surface generators)
-last_updated: "2026-03-11T12:23:20.484Z"
-last_activity: 2026-03-11 -- Completed 06-03 (Mock test and integration surface generators)
+stopped_at: Completed 06-02 (Decision flow and component map generators)
+last_updated: "2026-03-11T12:26:12.637Z"
+last_activity: 2026-03-11 -- Completed 06-02 (Decision flow and component map generators)
 progress:
   total_phases: 9
   completed_phases: 5
   total_plans: 25
-  completed_plans: 18
+  completed_plans: 19
   percent: 72
 ---
 
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 
 Phase: 6 of 9 (Simulation)
 Plan: 3 of 3 in current phase
-Status: Plan 06-03 complete, 06-02 still pending
-Last activity: 2026-03-11 -- Completed 06-03 (Mock test and integration surface generators)
+Status: All Phase 6 plans complete
+Last activity: 2026-03-11 -- Completed 06-02 (Decision flow and component map generators)
 
 Progress: [███████░░░] 72%
 
@@ -67,6 +67,7 @@ Progress: [███████░░░] 72%
 | Phase 05 P03 | 2min | 2 tasks | 2 files |
 | Phase 06 P01 | 4min | 2 tasks | 9 files |
 | Phase 06 P03 | 3min | 2 tasks | 6 files |
+| Phase 06 P02 | 6min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,9 @@ Recent decisions affecting current work:
 - [Phase 06]: Subgraph context tracking in Mermaid validator avoids false positives on subgraph end keywords
 - [Phase 06]: parseAndValidateYaml made async to support future retry/streaming patterns
 - [Phase 06]: Type assertion for IntegrationSurface due to Zod .default() making status optional in output type
+- [Phase 06]: Conversation repair context: failed LLM outputs appended as assistant messages with error feedback for retry
+- [Phase 06]: Knowledge confidence override: generator mutates ComponentMap entries in-place after Zod validation for KNOW-04 enforcement
+- [Phase 06]: Temperature 0.3 for both generators (per research recommendation for structured output)
 
 ### Pending Todos
 
@@ -125,6 +129,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T12:23:20.481Z
-Stopped at: Completed 06-03 (Mock test and integration surface generators)
+Last session: 2026-03-11T12:26:12.632Z
+Stopped at: Completed 06-02 (Decision flow and component map generators)
 Resume file: None

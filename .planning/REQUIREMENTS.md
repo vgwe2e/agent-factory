@@ -39,8 +39,8 @@
 
 ### Simulation
 
-- [ ] **SIMU-01**: Engine generates Mermaid decision flow diagrams for qualifying opportunities (composite >= 0.60)
-- [ ] **SIMU-02**: Engine produces YAML component maps linking opportunities to specific Aera components (Streams, Cortex, Process Builder, Agent Teams)
+- [x] **SIMU-01**: Engine generates Mermaid decision flow diagrams for qualifying opportunities (composite >= 0.60)
+- [x] **SIMU-02**: Engine produces YAML component maps linking opportunities to specific Aera components (Streams, Cortex, Process Builder, Agent Teams)
 - [x] **SIMU-03**: Engine creates mock decision tests with sample inputs/outputs using actual client financials from the export
 - [x] **SIMU-04**: Engine maps integration surfaces (source systems -> Aera -> process -> UI) for each simulated opportunity
 
@@ -123,8 +123,8 @@
 | TRIG-01 | Phase 3 | Complete |
 | TRIG-02 | Phase 3 | Complete |
 | TRIG-03 | Phase 3 | Complete |
-| SIMU-01 | Phase 6 | Pending |
-| SIMU-02 | Phase 6 | Pending |
+| SIMU-01 | Phase 6 | Complete |
+| SIMU-02 | Phase 6 | Complete |
 | SIMU-03 | Phase 6 | Complete |
 | SIMU-04 | Phase 6 | Complete |
 | KNOW-01 | Phase 2 | Complete |
