@@ -22,7 +22,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 8: Resilience & Recovery** - Error handling, crash recovery, checkpointing, git auto-commit (completed 2026-03-11)
 - [x] **Phase 9: Final Reports & Reflection** - Executive summary, dead zones, meta-reflection, simulation bundles (completed 2026-03-11)
 - [x] **Phase 10: Wire writeEvaluation into Pipeline** - Connect Phase 5 output formatters to pipeline-runner.ts (gap closure) (completed 2026-03-11)
-- [ ] **Phase 11: Wire Simulation Pipeline into Pipeline Runner** - Connect Phase 6 simulation pipeline to pipeline-runner.ts with adapter (gap closure)
+- [x] **Phase 11: Wire Simulation Pipeline into Pipeline Runner** - Connect Phase 6 simulation pipeline to pipeline-runner.ts with adapter (gap closure) (completed 2026-03-11)
 
 ## Phase Details
 
@@ -190,7 +190,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 10-01-PLAN.md -- Wire writeEvaluation into pipeline-runner with integration tests
+- [x] 10-01-PLAN.md -- Wire writeEvaluation into pipeline-runner with integration tests
 
 ### Phase 11: Wire Simulation Pipeline into Pipeline Runner
 **Goal**: Simulation pipeline runs during pipeline execution, producing real artifacts and passing real results to final reports
@@ -207,7 +207,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 10-01-PLAN.md -- Wire writeEvaluation into pipeline-runner with integration tests
+- [ ] 11-01-PLAN.md -- Scoring-to-simulation adapter and pipeline-runner wiring with integration tests
 
 ## Progress
 
@@ -226,4 +226,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9 > 10 > 11
 | 8. Resilience & Recovery | 3/3 | Complete | 2026-03-11 |
 | 9. Final Reports & Reflection | 3/3 | Complete | 2026-03-11 |
 | 10. Wire writeEvaluation | 1/1 | Complete    | 2026-03-11 |
-| 11. Wire Simulation Pipeline | 0/0 | Pending | -- |
+| 11. Wire Simulation Pipeline | 1/1 | Complete   | 2026-03-11 |

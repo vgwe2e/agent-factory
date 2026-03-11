@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 10-01-PLAN.md
-last_updated: "2026-03-11T15:04:35.304Z"
-last_activity: 2026-03-11 -- Completed 09-02 (Final reports orchestrator)
+stopped_at: Completed 11-01-PLAN.md
+last_updated: "2026-03-11T17:33:02Z"
+last_activity: 2026-03-11 -- Completed 11-01 (Wire simulation pipeline into pipeline runner)
 progress:
   total_phases: 11
-  completed_phases: 10
-  total_plans: 30
-  completed_plans: 30
+  completed_phases: 11
+  total_plans: 31
+  completed_plans: 31
   percent: 100
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** All 9 phases complete. 28/28 plans executed.
+**Current focus:** All 11 phases complete (31/31 plans). v1.0 milestone achieved.
 
 ## Current Position
 
-Phase: 9 of 9 (Final Reports & Reflection)
-Plan: 2 of 2 in current phase (all complete)
-Status: All phases complete
-Last activity: 2026-03-11 -- Completed 09-02 (Final reports orchestrator)
+Phase: 11 of 11 (Wire Simulation Pipeline into Pipeline Runner)
+Plan: 1 of 1 in current phase
+Status: v1.0 milestone complete
+Last activity: 2026-03-11 -- Completed 11-01 (Wire simulation pipeline into pipeline runner)
 
 Progress: [██████████] 100%
 
@@ -79,6 +79,7 @@ Progress: [██████████] 100%
 | Phase 09 P02 | 2min | 2 tasks | 2 files |
 | Phase 09 P03 | 2min | 1 tasks | 2 files |
 | Phase 10 P01 | 2min | 1 tasks | 2 files |
+| Phase 11 P01 | 5min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -145,6 +146,7 @@ Recent decisions affecting current work:
 - [Phase 09]: writeFinalReports complements writeEvaluation (does not replace it) -- Phase 7 calls both
 - [Phase 09]: allScoredResults accumulator independent of context tracker archiveAndReset for writeFinalReports wiring
 - [Phase 10]: writeEvaluation placed after archive flush and before git auto-commit; companyName declaration shared between writeEvaluation and writeFinalReports
+- [Phase 11]: runSimulationPipelineFn injectable via PipelineOptions for test isolation; simulation failure non-fatal with try-catch fallback; autoCommitEvaluation moved after simulation; toSimulationInputs is pure adapter
 
 ### Pending Todos
 
@@ -158,6 +160,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T15:02:22.771Z
-Stopped at: Completed 10-01-PLAN.md
+Last session: 2026-03-11T17:33:02Z
+Stopped at: Completed 11-01-PLAN.md -- v1.0 milestone complete
 Resume file: None

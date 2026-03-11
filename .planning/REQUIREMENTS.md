@@ -39,17 +39,17 @@
 
 ### Simulation
 
-- [ ] **SIMU-01**: Engine generates Mermaid decision flow diagrams for qualifying opportunities (composite >= 0.60)
-- [ ] **SIMU-02**: Engine produces YAML component maps linking opportunities to specific Aera components (Streams, Cortex, Process Builder, Agent Teams)
-- [ ] **SIMU-03**: Engine creates mock decision tests with sample inputs/outputs using actual client financials from the export
-- [ ] **SIMU-04**: Engine maps integration surfaces (source systems -> Aera -> process -> UI) for each simulated opportunity
+- [x] **SIMU-01**: Engine generates Mermaid decision flow diagrams for qualifying opportunities (composite >= 0.60)
+- [x] **SIMU-02**: Engine produces YAML component maps linking opportunities to specific Aera components (Streams, Cortex, Process Builder, Agent Teams)
+- [x] **SIMU-03**: Engine creates mock decision tests with sample inputs/outputs using actual client financials from the export
+- [x] **SIMU-04**: Engine maps integration surfaces (source systems -> Aera -> process -> UI) for each simulated opportunity
 
 ### Knowledge Base
 
 - [x] **KNOW-01**: Engine bundles Aera UI component reference (21 components, 208 properties) from ~/Documents/area
 - [x] **KNOW-02**: Engine bundles Process Builder node reference (22 nodes with procedures and patterns)
 - [x] **KNOW-03**: Engine bundles orchestration decision guide (Process vs Agent vs Hybrid framework)
-- [ ] **KNOW-04**: Every generated component map and spec references only real Aera components from the bundled knowledge base
+- [x] **KNOW-04**: Every generated component map and spec references only real Aera components from the bundled knowledge base
 
 ### Infrastructure
 
@@ -68,8 +68,8 @@
 - [x] **OUTP-02**: Engine produces evaluation/feasibility-scores.tsv with 9-dimension breakdown
 - [x] **OUTP-03**: Engine produces evaluation/adoption-risk.md with red flags and dead zones
 - [x] **OUTP-04**: Engine produces evaluation/tier1-report.md with deep analysis of top-tier opportunities
-- [ ] **OUTP-05**: Engine produces evaluation/simulations/<skill-name>/ with decision flows, component maps, mock tests
-- [ ] **OUTP-06**: Engine produces evaluation/summary.md with executive summary of top 10 opportunities
+- [x] **OUTP-05**: Engine produces evaluation/simulations/<skill-name>/ with decision flows, component maps, mock tests
+- [x] **OUTP-06**: Engine produces evaluation/summary.md with executive summary of top 10 opportunities
 - [x] **OUTP-07**: Engine produces evaluation/dead-zones.md with areas explicitly recommended against
 - [x] **OUTP-08**: Engine produces evaluation/meta-reflection.md with catalog-level pattern analysis
 
@@ -123,14 +123,14 @@
 | TRIG-01 | Phase 3 | Complete |
 | TRIG-02 | Phase 10 | Complete |
 | TRIG-03 | Phase 3 | Complete |
-| SIMU-01 | Phase 11 | Pending |
-| SIMU-02 | Phase 11 | Pending |
-| SIMU-03 | Phase 11 | Pending |
-| SIMU-04 | Phase 11 | Pending |
+| SIMU-01 | Phase 11 | Complete |
+| SIMU-02 | Phase 11 | Complete |
+| SIMU-03 | Phase 11 | Complete |
+| SIMU-04 | Phase 11 | Complete |
 | KNOW-01 | Phase 2 | Complete |
 | KNOW-02 | Phase 2 | Complete |
 | KNOW-03 | Phase 2 | Complete |
-| KNOW-04 | Phase 11 | Pending |
+| KNOW-04 | Phase 11 | Complete |
 | INFR-01 | Phase 8 | Complete |
 | INFR-02 | Phase 7 | Complete |
 | INFR-03 | Phase 8 | Complete |
@@ -143,8 +143,8 @@
 | OUTP-02 | Phase 10 | Complete |
 | OUTP-03 | Phase 10 | Complete |
 | OUTP-04 | Phase 10 | Complete |
-| OUTP-05 | Phase 11 | Pending |
-| OUTP-06 | Phase 11 | Pending |
+| OUTP-05 | Phase 11 | Complete |
+| OUTP-06 | Phase 11 | Complete |
 | OUTP-07 | Phase 9 | Complete |
 | OUTP-08 | Phase 9 | Complete |
 
