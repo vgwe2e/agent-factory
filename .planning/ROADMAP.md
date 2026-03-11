@@ -66,14 +66,12 @@ Plans:
   3. Engine demotes no-stakes opportunities and flags confidence gaps and orphan/thin opportunities
   4. Engine outputs triage results as a TSV sorted by tier
   5. Engine processes Tier 1 first, then Tier 2, then Tier 3 in all downstream work
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
-- [ ] 03-03: TBD
-- [ ] 03-04: TBD
-- [ ] 03-05: TBD
+- [ ] 03-01-PLAN.md -- Define triage types and implement red flag detection (FLAG-01 through FLAG-05)
+- [ ] 03-02-PLAN.md -- Tier engine and triage pipeline with sorting (TRIG-01, TRIG-03)
+- [ ] 03-03-PLAN.md -- TSV output formatting (TRIG-02)
 
 ### Phase 4: Scoring Engine
 **Goal**: Engine produces calibrated, three-lens scores for every non-disqualified opportunity with adoption realism weighted highest
@@ -195,7 +193,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 |-------|----------------|--------|-----------|
 | 1. Project Foundation | 0/3 | Complete    | 2026-03-11 |
 | 2. Knowledge Base | 3/3 | Complete   | 2026-03-11 |
-| 3. Triage & Red Flags | 0/5 | Not started | - |
+| 3. Triage & Red Flags | 0/3 | Not started | - |
 | 4. Scoring Engine | 0/6 | Not started | - |
 | 5. Scoring Output | 0/5 | Not started | - |
 | 6. Simulation | 0/5 | Not started | - |
