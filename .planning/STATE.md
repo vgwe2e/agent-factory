@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 08-02 (Checkpoint persistence and git auto-commit)
-last_updated: "2026-03-11T13:11:57.000Z"
-last_activity: 2026-03-11 -- Completed 08-02 (Checkpoint persistence and git auto-commit)
+stopped_at: Completed 08-03 (Gap closure: resilience module wiring)
+last_updated: "2026-03-11T13:30:12.000Z"
+last_activity: 2026-03-11 -- Completed 08-03 (Gap closure: resilience module wiring)
 progress:
   total_phases: 9
   completed_phases: 8
-  total_plans: 27
-  completed_plans: 26
+  total_plans: 28
+  completed_plans: 27
   percent: 96
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 8: Resilience & Recovery -- Complete. Phase 9 next.
+**Current focus:** Phase 8: Resilience & Recovery -- Complete (gap closure done). Phase 9 next.
 
 ## Current Position
 
 Phase: 8 of 9 (Resilience & Recovery)
-Plan: 2 of 2 in current phase (01, 02 complete)
-Status: Phase 8 complete
-Last activity: 2026-03-11 -- Completed 08-02 (Checkpoint persistence and git auto-commit)
+Plan: 3 of 3 in current phase (01, 02, 03 complete)
+Status: Phase 8 complete (gap closure done)
+Last activity: 2026-03-11 -- Completed 08-03 (Gap closure: resilience module wiring)
 
-Progress: [█████████░] 96%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -74,6 +74,7 @@ Progress: [█████████░] 96%
 | Phase 07 P03 | 6min | 2 tasks | 3 files |
 | Phase 08 P01 | 3min | 1 tasks | 2 files |
 | Phase 08 P02 | 2min | 2 tasks | 4 files |
+| Phase 08 P03 | 3min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -134,6 +135,8 @@ Recent decisions affecting current work:
 - [Phase 08]: scoreWithRetry reused as-is for both primary and fallback tiers (no wrapper duplication)
 - [Phase 08]: Zod safeParse for checkpoint validation with null fallback on any failure
 - [Phase 08]: Git commit failures are non-fatal, returning error string instead of throwing
+- [Phase 08]: z.any() passthrough schema for callWithResilience wrapping when inner function already validates via Zod
+- [Phase 08]: Stale checkpoint detection by comparing checkpoint.inputFile to current inputPath; completed set emptied on mismatch
 
 ### Pending Todos
 
@@ -147,6 +150,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T13:11:57Z
-Stopped at: Completed 08-02 (Checkpoint persistence and git auto-commit)
+Last session: 2026-03-11T13:30:12Z
+Stopped at: Completed 08-03 (Gap closure: resilience module wiring)
 Resume file: None

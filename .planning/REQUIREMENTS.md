@@ -133,12 +133,12 @@
 | KNOW-04 | Phase 6 | Complete |
 | INFR-01 | Phase 8 | Complete |
 | INFR-02 | Phase 7 | Complete |
-| INFR-03 | Phase 8 | Pending |
+| INFR-03 | Phase 8 | Complete |
 | INFR-04 | Phase 7 | Complete |
 | INFR-05 | Phase 7 | Complete |
 | INFR-06 | Phase 1 | Complete |
 | INFR-07 | Phase 7 | Complete |
-| INFR-08 | Phase 8 | Pending |
+| INFR-08 | Phase 8 | Complete |
 | OUTP-01 | Phase 5 | Complete |
 | OUTP-02 | Phase 5 | Complete |
 | OUTP-03 | Phase 5 | Complete |
