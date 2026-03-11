@@ -2,8 +2,8 @@
 phase: 5
 slug: scoring-output
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-10
 ---
 
@@ -36,13 +36,17 @@ created: 2026-03-10
 
 ## Per-Task Verification Map
 
-| Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
-|---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 05-01-01 | 01 | 0 | SCOR-07, OUTP-02 | unit | `npx tsx --test src/output/format-scores-tsv.test.ts` | ❌ W0 | ⬜ pending |
-| 05-01-02 | 01 | 0 | OUTP-01 | unit | `npx tsx --test src/output/format-triage-tsv.test.ts` | ❌ W0 | ⬜ pending |
-| 05-01-03 | 01 | 0 | OUTP-03 | unit | `npx tsx --test src/output/format-adoption-risk.test.ts` | ❌ W0 | ⬜ pending |
-| 05-01-04 | 01 | 0 | SCOR-08, OUTP-04 | unit | `npx tsx --test src/output/format-tier1-report.test.ts` | ❌ W0 | ⬜ pending |
-| 05-01-05 | 01 | 0 | All | integration | `npx tsx --test src/output/write-evaluation.test.ts` | ❌ W0 | ⬜ pending |
+All plans in this phase use `type: tdd`. TDD tasks create tests as the RED step before implementation (GREEN step), so tests are created inline at each task's wave -- no separate Wave 0 stub plan is needed.
+
+| Task ID | Plan | Wave | Requirement | Test Type | Automated Command | Status |
+|---------|------|------|-------------|-----------|-------------------|--------|
+| 05-01-01 | 01 | 1 | (types+utils) | unit | `npx tsx --test src/output/tsv-utils.test.ts` | ⬜ pending |
+| 05-01-02 | 01 | 1 | OUTP-01 | unit | `npx tsx --test src/output/format-triage-tsv.test.ts` | ⬜ pending |
+| 05-01-03 | 01 | 1 | SCOR-07, OUTP-02 | unit | `npx tsx --test src/output/format-scores-tsv.test.ts` | ⬜ pending |
+| 05-02-01 | 02 | 2 | OUTP-03 | unit | `npx tsx --test src/output/format-adoption-risk.test.ts` | ⬜ pending |
+| 05-02-02 | 02 | 2 | SCOR-08, OUTP-04 | unit | `npx tsx --test src/output/format-tier1-report.test.ts` | ⬜ pending |
+| 05-03-01 | 03 | 3 | All | integration | `npx tsx --test src/output/write-evaluation.test.ts` | ⬜ pending |
+| 05-03-02 | 03 | 3 | All | suite | `npx tsx --test src/output/*.test.ts && npx tsx --test src/**/*.test.ts` | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -50,13 +54,7 @@ created: 2026-03-10
 
 ## Wave 0 Requirements
 
-- [ ] `src/output/format-triage-tsv.test.ts` — stubs for OUTP-01
-- [ ] `src/output/format-scores-tsv.test.ts` — stubs for SCOR-07, OUTP-02
-- [ ] `src/output/format-adoption-risk.test.ts` — stubs for OUTP-03
-- [ ] `src/output/format-tier1-report.test.ts` — stubs for SCOR-08, OUTP-04
-- [ ] `src/output/write-evaluation.test.ts` — integration stubs for full write orchestration
-- [ ] `src/types/scoring.ts` — shared type contract (prerequisite, not test)
-- [ ] `src/types/triage.ts` — shared type contract (prerequisite, not test)
+Not applicable. All plans use TDD (`type: tdd`), which creates tests in the RED step before writing implementation. Type contracts (src/types/scoring.ts, src/types/triage.ts) are created in Plan 01 Task 1 as a prerequisite within Wave 1.
 
 ---
 
@@ -68,11 +66,11 @@ created: 2026-03-10
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 5s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify commands
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 not needed -- TDD plans create tests inline
+- [x] No watch-mode flags
+- [x] Feedback latency < 5s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved
