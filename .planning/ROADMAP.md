@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Triage & Red Flags** - Tier binning with 8B model and automatic disqualification filters (completed 2026-03-11)
 - [x] **Phase 4: Scoring Engine** - Three-lens scoring with weighted composite and threshold gate (completed 2026-03-11)
 - [x] **Phase 5: Scoring Output** - TSV and markdown reports for scores, triage, and analysis (completed 2026-03-11)
-- [ ] **Phase 6: Simulation** - Decision flows, component maps, mock tests, integration surfaces
+- [x] **Phase 6: Simulation** - Decision flows, component maps, mock tests, integration surfaces (completed 2026-03-11)
 - [ ] **Phase 7: Pipeline Orchestration** - Two-model strategy, logging, unattended mode, context management
 - [ ] **Phase 8: Resilience & Recovery** - Error handling, crash recovery, checkpointing, git auto-commit
 - [ ] **Phase 9: Final Reports & Reflection** - Executive summary, dead zones, meta-reflection, simulation bundles
@@ -186,7 +186,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | 3. Triage & Red Flags | 3/3 | Complete | 2026-03-11 |
 | 4. Scoring Engine | 4/4 | Complete | 2026-03-11 |
 | 5. Scoring Output | 3/3 | Complete   | 2026-03-11 |
-| 6. Simulation | 2/4 | In Progress|  |
+| 6. Simulation | 4/4 | Complete   | 2026-03-11 |
 | 7. Pipeline Orchestration | 0/3 | Planned | - |
 | 8. Resilience & Recovery | 0/2 | Planned | - |
 | 9. Final Reports & Reflection | 0/5 | Not started | - |

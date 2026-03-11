@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 06-02 (Decision flow and component map generators)
+stopped_at: Completed 06-04 (Simulation pipeline orchestrator)
 last_updated: "2026-03-11T12:26:12.637Z"
-last_activity: 2026-03-11 -- Completed 06-02 (Decision flow and component map generators)
+last_activity: 2026-03-11 -- Completed 06-04 (Simulation pipeline orchestrator)
 progress:
   total_phases: 9
   completed_phases: 5
   total_plans: 25
-  completed_plans: 19
-  percent: 72
+  completed_plans: 20
+  percent: 76
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 6: Simulation -- Plan 03 complete, ready for Plan 02 (wave 2 dependency).
+**Current focus:** Phase 6: Simulation -- All plans complete (01-04), ready for Phase 7.
 
 ## Current Position
 
 Phase: 6 of 9 (Simulation)
-Plan: 3 of 3 in current phase
+Plan: 4 of 4 in current phase
 Status: All Phase 6 plans complete
-Last activity: 2026-03-11 -- Completed 06-02 (Decision flow and component map generators)
+Last activity: 2026-03-11 -- Completed 06-04 (Simulation pipeline orchestrator)
 
-Progress: [███████░░░] 72%
+Progress: [████████░░] 76%
 
 ## Performance Metrics
 
@@ -68,6 +68,7 @@ Progress: [███████░░░] 72%
 | Phase 06 P01 | 4min | 2 tasks | 9 files |
 | Phase 06 P03 | 3min | 2 tasks | 6 files |
 | Phase 06 P02 | 6min | 2 tasks | 6 files |
+| Phase 06 P04 | 3min | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -116,6 +117,7 @@ Recent decisions affecting current work:
 - [Phase 06]: Conversation repair context: failed LLM outputs appended as assistant messages with error feedback for retry
 - [Phase 06]: Knowledge confidence override: generator mutates ComponentMap entries in-place after Zod validation for KNOW-04 enforcement
 - [Phase 06]: Temperature 0.3 for both generators (per research recommendation for structured output)
+- [Phase 06]: Dependency injection via PipelineDeps interface for simulation pipeline testing instead of module-level mocking
 
 ### Pending Todos
 
@@ -129,6 +131,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T12:26:12.632Z
-Stopped at: Completed 06-02 (Decision flow and component map generators)
+Last session: 2026-03-11T12:30:08Z
+Stopped at: Completed 06-04 (Simulation pipeline orchestrator)
 Resume file: None
