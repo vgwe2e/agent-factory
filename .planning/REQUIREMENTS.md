@@ -8,7 +8,7 @@
 ### Ingestion
 
 - [ ] **INGST-01**: User can run full pipeline with a single CLI command (`aera-evaluate --input export.json`)
-- [ ] **INGST-02**: Engine validates hierarchy JSON against Zod schema and rejects malformed exports with clear error messages
+- [x] **INGST-02**: Engine validates hierarchy JSON against Zod schema and rejects malformed exports with clear error messages
 - [ ] **INGST-03**: Engine parses company context (industry, revenue, COGS, employee count, ERP stack) from export metadata
 - [ ] **INGST-04**: Engine reads all L3 opportunities and constituent L4 activities from hierarchy export
 
@@ -104,7 +104,7 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | INGST-01 | Phase 1 | Pending |
-| INGST-02 | Phase 1 | Pending |
+| INGST-02 | Phase 1 | Complete |
 | INGST-03 | Phase 1 | Pending |
 | INGST-04 | Phase 1 | Pending |
 | SCOR-01 | Phase 4 | Pending |
