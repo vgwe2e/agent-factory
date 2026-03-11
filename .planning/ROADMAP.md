@@ -37,9 +37,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Scaffold TypeScript project, define Zod schemas for hierarchy validation
-- [ ] 01-02-PLAN.md -- CLI entry point with --input flag, ingestion pipeline, company context display
-- [ ] 01-03-PLAN.md -- Ollama connectivity check and model availability verification
+- [x] 01-01-PLAN.md -- Scaffold TypeScript project, define Zod schemas for hierarchy validation
+- [x] 01-02-PLAN.md -- CLI entry point with --input flag, ingestion pipeline, company context display
+- [x] 01-03-PLAN.md -- Ollama connectivity check and model availability verification
 
 ### Phase 2: Knowledge Base
 **Goal**: Engine has self-contained Aera reference data that downstream scoring and simulation can query
@@ -52,9 +52,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Bundle 21 UI component JSONs with typed query layer for component lookups
-- [ ] 02-02-PLAN.md -- Bundle Process Builder node reference with typed query layer for node and pattern lookups
-- [ ] 02-03-PLAN.md -- Bundle orchestration decision guide with typed query layer for routing decisions
+- [x] 02-01-PLAN.md -- Bundle 21 UI component JSONs with typed query layer for component lookups
+- [x] 02-02-PLAN.md -- Bundle Process Builder node reference with typed query layer for node and pattern lookups
+- [x] 02-03-PLAN.md -- Bundle orchestration decision guide with typed query layer for routing decisions
 
 ### Phase 3: Triage & Red Flags
 **Goal**: Engine rapidly bins all opportunities into priority tiers and automatically disqualifies or demotes bad candidates before expensive scoring
@@ -69,9 +69,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Define triage types and implement red flag detection (FLAG-01 through FLAG-05)
-- [ ] 03-02-PLAN.md -- Tier engine and triage pipeline with sorting (TRIG-01, TRIG-03)
-- [ ] 03-03-PLAN.md -- TSV output formatting (TRIG-02)
+- [x] 03-01-PLAN.md -- Define triage types and implement red flag detection (FLAG-01 through FLAG-05)
+- [x] 03-02-PLAN.md -- Tier engine and triage pipeline with sorting (TRIG-01, TRIG-03)
+- [x] 03-03-PLAN.md -- TSV output formatting (TRIG-02)
 
 ### Phase 4: Scoring Engine
 **Goal**: Engine produces calibrated, three-lens scores for every non-disqualified opportunity with adoption realism weighted highest
@@ -86,10 +86,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- Scoring types, Zod schemas, composite math, confidence computation, archetype router
-- [ ] 04-02-PLAN.md -- Ollama scoring client, lens prompt templates, schema validation tests
-- [ ] 04-03-PLAN.md -- Lens scorer functions, scoring pipeline orchestrator
-- [ ] 04-04-PLAN.md -- Gap closure: knowledge context builder and CLI wiring for triage + scoring pipeline
+- [x] 04-01-PLAN.md -- Scoring types, Zod schemas, composite math, confidence computation, archetype router
+- [x] 04-02-PLAN.md -- Ollama scoring client, lens prompt templates, schema validation tests
+- [x] 04-03-PLAN.md -- Lens scorer functions, scoring pipeline orchestrator
+- [x] 04-04-PLAN.md -- Gap closure: knowledge context builder and CLI wiring for triage + scoring pipeline
 
 ### Phase 5: Scoring Output
 **Goal**: User can review complete scoring and triage results as structured TSV files and readable markdown reports
@@ -104,9 +104,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 05-01-PLAN.md -- Define scoring/triage type contracts and implement TSV formatters (triage.tsv + feasibility-scores.tsv)
-- [ ] 05-02-PLAN.md -- Implement markdown report formatters (adoption-risk.md + tier1-report.md)
-- [ ] 05-03-PLAN.md -- Wire formatters into writeEvaluation orchestrator and run full test suite
+- [x] 05-01-PLAN.md -- Define scoring/triage type contracts and implement TSV formatters (triage.tsv + feasibility-scores.tsv)
+- [x] 05-02-PLAN.md -- Implement markdown report formatters (adoption-risk.md + tier1-report.md)
+- [x] 05-03-PLAN.md -- Wire formatters into writeEvaluation orchestrator and run full test suite
 
 ### Phase 6: Simulation
 **Goal**: Qualifying opportunities get concrete implementation artifacts -- decision flows, component maps, mock tests, and integration surfaces -- all grounded in real Aera components
@@ -121,10 +121,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 06-01-PLAN.md -- Simulation types, Zod schemas, validators (Mermaid structural + KNOW-04 knowledge base)
-- [ ] 06-02-PLAN.md -- Decision flow and component map generators with LLM prompts and retry
-- [ ] 06-03-PLAN.md -- Mock test and integration surface generators with LLM prompts and retry
-- [ ] 06-04-PLAN.md -- Simulation pipeline orchestrator wiring all generators with file output
+- [x] 06-01-PLAN.md -- Simulation types, Zod schemas, validators (Mermaid structural + KNOW-04 knowledge base)
+- [x] 06-02-PLAN.md -- Decision flow and component map generators with LLM prompts and retry
+- [x] 06-03-PLAN.md -- Mock test and integration surface generators with LLM prompts and retry
+- [x] 06-04-PLAN.md -- Simulation pipeline orchestrator wiring all generators with file output
 
 ### Phase 7: Pipeline Orchestration
 **Goal**: The full pipeline runs end-to-end with proper model switching, structured logging, and context management across hundreds of evaluations
@@ -184,6 +184,6 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | 4. Scoring Engine | 4/4 | Complete | 2026-03-11 |
 | 5. Scoring Output | 3/3 | Complete   | 2026-03-11 |
 | 6. Simulation | 4/4 | Complete   | 2026-03-11 |
-| 7. Pipeline Orchestration | 0/3 | Planned | - |
+| 7. Pipeline Orchestration | 1/3 | In Progress|  |
 | 8. Resilience & Recovery | 0/2 | Planned | - |
-| 9. Final Reports & Reflection | 0/2 | Not started | - |
+| 9. Final Reports & Reflection | 0/2 | Planned | - |
