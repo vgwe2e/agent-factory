@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 07-02 (Context tracker)
-last_updated: "2026-03-11T12:53:00Z"
-last_activity: 2026-03-11 -- Completed 07-02 (Context tracker)
+stopped_at: Completed 07-01 (Infrastructure foundation)
+last_updated: "2026-03-11T12:55:00Z"
+last_activity: 2026-03-11 -- Completed 07-01 (Infrastructure foundation)
 progress:
   total_phases: 9
   completed_phases: 6
   total_plans: 27
-  completed_plans: 21
-  percent: 76
+  completed_plans: 22
+  percent: 81
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 7: Pipeline Orchestration -- Plan 02 complete, continuing with remaining plans.
+**Current focus:** Phase 7: Pipeline Orchestration -- Plans 01-02 complete, continuing with remaining plans.
 
 ## Current Position
 
 Phase: 7 of 9 (Pipeline Orchestration)
-Plan: 2 of 4 in current phase
+Plan: 2 of 4 in current phase (01, 02 complete)
 Status: In progress
-Last activity: 2026-03-11 -- Completed 07-02 (Context tracker)
+Last activity: 2026-03-11 -- Completed 07-01 (Infrastructure foundation)
 
-Progress: [████████░░] 78%
+Progress: [████████░░] 81%
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Progress: [████████░░] 78%
 | Phase 06 P02 | 6min | 2 tasks | 6 files |
 | Phase 06 P04 | 3min | 1 tasks | 2 files |
 | Phase 07 P02 | 2min | 1 tasks | 2 files |
+| Phase 07 P01 | 4min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -121,6 +122,10 @@ Recent decisions affecting current work:
 - [Phase 06]: Dependency injection via PipelineDeps interface for simulation pipeline testing instead of module-level mocking
 - [Phase 07]: Map-based results with Set-based processed tracking for O(1) lookup in context tracker
 - [Phase 07]: archiveAndReset is only impure function in context tracker; all others are pure context mutations
+- [Phase 07]: Pino v10 ships own types; @types/pino not needed
+- [Phase 07]: ModelManager accepts fetchFn and switchDelayMs via constructor for testability
+- [Phase 07]: 3-second delay between unload/load configurable (0 in tests) for Apple Silicon memory reclaim
+- [Phase 07]: Logger type re-exported from pino for downstream consumer convenience
 
 ### Pending Todos
 
@@ -134,6 +139,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T12:53:00Z
-Stopped at: Completed 07-02 (Context tracker)
+Last session: 2026-03-11T12:55:00Z
+Stopped at: Completed 07-01 (Infrastructure foundation)
 Resume file: None

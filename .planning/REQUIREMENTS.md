@@ -54,9 +54,9 @@
 ### Infrastructure
 
 - [ ] **INFR-01**: Engine recovers gracefully from individual LLM call failures (retry, fallback prompt, skip-and-log)
-- [ ] **INFR-02**: Engine logs progress with pino structured logging (pipeline stage + opportunity ID)
+- [x] **INFR-02**: Engine logs progress with pino structured logging (pipeline stage + opportunity ID)
 - [ ] **INFR-03**: Engine auto-commits evaluation artifacts to git after each evaluation cycle
-- [ ] **INFR-04**: Engine uses two-model strategy (8B for bulk triage, 32B for reasoning/scoring/simulation)
+- [x] **INFR-04**: Engine uses two-model strategy (8B for bulk triage, 32B for reasoning/scoring/simulation)
 - [x] **INFR-05**: Engine manages context across evaluations (summarize, archive, reset between iterations)
 - [x] **INFR-06**: Engine runs fully locally via Ollama with zero cloud API dependency
 - [ ] **INFR-07**: Engine runs unattended overnight without user interaction
@@ -132,9 +132,9 @@
 | KNOW-03 | Phase 2 | Complete |
 | KNOW-04 | Phase 6 | Complete |
 | INFR-01 | Phase 8 | Pending |
-| INFR-02 | Phase 7 | Pending |
+| INFR-02 | Phase 7 | Complete |
 | INFR-03 | Phase 8 | Pending |
-| INFR-04 | Phase 7 | Pending |
+| INFR-04 | Phase 7 | Complete |
 | INFR-05 | Phase 7 | Complete |
 | INFR-06 | Phase 1 | Complete |
 | INFR-07 | Phase 7 | Pending |
