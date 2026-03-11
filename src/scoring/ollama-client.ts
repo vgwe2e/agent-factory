@@ -10,6 +10,7 @@
  */
 
 import type { ZodSchema } from "zod";
+import type { Logger } from "../infra/logger.js";
 
 // -- Constants --
 
@@ -41,18 +42,20 @@ export type ValidatedResult<T> =
  *
  * @param messages - Array of system/user message pairs
  * @param format - JSON schema object for Ollama's format parameter
+ * @param model - Model name to use (default: SCORING_MODEL). Backward compatible.
  * @returns Result with response content and duration, or error string
  */
 export async function ollamaChat(
   messages: Array<{ role: string; content: string }>,
   format: Record<string, unknown>,
+  model: string = SCORING_MODEL,
 ): Promise<ChatResult> {
   try {
     const response = await fetch(OLLAMA_CHAT_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: SCORING_MODEL,
+        model,
         messages,
         stream: false,
         format,
@@ -87,12 +90,14 @@ export async function ollamaChat(
  * @param schema - Zod schema to validate parsed JSON
  * @param callFn - Async function that returns raw JSON string from LLM
  * @param maxRetries - Maximum number of attempts (default 3)
+ * @param logger - Optional pino logger. Falls back to console.error if not provided.
  * @returns Validated data or error string
  */
 export async function scoreWithRetry<T>(
   schema: ZodSchema<T>,
   callFn: () => Promise<string>,
   maxRetries: number = 3,
+  logger?: Logger,
 ): Promise<ValidatedResult<T>> {
   const errors: string[] = [];
 
@@ -105,7 +110,11 @@ export async function scoreWithRetry<T>(
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       errors.push(`Attempt ${attempt + 1}: ${message}`);
-      console.error(`[scoreWithRetry] Attempt ${attempt + 1}/${maxRetries} failed: ${message}`);
+      if (logger) {
+        logger.error(`[scoreWithRetry] Attempt ${attempt + 1}/${maxRetries} failed: ${message}`);
+      } else {
+        console.error(`[scoreWithRetry] Attempt ${attempt + 1}/${maxRetries} failed: ${message}`);
+      }
 
       if (attempt < maxRetries - 1) {
         const delayMs = 1000 * Math.pow(2, attempt);
