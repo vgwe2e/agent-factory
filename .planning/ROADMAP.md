@@ -18,9 +18,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Scoring Engine** - Three-lens scoring with weighted composite and threshold gate (completed 2026-03-11)
 - [x] **Phase 5: Scoring Output** - TSV and markdown reports for scores, triage, and analysis (completed 2026-03-11)
 - [x] **Phase 6: Simulation** - Decision flows, component maps, mock tests, integration surfaces (completed 2026-03-11)
-- [ ] **Phase 7: Pipeline Orchestration** - Two-model strategy, logging, unattended mode, context management
+- [x] **Phase 7: Pipeline Orchestration** - Two-model strategy, logging, unattended mode, context management (completed 2026-03-11)
 - [x] **Phase 8: Resilience & Recovery** - Error handling, crash recovery, checkpointing, git auto-commit (completed 2026-03-11)
-- [ ] **Phase 9: Final Reports & Reflection** - Executive summary, dead zones, meta-reflection, simulation bundles
+- [x] **Phase 9: Final Reports & Reflection** - Executive summary, dead zones, meta-reflection, simulation bundles (completed 2026-03-11)
 
 ## Phase Details
 
@@ -138,9 +138,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 07-01-PLAN.md -- pino logger factory, ModelManager for Ollama model lifecycle, ollamaChat model parameter refactor
-- [ ] 07-02-PLAN.md -- Context tracker with archive-to-disk and memory reset
-- [ ] 07-03-PLAN.md -- Pipeline runner orchestrator and CLI wiring with --log-level and --output-dir flags
+- [x] 07-01-PLAN.md -- pino logger factory, ModelManager for Ollama model lifecycle, ollamaChat model parameter refactor
+- [x] 07-02-PLAN.md -- Context tracker with archive-to-disk and memory reset
+- [x] 07-03-PLAN.md -- Pipeline runner orchestrator and CLI wiring with --log-level and --output-dir flags
 
 ### Phase 8: Resilience & Recovery
 **Goal**: Engine can survive failures during long overnight runs -- retrying, recovering, and resuming without losing completed work
@@ -155,7 +155,7 @@ Plans:
 Plans:
 - [x] 08-01-PLAN.md -- Three-tier resilient LLM call wrapper (retry, fallback prompt, skip-and-log)
 - [x] 08-02-PLAN.md -- Checkpoint persistence for crash recovery and git auto-commit for evaluation artifacts
-- [ ] 08-03-PLAN.md -- Gap closure: wire resilience modules into pipeline-runner.ts (checkpoint resume, callWithResilience, git auto-commit)
+- [x] 08-03-PLAN.md -- Gap closure: wire resilience modules into pipeline-runner.ts (checkpoint resume, callWithResilience, git auto-commit)
 
 ### Phase 9: Final Reports & Reflection
 **Goal**: User gets a complete evaluation bundle with executive summary, dead zone warnings, catalog-level insights, and organized simulation output
@@ -171,7 +171,7 @@ Plans:
 Plans:
 - [x] 09-01-PLAN.md -- Three pure formatters: executive summary, dead zones report, meta-reflection with catalog statistics
 - [x] 09-02-PLAN.md -- writeFinalReports orchestrator wiring formatters + simulation directory structure
-- [ ] 09-03-PLAN.md -- Gap closure: wire writeFinalReports into pipeline-runner.ts execution path
+- [x] 09-03-PLAN.md -- Gap closure: wire writeFinalReports into pipeline-runner.ts execution path
 
 ## Progress
 
@@ -180,12 +180,12 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Foundation | 0/3 | Complete    | 2026-03-11 |
+| 1. Project Foundation | 3/3 | Complete | 2026-03-11 |
 | 2. Knowledge Base | 3/3 | Complete   | 2026-03-11 |
 | 3. Triage & Red Flags | 3/3 | Complete | 2026-03-11 |
 | 4. Scoring Engine | 4/4 | Complete | 2026-03-11 |
 | 5. Scoring Output | 3/3 | Complete   | 2026-03-11 |
 | 6. Simulation | 4/4 | Complete   | 2026-03-11 |
-| 7. Pipeline Orchestration | 2/3 | In Progress|  |
-| 8. Resilience & Recovery | 3/3 | Complete   | 2026-03-11 |
-| 9. Final Reports & Reflection | 2/3 | In Progress | - |
+| 7. Pipeline Orchestration | 3/3 | Complete | 2026-03-11 |
+| 8. Resilience & Recovery | 3/3 | Complete | 2026-03-11 |
+| 9. Final Reports & Reflection | 3/3 | Complete | 2026-03-11 |
