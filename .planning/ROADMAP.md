@@ -150,14 +150,11 @@ Plans:
   1. Engine recovers from individual LLM call failures via retry, fallback prompt, or skip-and-log without crashing the pipeline
   2. Engine auto-commits evaluation artifacts to git after each evaluation cycle
   3. Engine checkpoints progress so a crashed run can resume from the last completed evaluation without re-processing
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: TBD
-- [ ] 08-02: TBD
-- [ ] 08-03: TBD
-- [ ] 08-04: TBD
-- [ ] 08-05: TBD
+- [ ] 08-01-PLAN.md -- Three-tier resilient LLM call wrapper (retry, fallback prompt, skip-and-log)
+- [ ] 08-02-PLAN.md -- Checkpoint persistence for crash recovery and git auto-commit for evaluation artifacts
 
 ### Phase 9: Final Reports & Reflection
 **Goal**: User gets a complete evaluation bundle with executive summary, dead zone warnings, catalog-level insights, and organized simulation output
@@ -188,8 +185,8 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | 2. Knowledge Base | 3/3 | Complete   | 2026-03-11 |
 | 3. Triage & Red Flags | 3/3 | Complete | 2026-03-11 |
 | 4. Scoring Engine | 4/4 | Complete | 2026-03-11 |
-| 5. Scoring Output | 1/3 | In Progress|  |
+| 5. Scoring Output | 2/3 | In Progress|  |
 | 6. Simulation | 0/4 | Not started | - |
 | 7. Pipeline Orchestration | 0/3 | Planned | - |
-| 8. Resilience & Recovery | 0/5 | Not started | - |
+| 8. Resilience & Recovery | 0/2 | Planned | - |
 | 9. Final Reports & Reflection | 0/5 | Not started | - |
