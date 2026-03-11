@@ -20,7 +20,7 @@
 - [x] **SCOR-04**: Engine computes weighted composite score (Technical 0.30, Adoption 0.45, Value 0.25) -- 0.0 to 1.0 range
 - [x] **SCOR-05**: Engine applies ratcheting threshold -- only promotes opportunities with composite >= 0.60 to simulation
 - [x] **SCOR-06**: Engine classifies each opportunity by archetype (DETERMINISTIC, AGENTIC, GENERATIVE) and routes to appropriate evaluation patterns
-- [ ] **SCOR-07**: Engine outputs scored opportunities as TSV with all dimension breakdowns
+- [x] **SCOR-07**: Engine outputs scored opportunities as TSV with all dimension breakdowns
 - [ ] **SCOR-08**: Engine outputs scored opportunities as markdown report with analysis
 
 ### Red Flags
@@ -64,8 +64,8 @@
 
 ### Output
 
-- [ ] **OUTP-01**: Engine produces evaluation/triage.tsv with all opportunities tier-sorted
-- [ ] **OUTP-02**: Engine produces evaluation/feasibility-scores.tsv with 9-dimension breakdown
+- [x] **OUTP-01**: Engine produces evaluation/triage.tsv with all opportunities tier-sorted
+- [x] **OUTP-02**: Engine produces evaluation/feasibility-scores.tsv with 9-dimension breakdown
 - [ ] **OUTP-03**: Engine produces evaluation/adoption-risk.md with red flags and dead zones
 - [ ] **OUTP-04**: Engine produces evaluation/tier1-report.md with deep analysis of top-tier opportunities
 - [ ] **OUTP-05**: Engine produces evaluation/simulations/<skill-name>/ with decision flows, component maps, mock tests
@@ -113,7 +113,7 @@
 | SCOR-04 | Phase 4 | Complete |
 | SCOR-05 | Phase 4 | Complete |
 | SCOR-06 | Phase 4 | Complete |
-| SCOR-07 | Phase 5 | Pending |
+| SCOR-07 | Phase 5 | Complete |
 | SCOR-08 | Phase 5 | Pending |
 | FLAG-01 | Phase 3 | Complete |
 | FLAG-02 | Phase 3 | Complete |
@@ -139,8 +139,8 @@
 | INFR-06 | Phase 1 | Complete |
 | INFR-07 | Phase 7 | Pending |
 | INFR-08 | Phase 8 | Pending |
-| OUTP-01 | Phase 5 | Pending |
-| OUTP-02 | Phase 5 | Pending |
+| OUTP-01 | Phase 5 | Complete |
+| OUTP-02 | Phase 5 | Complete |
 | OUTP-03 | Phase 5 | Pending |
 | OUTP-04 | Phase 5 | Pending |
 | OUTP-05 | Phase 9 | Pending |

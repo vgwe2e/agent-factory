@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 04-04 (CLI pipeline wiring)
-last_updated: "2026-03-11T09:10:53.396Z"
-last_activity: 2026-03-11 -- Completed 04-04 (CLI pipeline wiring)
+stopped_at: Completed 05-01 (TSV type contracts and formatters)
+last_updated: "2026-03-11T11:40:13.643Z"
+last_activity: 2026-03-11 -- Completed 05-01 (TSV type contracts and formatters)
 progress:
   total_phases: 9
   completed_phases: 4
   total_plans: 23
-  completed_plans: 13
-  percent: 68
+  completed_plans: 14
+  percent: 61
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 4: Scoring Engine -- COMPLETE (including gap closure)
+**Current focus:** Phase 5: Scoring Output -- Plan 1 of 3 complete
 
 ## Current Position
 
-Phase: 4 of 9 (Scoring Engine) -- COMPLETE
-Plan: 4 of 4 in current phase (all complete, including gap closure)
-Status: Phase 4 complete, ready for Phase 5
-Last activity: 2026-03-11 -- Completed 04-04 (CLI pipeline wiring)
+Phase: 5 of 9 (Scoring Output)
+Plan: 1 of 3 in current phase
+Status: Plan 05-01 complete, continuing Phase 5
+Last activity: 2026-03-11 -- Completed 05-01 (TSV type contracts and formatters)
 
-Progress: [██████░░░░] 68%
+Progress: [██████░░░░] 61%
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Progress: [██████░░░░] 68%
 | Phase 04 P02 | 4min | 2 tasks | 6 files |
 | Phase 04 P03 | 4min | 2 tasks | 4 files |
 | Phase 04 P04 | 2min | 2 tasks | 3 files |
+| Phase 05 P01 | 3min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,7 @@ Recent decisions affecting current work:
 - [Phase 04]: Async generator pattern for incremental pipeline result consumption
 - [Phase 04]: PB nodes serialized with purpose field (not description) matching actual PBNode type
 - [Phase 04]: Component names are lowercase matching bundled data files
+- [Phase 05]: Adapted formatters to existing ScoringResult/TriageResult types from Phase 3/4 rather than creating duplicate type definitions
 
 ### Pending Todos
 
@@ -112,6 +114,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T09:06:33Z
-Stopped at: Completed 04-04 (CLI pipeline wiring)
+Last session: 2026-03-11T11:40:13.635Z
+Stopped at: Completed 05-01 (TSV type contracts and formatters)
 Resume file: None
