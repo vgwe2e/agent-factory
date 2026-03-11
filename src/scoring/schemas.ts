@@ -46,7 +46,8 @@ export type AdoptionLensOutput = z.infer<typeof AdoptionLensSchema>;
 export type ValueLensOutput = z.infer<typeof ValueLensSchema>;
 
 // -- JSON Schema conversions for Ollama format parameter --
+// Note: type assertions needed due to Zod 3.25.x / zod-to-json-schema type mismatch
 
-export const technicalJsonSchema = zodToJsonSchema(TechnicalLensSchema);
-export const adoptionJsonSchema = zodToJsonSchema(AdoptionLensSchema);
-export const valueJsonSchema = zodToJsonSchema(ValueLensSchema);
+export const technicalJsonSchema = zodToJsonSchema(TechnicalLensSchema as never) as Record<string, unknown>;
+export const adoptionJsonSchema = zodToJsonSchema(AdoptionLensSchema as never) as Record<string, unknown>;
+export const valueJsonSchema = zodToJsonSchema(ValueLensSchema as never) as Record<string, unknown>;
