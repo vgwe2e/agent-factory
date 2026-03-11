@@ -83,15 +83,12 @@ Plans:
   3. Engine scores each opportunity on Value & Efficiency (Value Density, Simulation Viability) producing a 0-6 score
   4. Engine computes weighted composite (0.30/0.45/0.25) and only promotes opportunities with composite >= 0.60 to simulation
   5. Engine classifies each opportunity by archetype (DETERMINISTIC, AGENTIC, GENERATIVE) and routes to appropriate evaluation patterns
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
-- [ ] 04-04: TBD
-- [ ] 04-05: TBD
-- [ ] 04-06: TBD
+- [ ] 04-01-PLAN.md -- Scoring types, Zod schemas, composite math, confidence computation, archetype router
+- [ ] 04-02-PLAN.md -- Ollama scoring client, lens prompt templates, schema validation tests
+- [ ] 04-03-PLAN.md -- Lens scorer functions, scoring pipeline orchestrator
 
 ### Phase 5: Scoring Output
 **Goal**: User can review complete scoring and triage results as structured TSV files and readable markdown reports
@@ -192,7 +189,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | 1. Project Foundation | 0/3 | Complete    | 2026-03-11 |
 | 2. Knowledge Base | 3/3 | Complete   | 2026-03-11 |
 | 3. Triage & Red Flags | 3/3 | Complete | 2026-03-11 |
-| 4. Scoring Engine | 0/6 | Not started | - |
+| 4. Scoring Engine | 0/3 | Not started | - |
 | 5. Scoring Output | 0/3 | Not started | - |
 | 6. Simulation | 0/5 | Not started | - |
 | 7. Pipeline Orchestration | 0/5 | Not started | - |
