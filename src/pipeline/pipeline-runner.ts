@@ -34,7 +34,10 @@ import { callWithResilience } from "../infra/retry-policy.js";
 import { autoCommitEvaluation } from "../infra/git-commit.js";
 import { writeFinalReports } from "../output/write-final-reports.js";
 import { writeEvaluation } from "../output/write-evaluation.js";
+import { runSimulationPipeline as defaultRunSimulationPipeline } from "../simulation/simulation-pipeline.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
+import { toSimulationInputs } from "./scoring-to-simulation.js";
+import path from "node:path";
 
 // -- Types --
 
@@ -54,6 +57,8 @@ export interface PipelineOptions {
   parseExportFn?: (path: string) => Promise<ParseResult>;
   /** Enable git auto-commit after pipeline completes (default true) */
   gitCommit?: boolean;
+  /** Inject runSimulationPipeline for testing (avoids LLM calls in tests). */
+  runSimulationPipelineFn?: typeof defaultRunSimulationPipeline;
 }
 
 export interface PipelineResult {
@@ -63,6 +68,7 @@ export interface PipelineResult {
   skippedCount: number;
   errorCount: number;
   resumedCount: number;
+  simulatedCount: number;
   totalDurationMs: number;
   errors: string[];
 }
@@ -269,7 +275,32 @@ export async function runPipeline(
     logger.warn({ error: evalResult.error }, "Evaluation files failed (non-fatal)");
   }
 
-  // 10b. Auto-commit evaluation artifacts
+  // 10b. Run simulation pipeline for promoted opportunities
+  const promoted = allScoredResults.filter((sr) => sr.promotedToSimulation);
+  const simInputs = toSimulationInputs(promoted, l3Map, l4Map, data.company_context);
+  const simDir = path.join(options.outputDir, "evaluation", "simulations");
+
+  let simResult: SimulationPipelineResult;
+  try {
+    const runSim = options.runSimulationPipelineFn ?? defaultRunSimulationPipeline;
+    simResult = await runSim(simInputs, simDir);
+    logger.info(
+      { simulated: simResult.totalSimulated, failed: simResult.totalFailed },
+      "Simulation pipeline complete",
+    );
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logger.warn({ error: msg }, "Simulation pipeline failed (non-fatal)");
+    simResult = {
+      results: [],
+      totalSimulated: 0,
+      totalFailed: 0,
+      totalConfirmed: 0,
+      totalInferred: 0,
+    };
+  }
+
+  // 10c. Auto-commit evaluation artifacts (after simulation so artifacts are included)
   const gitResult = autoCommitEvaluation({
     outputDir: options.outputDir,
     enabled: options.gitCommit !== false,
@@ -280,19 +311,12 @@ export async function runPipeline(
     logger.warn({ error: gitResult.error }, "Git auto-commit failed (non-fatal)");
   }
 
-  // 10c. Write final reports (summary, dead-zones, meta-reflection)
-  const emptySimResult: SimulationPipelineResult = {
-    results: [],
-    totalSimulated: 0,
-    totalFailed: 0,
-    totalConfirmed: 0,
-    totalInferred: 0,
-  };
+  // 10d. Write final reports (summary, dead-zones, meta-reflection)
   const reportResult = await writeFinalReports(
     options.outputDir,
     allScoredResults,
     triageResults,
-    emptySimResult,
+    simResult,
     companyName,
   );
   if (reportResult.success) {
@@ -315,6 +339,7 @@ export async function runPipeline(
     skippedCount: skipped.length,
     errorCount: errors.length,
     resumedCount,
+    simulatedCount: simResult.totalSimulated,
     totalDurationMs,
     errors,
   };

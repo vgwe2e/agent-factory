@@ -19,6 +19,8 @@ import type { HierarchyExport, L3Opportunity, L4Activity } from "../types/hierar
 import type { ChatResult } from "../scoring/ollama-client.js";
 import { loadCheckpoint, saveCheckpoint } from "../infra/checkpoint.js";
 import type { Checkpoint } from "../infra/checkpoint.js";
+import type { SimulationInput } from "../types/simulation.js";
+import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
 
 // -- Fixtures --
 
@@ -192,6 +194,56 @@ function makeFetchFn() {
   return { fn: fn as typeof globalThis.fetch, calls };
 }
 
+/**
+ * Mock runSimulationPipeline that creates stub artifact directories
+ * and returns a valid SimulationPipelineResult with non-zero counts.
+ */
+function makeMockSimulationPipeline(options?: { shouldThrow?: boolean }) {
+  const calls: SimulationInput[][] = [];
+
+  const fn = async (
+    inputs: SimulationInput[],
+    outputDir: string,
+  ): Promise<SimulationPipelineResult> => {
+    calls.push(inputs);
+
+    if (options?.shouldThrow) {
+      throw new Error("Simulation pipeline exploded");
+    }
+
+    // Create artifact directories with stub files for each input
+    for (const input of inputs) {
+      const slug = input.opportunity.l3_name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const oppDir = path.join(outputDir, slug);
+      fs.mkdirSync(oppDir, { recursive: true });
+      fs.writeFileSync(path.join(oppDir, "decision-flow.mmd"), "graph TD\n  A-->B", "utf-8");
+      fs.writeFileSync(path.join(oppDir, "component-map.yaml"), "streams: []\n", "utf-8");
+      fs.writeFileSync(path.join(oppDir, "mock-test.yaml"), "decision: test\n", "utf-8");
+      fs.writeFileSync(path.join(oppDir, "integration-surface.yaml"), "source_systems: []\n", "utf-8");
+    }
+
+    return {
+      results: inputs.map((input) => ({
+        l3Name: input.opportunity.l3_name,
+        slug: input.opportunity.l3_name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+        artifacts: {
+          decisionFlow: "graph TD\n  A-->B",
+          componentMap: { streams: [], cortex: [], process_builder: [], agent_teams: [], ui: [] },
+          mockTest: { decision: "test", input: { financial_context: {}, trigger: "test" }, expected_output: { action: "test", outcome: "test" }, rationale: "test" },
+          integrationSurface: { source_systems: [], aera_ingestion: [], processing: [], ui_surface: [] },
+        },
+        validationSummary: { confirmedCount: 2, inferredCount: 1, mermaidValid: true },
+      })),
+      totalSimulated: inputs.length,
+      totalFailed: 0,
+      totalConfirmed: inputs.length * 2,
+      totalInferred: inputs.length,
+    };
+  };
+
+  return { fn, calls };
+}
+
 // -- Test setup --
 
 const logger = createLogger("silent");
@@ -211,6 +263,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     const result = await runPipeline(
       "__fixture__",
@@ -219,6 +272,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
       logger,
@@ -236,6 +290,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn({ failFor: ["Opp-B"] });
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     const result = await runPipeline(
       "__fixture__",
@@ -244,6 +299,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
       logger,
@@ -259,6 +315,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     const result = await runPipeline(
       "__fixture__",
@@ -267,6 +324,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 2, // archive after every 2
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
       logger,
@@ -288,6 +346,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
     const { fn: fetchFn, calls } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     await runPipeline(
       "__fixture__",
@@ -296,6 +355,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
       logger,
@@ -312,6 +372,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     // Pre-write a checkpoint marking Opp-A as already completed
     const existingCheckpoint: Checkpoint = {
@@ -331,6 +392,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         gitCommit: false,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
@@ -346,6 +408,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     // Pre-write a checkpoint for a different input file
     const staleCheckpoint: Checkpoint = {
@@ -365,6 +428,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         gitCommit: false,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
@@ -380,6 +444,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     await runPipeline(
       "__fixture__",
@@ -388,6 +453,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         gitCommit: false,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
@@ -405,6 +471,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     await runPipeline(
       "__fixture__",
@@ -413,6 +480,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         gitCommit: false,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
@@ -430,6 +498,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     await runPipeline(
       "__fixture__",
@@ -438,6 +507,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         gitCommit: false,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
@@ -455,6 +525,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline({ shouldThrow: true });
 
     // Use a read-only directory to force writeFinalReports to fail
     const readOnlyDir = path.join(tmpDir, "readonly");
@@ -469,6 +540,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         gitCommit: false,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
@@ -484,6 +556,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     // gitCommit: false should prevent any git operations
     const result = await runPipeline(
@@ -493,6 +566,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         gitCommit: false,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
@@ -507,6 +581,7 @@ describe("pipeline-runner", () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn({ failFor: ["Opp-B"] });
     const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
 
     const result = await runPipeline(
       "__fixture__",
@@ -515,6 +590,7 @@ describe("pipeline-runner", () => {
         archiveThreshold: 100,
         chatFn,
         fetchFn,
+        runSimulationPipelineFn: simFn,
         gitCommit: false,
         parseExportFn: async () => ({ success: true as const, data: fixture }),
       },
@@ -530,5 +606,125 @@ describe("pipeline-runner", () => {
     const oppBEntry = cp!.entries.find((e) => e.l3Name === "Opp-B");
     assert.ok(oppBEntry, "Opp-B entry in checkpoint");
     assert.equal(oppBEntry!.status, "error", "Opp-B status is error");
+  });
+
+  // -- Simulation wiring integration tests --
+
+  it("runs simulation pipeline for promoted opportunities and creates artifact directories", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn, calls } = makeMockSimulationPipeline();
+
+    await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Mock simulation was called with promoted inputs
+    assert.equal(calls.length, 1, "simulation pipeline called once");
+    assert.ok(calls[0].length > 0, "at least one promoted input");
+
+    // Check artifact directories exist
+    const simDir = path.join(tmpDir, "evaluation", "simulations");
+    assert.ok(fs.existsSync(simDir), "simulations/ dir exists");
+
+    // Check each promoted opportunity has artifact files
+    for (const input of calls[0]) {
+      const slug = input.opportunity.l3_name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const oppDir = path.join(simDir, slug);
+      assert.ok(fs.existsSync(path.join(oppDir, "decision-flow.mmd")), `${slug}/decision-flow.mmd exists`);
+      assert.ok(fs.existsSync(path.join(oppDir, "component-map.yaml")), `${slug}/component-map.yaml exists`);
+      assert.ok(fs.existsSync(path.join(oppDir, "mock-test.yaml")), `${slug}/mock-test.yaml exists`);
+      assert.ok(fs.existsSync(path.join(oppDir, "integration-surface.yaml")), `${slug}/integration-surface.yaml exists`);
+    }
+  });
+
+  it("passes real simulation results to writeFinalReports (summary.md has non-zero simulation counts)", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    const summaryPath = path.join(tmpDir, "evaluation", "summary.md");
+    assert.ok(fs.existsSync(summaryPath), "summary.md exists");
+    const content = fs.readFileSync(summaryPath, "utf-8");
+    // The summary should contain non-zero simulation metrics
+    // formatSummary includes totalSimulated from the sim result
+    assert.ok(!content.includes("Simulated: 0"), "summary does not show 0 simulated");
+  });
+
+  it("simulation pipeline failure is non-fatal -- pipeline still completes", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline({ shouldThrow: true });
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Pipeline should still complete successfully
+    assert.equal(result.scoredCount, 3, "3 scored despite simulation failure");
+    assert.equal(result.errorCount, 0, "simulation failure is not a pipeline error");
+    assert.equal(result.simulatedCount, 0, "simulatedCount is 0 due to failure");
+  });
+
+  it("PipelineResult includes simulatedCount reflecting number of simulated opportunities", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // All 3 scored opportunities get composite ~0.67 >= 0.60 threshold -> all promoted
+    assert.equal(result.simulatedCount, 3, "all promoted opportunities were simulated");
+    assert.equal(result.promotedCount, result.simulatedCount, "simulatedCount matches promotedCount");
   });
 });
