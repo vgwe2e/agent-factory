@@ -17,6 +17,8 @@ import type { PipelineOptions, PipelineResult } from "./pipeline-runner.js";
 import { createLogger } from "../infra/logger.js";
 import type { HierarchyExport, L3Opportunity, L4Activity } from "../types/hierarchy.js";
 import type { ChatResult } from "../scoring/ollama-client.js";
+import { loadCheckpoint, saveCheckpoint } from "../infra/checkpoint.js";
+import type { Checkpoint } from "../infra/checkpoint.js";
 
 // -- Fixtures --
 
@@ -302,5 +304,152 @@ describe("pipeline-runner", () => {
     // Last fetch call should be unloadAll with keep_alive=0
     const lastCall = calls[calls.length - 1];
     assert.equal(lastCall.keep_alive, 0, "final call unloads model");
+  });
+
+  // -- Resilience wiring integration tests --
+
+  it("checkpoint resume skips already-completed opportunities", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+
+    // Pre-write a checkpoint marking Opp-A as already completed
+    const existingCheckpoint: Checkpoint = {
+      version: 1,
+      inputFile: "__fixture__",
+      startedAt: new Date().toISOString(),
+      entries: [
+        { l3Name: "Opp-A", completedAt: new Date().toISOString(), status: "scored" },
+      ],
+    };
+    saveCheckpoint(tmpDir, existingCheckpoint);
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Opp-A skipped via resume, Opp-B and Opp-C scored, Opp-D phantom skip
+    assert.equal(result.scoredCount, 2, "2 scored (Opp-A resumed)");
+    assert.equal(result.resumedCount, 1, "1 resumed from checkpoint");
+  });
+
+  it("stale checkpoint is ignored when inputPath differs", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+
+    // Pre-write a checkpoint for a different input file
+    const staleCheckpoint: Checkpoint = {
+      version: 1,
+      inputFile: "old-file.json",
+      startedAt: new Date().toISOString(),
+      entries: [
+        { l3Name: "Opp-A", completedAt: new Date().toISOString(), status: "scored" },
+      ],
+    };
+    saveCheckpoint(tmpDir, staleCheckpoint);
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Stale checkpoint ignored: all 3 processable scored
+    assert.equal(result.scoredCount, 3, "all 3 scored (stale checkpoint ignored)");
+    assert.equal(result.resumedCount, 0, "0 resumed (stale checkpoint)");
+  });
+
+  it("checkpoint file is written after pipeline completes", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+
+    await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    const cp = loadCheckpoint(tmpDir);
+    assert.ok(cp !== null, "checkpoint file exists");
+    assert.equal(cp!.entries.length, 3, "3 entries (one per scored opp)");
+    assert.equal(cp!.inputFile, "__fixture__", "inputFile matches");
+    assert.ok(cp!.entries.every((e) => e.status === "scored"), "all entries scored");
+  });
+
+  it("git auto-commit disabled via option", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+
+    // gitCommit: false should prevent any git operations
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.equal(result.scoredCount, 3, "pipeline completes with gitCommit=false");
+    assert.equal(result.errorCount, 0, "no errors");
+  });
+
+  it("pipeline records error via callWithResilience when scoring fails", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn({ failFor: ["Opp-B"] });
+    const { fn: fetchFn } = makeFetchFn();
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.equal(result.scoredCount, 2, "2 scored");
+    assert.equal(result.errorCount, 1, "1 error");
+
+    // Verify checkpoint records error status for Opp-B
+    const cp = loadCheckpoint(tmpDir);
+    assert.ok(cp !== null, "checkpoint exists");
+    const oppBEntry = cp!.entries.find((e) => e.l3Name === "Opp-B");
+    assert.ok(oppBEntry, "Opp-B entry in checkpoint");
+    assert.equal(oppBEntry!.status, "error", "Opp-B status is error");
   });
 });
