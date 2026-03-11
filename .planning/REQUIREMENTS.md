@@ -1,7 +1,7 @@
 # Requirements: Aera Skill Feasibility Engine
 
 **Defined:** 2026-03-10
-**Core Value:** Produce actionable, adoption-realistic implementation specs for Aera skills — not just technically feasible ones, but ones real users will actually adopt.
+**Core Value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
 
 ## v1 Requirements
 
@@ -14,11 +14,11 @@
 
 ### Scoring
 
-- [ ] **SCOR-01**: Engine scores each opportunity on Technical Feasibility lens (Data Readiness, Aera Platform Fit, Archetype Confidence) — 0-9 scale
-- [ ] **SCOR-02**: Engine scores each opportunity on Adoption Realism lens (Decision Density, Financial Gravity, Impact Proximity, Confidence Signal) — 0-12 scale
-- [ ] **SCOR-03**: Engine scores each opportunity on Value & Efficiency lens (Value Density, Simulation Viability) — 0-6 scale
-- [ ] **SCOR-04**: Engine computes weighted composite score (Technical 0.30, Adoption 0.45, Value 0.25) — 0.0 to 1.0 range
-- [ ] **SCOR-05**: Engine applies ratcheting threshold — only promotes opportunities with composite >= 0.60 to simulation
+- [ ] **SCOR-01**: Engine scores each opportunity on Technical Feasibility lens (Data Readiness, Aera Platform Fit, Archetype Confidence) -- 0-9 scale
+- [ ] **SCOR-02**: Engine scores each opportunity on Adoption Realism lens (Decision Density, Financial Gravity, Impact Proximity, Confidence Signal) -- 0-12 scale
+- [ ] **SCOR-03**: Engine scores each opportunity on Value & Efficiency lens (Value Density, Simulation Viability) -- 0-6 scale
+- [ ] **SCOR-04**: Engine computes weighted composite score (Technical 0.30, Adoption 0.45, Value 0.25) -- 0.0 to 1.0 range
+- [ ] **SCOR-05**: Engine applies ratcheting threshold -- only promotes opportunities with composite >= 0.60 to simulation
 - [ ] **SCOR-06**: Engine classifies each opportunity by archetype (DETERMINISTIC, AGENTIC, GENERATIVE) and routes to appropriate evaluation patterns
 - [ ] **SCOR-07**: Engine outputs scored opportunities as TSV with all dimension breakdowns
 - [ ] **SCOR-08**: Engine outputs scored opportunities as markdown report with analysis
@@ -42,7 +42,7 @@
 - [ ] **SIMU-01**: Engine generates Mermaid decision flow diagrams for qualifying opportunities (composite >= 0.60)
 - [ ] **SIMU-02**: Engine produces YAML component maps linking opportunities to specific Aera components (Streams, Cortex, Process Builder, Agent Teams)
 - [ ] **SIMU-03**: Engine creates mock decision tests with sample inputs/outputs using actual client financials from the export
-- [ ] **SIMU-04**: Engine maps integration surfaces (source systems → Aera → process → UI) for each simulated opportunity
+- [ ] **SIMU-04**: Engine maps integration surfaces (source systems -> Aera -> process -> UI) for each simulated opportunity
 
 ### Knowledge Base
 
@@ -103,56 +103,56 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INGST-01 | — | Pending |
-| INGST-02 | — | Pending |
-| INGST-03 | — | Pending |
-| INGST-04 | — | Pending |
-| SCOR-01 | — | Pending |
-| SCOR-02 | — | Pending |
-| SCOR-03 | — | Pending |
-| SCOR-04 | — | Pending |
-| SCOR-05 | — | Pending |
-| SCOR-06 | — | Pending |
-| SCOR-07 | — | Pending |
-| SCOR-08 | — | Pending |
-| FLAG-01 | — | Pending |
-| FLAG-02 | — | Pending |
-| FLAG-03 | — | Pending |
-| FLAG-04 | — | Pending |
-| FLAG-05 | — | Pending |
-| TRIG-01 | — | Pending |
-| TRIG-02 | — | Pending |
-| TRIG-03 | — | Pending |
-| SIMU-01 | — | Pending |
-| SIMU-02 | — | Pending |
-| SIMU-03 | — | Pending |
-| SIMU-04 | — | Pending |
-| KNOW-01 | — | Pending |
-| KNOW-02 | — | Pending |
-| KNOW-03 | — | Pending |
-| KNOW-04 | — | Pending |
-| INFR-01 | — | Pending |
-| INFR-02 | — | Pending |
-| INFR-03 | — | Pending |
-| INFR-04 | — | Pending |
-| INFR-05 | — | Pending |
-| INFR-06 | — | Pending |
-| INFR-07 | — | Pending |
-| INFR-08 | — | Pending |
-| OUTP-01 | — | Pending |
-| OUTP-02 | — | Pending |
-| OUTP-03 | — | Pending |
-| OUTP-04 | — | Pending |
-| OUTP-05 | — | Pending |
-| OUTP-06 | — | Pending |
-| OUTP-07 | — | Pending |
-| OUTP-08 | — | Pending |
+| INGST-01 | Phase 1 | Pending |
+| INGST-02 | Phase 1 | Pending |
+| INGST-03 | Phase 1 | Pending |
+| INGST-04 | Phase 1 | Pending |
+| SCOR-01 | Phase 4 | Pending |
+| SCOR-02 | Phase 4 | Pending |
+| SCOR-03 | Phase 4 | Pending |
+| SCOR-04 | Phase 4 | Pending |
+| SCOR-05 | Phase 4 | Pending |
+| SCOR-06 | Phase 4 | Pending |
+| SCOR-07 | Phase 5 | Pending |
+| SCOR-08 | Phase 5 | Pending |
+| FLAG-01 | Phase 3 | Pending |
+| FLAG-02 | Phase 3 | Pending |
+| FLAG-03 | Phase 3 | Pending |
+| FLAG-04 | Phase 3 | Pending |
+| FLAG-05 | Phase 3 | Pending |
+| TRIG-01 | Phase 3 | Pending |
+| TRIG-02 | Phase 3 | Pending |
+| TRIG-03 | Phase 3 | Pending |
+| SIMU-01 | Phase 6 | Pending |
+| SIMU-02 | Phase 6 | Pending |
+| SIMU-03 | Phase 6 | Pending |
+| SIMU-04 | Phase 6 | Pending |
+| KNOW-01 | Phase 2 | Pending |
+| KNOW-02 | Phase 2 | Pending |
+| KNOW-03 | Phase 2 | Pending |
+| KNOW-04 | Phase 6 | Pending |
+| INFR-01 | Phase 8 | Pending |
+| INFR-02 | Phase 7 | Pending |
+| INFR-03 | Phase 8 | Pending |
+| INFR-04 | Phase 7 | Pending |
+| INFR-05 | Phase 7 | Pending |
+| INFR-06 | Phase 1 | Pending |
+| INFR-07 | Phase 7 | Pending |
+| INFR-08 | Phase 8 | Pending |
+| OUTP-01 | Phase 5 | Pending |
+| OUTP-02 | Phase 5 | Pending |
+| OUTP-03 | Phase 5 | Pending |
+| OUTP-04 | Phase 5 | Pending |
+| OUTP-05 | Phase 9 | Pending |
+| OUTP-06 | Phase 9 | Pending |
+| OUTP-07 | Phase 9 | Pending |
+| OUTP-08 | Phase 9 | Pending |
 
 **Coverage:**
 - v1 requirements: 44 total
-- Mapped to phases: 0
-- Unmapped: 44 ⚠️
+- Mapped to phases: 44
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-10*
-*Last updated: 2026-03-10 after initial definition*
+*Last updated: 2026-03-10 after roadmap creation*
