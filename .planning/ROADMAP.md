@@ -34,14 +34,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Engine correctly parses company context (industry, revenue, ERP stack) from a valid export and displays it
   4. Engine reads all L3 opportunities and L4 activities from the export without data loss
   5. Engine connects to Ollama and confirms local model availability without any cloud API calls
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
-- [ ] 01-04: TBD
-- [ ] 01-05: TBD
+- [ ] 01-01-PLAN.md -- Scaffold TypeScript project, define Zod schemas for hierarchy validation
+- [ ] 01-02-PLAN.md -- CLI entry point with --input flag, ingestion pipeline, company context display
+- [ ] 01-03-PLAN.md -- Ollama connectivity check and model availability verification
 
 ### Phase 2: Knowledge Base
 **Goal**: Engine has self-contained Aera reference data that downstream scoring and simulation can query
@@ -195,7 +193,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Foundation | 0/5 | Not started | - |
+| 1. Project Foundation | 0/3 | Planning complete | - |
 | 2. Knowledge Base | 0/3 | Not started | - |
 | 3. Triage & Red Flags | 0/5 | Not started | - |
 | 4. Scoring Engine | 0/6 | Not started | - |
