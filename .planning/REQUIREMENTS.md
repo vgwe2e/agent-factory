@@ -25,11 +25,11 @@
 
 ### Red Flags
 
-- [ ] **FLAG-01**: Engine auto-skips opportunities where decision density = 0% across all L4s (dead zone)
-- [ ] **FLAG-02**: Engine demotes opportunities with zero HIGH financial ratings + SECOND-order impact only (no stakes)
-- [ ] **FLAG-03**: Engine flags opportunities where >50% of L4s have rating_confidence = LOW (confidence gap)
-- [ ] **FLAG-04**: Engine skips opportunities where opportunity_exists = false (phantom)
-- [ ] **FLAG-05**: Engine flags opportunities where l4_count < 3 (orphan/thin opportunity)
+- [x] **FLAG-01**: Engine auto-skips opportunities where decision density = 0% across all L4s (dead zone)
+- [x] **FLAG-02**: Engine demotes opportunities with zero HIGH financial ratings + SECOND-order impact only (no stakes)
+- [x] **FLAG-03**: Engine flags opportunities where >50% of L4s have rating_confidence = LOW (confidence gap)
+- [x] **FLAG-04**: Engine skips opportunities where opportunity_exists = false (phantom)
+- [x] **FLAG-05**: Engine flags opportunities where l4_count < 3 (orphan/thin opportunity)
 
 ### Triage
 
@@ -115,11 +115,11 @@
 | SCOR-06 | Phase 4 | Pending |
 | SCOR-07 | Phase 5 | Pending |
 | SCOR-08 | Phase 5 | Pending |
-| FLAG-01 | Phase 3 | Pending |
-| FLAG-02 | Phase 3 | Pending |
-| FLAG-03 | Phase 3 | Pending |
-| FLAG-04 | Phase 3 | Pending |
-| FLAG-05 | Phase 3 | Pending |
+| FLAG-01 | Phase 3 | Complete |
+| FLAG-02 | Phase 3 | Complete |
+| FLAG-03 | Phase 3 | Complete |
+| FLAG-04 | Phase 3 | Complete |
+| FLAG-05 | Phase 3 | Complete |
 | TRIG-01 | Phase 3 | Pending |
 | TRIG-02 | Phase 3 | Pending |
 | TRIG-03 | Phase 3 | Pending |

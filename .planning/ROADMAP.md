@@ -191,7 +191,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 |-------|----------------|--------|-----------|
 | 1. Project Foundation | 0/3 | Complete    | 2026-03-11 |
 | 2. Knowledge Base | 3/3 | Complete   | 2026-03-11 |
-| 3. Triage & Red Flags | 0/3 | Not started | - |
+| 3. Triage & Red Flags | 1/3 | In progress | - |
 | 4. Scoring Engine | 0/6 | Not started | - |
 | 5. Scoring Output | 0/3 | Not started | - |
 | 6. Simulation | 0/5 | Not started | - |
