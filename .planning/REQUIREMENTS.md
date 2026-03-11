@@ -49,7 +49,7 @@
 - [x] **KNOW-01**: Engine bundles Aera UI component reference (21 components, 208 properties) from ~/Documents/area
 - [x] **KNOW-02**: Engine bundles Process Builder node reference (22 nodes with procedures and patterns)
 - [x] **KNOW-03**: Engine bundles orchestration decision guide (Process vs Agent vs Hybrid framework)
-- [ ] **KNOW-04**: Every generated component map and spec references only real Aera components from the bundled knowledge base
+- [x] **KNOW-04**: Every generated component map and spec references only real Aera components from the bundled knowledge base
 
 ### Infrastructure
 
@@ -130,7 +130,7 @@
 | KNOW-01 | Phase 2 | Complete |
 | KNOW-02 | Phase 2 | Complete |
 | KNOW-03 | Phase 2 | Complete |
-| KNOW-04 | Phase 6 | Pending |
+| KNOW-04 | Phase 6 | Complete |
 | INFR-01 | Phase 8 | Pending |
 | INFR-02 | Phase 7 | Pending |
 | INFR-03 | Phase 8 | Pending |

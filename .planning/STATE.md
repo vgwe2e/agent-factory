@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 05-03 (Write evaluation orchestrator) - Phase 5 complete
-last_updated: "2026-03-11T11:53:15.180Z"
+stopped_at: Completed 06-01 (Simulation foundation types, schemas, validators)
+last_updated: "2026-03-11T12:17:46.202Z"
 last_activity: 2026-03-11 -- Completed 05-03 (Write evaluation orchestrator)
 progress:
   total_phases: 9
   completed_phases: 5
   total_plans: 25
-  completed_plans: 16
+  completed_plans: 17
   percent: 64
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 5: Scoring Output -- Complete. Ready for Phase 6.
+**Current focus:** Phase 6: Simulation -- Plan 01 complete, ready for Plan 02.
 
 ## Current Position
 
-Phase: 5 of 9 (Scoring Output) -- COMPLETE
-Plan: 3 of 3 in current phase (all done)
-Status: Phase 5 complete, ready for Phase 6
-Last activity: 2026-03-11 -- Completed 05-03 (Write evaluation orchestrator)
+Phase: 6 of 9 (Simulation)
+Plan: 1 of 3 in current phase
+Status: Plan 06-01 complete, ready for 06-02
+Last activity: 2026-03-11 -- Completed 06-01 (Simulation foundation types, schemas, validators)
 
-Progress: [██████░░░░] 64%
+Progress: [███████░░░] 68%
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@ Progress: [██████░░░░] 64%
 | Phase 05 P01 | 3min | 3 tasks | 6 files |
 | Phase 05 P02 | 4min | 2 tasks | 4 files |
 | Phase 05 P03 | 2min | 2 tasks | 2 files |
+| Phase 06 P01 | 4min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -106,6 +107,9 @@ Recent decisions affecting current work:
 - [Phase 05]: Generated human-readable reason strings from typed RedFlag union fields since actual type has no generic reason property
 - [Phase 05]: date parameter passed through writeEvaluation to formatters for deterministic test output
 - [Phase 05]: tier1Names derived inside orchestrator from triage data rather than requiring caller computation
+- [Phase 06]: Aera concept index skips entries that already exist as PB/UI nodes to prevent collision overwrites
+- [Phase 06]: Subgraph context tracking in Mermaid validator avoids false positives on subgraph end keywords
+- [Phase 06]: parseAndValidateYaml made async to support future retry/streaming patterns
 
 ### Pending Todos
 
@@ -119,6 +123,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T11:49:37Z
-Stopped at: Completed 05-03 (Write evaluation orchestrator) - Phase 5 complete
+Last session: 2026-03-11T12:17:46.197Z
+Stopped at: Completed 06-01 (Simulation foundation types, schemas, validators)
 Resume file: None
