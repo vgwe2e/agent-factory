@@ -15,71 +15,29 @@ import os from "node:os";
 import { runPipeline } from "./pipeline-runner.js";
 import type { PipelineOptions, PipelineResult } from "./pipeline-runner.js";
 import { createLogger } from "../infra/logger.js";
-import type { HierarchyExport } from "../types/hierarchy.js";
+import type { HierarchyExport, L3Opportunity, L4Activity } from "../types/hierarchy.js";
 import type { ChatResult } from "../scoring/ollama-client.js";
 
 // -- Fixtures --
 
-/** Minimal hierarchy export with 4 L3 opportunities in different tiers. */
-function makeFixtureExport(): HierarchyExport {
+function makeL4(l3: string, l2: string, l1: string, name: string, overrides: Partial<L4Activity> = {}): L4Activity {
   return {
-    meta: {
-      project_name: "Test Project",
-      export_date: "2026-01-01",
-      hierarchy_version: "v2",
-      format_version: "1.0",
-    },
-    company_context: {
-      company_name: "TestCo",
-      industry: "Manufacturing",
-      annual_revenue: 10_000_000_000,
-      employee_count: 50_000,
-      enterprise_applications: ["SAP"],
-    },
-    hierarchy: [
-      // L4s for Opp-A (Tier 1 candidate: quick_win + high value)
-      makeL4("Opp-A", "L2-A", "L1-A", "Act-A1"),
-      makeL4("Opp-A", "L2-A", "L1-A", "Act-A2"),
-      makeL4("Opp-A", "L2-A", "L1-A", "Act-A3"),
-      // L4s for Opp-B (Tier 2 candidate: high AI suitability)
-      makeL4("Opp-B", "L2-B", "L1-B", "Act-B1"),
-      makeL4("Opp-B", "L2-B", "L1-B", "Act-B2"),
-      makeL4("Opp-B", "L2-B", "L1-B", "Act-B3"),
-      // L4s for Opp-C (Tier 3: default)
-      makeL4("Opp-C", "L2-C", "L1-C", "Act-C1"),
-      makeL4("Opp-C", "L2-C", "L1-C", "Act-C2"),
-      makeL4("Opp-C", "L2-C", "L1-C", "Act-C3"),
-      // Opp-D will be phantom (opportunity_exists=false) -> skip
-    ],
-    l3_opportunities: [
-      makeL3("Opp-A", "L2-A", "L1-A", {
-        quick_win: true,
-        combined_max_value: 10_000_000,
-      }),
-      makeL3("Opp-B", "L2-B", "L1-B", {
-        ai_suitability: "HIGH",
-      }),
-      makeL3("Opp-C", "L2-C", "L1-C", {}),
-      makeL3("Opp-D", "L2-D", "L1-D", {
-        opportunity_exists: false,
-      }),
-    ],
-  };
-}
-
-function makeL4(l3: string, l2: string, l1: string, name: string) {
-  return {
+    id: `${l3}-${name}`,
+    name,
+    description: `Description of ${name}`,
     l1,
     l2,
     l3,
-    l4: name,
-    decision_type: "OPERATIONAL" as const,
-    impact_order: "FIRST" as const,
-    financial_impact: "HIGH" as const,
-    rating_confidence: "HIGH" as const,
-    implementation_complexity: "MEDIUM" as const,
-    ai_suitability: "HIGH" as const,
+    financial_rating: "HIGH",
+    value_metric: "cost_savings",
+    impact_order: "FIRST",
+    rating_confidence: "HIGH",
+    ai_suitability: "HIGH",
+    decision_exists: true,
     decision_articulation: null,
+    escalation_flag: null,
+    skills: [],
+    ...overrides,
   };
 }
 
@@ -87,22 +45,93 @@ function makeL3(
   name: string,
   l2: string,
   l1: string,
-  overrides: Record<string, unknown>,
-) {
+  overrides: Partial<L3Opportunity> = {},
+): L3Opportunity {
   return {
     l3_name: name,
     l2_name: l2,
     l1_name: l1,
     opportunity_exists: true,
-    quick_win: false,
-    combined_max_value: 1_000_000,
-    lead_archetype: "DETERMINISTIC" as const,
     opportunity_name: name,
     opportunity_summary: `Summary for ${name}`,
+    lead_archetype: "DETERMINISTIC",
+    supporting_archetypes: [],
+    combined_max_value: 1_000_000,
+    implementation_complexity: "MEDIUM",
+    quick_win: false,
+    competitive_positioning: null,
+    aera_differentiators: [],
+    l4_count: 3,
+    high_value_l4_count: 2,
     rationale: `Rationale for ${name}`,
-    ai_suitability: null,
     ...overrides,
   };
+}
+
+/** Minimal hierarchy export with 4 L3 opportunities in different tiers. */
+function makeFixtureExport(): HierarchyExport {
+  return {
+    meta: {
+      project_name: "Test Project",
+      version_date: "2026-01-01",
+      created_date: "2026-01-01",
+      exported_by: null,
+      description: "Test export",
+    },
+    company_context: {
+      company_name: "TestCo",
+      industry: "Manufacturing",
+      annual_revenue: 10_000_000_000,
+      employee_count: 50_000,
+      enterprise_applications: ["SAP"],
+      cogs: null,
+      sga: null,
+      ebitda: null,
+      working_capital: null,
+      inventory_value: null,
+      annual_hires: null,
+      geographic_scope: "Global",
+      notes: "",
+      business_exclusions: "",
+      detected_applications: [],
+      pptx_template: null,
+      industry_specifics: null,
+      raw_context: "",
+      enriched_context: {},
+      enrichment_applied_at: "",
+      existing_systems: [],
+      hard_exclusions: [],
+      filtered_skills: [],
+    },
+    hierarchy: [
+      // L4s for Opp-A (Tier 1 candidate: quick_win + high value)
+      makeL4("Opp-A", "L2-A", "L1-A", "Act-A1"),
+      makeL4("Opp-A", "L2-A", "L1-A", "Act-A2"),
+      makeL4("Opp-A", "L2-A", "L1-A", "Act-A3"),
+      // L4s for Opp-B (Tier 2 candidate: high AI suitability L4s)
+      makeL4("Opp-B", "L2-B", "L1-B", "Act-B1", { ai_suitability: "HIGH" }),
+      makeL4("Opp-B", "L2-B", "L1-B", "Act-B2", { ai_suitability: "HIGH" }),
+      makeL4("Opp-B", "L2-B", "L1-B", "Act-B3", { ai_suitability: "HIGH" }),
+      // L4s for Opp-C (Tier 3: default -- low ai suitability, low value)
+      makeL4("Opp-C", "L2-C", "L1-C", "Act-C1", { ai_suitability: "LOW", financial_rating: "LOW" }),
+      makeL4("Opp-C", "L2-C", "L1-C", "Act-C2", { ai_suitability: "LOW", financial_rating: "LOW" }),
+      makeL4("Opp-C", "L2-C", "L1-C", "Act-C3", { ai_suitability: "LOW", financial_rating: "LOW" }),
+      // Opp-D will be phantom (opportunity_exists=false) -> skip
+    ],
+    l3_opportunities: [
+      makeL3("Opp-A", "L2-A", "L1-A", {
+        quick_win: true,
+        combined_max_value: 10_000_000,
+      }),
+      makeL3("Opp-B", "L2-B", "L1-B", {}),
+      makeL3("Opp-C", "L2-C", "L1-C", {
+        combined_max_value: 100_000,
+      }),
+      makeL3("Opp-D", "L2-D", "L1-D", {
+        opportunity_exists: false,
+      }),
+    ],
+  } as HierarchyExport;
 }
 
 /** chatFn that returns a valid scoring response. */
@@ -123,15 +152,25 @@ function makeChatFn(options?: { failFor?: string[] }) {
       }
     }
 
+    // Return valid structured JSON matching what lens scorers expect.
+    // Each lens schema has different field names, but scoreWithRetry
+    // validates via Zod. We return a JSON string that satisfies all three
+    // lens schemas by including all possible sub-dimension fields.
     return {
       success: true as const,
-      data: JSON.stringify({
-        sub_dimensions: [
-          { name: "dim1", score: 2, reason: "Good" },
-          { name: "dim2", score: 2, reason: "Good" },
-          { name: "dim3", score: 2, reason: "Good" },
-        ],
-        confidence: "HIGH",
+      content: JSON.stringify({
+        // Technical lens fields
+        data_readiness: { score: 2, reason: "Good" },
+        aera_platform_fit: { score: 2, reason: "Good" },
+        archetype_confidence: { score: 2, reason: "Good" },
+        // Adoption lens fields
+        decision_density: { score: 2, reason: "Good" },
+        financial_gravity: { score: 2, reason: "Good" },
+        impact_proximity: { score: 2, reason: "Good" },
+        confidence_signal: { score: 2, reason: "Good" },
+        // Value lens fields
+        value_density: { score: 2, reason: "Good" },
+        simulation_viability: { score: 2, reason: "Good" },
       }),
       durationMs: 100,
     };
