@@ -1,0 +1,22 @@
+{
+  "name": "aera-evaluate",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "aera-evaluate": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx cli.ts",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "commander": "^13.0.0",
+    "tsx": "^4.19.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}
