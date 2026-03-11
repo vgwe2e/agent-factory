@@ -15,8 +15,8 @@ import type { Logger } from "../infra/logger.js";
 // -- Constants --
 
 export const OLLAMA_CHAT_API = "http://localhost:11434/api/chat";
-export const SCORING_MODEL = "qwen2.5:32b";
-export const SCORING_TIMEOUT_MS = 120_000; // 2 minutes per call
+export const SCORING_MODEL = "qwen3:30b";
+export const SCORING_TIMEOUT_MS = 300_000; // 5 minutes per call
 export const SCORING_TEMPERATURE = 0;
 
 // -- Types --

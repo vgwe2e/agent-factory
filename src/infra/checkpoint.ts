@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { z } from 'zod';
 
@@ -40,6 +40,7 @@ export function loadCheckpoint(outputDir: string): Checkpoint | null {
 }
 
 export function saveCheckpoint(outputDir: string, checkpoint: Checkpoint): void {
+  mkdirSync(outputDir, { recursive: true });
   const filePath = checkpointPath(outputDir);
   writeFileSync(filePath, JSON.stringify(checkpoint, null, 2), 'utf-8');
 }
