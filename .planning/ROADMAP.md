@@ -103,14 +103,12 @@ Plans:
   3. Engine produces evaluation/adoption-risk.md identifying red-flagged opportunities with specific flag types and reasoning
   4. Engine produces evaluation/tier1-report.md with deep narrative analysis of top-tier opportunities
   5. Engine produces scored opportunities as a markdown report with analysis narrative alongside the raw TSV data
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
-- [ ] 05-03: TBD
-- [ ] 05-04: TBD
-- [ ] 05-05: TBD
+- [ ] 05-01-PLAN.md -- Define scoring/triage type contracts and implement TSV formatters (triage.tsv + feasibility-scores.tsv)
+- [ ] 05-02-PLAN.md -- Implement markdown report formatters (adoption-risk.md + tier1-report.md)
+- [ ] 05-03-PLAN.md -- Wire formatters into writeEvaluation orchestrator and run full test suite
 
 ### Phase 6: Simulation
 **Goal**: Qualifying opportunities get concrete implementation artifacts -- decision flows, component maps, mock tests, and integration surfaces -- all grounded in real Aera components
@@ -195,7 +193,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | 2. Knowledge Base | 3/3 | Complete   | 2026-03-11 |
 | 3. Triage & Red Flags | 0/3 | Not started | - |
 | 4. Scoring Engine | 0/6 | Not started | - |
-| 5. Scoring Output | 0/5 | Not started | - |
+| 5. Scoring Output | 0/3 | Not started | - |
 | 6. Simulation | 0/5 | Not started | - |
 | 7. Pipeline Orchestration | 0/5 | Not started | - |
 | 8. Resilience & Recovery | 0/5 | Not started | - |
