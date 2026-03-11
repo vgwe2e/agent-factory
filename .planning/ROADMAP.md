@@ -21,6 +21,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 7: Pipeline Orchestration** - Two-model strategy, logging, unattended mode, context management (completed 2026-03-11)
 - [x] **Phase 8: Resilience & Recovery** - Error handling, crash recovery, checkpointing, git auto-commit (completed 2026-03-11)
 - [x] **Phase 9: Final Reports & Reflection** - Executive summary, dead zones, meta-reflection, simulation bundles (completed 2026-03-11)
+- [ ] **Phase 10: Wire writeEvaluation into Pipeline** - Connect Phase 5 output formatters to pipeline-runner.ts (gap closure)
+- [ ] **Phase 11: Wire Simulation Pipeline into Pipeline Runner** - Connect Phase 6 simulation pipeline to pipeline-runner.ts with adapter (gap closure)
 
 ## Phase Details
 
@@ -173,10 +175,38 @@ Plans:
 - [x] 09-02-PLAN.md -- writeFinalReports orchestrator wiring formatters + simulation directory structure
 - [x] 09-03-PLAN.md -- Gap closure: wire writeFinalReports into pipeline-runner.ts execution path
 
+### Phase 10: Wire writeEvaluation into Pipeline
+**Goal**: Phase 5 output files (triage.tsv, feasibility-scores.tsv, adoption-risk.md, tier1-report.md) are actually written during pipeline execution
+**Depends on**: Phase 5, Phase 7
+**Requirements**: SCOR-07, SCOR-08, TRIG-02, OUTP-01, OUTP-02, OUTP-03, OUTP-04
+**Gap Closure:** Closes gaps from v1.0 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. Pipeline runner imports and calls writeEvaluation after the scoring loop completes
+  2. Running the full pipeline produces evaluation/triage.tsv on disk
+  3. Running the full pipeline produces evaluation/feasibility-scores.tsv on disk
+  4. Running the full pipeline produces evaluation/adoption-risk.md on disk
+  5. Running the full pipeline produces evaluation/tier1-report.md on disk
+
+Plans: TBD
+
+### Phase 11: Wire Simulation Pipeline into Pipeline Runner
+**Goal**: Simulation pipeline runs during pipeline execution, producing real artifacts and passing real results to final reports
+**Depends on**: Phase 6, Phase 10
+**Requirements**: SIMU-01, SIMU-02, SIMU-03, SIMU-04, KNOW-04, OUTP-05, OUTP-06
+**Gap Closure:** Closes gaps from v1.0 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. A ScoringResult -> SimulationInput adapter function correctly transforms scored opportunities into simulation inputs
+  2. Pipeline runner imports and calls runSimulationPipeline with adapted inputs after scoring
+  3. Running the full pipeline produces evaluation/simulations/<skill-name>/ directories with decision flows, component maps, and mock tests
+  4. writeFinalReports receives real SimulationPipelineResult (not hardcoded empty) with accurate counts
+  5. evaluation/summary.md contains non-zero simulation metrics reflecting actual simulation results
+
+Plans: TBD
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
+Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9 > 10 > 11
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -189,3 +219,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8 > 9
 | 7. Pipeline Orchestration | 3/3 | Complete | 2026-03-11 |
 | 8. Resilience & Recovery | 3/3 | Complete | 2026-03-11 |
 | 9. Final Reports & Reflection | 3/3 | Complete | 2026-03-11 |
+| 10. Wire writeEvaluation | 0/0 | Pending | -- |
+| 11. Wire Simulation Pipeline | 0/0 | Pending | -- |

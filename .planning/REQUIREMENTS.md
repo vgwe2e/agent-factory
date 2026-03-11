@@ -20,8 +20,8 @@
 - [x] **SCOR-04**: Engine computes weighted composite score (Technical 0.30, Adoption 0.45, Value 0.25) -- 0.0 to 1.0 range
 - [x] **SCOR-05**: Engine applies ratcheting threshold -- only promotes opportunities with composite >= 0.60 to simulation
 - [x] **SCOR-06**: Engine classifies each opportunity by archetype (DETERMINISTIC, AGENTIC, GENERATIVE) and routes to appropriate evaluation patterns
-- [x] **SCOR-07**: Engine outputs scored opportunities as TSV with all dimension breakdowns
-- [x] **SCOR-08**: Engine outputs scored opportunities as markdown report with analysis
+- [ ] **SCOR-07**: Engine outputs scored opportunities as TSV with all dimension breakdowns
+- [ ] **SCOR-08**: Engine outputs scored opportunities as markdown report with analysis
 
 ### Red Flags
 
@@ -34,22 +34,22 @@
 ### Triage
 
 - [x] **TRIG-01**: Engine bins opportunities into Tier 1 (quick_win + value > $5M), Tier 2 (high AI suitability), Tier 3 (everything else)
-- [x] **TRIG-02**: Engine outputs triage results as TSV sorted by tier
+- [ ] **TRIG-02**: Engine outputs triage results as TSV sorted by tier
 - [x] **TRIG-03**: Engine processes Tier 1 opportunities first, then Tier 2, then Tier 3
 
 ### Simulation
 
-- [x] **SIMU-01**: Engine generates Mermaid decision flow diagrams for qualifying opportunities (composite >= 0.60)
-- [x] **SIMU-02**: Engine produces YAML component maps linking opportunities to specific Aera components (Streams, Cortex, Process Builder, Agent Teams)
-- [x] **SIMU-03**: Engine creates mock decision tests with sample inputs/outputs using actual client financials from the export
-- [x] **SIMU-04**: Engine maps integration surfaces (source systems -> Aera -> process -> UI) for each simulated opportunity
+- [ ] **SIMU-01**: Engine generates Mermaid decision flow diagrams for qualifying opportunities (composite >= 0.60)
+- [ ] **SIMU-02**: Engine produces YAML component maps linking opportunities to specific Aera components (Streams, Cortex, Process Builder, Agent Teams)
+- [ ] **SIMU-03**: Engine creates mock decision tests with sample inputs/outputs using actual client financials from the export
+- [ ] **SIMU-04**: Engine maps integration surfaces (source systems -> Aera -> process -> UI) for each simulated opportunity
 
 ### Knowledge Base
 
 - [x] **KNOW-01**: Engine bundles Aera UI component reference (21 components, 208 properties) from ~/Documents/area
 - [x] **KNOW-02**: Engine bundles Process Builder node reference (22 nodes with procedures and patterns)
 - [x] **KNOW-03**: Engine bundles orchestration decision guide (Process vs Agent vs Hybrid framework)
-- [x] **KNOW-04**: Every generated component map and spec references only real Aera components from the bundled knowledge base
+- [ ] **KNOW-04**: Every generated component map and spec references only real Aera components from the bundled knowledge base
 
 ### Infrastructure
 
@@ -64,12 +64,12 @@
 
 ### Output
 
-- [x] **OUTP-01**: Engine produces evaluation/triage.tsv with all opportunities tier-sorted
-- [x] **OUTP-02**: Engine produces evaluation/feasibility-scores.tsv with 9-dimension breakdown
-- [x] **OUTP-03**: Engine produces evaluation/adoption-risk.md with red flags and dead zones
-- [x] **OUTP-04**: Engine produces evaluation/tier1-report.md with deep analysis of top-tier opportunities
-- [x] **OUTP-05**: Engine produces evaluation/simulations/<skill-name>/ with decision flows, component maps, mock tests
-- [x] **OUTP-06**: Engine produces evaluation/summary.md with executive summary of top 10 opportunities
+- [ ] **OUTP-01**: Engine produces evaluation/triage.tsv with all opportunities tier-sorted
+- [ ] **OUTP-02**: Engine produces evaluation/feasibility-scores.tsv with 9-dimension breakdown
+- [ ] **OUTP-03**: Engine produces evaluation/adoption-risk.md with red flags and dead zones
+- [ ] **OUTP-04**: Engine produces evaluation/tier1-report.md with deep analysis of top-tier opportunities
+- [ ] **OUTP-05**: Engine produces evaluation/simulations/<skill-name>/ with decision flows, component maps, mock tests
+- [ ] **OUTP-06**: Engine produces evaluation/summary.md with executive summary of top 10 opportunities
 - [x] **OUTP-07**: Engine produces evaluation/dead-zones.md with areas explicitly recommended against
 - [x] **OUTP-08**: Engine produces evaluation/meta-reflection.md with catalog-level pattern analysis
 
@@ -113,24 +113,24 @@
 | SCOR-04 | Phase 4 | Complete |
 | SCOR-05 | Phase 4 | Complete |
 | SCOR-06 | Phase 4 | Complete |
-| SCOR-07 | Phase 5 | Complete |
-| SCOR-08 | Phase 5 | Complete |
+| SCOR-07 | Phase 10 | Pending |
+| SCOR-08 | Phase 10 | Pending |
 | FLAG-01 | Phase 3 | Complete |
 | FLAG-02 | Phase 3 | Complete |
 | FLAG-03 | Phase 3 | Complete |
 | FLAG-04 | Phase 3 | Complete |
 | FLAG-05 | Phase 3 | Complete |
 | TRIG-01 | Phase 3 | Complete |
-| TRIG-02 | Phase 3 | Complete |
+| TRIG-02 | Phase 10 | Pending |
 | TRIG-03 | Phase 3 | Complete |
-| SIMU-01 | Phase 6 | Complete |
-| SIMU-02 | Phase 6 | Complete |
-| SIMU-03 | Phase 6 | Complete |
-| SIMU-04 | Phase 6 | Complete |
+| SIMU-01 | Phase 11 | Pending |
+| SIMU-02 | Phase 11 | Pending |
+| SIMU-03 | Phase 11 | Pending |
+| SIMU-04 | Phase 11 | Pending |
 | KNOW-01 | Phase 2 | Complete |
 | KNOW-02 | Phase 2 | Complete |
 | KNOW-03 | Phase 2 | Complete |
-| KNOW-04 | Phase 6 | Complete |
+| KNOW-04 | Phase 11 | Pending |
 | INFR-01 | Phase 8 | Complete |
 | INFR-02 | Phase 7 | Complete |
 | INFR-03 | Phase 8 | Complete |
@@ -139,18 +139,19 @@
 | INFR-06 | Phase 1 | Complete |
 | INFR-07 | Phase 7 | Complete |
 | INFR-08 | Phase 8 | Complete |
-| OUTP-01 | Phase 5 | Complete |
-| OUTP-02 | Phase 5 | Complete |
-| OUTP-03 | Phase 5 | Complete |
-| OUTP-04 | Phase 5 | Complete |
-| OUTP-05 | Phase 9 | Complete |
-| OUTP-06 | Phase 9 | Complete |
+| OUTP-01 | Phase 10 | Pending |
+| OUTP-02 | Phase 10 | Pending |
+| OUTP-03 | Phase 10 | Pending |
+| OUTP-04 | Phase 10 | Pending |
+| OUTP-05 | Phase 11 | Pending |
+| OUTP-06 | Phase 11 | Pending |
 | OUTP-07 | Phase 9 | Complete |
 | OUTP-08 | Phase 9 | Complete |
 
 **Coverage:**
 - v1 requirements: 44 total
-- Mapped to phases: 44
+- Satisfied: 30 (complete)
+- Pending: 14 (gap closure phases 10-11)
 - Unmapped: 0
 
 ---
