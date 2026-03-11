@@ -38,12 +38,12 @@ ${workflowPatterns.length > 0 ? `Available workflow patterns: ${workflowPatterns
 The diagram should represent how Aera would orchestrate the decision flow for the given opportunity using the "${input.archetypeRoute}" orchestration route.`;
 
   const summary = input.opportunity.opportunity_summary
-    ?? input.opportunity.decision_articulation
+    ?? input.opportunity.rationale
     ?? "No summary available";
 
   const decisionArticulations = input.l4s
     .filter((l4) => l4.decision_articulation !== null && l4.decision_articulation !== undefined)
-    .map((l4) => `- ${l4.l4_name}: ${l4.decision_articulation}`);
+    .map((l4) => `- ${l4.name}: ${l4.decision_articulation}`);
 
   const l4Section = decisionArticulations.length > 0
     ? `L4 Decision Articulations:\n${decisionArticulations.join("\n")}`

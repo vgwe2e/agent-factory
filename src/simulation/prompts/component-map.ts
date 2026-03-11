@@ -47,9 +47,9 @@ Use these exact names when referencing known components. If a component is neede
 
   const l4Activities = input.l4s
     .map((l4) => {
-      const parts = [`- ${l4.l4_name}`];
+      const parts = [`- ${l4.name}`];
       if (l4.decision_articulation) parts.push(`  Decision: ${l4.decision_articulation}`);
-      if (l4.business_process) parts.push(`  Process: ${l4.business_process}`);
+      if (l4.description) parts.push(`  Description: ${l4.description}`);
       return parts.join("\n");
     })
     .join("\n");
@@ -57,7 +57,7 @@ Use these exact names when referencing known components. If a component is neede
   const userPrompt = `Map the following opportunity to Aera platform components:
 
 Opportunity: ${input.opportunity.l3_name}
-Summary: ${input.opportunity.opportunity_summary ?? input.opportunity.decision_articulation ?? "No summary"}
+Summary: ${input.opportunity.opportunity_summary ?? input.opportunity.rationale ?? "No summary"}
 Archetype: ${input.archetype}
 Orchestration Route: ${input.archetypeRoute}
 Composite Score: ${input.composite}
