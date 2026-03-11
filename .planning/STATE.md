@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 03-02 (Tier engine & triage pipeline)
-last_updated: "2026-03-11T04:22:33.442Z"
-last_activity: 2026-03-11 -- Completed 03-02 (Tier engine & triage pipeline)
+status: in_progress
+stopped_at: Completed 04-01 (Scoring types, composite, confidence, archetype router)
+last_updated: "2026-03-11T04:27:54Z"
+last_activity: 2026-03-11 -- Completed 04-01 (Scoring types, composite, confidence, archetype router)
 progress:
   total_phases: 9
   completed_phases: 3
-  total_plans: 15
-  completed_plans: 9
-  percent: 75
+  total_plans: 19
+  completed_plans: 10
+  percent: 53
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 3: Triage & Red Flags -- COMPLETE
+**Current focus:** Phase 4: Scoring Engine -- IN PROGRESS
 
 ## Current Position
 
-Phase: 3 of 9 (Triage & Red Flags) -- COMPLETE
-Plan: 3 of 3 in current phase (all complete)
-Status: Phase 3 complete, ready for Phase 4
-Last activity: 2026-03-11 -- Completed 03-02 (Tier engine & triage pipeline)
+Phase: 4 of 9 (Scoring Engine) -- IN PROGRESS
+Plan: 1 of 3 in current phase (04-01 complete)
+Status: Phase 4 in progress, 04-01 complete
+Last activity: 2026-03-11 -- Completed 04-01 (Scoring types, composite, confidence, archetype router)
 
-Progress: [████████░░] 75%
+Progress: [█████░░░░░] 53%
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Progress: [████████░░] 75%
 | Phase 03 P01 | 2min | 2 tasks | 3 files |
 | Phase 03 P02 | 4min | 2 tasks | 4 files |
 | Phase 03 P03 | 1min | 1 tasks | 2 files |
+| Phase 04 P01 | 3min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,10 @@ Recent decisions affecting current work:
 - [Phase 03]: Confidence gap uses strict >50% threshold (not >=50%)
 - [Phase 03]: Tier 1 checked before Tier 2 to establish priority ordering
 - [Phase 03]: compareTriage exported for reuse in downstream sorting
+- [Phase 04]: zod-to-json-schema for Ollama format parameter JSON schema generation
+- [Phase 04]: Confidence LOW checks evaluated before HIGH to prioritize caution
+- [Phase 04]: DETERMINISTIC as safe default archetype for empty L4 arrays
+- [Phase 04]: Archetype inference heuristic: decisionPct/aiPct thresholds at 0.3/0.5/0.6
 
 ### Pending Todos
 
@@ -97,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T04:18:23Z
-Stopped at: Completed 03-02 (Tier engine & triage pipeline)
-Resume file: .planning/phases/03-triage-red-flags/03-02-SUMMARY.md
+Last session: 2026-03-11T04:24:24Z
+Stopped at: Completed 04-01 (Scoring types, composite, confidence, archetype router)
+Resume file: .planning/phases/04-scoring-engine/04-01-SUMMARY.md
