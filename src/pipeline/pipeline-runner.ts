@@ -31,6 +31,7 @@ import { ollamaChat } from "../scoring/ollama-client.js";
 import { buildKnowledgeContext } from "../scoring/knowledge-context.js";
 import { groupL4sByL3 } from "../triage/red-flags.js";
 import { loadCheckpoint, getCompletedNames, createCheckpointWriter } from "../infra/checkpoint.js";
+import { checkOllama, warmUpModel, isOllamaHealthy } from "../infra/ollama.js";
 import type { Checkpoint } from "../infra/checkpoint.js";
 import { Semaphore } from "../infra/semaphore.js";
 import { withTimeout, TimeoutError } from "../infra/timeout.js";
@@ -200,6 +201,27 @@ export async function runPipeline(
 
   // 3. Create ModelManager and switch to scoring model (only for local Ollama backend)
   const useLocalModels = options.backend !== "vllm"; // explicit vllm backend skips local model management
+
+  // Health check and warm-up only for real Ollama runs (no chatFn/fetchFn injection)
+  const isRealOllama = useLocalModels && !options.chatFn && !options.fetchFn;
+  if (isRealOllama) {
+    // Verify Ollama is running and required models are available before starting
+    logger.info("Checking Ollama connectivity and model availability");
+    const ollamaStatus = await checkOllama([scoringModel]);
+    if (!ollamaStatus.connected) {
+      throw new Error(
+        `Ollama is not running. Start it with: ollama serve`,
+      );
+    }
+    if (ollamaStatus.missingModels.length > 0) {
+      throw new Error(
+        `Required Ollama model(s) not found: ${ollamaStatus.missingModels.join(", ")}. ` +
+        `Pull with: ${ollamaStatus.missingModels.map((m) => `ollama pull ${m}`).join("; ")}`,
+      );
+    }
+    logger.info({ models: ollamaStatus.models.length }, "Ollama health check passed");
+  }
+
   const modelManager = useLocalModels
     ? new ModelManager(
         { triageModel, scoringModel, timeoutMs: MODEL_TIMEOUT_MS },
@@ -210,6 +232,18 @@ export async function runPipeline(
     : null;
   if (modelManager) {
     await modelManager.ensureScoringModel();
+
+    // Warm up the scoring model to avoid cold-start latency on first opportunity
+    // (skip in tests where chatFn or fetchFn is injected)
+    if (isRealOllama) {
+      logger.info({ model: scoringModel }, "Warming up scoring model");
+      const warmUp = await warmUpModel(scoringModel);
+      if (warmUp.success) {
+        logger.info({ durationMs: warmUp.durationMs }, "Scoring model warm-up complete");
+      } else {
+        logger.warn({ error: warmUp.error, durationMs: warmUp.durationMs }, "Scoring model warm-up failed (non-fatal, proceeding)");
+      }
+    }
   }
 
   // 4. Create evaluation context
@@ -318,6 +352,15 @@ export async function runPipeline(
           addError(ctx, triage.l3Name, "scoring", msg);
           errors.push(msg);
           childLog.warn({ timeoutMs: err.timeoutMs }, "Scoring timed out");
+
+          // Mid-run health check: is Ollama still alive, or did it crash?
+          if (isRealOllama) {
+            const healthy = await isOllamaHealthy(5000);
+            if (!healthy) {
+              childLog.error("Ollama is unresponsive after timeout — it may have crashed. Aborting pipeline.");
+              throw new Error("Ollama became unresponsive during scoring. Check `ollama serve` and system memory.");
+            }
+          }
         } else {
           const msg = err instanceof Error ? err.message : String(err);
           addError(ctx, triage.l3Name, "scoring", msg);

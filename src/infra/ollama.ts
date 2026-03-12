@@ -65,6 +65,71 @@ export async function checkOllama(
   }
 }
 
+/**
+ * Quick connectivity probe — returns true if Ollama responds within timeout.
+ * Use for mid-run health checks to distinguish "model is slow" from "Ollama crashed".
+ */
+export async function isOllamaHealthy(timeoutMs: number = 5000): Promise<boolean> {
+  try {
+    const response = await fetch("http://localhost:11434/api/tags", {
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Send a trivial prompt to warm up the scoring model in GPU memory.
+ *
+ * Ollama may evict large models under memory pressure. This forces
+ * the model to be fully loaded before the first real scoring call,
+ * converting a ~60-90 second cold-start penalty from the first real
+ * opportunity into an explicit warm-up step.
+ *
+ * @param model - Model to warm up (default: qwen3:30b)
+ * @param timeoutMs - Warm-up timeout (default: 180_000 = 3 min). First load can be slow.
+ * @returns success/error result
+ */
+export async function warmUpModel(
+  model: string = "qwen3:30b",
+  timeoutMs: number = 180_000,
+): Promise<{ success: boolean; durationMs: number; error?: string }> {
+  const start = Date.now();
+  try {
+    const response = await fetch("http://localhost:11434/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model,
+        messages: [{ role: "user", content: "Reply with exactly: ready" }],
+        stream: false,
+        options: { temperature: 0, num_predict: 10 },
+      }),
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+
+    if (!response.ok) {
+      return {
+        success: false,
+        durationMs: Date.now() - start,
+        error: `Warm-up got HTTP ${response.status}`,
+      };
+    }
+
+    // Consume the response body to ensure the model is fully loaded
+    await response.json();
+    return { success: true, durationMs: Date.now() - start };
+  } catch (err) {
+    return {
+      success: false,
+      durationMs: Date.now() - start,
+      error: err instanceof Error ? err.message : String(err),
+    };
+  }
+}
+
 const RED = "\x1b[31m";
 const GREEN = "\x1b[32m";
 const YELLOW = "\x1b[33m";

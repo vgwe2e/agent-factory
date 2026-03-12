@@ -120,6 +120,86 @@ describe("checkOllama", () => {
   });
 });
 
+describe("isOllamaHealthy", () => {
+  let originalFetch: typeof globalThis.fetch;
+
+  beforeEach(() => {
+    originalFetch = globalThis.fetch;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it("returns true when Ollama responds with 200", async () => {
+    globalThis.fetch = (async () =>
+      new Response(JSON.stringify({ models: [] }), { status: 200 })
+    ) as typeof globalThis.fetch;
+
+    const { isOllamaHealthy } = await import("./ollama.js");
+    const result = await isOllamaHealthy();
+    assert.equal(result, true);
+  });
+
+  it("returns false when fetch throws (connection refused)", async () => {
+    globalThis.fetch = (async () => {
+      throw new TypeError("fetch failed");
+    }) as typeof globalThis.fetch;
+
+    const { isOllamaHealthy } = await import("./ollama.js");
+    const result = await isOllamaHealthy();
+    assert.equal(result, false);
+  });
+});
+
+describe("warmUpModel", () => {
+  let originalFetch: typeof globalThis.fetch;
+
+  beforeEach(() => {
+    originalFetch = globalThis.fetch;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it("returns success with duration when model responds", async () => {
+    globalThis.fetch = (async () =>
+      new Response(
+        JSON.stringify({ message: { role: "assistant", content: "ready" }, done: true }),
+        { status: 200 },
+      )
+    ) as typeof globalThis.fetch;
+
+    const { warmUpModel } = await import("./ollama.js");
+    const result = await warmUpModel("qwen3:30b", 5000);
+    assert.equal(result.success, true);
+    assert.ok(result.durationMs >= 0);
+  });
+
+  it("returns failure when fetch throws", async () => {
+    globalThis.fetch = (async () => {
+      throw new TypeError("fetch failed");
+    }) as typeof globalThis.fetch;
+
+    const { warmUpModel } = await import("./ollama.js");
+    const result = await warmUpModel("qwen3:30b", 5000);
+    assert.equal(result.success, false);
+    assert.ok(result.error?.includes("fetch failed"));
+  });
+
+  it("returns failure on non-200 response", async () => {
+    globalThis.fetch = (async () =>
+      new Response("Not Found", { status: 404 })
+    ) as typeof globalThis.fetch;
+
+    const { warmUpModel } = await import("./ollama.js");
+    const result = await warmUpModel("qwen3:30b", 5000);
+    assert.equal(result.success, false);
+    assert.ok(result.error?.includes("404"));
+  });
+});
+
 describe("formatOllamaStatus", () => {
   it("shows NOT CONNECTED when not connected", async () => {
     const { formatOllamaStatus } = await import("./ollama.js");
