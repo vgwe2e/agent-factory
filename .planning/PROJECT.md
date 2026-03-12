@@ -37,7 +37,14 @@ Produce actionable, adoption-realistic implementation specs for Aera skills — 
 
 ### Active
 
-(None — define with `/gsd:new-milestone`)
+#### v1.2 — Cloud Pipeline Hardening
+
+- [ ] Report generation includes checkpoint data on resume runs
+- [ ] Simulation phase can be skipped (`--skip-sim`) or configured with custom timeouts
+- [ ] End-to-end automation: one command handles score + retry + report + teardown
+- [ ] RunPod provisioning succeeds on first attempt with correct model via GraphQL API
+- [ ] Backend-aware output directories (auto-namespace by backend type)
+- [ ] Network volume support for model weight persistence across runs
 
 ### Future
 
@@ -62,6 +69,18 @@ Produce actionable, adoption-realistic implementation specs for Aera skills — 
 ## Context
 
 Shipped v1.1 with cloud-accelerated scoring. ~218K LOC TypeScript, 552 tests, 14 phases across 2 milestones.
+
+## Current Milestone: v1.2 Cloud Pipeline Hardening
+
+**Goal:** Make the cloud evaluation pipeline reliable, automated, and fast enough to complete a full 362-opportunity Ford hierarchy evaluation in under 30 minutes on a single A100 GPU with zero manual intervention.
+
+**Target features:**
+- Fix report generation to include checkpoint data on resume
+- Add --skip-sim flag and simulation timeout configuration
+- Integrate retry loop and report regen into CLI (replace run-full-eval.sh)
+- Fix RunPod provisioning — use GraphQL API, validate model loading, add timeout
+- Backend-aware output directories (auto-namespace by backend type)
+- Network volume support for model weight persistence
 Tech stack: TypeScript (ESM strict), Zod, Commander, Pino, js-yaml, Ollama REST API, vLLM OpenAI-compatible API, RunPod GraphQL API, dotenv.
 Pipeline: CLI → Zod ingestion → 8B triage → 32B scoring → simulation → final reports → git commit.
 Cloud path: CLI → RunPod provision → vLLM health poll → concurrent scoring (semaphore-bounded) → cost tracking → auto-teardown.
@@ -100,4 +119,4 @@ Known tech debt: 12 items across v1.0 (9) and v1.1 (3). See `.planning/MILESTONE
 | Non-fatal cloud-cost.json write | Artifact write failure should not break scoring pipeline | ✓ Good — consistent with evaluation artifact patterns |
 
 ---
-*Last updated: 2026-03-12 after v1.1 milestone*
+*Last updated: 2026-03-12 after v1.2 milestone start*
