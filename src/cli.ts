@@ -14,8 +14,10 @@ import { parseExport } from "./ingestion/parse-export.js";
 import { checkOllama, formatOllamaStatus } from "./infra/ollama.js";
 import { createLogger } from "./infra/logger.js";
 import { runPipeline } from "./pipeline/pipeline-runner.js";
+import type { PipelineResult } from "./pipeline/pipeline-runner.js";
 import { createBackend } from "./infra/backend-factory.js";
 import type { Backend, BackendConfig } from "./infra/backend-factory.js";
+import { clearCheckpointErrors } from "./infra/checkpoint.js";
 
 const RED = "\x1b[31m";
 const GREEN = "\x1b[32m";
@@ -23,6 +25,66 @@ const RESET = "\x1b[0m";
 const BOLD = "\x1b[1m";
 
 const LOG_LEVELS = ["silent", "fatal", "error", "warn", "info", "debug", "trace"] as const;
+
+// ---------------------------------------------------------------------------
+// Testable retry/teardown/exit-code helper (extracted from Commander action)
+// ---------------------------------------------------------------------------
+
+export interface LifecycleOptions {
+  pipelineFn: () => Promise<PipelineResult>;
+  clearCheckpointErrorsFn: (outputDir: string) => number;
+  cleanupFn: () => Promise<void>;
+  teardown: boolean;
+  maxRetries: number;
+  outputDir: string;
+}
+
+export interface LifecycleResult {
+  exitCode: 0 | 1 | 2;
+  lastResult?: PipelineResult;
+  fatalError?: string;
+}
+
+/**
+ * Run the pipeline with retry loop, teardown control, and structured exit codes.
+ *
+ * Exit codes:
+ * - 0: all opportunities scored successfully
+ * - 1: errors remain after all retries exhausted
+ * - 2: fatal/thrown error (parse failure, infra down)
+ */
+export async function runWithRetries(opts: LifecycleOptions): Promise<LifecycleResult> {
+  try {
+    // Initial pipeline run
+    let lastResult = await opts.pipelineFn();
+
+    // Retry loop
+    for (let attempt = 1; attempt <= opts.maxRetries; attempt++) {
+      if (lastResult.errorCount === 0) break;
+
+      const cleared = opts.clearCheckpointErrorsFn(opts.outputDir);
+      console.log(`\n=== Retry ${attempt}/${opts.maxRetries}: ${cleared} errored opportunities ===\n`);
+
+      lastResult = await opts.pipelineFn();
+    }
+
+    // Teardown only if --teardown flag set
+    if (opts.teardown) {
+      await opts.cleanupFn();
+    }
+
+    // Determine exit code
+    if (lastResult.errorCount > 0) {
+      return { exitCode: 1, lastResult };
+    }
+    return { exitCode: 0, lastResult };
+  } catch (err) {
+    // Fatal failure -- ALWAYS tear down to prevent orphaned pods
+    await opts.cleanupFn();
+    const msg = err instanceof Error ? err.message : String(err);
+    return { exitCode: 2, fatalError: msg };
+  }
+}
 
 const program = new Command();
 
@@ -63,7 +125,9 @@ program
   )
   .option("--skip-sim", "Skip simulation phase (scoring only)")
   .option("--sim-timeout <ms>", "Per-opportunity simulation timeout in milliseconds")
-  .action(async (opts: { input: string; logLevel: string; outputDir: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string }) => {
+  .option("--retry <n>", "Retry errored opportunities up to N times at concurrency 1", "0")
+  .option("--teardown", "Tear down cloud resources after pipeline completes")
+  .action(async (opts: { input: string; logLevel: string; outputDir: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; retry: string; teardown?: boolean }) => {
     console.log(`${BOLD}Aera Skill Feasibility Engine v1.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
@@ -134,6 +198,13 @@ program
       }
     }
 
+    // Validate retry
+    const maxRetries = parseInt(opts.retry ?? "0", 10);
+    if (isNaN(maxRetries) || maxRetries < 0) {
+      console.error(`${RED}Error: --retry must be a non-negative integer${RESET}`);
+      process.exit(1);
+    }
+
     // Validate vLLM backend requirements
     const backend = opts.backend as Backend;
     if (backend === "vllm" && !opts.vllmUrl && !process.env.RUNPOD_API_KEY) {
@@ -199,38 +270,63 @@ program
     }
     console.log(`Log level:   ${opts.logLevel}`);
     console.log(`Output dir:  ${opts.outputDir}`);
+    if (maxRetries > 0) {
+      console.log(`Retries:     ${maxRetries} (concurrency 1)`);
+    }
+    if (opts.teardown) {
+      console.log(`Teardown:    enabled`);
+    }
     console.log();
 
-    let pipelineResult;
-    try {
-      // Start cost tracking if cloud backend
-      if (backendConfig.costTracker) {
-        backendConfig.costTracker.start();
-      }
+    const pipelineOptions = {
+      outputDir: opts.outputDir,
+      logLevel: opts.logLevel,
+      chatFn: backendConfig.chatFn,
+      backend,
+      concurrency,
+      maxTier,
+      skipSim: opts.skipSim ?? false,
+      simTimeoutMs,
+      costTracker: backendConfig.costTracker,
+    };
 
-      pipelineResult = await runPipeline(
+    // Start cost tracking BEFORE retry loop so total GPU time spans all attempts
+    if (backendConfig.costTracker) {
+      backendConfig.costTracker.start();
+    }
+
+    let retryAttempt = 0;
+    const pipelineFn = async () => {
+      const currentConcurrency = retryAttempt === 0 ? concurrency : 1;
+      retryAttempt++;
+      return runPipeline(
         opts.input,
-        {
-          outputDir: opts.outputDir,
-          logLevel: opts.logLevel,
-          chatFn: backendConfig.chatFn,
-          backend,
-          concurrency,
-          maxTier,
-          skipSim: opts.skipSim ?? false,
-          simTimeoutMs,
-          costTracker: backendConfig.costTracker,
-        },
+        { ...pipelineOptions, concurrency: currentConcurrency },
         logger,
       );
-    } finally {
-      // Stop cost tracking
-      if (backendConfig.costTracker) {
-        backendConfig.costTracker.stop();
-      }
-      // Always tear down cloud resources
-      await doCleanup();
+    };
+
+    const lifecycleResult = await runWithRetries({
+      pipelineFn,
+      clearCheckpointErrorsFn: clearCheckpointErrors,
+      cleanupFn: doCleanup,
+      teardown: opts.teardown ?? false,
+      maxRetries,
+      outputDir: opts.outputDir,
+    });
+
+    // Stop cost tracking AFTER retry loop
+    if (backendConfig.costTracker) {
+      backendConfig.costTracker.stop();
     }
+
+    // Handle fatal error
+    if (lifecycleResult.exitCode === 2) {
+      console.error(`${RED}Fatal: ${lifecycleResult.fatalError}${RESET}`);
+      process.exit(2);
+    }
+
+    const pipelineResult = lifecycleResult.lastResult!;
 
     // Print summary
     const durationSec = (pipelineResult.totalDurationMs / 1000).toFixed(1);
@@ -257,12 +353,19 @@ program
       console.log(`Rate:        $${cost.ratePerHour}/hr`);
     }
 
-    if (pipelineResult.errorCount > 0 && pipelineResult.scoredCount === 0) {
-      console.error(`${RED}All opportunities errored. Check logs for details.${RESET}`);
+    if (pipelineResult.errorCount > 0) {
+      console.error(`${RED}${pipelineResult.errorCount} opportunities still errored after ${maxRetries > 0 ? maxRetries + " retries" : "scoring"}.${RESET}`);
       process.exit(1);
     }
 
     console.log(`${GREEN}Results written to ${opts.outputDir}${RESET}`);
   });
 
-program.parse();
+// Only parse when run as main script (not when imported for testing)
+const isMain = process.argv[1] && (
+  process.argv[1].endsWith("/cli.ts") ||
+  process.argv[1].endsWith("/cli.js")
+);
+if (isMain) {
+  program.parse();
+}
