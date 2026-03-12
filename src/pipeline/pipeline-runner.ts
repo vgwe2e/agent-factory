@@ -144,10 +144,11 @@ export async function runPipeline(
   );
 
   // 1b. Load checkpoint for resume support
+  const resolvedInput = path.resolve(inputPath);
   const existingCheckpoint = loadCheckpoint(options.outputDir);
-  const isStale = !existingCheckpoint || existingCheckpoint.inputFile !== inputPath;
+  const isStale = !existingCheckpoint || path.resolve(existingCheckpoint.inputFile) !== resolvedInput;
   const checkpoint: Checkpoint = isStale
-    ? { version: 1, inputFile: inputPath, startedAt: new Date().toISOString(), entries: [] }
+    ? { version: 1, inputFile: resolvedInput, startedAt: new Date().toISOString(), entries: [] }
     : existingCheckpoint;
   const completed = isStale ? new Set<string>() : getCompletedNames(existingCheckpoint);
 
