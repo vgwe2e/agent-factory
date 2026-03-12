@@ -1120,6 +1120,183 @@ describe("pipeline-runner", () => {
     );
   });
 
+  // -- skipSim and simTimeout integration tests --
+
+  it("skipSim=true causes simulation to be skipped entirely", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn, calls } = makeMockSimulationPipeline();
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        skipSim: true,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Simulation should never be called
+    assert.equal(calls.length, 0, "simulation pipeline was not called");
+    assert.equal(result.simulatedCount, 0, "simulatedCount is 0");
+    assert.equal(result.simErrorCount, 0, "simErrorCount is 0");
+    // Scoring and promotion still work
+    assert.equal(result.scoredCount, 3, "3 scored");
+    assert.ok(result.promotedCount > 0, "promotedCount is still computed");
+  });
+
+  it("skipSim=true preserves promotedCount (promotion is a scoring outcome)", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    // Run without skipSim to get baseline
+    const baseResult = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Run with skipSim in a fresh dir
+    const tmpDir2 = fs.mkdtempSync(path.join(os.tmpdir(), "pipeline-skip-"));
+    try {
+      const { fn: simFn2 } = makeMockSimulationPipeline();
+      const skipResult = await runPipeline(
+        "__fixture__",
+        {
+          outputDir: tmpDir2,
+          archiveThreshold: 100,
+          chatFn,
+          fetchFn,
+          runSimulationPipelineFn: simFn2,
+          gitCommit: false,
+          skipSim: true,
+          parseExportFn: async () => ({ success: true as const, data: fixture }),
+        },
+        logger,
+      );
+
+      assert.equal(skipResult.promotedCount, baseResult.promotedCount, "promotedCount same with or without skipSim");
+    } finally {
+      fs.rmSync(tmpDir2, { recursive: true, force: true });
+    }
+  });
+
+  it("simTimeoutMs is passed through to runSimulationPipeline when skipSim is false", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+
+    // Custom mock that captures the options argument
+    const capturedOptions: Array<{ timeoutMs?: number } | undefined> = [];
+    const simFn = async (
+      inputs: SimulationInput[],
+      outputDir: string,
+      _ollamaUrl?: string,
+      _deps?: unknown,
+      options?: { timeoutMs?: number },
+    ): Promise<SimulationPipelineResult> => {
+      capturedOptions.push(options);
+      return { results: [], totalSimulated: 0, totalFailed: 0, totalConfirmed: 0, totalInferred: 0 };
+    };
+
+    await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        simTimeoutMs: 60000,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.equal(capturedOptions.length, 1, "simulation was called once");
+    assert.deepStrictEqual(capturedOptions[0], { timeoutMs: 60000 }, "timeoutMs threaded through");
+  });
+
+  it("simErrorCount on PipelineResult reflects simulation failures", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+
+    // Mock that returns some failures
+    const simFn = async (
+      inputs: SimulationInput[],
+      _outputDir: string,
+    ): Promise<SimulationPipelineResult> => {
+      return {
+        results: [],
+        totalSimulated: inputs.length - 1,
+        totalFailed: 1,
+        totalConfirmed: 0,
+        totalInferred: 0,
+      };
+    };
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.equal(result.simErrorCount, 1, "simErrorCount from totalFailed");
+  });
+
+  it("default behavior unchanged when skipSim and simTimeoutMs are not set", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn, calls } = makeMockSimulationPipeline();
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Simulation should be called normally
+    assert.equal(calls.length, 1, "simulation pipeline called once");
+    assert.ok(result.simulatedCount > 0, "simulatedCount > 0");
+    assert.equal(typeof result.simErrorCount, "number", "simErrorCount exists on result");
+  });
+
   it("resumed run with overlapping archived scores uses current session score (freshest wins)", async () => {
     const fixture = makeFixtureExport();
     const chatFn = makeChatFn();
