@@ -22,6 +22,7 @@ import type { Checkpoint } from "../infra/checkpoint.js";
 import type { SimulationInput } from "../types/simulation.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
 import type { CostTracker, CostSummary } from "../infra/cost-tracker.js";
+import type { ScoringResult } from "../types/scoring.js";
 
 // -- Fixtures --
 
@@ -973,5 +974,196 @@ describe("pipeline-runner", () => {
     assert.ok(cp !== null, "checkpoint file exists after concurrent run");
     assert.equal(cp!.entries.length, 3, "3 entries (one per scored opp)");
     assert.ok(cp!.entries.every((e) => e.status === "scored"), "all entries scored");
+  });
+
+  // -- Archived score loading on resume integration tests --
+
+  /**
+   * Helper: create a ScoringResult fixture matching what archiveAndReset writes.
+   */
+  function makeScoringResult(l3Name: string, l2Name: string, l1Name: string, composite: number = 0.67): ScoringResult {
+    return {
+      l3Name,
+      l2Name,
+      l1Name,
+      archetype: "DETERMINISTIC",
+      archetypeSource: "export",
+      lenses: {
+        technical: {
+          lens: "technical",
+          subDimensions: [
+            { name: "data_readiness", score: 2, reason: "Good" },
+            { name: "aera_platform_fit", score: 2, reason: "Good" },
+            { name: "archetype_confidence", score: 2, reason: "Good" },
+          ],
+          total: 6, maxPossible: 9, normalized: 0.67, confidence: "MEDIUM",
+        },
+        adoption: {
+          lens: "adoption",
+          subDimensions: [
+            { name: "decision_density", score: 2, reason: "Good" },
+            { name: "financial_gravity", score: 2, reason: "Good" },
+            { name: "impact_proximity", score: 2, reason: "Good" },
+            { name: "confidence_signal", score: 2, reason: "Good" },
+          ],
+          total: 8, maxPossible: 12, normalized: 0.67, confidence: "MEDIUM",
+        },
+        value: {
+          lens: "value",
+          subDimensions: [
+            { name: "value_density", score: 2, reason: "Good" },
+            { name: "simulation_viability", score: 2, reason: "Good" },
+          ],
+          total: 4, maxPossible: 6, normalized: 0.67, confidence: "MEDIUM",
+        },
+      },
+      composite,
+      overallConfidence: "MEDIUM",
+      promotedToSimulation: composite >= 0.60,
+      scoringDurationMs: 5000,
+    } as ScoringResult;
+  }
+
+  it("resumed run with archives produces reports with ALL scored opportunities", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    // Pre-write checkpoint marking Opp-A as completed
+    const existingCheckpoint: Checkpoint = {
+      version: 1,
+      inputFile: "__fixture__",
+      startedAt: new Date().toISOString(),
+      entries: [
+        { l3Name: "Opp-A", completedAt: new Date().toISOString(), status: "scored" },
+      ],
+    };
+    saveCheckpoint(tmpDir, existingCheckpoint);
+
+    // Pre-write archive file with Opp-A's full ScoringResult
+    const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.75);
+    const pipelineDir = path.join(tmpDir, ".pipeline");
+    fs.mkdirSync(pipelineDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(pipelineDir, "checkpoint-1000.json"),
+      JSON.stringify({ "Opp-A": archivedOppA }, null, 2),
+      "utf-8",
+    );
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Opp-A resumed, Opp-B + Opp-C scored in current session
+    assert.equal(result.scoredCount, 2, "2 scored in current session");
+    assert.equal(result.resumedCount, 1, "1 resumed from checkpoint");
+
+    // Verify summary.md reports ALL 3 scored opportunities
+    const summaryPath = path.join(tmpDir, "evaluation", "summary.md");
+    assert.ok(fs.existsSync(summaryPath), "summary.md exists");
+    const summaryContent = fs.readFileSync(summaryPath, "utf-8");
+    assert.ok(
+      summaryContent.includes("**Total Evaluated:** 3"),
+      `summary.md should show Total Evaluated: 3, got: ${summaryContent.match(/\*\*Total Evaluated:\*\* \d+/)?.[0]}`,
+    );
+
+    // Verify feasibility-scores.tsv has all 3 opportunities
+    const tsvPath = path.join(tmpDir, "evaluation", "feasibility-scores.tsv");
+    assert.ok(fs.existsSync(tsvPath), "feasibility-scores.tsv exists");
+    const tsvContent = fs.readFileSync(tsvPath, "utf-8");
+    assert.ok(tsvContent.includes("Opp-A"), "TSV contains Opp-A");
+    assert.ok(tsvContent.includes("Opp-B"), "TSV contains Opp-B");
+    assert.ok(tsvContent.includes("Opp-C"), "TSV contains Opp-C");
+  });
+
+  it("fresh run (no checkpoint) does not load archived scores", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Fresh run: all 3 processable scored, no resume
+    assert.equal(result.scoredCount, 3, "3 scored");
+    assert.equal(result.resumedCount, 0, "0 resumed");
+
+    // Summary should show 3 evaluated
+    const summaryPath = path.join(tmpDir, "evaluation", "summary.md");
+    const summaryContent = fs.readFileSync(summaryPath, "utf-8");
+    assert.ok(
+      summaryContent.includes("**Total Evaluated:** 3"),
+      "fresh run also shows 3 evaluated",
+    );
+  });
+
+  it("resumed run with overlapping archived scores uses current session score (freshest wins)", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    // Archive has Opp-A scored, but do NOT mark it in the checkpoint resume
+    // file -- so Opp-A will be scored again in the current session.
+    // The report should use the current session's score (not the archived one).
+    const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.30); // low composite
+    const pipelineDir = path.join(tmpDir, ".pipeline");
+    fs.mkdirSync(pipelineDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(pipelineDir, "checkpoint-1000.json"),
+      JSON.stringify({ "Opp-A": archivedOppA }, null, 2),
+      "utf-8",
+    );
+
+    // No checkpoint resume file -- fresh run, but archive exists on disk
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Fresh run: completed.size === 0, so no archived scores loaded
+    // All 3 scored in current session
+    assert.equal(result.scoredCount, 3, "3 scored in current session");
+    assert.equal(result.resumedCount, 0, "0 resumed (no checkpoint)");
+
+    // Verify feasibility-scores.tsv contains all 3
+    const tsvPath = path.join(tmpDir, "evaluation", "feasibility-scores.tsv");
+    const tsvContent = fs.readFileSync(tsvPath, "utf-8");
+    assert.ok(tsvContent.includes("Opp-A"), "Opp-A in TSV");
+    assert.ok(tsvContent.includes("Opp-B"), "Opp-B in TSV");
+    assert.ok(tsvContent.includes("Opp-C"), "Opp-C in TSV");
   });
 });

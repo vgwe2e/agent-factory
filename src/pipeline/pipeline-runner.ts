@@ -40,6 +40,7 @@ import { createProgressTracker } from "./progress.js";
 import { autoCommitEvaluation } from "../infra/git-commit.js";
 import { writeFinalReports } from "../output/write-final-reports.js";
 import { writeEvaluation } from "../output/write-evaluation.js";
+import { loadArchivedScores } from "./load-archived-scores.js";
 import { runSimulationPipeline as defaultRunSimulationPipeline } from "../simulation/simulation-pipeline.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
 import { toSimulationInputs } from "./scoring-to-simulation.js";
@@ -170,6 +171,22 @@ export async function runPipeline(
   }
 
   const resumedCount = completed.size;
+
+  // 1c. Load previously-scored results from archive so reports include ALL scores
+  if (completed.size > 0) {
+    const archived = await loadArchivedScores(options.outputDir);
+    for (const sr of archived) {
+      // Only include scores for opportunities we're skipping (already completed)
+      // Current-session scores will be added during scoring below
+      if (completed.has(sr.l3Name)) {
+        allScoredResults.push(sr);
+      }
+    }
+    logger.info(
+      { archivedScoresLoaded: allScoredResults.length },
+      `Loaded ${allScoredResults.length} archived scoring results for report generation`,
+    );
+  }
 
   // 2. Triage (pure function, no model needed)
   logger.info("Running triage");
@@ -396,11 +413,18 @@ export async function runPipeline(
   // 10. Final archive flush
   await archiveAndReset(ctx, options.outputDir);
 
+  // 10-dedup. Deduplicate allScoredResults: current session scores override archived scores
+  const deduped = new Map<string, ScoringResult>();
+  for (const sr of allScoredResults) {
+    deduped.set(sr.l3Name, sr); // later entries (current session) overwrite earlier (archived)
+  }
+  const finalScoredResults = [...deduped.values()];
+
   // 10a. Write evaluation output files
   const companyName = data.company_context.company_name;
   const evalResult = await writeEvaluation(
     options.outputDir,
-    allScoredResults,
+    finalScoredResults,
     triageResults,
     companyName,
   );
@@ -411,7 +435,7 @@ export async function runPipeline(
   }
 
   // 10b. Run simulation pipeline for promoted opportunities
-  const promoted = allScoredResults.filter((sr) => sr.promotedToSimulation);
+  const promoted = finalScoredResults.filter((sr) => sr.promotedToSimulation);
   const simInputs = toSimulationInputs(promoted, l3Map, l4Map, data.company_context);
   const simDir = path.join(options.outputDir, "evaluation", "simulations");
 
@@ -449,7 +473,7 @@ export async function runPipeline(
   // 10d. Write final reports (summary, dead-zones, meta-reflection)
   const reportResult = await writeFinalReports(
     options.outputDir,
-    allScoredResults,
+    finalScoredResults,
     triageResults,
     simResult,
     companyName,
