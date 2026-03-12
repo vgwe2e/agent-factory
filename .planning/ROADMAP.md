@@ -122,7 +122,9 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. User can provision a RunPod pod with `--network-volume` and the pod mounts the volume for model weight storage
   2. On second pod launch with the same network volume, model loading completes significantly faster (no HuggingFace download) and `/v1/models` shows the model ready
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 20-01-PLAN.md — Add networkVolumeId to cloud-provider, backend-factory, and CLI
 
 ## Progress
 
@@ -150,5 +152,5 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 16. Simulation Configuration | 2/2 | Complete    | 2026-03-12 | - |
 | 17. CLI Automation | 2/2 | Complete    | 2026-03-12 | - |
 | 18. RunPod Provisioning Fix | 1/1 | Complete    | 2026-03-12 | - |
-| 19. Output Directory Management | 1/1 | Complete   | 2026-03-12 | - |
-| 20. Network Volume & Model Caching | v1.2 | 0/0 | Not started | - |
+| 19. Output Directory Management | 1/1 | Complete    | 2026-03-12 | - |
+| 20. Network Volume & Model Caching | v1.2 | 0/1 | Not started | - |
