@@ -1,6 +1,6 @@
 import { describe, it, mock, beforeEach } from "node:test";
 import assert from "node:assert/strict";
-import { runWithRetries, type LifecycleOptions, type LifecycleResult } from "./cli.js";
+import { runWithRetries, type LifecycleOptions, type LifecycleResult, resolveOutputDir } from "./cli.js";
 import type { PipelineResult } from "./pipeline/pipeline-runner.js";
 
 function makePipelineResult(overrides: Partial<PipelineResult> = {}): PipelineResult {
@@ -20,6 +20,30 @@ function makePipelineResult(overrides: Partial<PipelineResult> = {}): PipelineRe
     ...overrides,
   };
 }
+
+describe("resolveOutputDir", () => {
+  it("returns evaluation-ollama when no explicit dir and backend is ollama", () => {
+    assert.equal(resolveOutputDir(undefined, "ollama"), "./evaluation-ollama");
+  });
+
+  it("returns evaluation-vllm when no explicit dir and backend is vllm", () => {
+    assert.equal(resolveOutputDir(undefined, "vllm"), "./evaluation-vllm");
+  });
+
+  it("returns explicit dir unchanged when backend is vllm", () => {
+    assert.equal(resolveOutputDir("./custom-dir", "vllm"), "./custom-dir");
+  });
+
+  it("returns explicit dir unchanged when backend is ollama", () => {
+    assert.equal(resolveOutputDir("./custom-dir", "ollama"), "./custom-dir");
+  });
+
+  it("default ollama dir differs from default vllm dir (non-clobber guarantee)", () => {
+    const ollamaDir = resolveOutputDir(undefined, "ollama");
+    const vllmDir = resolveOutputDir(undefined, "vllm");
+    assert.notEqual(ollamaDir, vllmDir);
+  });
+});
 
 describe("runWithRetries", () => {
   describe("teardown control", () => {

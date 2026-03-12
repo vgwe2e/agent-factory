@@ -27,6 +27,18 @@ const BOLD = "\x1b[1m";
 const LOG_LEVELS = ["silent", "fatal", "error", "warn", "info", "debug", "trace"] as const;
 
 // ---------------------------------------------------------------------------
+// Backend-aware output directory resolution (pure helper)
+// ---------------------------------------------------------------------------
+
+export function resolveOutputDir(
+  explicitOutputDir: string | undefined,
+  backend: string,
+): string {
+  if (explicitOutputDir != null) return explicitOutputDir;
+  return `./evaluation-${backend}`;
+}
+
+// ---------------------------------------------------------------------------
 // Testable retry/teardown/exit-code helper (extracted from Commander action)
 // ---------------------------------------------------------------------------
 
