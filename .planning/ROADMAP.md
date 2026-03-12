@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 MVP** — Phases 1-11 (shipped 2026-03-11)
 - ✅ **v1.1 Cloud-Accelerated Scoring** — Phases 12-14 (shipped 2026-03-12)
-- 🚧 **v1.2 Cloud Pipeline Hardening** — Phases 15-20 (in progress)
+- ✅ **v1.2 Cloud Pipeline Hardening** — Phases 15-20 (shipped 2026-03-12)
 
 ## Phases
 
@@ -47,7 +47,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 - [x] **Phase 17: CLI Automation** — Single CLI invocation handles full lifecycle with retries and teardown (completed 2026-03-12)
 - [x] **Phase 18: RunPod Provisioning Fix** — Pod provisioning succeeds on first attempt with correct model loaded (completed 2026-03-12)
 - [x] **Phase 19: Output Directory Management** — Backend-aware output namespacing prevents local/cloud clobber (completed 2026-03-12)
-- [ ] **Phase 20: Network Volume & Model Caching** — Model weights persist across pod launches via network volumes
+- [x] **Phase 20: Network Volume & Model Caching** — Model weights persist across pod launches via network volumes (completed 2026-03-12)
 
 ## Phase Details
 
@@ -122,9 +122,9 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. User can provision a RunPod pod with `--network-volume` and the pod mounts the volume for model weight storage
   2. On second pod launch with the same network volume, model loading completes significantly faster (no HuggingFace download) and `/v1/models` shows the model ready
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
-- [ ] 20-01-PLAN.md — Add networkVolumeId to cloud-provider, backend-factory, and CLI
+- [x] 20-01-PLAN.md — Add networkVolumeId to cloud-provider, backend-factory, and CLI
 
 ## Progress
 
@@ -153,4 +153,4 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 17. CLI Automation | 2/2 | Complete    | 2026-03-12 | - |
 | 18. RunPod Provisioning Fix | 1/1 | Complete    | 2026-03-12 | - |
 | 19. Output Directory Management | 1/1 | Complete    | 2026-03-12 | - |
-| 20. Network Volume & Model Caching | v1.2 | 0/1 | Not started | - |
+| 20. Network Volume & Model Caching | v1.2 | 1/1 | Complete | 2026-03-12 |

@@ -40,8 +40,8 @@ Requirements for Cloud Pipeline Hardening milestone. Each maps to roadmap phases
 
 ### Model Caching
 
-- [ ] **CACHE-01**: `/setup-runpod-vllm` skill supports creating and attaching a network volume for model weights
-- [ ] **CACHE-02**: Subsequent pod launches reuse cached model weights from network volume, skipping HuggingFace download
+- [x] **CACHE-01**: `/setup-runpod-vllm` skill supports creating and attaching a network volume for model weights
+- [x] **CACHE-02**: Subsequent pod launches reuse cached model weights from network volume, skipping HuggingFace download
 
 ## Future Requirements
 
@@ -84,8 +84,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROV-04 | Phase 18 | Complete |
 | OUT-01 | Phase 19 | Complete |
 | OUT-02 | Phase 19 | Complete |
-| CACHE-01 | Phase 20 | Pending |
-| CACHE-02 | Phase 20 | Pending |
+| CACHE-01 | Phase 20 | Complete |
+| CACHE-02 | Phase 20 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 18 total

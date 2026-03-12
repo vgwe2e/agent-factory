@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cloud Pipeline Hardening
 status: completed
-stopped_at: Completed 19-01-PLAN.md
-last_updated: "2026-03-12T22:41:20.000Z"
-last_activity: 2026-03-12 -- Completed 19-01 (output directory management)
+stopped_at: Completed 20-01-PLAN.md
+last_updated: "2026-03-12T23:02:08Z"
+last_activity: 2026-03-12 -- Completed 20-01 (network volume model caching)
 progress:
   total_phases: 6
-  completed_phases: 5
-  total_plans: 7
-  completed_plans: 7
+  completed_phases: 6
+  total_plans: 8
+  completed_plans: 8
   percent: 100
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 19 — Output Directory Management
+**Current focus:** Phase 20 — Network Volume Model Caching (complete)
 
 ## Current Position
 
-Phase: 19 of 20 (Output Directory Management) -- complete
+Phase: 20 of 20 (Network Volume Model Caching) -- complete
 Plan: 01 of 01 (complete)
-Status: Phase 19 plan 01 complete
-Last activity: 2026-03-12 -- Completed 19-01 (output directory management)
+Status: Phase 20 plan 01 complete
+Last activity: 2026-03-12 -- Completed 20-01 (network volume model caching)
 
 Progress: [██████████] 100%
 
@@ -46,6 +46,7 @@ Progress: [██████████] 100%
 - v1.2 plan 17-02: 3min (2 tasks TDD, 2 files)
 - v1.2 plan 18-01: 3min (2 tasks TDD, 2 files)
 - v1.2 plan 19-01: 1min (2 tasks TDD, 2 files)
+- v1.2 plan 20-01: 3min (2 tasks TDD, 5 files)
 
 ## Accumulated Context
 
@@ -76,6 +77,9 @@ All v1.0 and v1.1 decisions logged in PROJECT.md Key Decisions table (16 decisio
 - 19-01: resolveOutputDir as pure exported function before Commander setup for testability
 - 19-01: No migration warning for existing ./evaluation/ directory
 - 19-01: regen-reports.ts unchanged -- explicit-arg-only for standalone usage
+- 20-01: Omit networkVolumeId field entirely when not provided (empty string vs omitted may differ)
+- 20-01: No --download-dir in dockerArgs -- RunPod vLLM worker caches automatically on volume
+- 20-01: CACHE-02 satisfied by RunPod built-in behavior when volume attached
 
 ### Pending Todos
 
@@ -87,6 +91,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-12T22:41:20.000Z
-Stopped at: Completed 19-01-PLAN.md
+Last session: 2026-03-12T23:02:08Z
+Stopped at: Completed 20-01-PLAN.md
 Resume file: None
