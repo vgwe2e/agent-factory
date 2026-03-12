@@ -2,8 +2,8 @@
 phase: 17
 slug: cli-automation
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-12
 ---
 
@@ -27,7 +27,7 @@ created: 2026-03-12
 
 ## Sampling Rate
 
-- **After every task commit:** Run `npx tsx --test src/infra/checkpoint.test.ts`
+- **After every task commit:** Run relevant test file
 - **After every plan wave:** Run `cd src && npm test`
 - **Before `/gsd:verify-work`:** Full suite must be green
 - **Max feedback latency:** 15 seconds
@@ -38,22 +38,23 @@ created: 2026-03-12
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 17-01-01 | 01 | 1 | AUTO-01 | unit | `npx tsx --test src/infra/checkpoint.test.ts` | ❌ W0 | ⬜ pending |
-| 17-01-02 | 01 | 1 | AUTO-01 | unit | `npx tsx --test src/pipeline/pipeline-runner.test.ts` | ❌ W0 | ⬜ pending |
-| 17-02-01 | 02 | 1 | AUTO-02 | unit | `npx tsx --test src/cli.test.ts` | ❌ W0 | ⬜ pending |
-| 17-02-02 | 02 | 1 | AUTO-04 | unit | `npx tsx --test src/cli.test.ts` | ❌ W0 | ⬜ pending |
-| 17-03-01 | 03 | 2 | AUTO-03 | integration | Manual (requires real backend) | N/A | ⬜ pending |
+| 17-01-01 | 01 | 1 | AUTO-01 | unit | `npx tsx --test src/infra/checkpoint.test.ts` | Yes (existing file, new tests added) | pending |
+| 17-02-01 | 02 | 2 | AUTO-02 | unit | `npx tsx --test src/cli.test.ts` | Created in Task 1 | pending |
+| 17-02-02 | 02 | 2 | AUTO-04 | unit | `npx tsx --test src/cli.test.ts` | Created in Task 1 | pending |
+| 17-02-03 | 02 | 2 | AUTO-01 | unit | `npx tsx --test src/cli.test.ts` | Created in Task 1 | pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+*Status: pending / green / red / flaky*
 
 ---
 
 ## Wave 0 Requirements
 
-- [ ] `src/infra/checkpoint.test.ts` — add tests for new `clearCheckpointErrors` function (file exists, needs new test cases)
-- [ ] `src/cli.test.ts` — new file for CLI-level retry loop and exit code tests (or test via pipeline-runner.test.ts with mocked pipeline)
+Wave 0 is handled within the plans themselves:
 
-*Existing test infrastructure (node:test, assert/strict) covers framework needs.*
+- Plan 01 Task 1 creates checkpoint tests as part of TDD (RED phase writes tests first)
+- Plan 02 Task 1 creates `src/cli.test.ts` as part of TDD (RED phase writes tests first)
+
+No separate Wave 0 plan needed — test creation is the first task in each plan.
 
 ---
 
@@ -61,17 +62,17 @@ created: 2026-03-12
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
-| Full lifecycle: score → retry → report → teardown | AUTO-03 | Requires real RunPod backend and hierarchy export | Run `npx tsx src/cli.ts --input ford.json --backend vllm --retry 3 --teardown` and verify all stages complete |
+| Full lifecycle: score -> retry -> report -> teardown | AUTO-03 | Requires real RunPod backend and hierarchy export | Run `npx tsx src/cli.ts --input ford.json --backend vllm --retry 3 --teardown` and verify all stages complete |
 
 ---
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 15s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references (tests created as TDD first tasks)
+- [x] No watch-mode flags
+- [x] Feedback latency < 15s
+- [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
