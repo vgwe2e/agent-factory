@@ -59,7 +59,9 @@ Full details: `milestones/v1.1-ROADMAP.md`
   1. User resumes a partially-completed run and the final report includes all previously-checkpointed scores, not just the current session's scores
   2. User completes a run and `writeFinalReports` produces complete output without needing to manually run `regen-reports.ts`
   3. User inspects the summary report and sees correct totals for scored, simulated, and errored opportunities across all checkpoint entries
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 15-01-PLAN.md — Load archived scores on resume and wire into report generation
 
 ### Phase 16: Simulation Configuration
 **Goal**: Users can control simulation behavior via CLI flags without modifying source code
@@ -134,7 +136,7 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 12. vLLM Client Adapter | v1.1 | 2/2 | Complete | 2026-03-11 |
 | 13. Concurrent Pipeline Runner | v1.1 | 2/2 | Complete | 2026-03-11 |
 | 14. Cloud Infrastructure | v1.1 | 3/3 | Complete | 2026-03-11 |
-| 15. Report Generation Fix | v1.2 | 0/0 | Not started | - |
+| 15. Report Generation Fix | v1.2 | 0/1 | Planning complete | - |
 | 16. Simulation Configuration | v1.2 | 0/0 | Not started | - |
 | 17. CLI Automation | v1.2 | 0/0 | Not started | - |
 | 18. RunPod Provisioning Fix | v1.2 | 0/0 | Not started | - |
