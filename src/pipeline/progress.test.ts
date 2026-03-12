@@ -105,7 +105,7 @@ describe("progress tracker", () => {
     assert.ok(summary.totalMs >= 0);
   });
 
-  it("report() logs with 'Pipeline progress' message", () => {
+  it("report() logs with 'Pipeline progress' message prefix", () => {
     const logger = makeMockLogger();
     const tracker = createProgressTracker(2, logger as any);
 
@@ -113,6 +113,34 @@ describe("progress tracker", () => {
     tracker.complete("opp-1");
     tracker.report();
 
-    assert.equal(logger.infoCalls[0].msg, "Pipeline progress");
+    assert.ok(
+      (logger.infoCalls[0].msg as string).startsWith("Pipeline progress:"),
+      `Expected message to start with 'Pipeline progress:', got: ${logger.infoCalls[0].msg}`,
+    );
+  });
+
+  it("report() includes in-flight opportunity name and elapsed time", () => {
+    const logger = makeMockLogger();
+    const tracker = createProgressTracker(3, logger as any);
+
+    tracker.start("My Long Running Opportunity");
+    tracker.report();
+
+    const msg = logger.infoCalls[0].msg as string;
+    assert.ok(msg.includes("My Long Running Opportunity"), "Message should include in-flight opportunity name");
+    assert.ok(msg.includes("Scoring:"), "Message should indicate scoring is active");
+  });
+
+  it("report() includes etaFormatted in structured data", () => {
+    const logger = makeMockLogger();
+    const tracker = createProgressTracker(4, logger as any);
+
+    tracker.start("opp-1");
+    tracker.complete("opp-1");
+    tracker.report();
+
+    const data = logger.infoCalls[0].data as Record<string, unknown>;
+    assert.ok("etaFormatted" in data, "Should include etaFormatted");
+    assert.ok("elapsed" in data, "Should include elapsed");
   });
 });
