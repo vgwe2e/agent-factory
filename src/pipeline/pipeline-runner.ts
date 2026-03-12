@@ -69,7 +69,14 @@ export interface PipelineOptions {
   backend?: "ollama" | "vllm";
   /** Number of opportunities to score in parallel (default: 1 = sequential). */
   concurrency?: number;
-  /** Per-request timeout in ms for scoring calls (default: 300_000 = 5 min). */
+  /**
+   * Per-request timeout in ms for scoring calls.
+   *
+   * Default: 1,500,000 (25 min). This wraps all three lens calls (which run
+   * concurrently via Promise.all in scoreOneOpportunity), so it only needs to
+   * be as long as the slowest single lens. The 30B MoE model on Apple Silicon
+   * can take up to 18 minutes for complex prompts; 25 min provides headroom.
+   */
   requestTimeoutMs?: number;
   /** Only score opportunities up to this tier (1, 2, or 3). Default: 3. */
   maxTier?: number;
@@ -229,7 +236,7 @@ export async function runPipeline(
   // In Node.js single-threaded event loop, these mutations are safe even with concurrent
   // promises because each mutation runs to completion within its microtask. No mutex needed.
   const concurrency = options.concurrency ?? 1;
-  const requestTimeoutMs = options.requestTimeoutMs ?? 300_000;
+  const requestTimeoutMs = options.requestTimeoutMs ?? 1_500_000; // 25 min — matches SCORING_TIMEOUT_MS
   const semaphore = new Semaphore(concurrency);
   const writer = createCheckpointWriter(options.outputDir, checkpoint);
   const cleanupSignalHandlers = writer.installSignalHandlers();

@@ -131,4 +131,21 @@ describe("scoreWithRetry", () => {
     assert.equal(callCount, 1, "Should bail after first timeout, not retry");
     assert.ok(result.error.includes("timeout"));
   });
+
+  it("does not retry on connection refused errors", async () => {
+    const { scoreWithRetry } = await import("./ollama-client.js");
+    const { z } = await import("zod");
+
+    const schema = z.object({ value: z.number() });
+    let callCount = 0;
+    const callFn = async () => {
+      callCount++;
+      throw new Error("Ollama connection failed (is it running?): ECONNREFUSED");
+    };
+
+    const result = await scoreWithRetry(schema, callFn, 3);
+    assert.equal(result.success, false);
+    assert.equal(callCount, 1, "Should bail after first connection error, not retry");
+    assert.ok(result.error.includes("ECONNREFUSED"));
+  });
 });
