@@ -68,30 +68,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RPT-01 | — | Pending |
-| RPT-02 | — | Pending |
-| RPT-03 | — | Pending |
-| SIM-01 | — | Pending |
-| SIM-02 | — | Pending |
-| SIM-03 | — | Pending |
-| AUTO-01 | — | Pending |
-| AUTO-02 | — | Pending |
-| AUTO-03 | — | Pending |
-| AUTO-04 | — | Pending |
-| PROV-01 | — | Pending |
-| PROV-02 | — | Pending |
-| PROV-03 | — | Pending |
-| PROV-04 | — | Pending |
-| OUT-01 | — | Pending |
-| OUT-02 | — | Pending |
-| CACHE-01 | — | Pending |
-| CACHE-02 | — | Pending |
+| RPT-01 | Phase 15 | Pending |
+| RPT-02 | Phase 15 | Pending |
+| RPT-03 | Phase 15 | Pending |
+| SIM-01 | Phase 16 | Pending |
+| SIM-02 | Phase 16 | Pending |
+| SIM-03 | Phase 16 | Pending |
+| AUTO-01 | Phase 17 | Pending |
+| AUTO-02 | Phase 17 | Pending |
+| AUTO-03 | Phase 17 | Pending |
+| AUTO-04 | Phase 17 | Pending |
+| PROV-01 | Phase 18 | Pending |
+| PROV-02 | Phase 18 | Pending |
+| PROV-03 | Phase 18 | Pending |
+| PROV-04 | Phase 18 | Pending |
+| OUT-01 | Phase 19 | Pending |
+| OUT-02 | Phase 19 | Pending |
+| CACHE-01 | Phase 20 | Pending |
+| CACHE-02 | Phase 20 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 ⚠️
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 after initial definition*
+*Last updated: 2026-03-12 after roadmap creation*
