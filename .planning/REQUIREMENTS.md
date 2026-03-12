@@ -16,8 +16,8 @@ Requirements for Cloud Pipeline Hardening milestone. Each maps to roadmap phases
 ### Simulation Configuration
 
 - [ ] **SIM-01**: User can pass `--skip-sim` flag to bypass simulation phase entirely when only scores are needed
-- [ ] **SIM-02**: User can configure simulation timeout via `--sim-timeout <ms>` flag (default: current value)
-- [ ] **SIM-03**: Simulation errors are logged with reason and do not block scoring completion
+- [x] **SIM-02**: User can configure simulation timeout via `--sim-timeout <ms>` flag (default: current value)
+- [x] **SIM-03**: Simulation errors are logged with reason and do not block scoring completion
 
 ### Automation
 
@@ -72,8 +72,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RPT-02 | Phase 15 | Complete |
 | RPT-03 | Phase 15 | Complete |
 | SIM-01 | Phase 16 | Pending |
-| SIM-02 | Phase 16 | Pending |
-| SIM-03 | Phase 16 | Pending |
+| SIM-02 | Phase 16 | Complete |
+| SIM-03 | Phase 16 | Complete |
 | AUTO-01 | Phase 17 | Pending |
 | AUTO-02 | Phase 17 | Pending |
 | AUTO-03 | Phase 17 | Pending |
