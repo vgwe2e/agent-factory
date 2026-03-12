@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A catalog evaluation engine that ingests Aera hierarchy exports (L1-L4 activities, L3 opportunities), scores them across three adoption-weighted lenses, simulates qualifying opportunities with real Aera component maps, and produces ranked feasibility reports with implementation artifacts. Runs overnight on local Ollama models with checkpoint recovery, producing an evaluation/ directory an SE team can act on.
+A catalog evaluation engine that ingests Aera hierarchy exports (L1-L4 activities, L3 opportunities), scores them across three adoption-weighted lenses, simulates qualifying opportunities with real Aera component maps, and produces ranked feasibility reports with implementation artifacts. Supports both local Ollama models for offline overnight runs and cloud-accelerated vLLM on H100 GPUs for sub-30-minute scoring via RunPod.
 
 ## Core Value
 
@@ -29,40 +29,51 @@ Produce actionable, adoption-realistic implementation specs for Aera skills — 
 - ✓ Git auto-commit artifacts during run with checkpoint recovery — v1.0
 - ✓ Context management (summarize, archive, reset between iterations) — v1.0
 - ✓ Meta-reflections surfacing catalog-level patterns — v1.0
+- ✓ vLLM client adapter implementing ChatFn interface for cloud backends — v1.1
+- ✓ Concurrent pipeline runner with semaphore-bounded parallel scoring — v1.1
+- ✓ Cloud infrastructure provisioning (ephemeral H100, health checks, auto-teardown) — v1.1
+- ✓ CLI --backend flag to select ollama or vllm backend — v1.1
+- ✓ Concurrent-safe checkpoint system for parallel opportunity processing — v1.1
 
 ### Active
 
+(None — define with `/gsd:new-milestone`)
+
+### Future
+
 - [ ] Generate full implementation specs for simulated opportunities (SPEC-01, SPEC-02)
-- [ ] Model recommendations for local model → skill matching (ADVN-01)
+- [ ] Model recommendations for local model to skill matching (ADVN-01)
 - [ ] Configurable scoring weights via CLI flags (ADVN-02)
 - [ ] Partial re-evaluation of specific opportunities (ADVN-03)
+- [ ] Full Ford 339-opportunity E2E run on cloud backend with output verification (VAL-01)
+- [ ] Golden test suite comparing Ollama vs vLLM scores (VAL-02)
+- [ ] Documented performance benchmarks (VAL-03)
 
 ### Out of Scope
 
-- Claude API / cloud model dependency — engine runs fully offline, confirmed viable in v1.0
+- Cloud as the *only* backend — local Ollama path must always work, cloud is opt-in
 - Mobile or web UI — CLI-only, artifacts reviewed via cat/less
-- Real-time evaluation — batch overnight pattern validated in v1.0
+- Real-time evaluation — batch pattern validated in v1.0
 - Modifying existing agent-factory code — coexistence confirmed
 - Multi-client concurrent runs — one export at a time
 - Training or fine-tuning models — off-the-shelf Ollama models only
-- Offline mode — Ollama must be running locally
+- Multi-GPU / multi-instance — single H100 sufficient for Qwen 30B
 
 ## Context
 
-Shipped v1.0 with 213K LOC TypeScript, 412 tests, 11 phases.
-Tech stack: TypeScript (ESM strict), Zod, Commander, Pino, js-yaml, Ollama REST API.
+Shipped v1.1 with cloud-accelerated scoring. ~218K LOC TypeScript, 552 tests, 14 phases across 2 milestones.
+Tech stack: TypeScript (ESM strict), Zod, Commander, Pino, js-yaml, Ollama REST API, vLLM OpenAI-compatible API, RunPod GraphQL API, dotenv.
 Pipeline: CLI → Zod ingestion → 8B triage → 32B scoring → simulation → final reports → git commit.
+Cloud path: CLI → RunPod provision → vLLM health poll → concurrent scoring (semaphore-bounded) → cost tracking → auto-teardown.
 Ford hierarchy export (2,016 L4s, 362 L3s) used as reference dataset.
-Archetype distribution: ~56% DETERMINISTIC, ~43% AGENTIC, <1% GENERATIVE.
-Hardware: Apple Silicon 36GB — 32B Q4 models confirmed viable.
+Hardware: Apple Silicon 36GB for local; RunPod H100 ($5.58/hr) for cloud.
 
-Known tech debt: 9 items (writeFinalReports ordering, orphaned exports, switchDelayMs disabled).
-See `.planning/MILESTONES.md` for full debt inventory.
+Known tech debt: 12 items across v1.0 (9) and v1.1 (3). See `.planning/MILESTONES.md` for inventory.
 
 ## Constraints
 
 - **Hardware**: 36GB Apple Silicon — max model size ~32B quantized (Q4). No 70B models.
-- **Runtime**: Ollama only — no cloud API calls, no internet dependency during overnight runs.
+- **Runtime**: Ollama default (offline). Optional vLLM cloud backend requires network access + RunPod API key.
 - **Schema**: Must handle the hierarchy JSON schema without manual preprocessing.
 - **Aera fidelity**: Every generated spec must map to real Aera components from bundled knowledge base.
 - **Coexistence**: Must not modify or break existing agent-factory code.
@@ -77,10 +88,16 @@ See `.planning/MILESTONES.md` for full debt inventory.
 | Adoption Realism weighted 0.45 | Prevents technically sound but operationally dead skills | ✓ Good — core differentiator validated |
 | Parallel to existing code | Preserves agent-factory discovery capability | ✓ Good — zero conflicts in coexistence |
 | 32B model ceiling | Hardware constraint (36GB), Qwen 2.5 32B Q4 sweet spot | ✓ Good — quality sufficient for structured output |
-| Node.js built-in test runner | Zero-dependency testing with node:test | ✓ Good — 412 tests, fast execution |
+| Node.js built-in test runner | Zero-dependency testing with node:test | ✓ Good — 552 tests, fast execution |
 | Dependency injection throughout | chatFn, parseExportFn, runSimulationPipelineFn injectable | ✓ Good — enabled thorough unit testing |
 | Result type pattern | `{success, data} \| {success, error}` over exceptions | ✓ Good — clean error propagation |
 | Three-tier resilience | retry → fallback prompt → skip-and-log | ✓ Good — overnight stability |
+| Resolve $ref inline in schema translation | vLLM xgrammar rejects $ref; zodToJsonSchema produces $ref for repeated shapes | ✓ Good — all 3 scoring schemas pass pre-flight |
+| Explicit backend field in PipelineOptions | Existing tests inject chatFn but expect Ollama model management | ✓ Good — zero regressions in 16 pipeline tests |
+| RunPod GraphQL API over SDK | SDK lacks endpoint creation/deletion methods | ✓ Good — full lifecycle managed programmatically |
+| Async createBackend factory | Cloud provisioning requires await for RunPod endpoint | ✓ Good — clean async/await flow |
+| costTracker via PipelineOptions (not global) | Testability and explicit dependency injection | ✓ Good — 2 new tests with deterministic assertions |
+| Non-fatal cloud-cost.json write | Artifact write failure should not break scoring pipeline | ✓ Good — consistent with evaluation artifact patterns |
 
 ---
-*Last updated: 2026-03-11 after v1.0 milestone*
+*Last updated: 2026-03-12 after v1.1 milestone*

@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync } from 'node:fs';
 import { join } from 'node:path';
 import { z } from 'zod';
 
@@ -48,4 +48,62 @@ export function saveCheckpoint(outputDir: string, checkpoint: Checkpoint): void 
 export function getCompletedNames(checkpoint: Checkpoint | null): Set<string> {
   if (!checkpoint) return new Set();
   return new Set(checkpoint.entries.map((e) => e.l3Name));
+}
+
+// ---------------------------------------------------------------------------
+// Concurrent-safe checkpoint writer
+// ---------------------------------------------------------------------------
+
+const DEBOUNCE_MS = 100;
+const TMP_SUFFIX = '.tmp';
+
+export interface CheckpointWriter {
+  /** Add an entry and schedule a debounced write to disk. */
+  enqueue: (entry: CheckpointEntry) => void;
+  /** Force an immediate write (call at pipeline end). Clears pending debounce. */
+  flush: () => void;
+  /** Live checkpoint reference — mutations from enqueue are visible here. */
+  checkpoint: Checkpoint;
+}
+
+/**
+ * Create a checkpoint writer that coalesces rapid enqueue() calls into
+ * single atomic file writes via debouncing + rename.
+ */
+export function createCheckpointWriter(
+  outputDir: string,
+  checkpoint: Checkpoint,
+): CheckpointWriter {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  function atomicWrite(): void {
+    mkdirSync(outputDir, { recursive: true });
+    const target = checkpointPath(outputDir);
+    const tmp = target + TMP_SUFFIX;
+    writeFileSync(tmp, JSON.stringify(checkpoint, null, 2), 'utf-8');
+    renameSync(tmp, target);
+  }
+
+  function scheduleDebouncedWrite(): void {
+    if (timer !== undefined) return; // already scheduled
+    timer = setTimeout(() => {
+      timer = undefined;
+      atomicWrite();
+    }, DEBOUNCE_MS);
+  }
+
+  function enqueue(entry: CheckpointEntry): void {
+    checkpoint.entries.push(entry);
+    scheduleDebouncedWrite();
+  }
+
+  function flush(): void {
+    if (timer !== undefined) {
+      clearTimeout(timer);
+      timer = undefined;
+    }
+    atomicWrite();
+  }
+
+  return { enqueue, flush, checkpoint };
 }

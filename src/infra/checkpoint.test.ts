@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import {
@@ -8,9 +8,10 @@ import {
   saveCheckpoint,
   getCompletedNames,
   checkpointPath,
+  createCheckpointWriter,
   CHECKPOINT_FILENAME,
 } from './checkpoint.js';
-import type { Checkpoint } from './checkpoint.js';
+import type { Checkpoint, CheckpointEntry } from './checkpoint.js';
 
 describe('checkpoint', () => {
   let tempDir: string;
@@ -83,5 +84,111 @@ describe('checkpoint', () => {
   it('checkpointPath returns correct path with .checkpoint.json filename', () => {
     const result = checkpointPath('/output/dir');
     assert.equal(result, join('/output/dir', '.checkpoint.json'));
+  });
+});
+
+describe('createCheckpointWriter', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = mkdtempSync(join(tmpdir(), 'checkpoint-writer-test-'));
+  });
+
+  afterEach(() => {
+    rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  function makeCheckpoint(): Checkpoint {
+    return {
+      version: 1,
+      inputFile: '/test/input.json',
+      startedAt: '2026-03-11T10:00:00Z',
+      entries: [],
+    };
+  }
+
+  function makeEntry(name: string, status: CheckpointEntry['status'] = 'scored'): CheckpointEntry {
+    return { l3Name: name, completedAt: new Date().toISOString(), status };
+  }
+
+  it('enqueue adds entry to in-memory checkpoint', () => {
+    const cp = makeCheckpoint();
+    const writer = createCheckpointWriter(tempDir, cp);
+    writer.enqueue(makeEntry('Alpha'));
+    assert.equal(writer.checkpoint.entries.length, 1);
+    assert.equal(writer.checkpoint.entries[0].l3Name, 'Alpha');
+  });
+
+  it('flush writes checkpoint file to disk', () => {
+    const cp = makeCheckpoint();
+    const writer = createCheckpointWriter(tempDir, cp);
+    writer.enqueue(makeEntry('Alpha'));
+    writer.flush();
+
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries.length, 1);
+    assert.equal(loaded!.entries[0].l3Name, 'Alpha');
+  });
+
+  it('flush produces valid JSON loadable by loadCheckpoint', () => {
+    const cp = makeCheckpoint();
+    const writer = createCheckpointWriter(tempDir, cp);
+    writer.enqueue(makeEntry('A'));
+    writer.enqueue(makeEntry('B'));
+    writer.enqueue(makeEntry('C', 'error'));
+    writer.flush();
+
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries.length, 3);
+    assert.equal(loaded!.entries[2].status, 'error');
+  });
+
+  it('multiple rapid enqueue calls coalesce into fewer writes (debounce)', async () => {
+    const cp = makeCheckpoint();
+    const writer = createCheckpointWriter(tempDir, cp);
+
+    // Enqueue 5 entries rapidly - should coalesce into one debounced write
+    for (let i = 0; i < 5; i++) {
+      writer.enqueue(makeEntry(`Item${i}`));
+    }
+
+    // No file yet (debounce hasn't fired)
+    // Wait for debounce to fire (100ms + buffer)
+    await new Promise((r) => setTimeout(r, 200));
+
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries.length, 5);
+  });
+
+  it('getCompletedNames works on the live checkpoint reference', () => {
+    const cp = makeCheckpoint();
+    const writer = createCheckpointWriter(tempDir, cp);
+    writer.enqueue(makeEntry('Alpha'));
+    writer.enqueue(makeEntry('Beta'));
+
+    const names = getCompletedNames(writer.checkpoint);
+    assert.deepEqual(names, new Set(['Alpha', 'Beta']));
+  });
+
+  it('atomic rename: .checkpoint.json.tmp does not persist after flush', () => {
+    const cp = makeCheckpoint();
+    const writer = createCheckpointWriter(tempDir, cp);
+    writer.enqueue(makeEntry('Alpha'));
+    writer.flush();
+
+    assert.ok(existsSync(join(tempDir, CHECKPOINT_FILENAME)));
+    assert.equal(existsSync(join(tempDir, '.checkpoint.json.tmp')), false);
+  });
+
+  it('checkpoint object is shared reference (mutations visible)', () => {
+    const cp = makeCheckpoint();
+    const writer = createCheckpointWriter(tempDir, cp);
+    writer.enqueue(makeEntry('Alpha'));
+    // The original cp should also see the entry (same reference)
+    assert.equal(cp.entries.length, 1);
+    assert.equal(cp.entries[0].l3Name, 'Alpha');
   });
 });

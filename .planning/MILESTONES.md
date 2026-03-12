@@ -1,5 +1,34 @@
 # Milestones
 
+## v1.1 Cloud-Accelerated Scoring (Shipped: 2026-03-12)
+
+**Phases:** 12-14 (7 plans, 14 tasks)
+**Timeline:** 2 days (2026-03-10 → 2026-03-12)
+**Stats:** 41 files modified, +5,394 lines, 140 new tests (552 total)
+**Git range:** `feat(12-01)` → `docs(phase-14)` (30 commits)
+**Audit:** passed — 11/11 requirements, 5 tech debt items (all cosmetic/by-design)
+
+**Key accomplishments:**
+
+1. Drop-in vLLM ChatFn adapter with Zod-to-vLLM schema translation and pre-flight validation
+2. Backend factory with `--backend ollama|vllm` CLI flag — zero regression for Ollama path
+3. Semaphore-bounded concurrent scoring with configurable `--concurrency` flag
+4. Concurrent-safe checkpoint system with debounced atomic writes and crash recovery
+5. Ephemeral H100 provisioning via RunPod GraphQL API with auto-teardown and cost tracking
+6. Defense-in-depth cloud cleanup: signal handlers + try/finally + 60s idle timeout
+
+### Known Tech Debt
+
+| Phase | Item | Severity |
+|-------|------|----------|
+| 14 | cloud-cost.json captures cost before costTracker.stop() (cosmetic, few seconds) | Low |
+| 14 | SIGKILL/OOM does not trigger cleanup (mitigated by idleTimeout: 60) | Low |
+| 13 | 100ms debounce window on checkpoint writes (hard crash may re-score) | Low |
+
+**Archives:** `milestones/v1.1-ROADMAP.md`, `milestones/v1.1-REQUIREMENTS.md`, `milestones/v1.1-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.0 Aera Skill Feasibility Engine MVP (Shipped: 2026-03-11)
 
 **Phases:** 1-11 (31 plans)

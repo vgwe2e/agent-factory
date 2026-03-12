@@ -3,6 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 MVP** — Phases 1-11 (shipped 2026-03-11)
+- ✅ **v1.1 Cloud-Accelerated Scoring** — Phases 12-14 (shipped 2026-03-12)
 
 ## Phases
 
@@ -25,6 +26,17 @@ Full details: `milestones/v1.0-ROADMAP.md`
 
 </details>
 
+<details>
+<summary>✅ v1.1 Cloud-Accelerated Scoring (Phases 12-14) — SHIPPED 2026-03-12</summary>
+
+- [x] Phase 12: vLLM Client Adapter (2/2 plans) — completed 2026-03-11
+- [x] Phase 13: Concurrent Pipeline Runner (2/2 plans) — completed 2026-03-11
+- [x] Phase 14: Cloud Infrastructure (3/3 plans) — completed 2026-03-11
+
+Full details: `milestones/v1.1-ROADMAP.md`
+
+</details>
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -40,3 +52,6 @@ Full details: `milestones/v1.0-ROADMAP.md`
 | 9. Final Reports & Reflection | v1.0 | 3/3 | Complete | 2026-03-11 |
 | 10. Wire writeEvaluation | v1.0 | 1/1 | Complete | 2026-03-11 |
 | 11. Wire Simulation Pipeline | v1.0 | 1/1 | Complete | 2026-03-11 |
+| 12. vLLM Client Adapter | v1.1 | 2/2 | Complete | 2026-03-11 |
+| 13. Concurrent Pipeline Runner | v1.1 | 2/2 | Complete | 2026-03-11 |
+| 14. Cloud Infrastructure | v1.1 | 3/3 | Complete | 2026-03-11 |

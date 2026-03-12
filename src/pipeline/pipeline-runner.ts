@@ -13,6 +13,7 @@ import type { HierarchyExport } from "../types/hierarchy.js";
 import type { ChatResult } from "../scoring/ollama-client.js";
 import type { ScoringResult } from "../types/scoring.js";
 import type { ParseResult } from "../ingestion/parse-export.js";
+import type { CostTracker, CostSummary } from "../infra/cost-tracker.js";
 
 import { z } from "zod";
 import { parseExport } from "../ingestion/parse-export.js";
@@ -28,15 +29,19 @@ import {
 } from "./context-tracker.js";
 import { buildKnowledgeContext } from "../scoring/knowledge-context.js";
 import { groupL4sByL3 } from "../triage/red-flags.js";
-import { loadCheckpoint, saveCheckpoint, getCompletedNames } from "../infra/checkpoint.js";
+import { loadCheckpoint, getCompletedNames, createCheckpointWriter } from "../infra/checkpoint.js";
 import type { Checkpoint } from "../infra/checkpoint.js";
+import { Semaphore } from "../infra/semaphore.js";
+import { withTimeout, TimeoutError } from "../infra/timeout.js";
 import { callWithResilience } from "../infra/retry-policy.js";
+import { createProgressTracker } from "./progress.js";
 import { autoCommitEvaluation } from "../infra/git-commit.js";
 import { writeFinalReports } from "../output/write-final-reports.js";
 import { writeEvaluation } from "../output/write-evaluation.js";
 import { runSimulationPipeline as defaultRunSimulationPipeline } from "../simulation/simulation-pipeline.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
 import { toSimulationInputs } from "./scoring-to-simulation.js";
+import fs from "node:fs/promises";
 import path from "node:path";
 
 // -- Types --
@@ -59,6 +64,14 @@ export interface PipelineOptions {
   gitCommit?: boolean;
   /** Inject runSimulationPipeline for testing (avoids LLM calls in tests). */
   runSimulationPipelineFn?: typeof defaultRunSimulationPipeline;
+  /** Scoring backend -- when "vllm", skips Ollama model management. Default: "ollama". */
+  backend?: "ollama" | "vllm";
+  /** Number of opportunities to score in parallel (default: 1 = sequential). */
+  concurrency?: number;
+  /** Per-request timeout in ms for scoring calls (default: 300_000 = 5 min). */
+  requestTimeoutMs?: number;
+  /** Cost tracker for cloud GPU usage (injected from BackendConfig). */
+  costTracker?: CostTracker;
 }
 
 export interface PipelineResult {
@@ -70,7 +83,10 @@ export interface PipelineResult {
   resumedCount: number;
   simulatedCount: number;
   totalDurationMs: number;
+  concurrency: number;
+  avgPerOppMs: number;
   errors: string[];
+  costSummary?: CostSummary;
 }
 
 // -- Defaults --
@@ -163,14 +179,19 @@ export async function runPipeline(
     "Triage complete",
   );
 
-  // 3. Create ModelManager and switch to scoring model
-  const modelManager = new ModelManager(
-    { triageModel, scoringModel, timeoutMs: MODEL_TIMEOUT_MS },
-    logger,
-    options.fetchFn,
-    0, // no delay in pipeline (caller controls this)
-  );
-  await modelManager.ensureScoringModel();
+  // 3. Create ModelManager and switch to scoring model (only for local Ollama backend)
+  const useLocalModels = options.backend !== "vllm"; // explicit vllm backend skips local model management
+  const modelManager = useLocalModels
+    ? new ModelManager(
+        { triageModel, scoringModel, timeoutMs: MODEL_TIMEOUT_MS },
+        logger,
+        options.fetchFn,
+        0, // no delay in pipeline (caller controls this)
+      )
+    : null;
+  if (modelManager) {
+    await modelManager.ensureScoringModel();
+  }
 
   // 4. Create evaluation context
   const ctx = createContext();
@@ -190,72 +211,117 @@ export async function runPipeline(
   // 8. Sort processable by tier (1 first)
   processable.sort((a, b) => a.tier - b.tier);
 
-  // 9. Score each opportunity
-  let sinceLastArchive = 0;
+  // 9. Score each opportunity (concurrently via semaphore)
+  //
+  // Thread-safety note: addResult/addError mutate EvaluationContext (Set, Map, Array).
+  // In Node.js single-threaded event loop, these mutations are safe even with concurrent
+  // promises because each mutation runs to completion within its microtask. No mutex needed.
+  const concurrency = options.concurrency ?? 1;
+  const requestTimeoutMs = options.requestTimeoutMs ?? 300_000;
+  const semaphore = new Semaphore(concurrency);
+  const writer = createCheckpointWriter(options.outputDir, checkpoint);
+  const progress = createProgressTracker(processable.length, logger);
+  const progressInterval = setInterval(() => progress.report(), 5000);
 
-  for (const triage of processable) {
-    const opp = l3Map.get(triage.l3Name);
-    if (!opp) {
-      const msg = `L3 opportunity not found: ${triage.l3Name}`;
-      addError(ctx, triage.l3Name, "scoring", msg);
-      errors.push(msg);
-      logger.warn({ oppId: triage.l3Name }, msg);
-      continue;
-    }
+  try {
+    const tasks = processable.map((triage) => semaphore.run(async () => {
+      const opp = l3Map.get(triage.l3Name);
+      if (!opp) {
+        const msg = `L3 opportunity not found: ${triage.l3Name}`;
+        addError(ctx, triage.l3Name, "scoring", msg);
+        errors.push(msg);
+        logger.warn({ oppId: triage.l3Name }, msg);
+        return;
+      }
 
-    const l4s = l4Map.get(triage.l3Name) ?? [];
-    const childLog = logger.child({ oppId: triage.l3Name, tier: triage.tier });
+      const l4s = l4Map.get(triage.l3Name) ?? [];
+      const childLog = logger.child({ oppId: triage.l3Name, tier: triage.tier });
 
-    // Skip already-completed opportunities (resume support)
-    if (completed.has(triage.l3Name)) {
-      childLog.info("Skipping (already completed in previous run)");
-      continue;
-    }
+      // Skip already-completed opportunities (resume support)
+      if (completed.has(triage.l3Name)) {
+        childLog.info("Skipping (already completed in previous run)");
+        return;
+      }
 
-    childLog.info("Scoring opportunity");
+      childLog.info("Scoring opportunity");
+      progress.start(triage.l3Name);
 
-    // Use callWithResilience for three-tier error handling
-    const resilient = await callWithResilience({
-      primaryCall: async () => {
-        const r = await scoreOneOpportunity(opp, l4s, data.company_context, knowledgeContext, options.chatFn);
-        if ("error" in r) throw new Error(r.error);
-        return JSON.stringify(r);
-      },
-      schema: z.any(),  // We validate via scoreOneOpportunity internally; this is a pass-through wrapper
-      label: triage.l3Name,
-      maxRetries: 1,  // scoreOneOpportunity already has internal retries via scoreWithRetry
-    });
+      try {
+        // Use callWithResilience wrapped in withTimeout for stuck request protection
+        const resilient = await withTimeout(
+          (_signal) => callWithResilience({
+            primaryCall: async () => {
+              const r = await scoreOneOpportunity(opp, l4s, data.company_context, knowledgeContext, options.chatFn);
+              if ("error" in r) throw new Error(r.error);
+              return JSON.stringify(r);
+            },
+            schema: z.any(),  // We validate via scoreOneOpportunity internally; this is a pass-through wrapper
+            label: triage.l3Name,
+            maxRetries: 1,  // scoreOneOpportunity already has internal retries via scoreWithRetry
+          }),
+          requestTimeoutMs,
+        );
 
-    if (resilient.result.success) {
-      const sr = resilient.result.data as unknown as ScoringResult;
-      addResult(ctx, sr);
-      allScoredResults.push(sr);
-      scoredCount++;
-      if (sr.promotedToSimulation) promotedCount++;
-      childLog.info(
-        { composite: sr.composite.toFixed(2), promoted: sr.promotedToSimulation, resolvedVia: resilient.resolvedVia },
-        "Scored",
-      );
-    } else {
-      addError(ctx, triage.l3Name, "scoring", resilient.skipReason ?? resilient.result.error);
-      errors.push(resilient.skipReason ?? resilient.result.error);
-      childLog.warn({ error: resilient.skipReason, resolvedVia: "skipped" }, "Scoring skipped");
-    }
+        if (resilient.result.success) {
+          const sr = resilient.result.data as unknown as ScoringResult;
+          addResult(ctx, sr);
+          allScoredResults.push(sr);
+          scoredCount++;
+          if (sr.promotedToSimulation) promotedCount++;
+          childLog.info(
+            { composite: sr.composite.toFixed(2), promoted: sr.promotedToSimulation, resolvedVia: resilient.resolvedVia },
+            "Scored",
+          );
+          progress.complete(triage.l3Name);
+        } else {
+          addError(ctx, triage.l3Name, "scoring", resilient.skipReason ?? resilient.result.error);
+          errors.push(resilient.skipReason ?? resilient.result.error);
+          childLog.warn({ error: resilient.skipReason, resolvedVia: "skipped" }, "Scoring skipped");
+          progress.error(triage.l3Name);
+        }
 
-    // Save checkpoint after each opportunity
-    checkpoint.entries.push({
-      l3Name: triage.l3Name,
-      completedAt: new Date().toISOString(),
-      status: resilient.result.success ? "scored" : "error",
-    });
-    saveCheckpoint(options.outputDir, checkpoint);
+        // Enqueue checkpoint entry (atomic writer handles debounced disk writes)
+        writer.enqueue({
+          l3Name: triage.l3Name,
+          completedAt: new Date().toISOString(),
+          status: resilient.result.success ? "scored" : "error",
+        });
+      } catch (err) {
+        // Handle timeout specifically
+        if (err instanceof TimeoutError) {
+          const msg = `Scoring timed out after ${err.timeoutMs}ms for ${triage.l3Name}`;
+          addError(ctx, triage.l3Name, "scoring", msg);
+          errors.push(msg);
+          childLog.warn({ timeoutMs: err.timeoutMs }, "Scoring timed out");
+        } else {
+          const msg = err instanceof Error ? err.message : String(err);
+          addError(ctx, triage.l3Name, "scoring", msg);
+          errors.push(msg);
+          childLog.warn({ error: msg }, "Scoring failed unexpectedly");
+        }
+        progress.error(triage.l3Name);
 
-    sinceLastArchive++;
-    if (sinceLastArchive >= archiveThreshold) {
-      await archiveAndReset(ctx, options.outputDir);
-      sinceLastArchive = 0;
-      logger.info("Archived intermediate results");
-    }
+        writer.enqueue({
+          l3Name: triage.l3Name,
+          completedAt: new Date().toISOString(),
+          status: "error",
+        });
+      }
+    }));
+
+    await Promise.allSettled(tasks);
+  } finally {
+    clearInterval(progressInterval);
+  }
+
+  // Flush checkpoint and log final progress
+  writer.flush();
+  progress.report();
+
+  // Archive all results in a single batch after concurrent scoring completes
+  if (ctx.results.size > 0) {
+    await archiveAndReset(ctx, options.outputDir);
+    logger.info("Archived scoring results");
   }
 
   // 10. Final archive flush
@@ -325,12 +391,31 @@ export async function runPipeline(
     logger.warn({ error: reportResult.error }, "Final reports failed (non-fatal)");
   }
 
-  // 11. Unload models
-  await modelManager.unloadAll();
-  logger.info("Models unloaded");
+  // 11. Unload models (only for local Ollama backend)
+  if (modelManager) {
+    await modelManager.unloadAll();
+    logger.info("Models unloaded");
+  }
 
   // 12. Build result
   const totalDurationMs = Date.now() - startMs;
+
+  // Cost tracking (cloud backends only)
+  const costSummary = options.costTracker?.summary();
+  if (costSummary) {
+    logger.info({ costSummary }, "Cloud GPU cost summary");
+
+    // Write cloud cost artifact to evaluation directory
+    const evalDir = path.join(options.outputDir, "evaluation");
+    const costPath = path.join(evalDir, "cloud-cost.json");
+    try {
+      await fs.mkdir(evalDir, { recursive: true });
+      await fs.writeFile(costPath, JSON.stringify(costSummary, null, 2), "utf-8");
+      logger.info({ path: costPath }, "Cloud cost artifact written");
+    } catch (err) {
+      logger.warn({ error: err instanceof Error ? err.message : String(err) }, "Failed to write cloud cost artifact (non-fatal)");
+    }
+  }
 
   const pipelineResult: PipelineResult = {
     triageCount: triageResults.length,
@@ -341,7 +426,10 @@ export async function runPipeline(
     resumedCount,
     simulatedCount: simResult.totalSimulated,
     totalDurationMs,
+    concurrency,
+    avgPerOppMs: scoredCount > 0 ? Math.round(totalDurationMs / scoredCount) : 0,
     errors,
+    costSummary,
   };
 
   logger.info(

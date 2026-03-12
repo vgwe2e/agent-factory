@@ -5,13 +5,17 @@
  *
  * Usage: npx tsx cli.ts --input <path-to-hierarchy-export.json>
  *        npx tsx cli.ts --input export.json --log-level debug --output-dir ./results
+ *        npx tsx cli.ts --input export.json --backend vllm  (auto-provisions RunPod H100)
  */
 
-import { Command } from "commander";
+import "dotenv/config";
+import { Command, Option } from "commander";
 import { parseExport } from "./ingestion/parse-export.js";
 import { checkOllama, formatOllamaStatus } from "./infra/ollama.js";
 import { createLogger } from "./infra/logger.js";
 import { runPipeline } from "./pipeline/pipeline-runner.js";
+import { createBackend } from "./infra/backend-factory.js";
+import type { Backend, BackendConfig } from "./infra/backend-factory.js";
 
 const RED = "\x1b[31m";
 const GREEN = "\x1b[32m";
@@ -38,8 +42,22 @@ program
     "Output directory for evaluation results",
     "./evaluation",
   )
-  .action(async (opts: { input: string; logLevel: string; outputDir: string }) => {
-    console.log(`${BOLD}Aera Skill Feasibility Engine v0.1.0${RESET}`);
+  .addOption(
+    new Option("--backend <backend>", "Scoring backend (ollama or vllm)")
+      .choices(["ollama", "vllm"])
+      .default("ollama"),
+  )
+  .option(
+    "--vllm-url <url>",
+    "vLLM server URL (required when --backend vllm without RUNPOD_API_KEY)",
+  )
+  .option(
+    "--concurrency <n>",
+    "Number of opportunities to score in parallel (default: 1)",
+    "1",
+  )
+  .action(async (opts: { input: string; logLevel: string; outputDir: string; backend: string; vllmUrl?: string; concurrency: string }) => {
+    console.log(`${BOLD}Aera Skill Feasibility Engine v1.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
 
@@ -85,28 +103,104 @@ program
     console.log(`Domains:       ${domains.join(", ")}`);
     console.log();
 
-    // Ollama connectivity check (informational -- does not block)
-    const ollamaStatus = await checkOllama();
-    console.log("=== Ollama ===");
-    console.log(formatOllamaStatus(ollamaStatus));
-    console.log();
+    // Validate concurrency
+    const concurrency = parseInt(opts.concurrency, 10);
+    if (isNaN(concurrency) || concurrency < 1) {
+      console.error(`${RED}Error: --concurrency must be a positive integer${RESET}`);
+      process.exit(1);
+    }
+
+    // Validate vLLM backend requirements
+    const backend = opts.backend as Backend;
+    if (backend === "vllm" && !opts.vllmUrl && !process.env.RUNPOD_API_KEY) {
+      console.error(`${RED}Error: Either --vllm-url or RUNPOD_API_KEY environment variable is required when --backend is vllm${RESET}`);
+      process.exit(1);
+    }
+
+    // Ollama connectivity check (only for ollama backend)
+    if (backend === "ollama") {
+      const ollamaStatus = await checkOllama();
+      console.log("=== Ollama ===");
+      console.log(formatOllamaStatus(ollamaStatus));
+      console.log();
+    }
+
+    // Create backend (validates schemas for vLLM, auto-provisions cloud if needed)
+    let backendConfig: BackendConfig;
+    try {
+      backendConfig = await createBackend(backend, {
+        vllmUrl: opts.vllmUrl,
+        vllmModel: undefined,
+        runpodApiKey: process.env.RUNPOD_API_KEY,
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`${RED}${msg}${RESET}`);
+      process.exit(1);
+    }
+
+    // Signal handler teardown for cloud resources
+    let cleanedUp = false;
+    const doCleanup = async () => {
+      if (cleanedUp) return;
+      cleanedUp = true;
+      if (backendConfig.cleanup) {
+        console.log("\nTearing down cloud resources...");
+        await backendConfig.cleanup();
+        console.log("Cloud resources torn down.");
+      }
+    };
+
+    process.on("SIGINT", async () => { await doCleanup(); process.exit(130); });
+    process.on("SIGTERM", async () => { await doCleanup(); process.exit(143); });
 
     // --- Run full pipeline ---
     const logger = createLogger(opts.logLevel);
 
     console.log("=== Pipeline ===");
+    if (backend === "vllm" && !opts.vllmUrl) {
+      console.log(`Backend:     vllm (RunPod cloud)`);
+      if (backendConfig.endpointId) {
+        console.log(`Endpoint:    ${backendConfig.endpointId}`);
+      }
+    } else if (backend === "vllm") {
+      console.log(`Backend:     vllm (user-managed)`);
+      console.log(`vLLM URL:    ${opts.vllmUrl}`);
+    } else {
+      console.log(`Backend:     ollama (local)`);
+    }
+    console.log(`Concurrency: ${concurrency}`);
     console.log(`Log level:   ${opts.logLevel}`);
     console.log(`Output dir:  ${opts.outputDir}`);
     console.log();
 
-    const pipelineResult = await runPipeline(
-      opts.input,
-      {
-        outputDir: opts.outputDir,
-        logLevel: opts.logLevel,
-      },
-      logger,
-    );
+    let pipelineResult;
+    try {
+      // Start cost tracking if cloud backend
+      if (backendConfig.costTracker) {
+        backendConfig.costTracker.start();
+      }
+
+      pipelineResult = await runPipeline(
+        opts.input,
+        {
+          outputDir: opts.outputDir,
+          logLevel: opts.logLevel,
+          chatFn: backendConfig.chatFn,
+          backend,
+          concurrency,
+          costTracker: backendConfig.costTracker,
+        },
+        logger,
+      );
+    } finally {
+      // Stop cost tracking
+      if (backendConfig.costTracker) {
+        backendConfig.costTracker.stop();
+      }
+      // Always tear down cloud resources
+      await doCleanup();
+    }
 
     // Print summary
     const durationSec = (pipelineResult.totalDurationMs / 1000).toFixed(1);
@@ -118,6 +212,16 @@ program
     console.log(`Promoted:  ${pipelineResult.promotedCount} to simulation`);
     console.log(`Errors:    ${pipelineResult.errorCount}`);
     console.log(`Duration:  ${durationSec}s`);
+
+    // Cloud cost summary
+    if (backendConfig.costTracker) {
+      const cost = backendConfig.costTracker.summary();
+      console.log();
+      console.log("=== Cloud Cost ===");
+      console.log(`GPU time:    ${cost.gpuHours}`);
+      console.log(`Est. cost:   ${cost.estimatedCost}`);
+      console.log(`Rate:        $${cost.ratePerHour}/hr`);
+    }
 
     if (pipelineResult.errorCount > 0 && pipelineResult.scoredCount === 0) {
       console.error(`${RED}All opportunities errored. Check logs for details.${RESET}`);

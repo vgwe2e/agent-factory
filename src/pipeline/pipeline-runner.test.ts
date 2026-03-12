@@ -21,6 +21,7 @@ import { loadCheckpoint, saveCheckpoint } from "../infra/checkpoint.js";
 import type { Checkpoint } from "../infra/checkpoint.js";
 import type { SimulationInput } from "../types/simulation.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
+import type { CostTracker, CostSummary } from "../infra/cost-tracker.js";
 
 // -- Fixtures --
 
@@ -726,5 +727,251 @@ describe("pipeline-runner", () => {
     // All 3 scored opportunities get composite ~0.67 >= 0.60 threshold -> all promoted
     assert.equal(result.simulatedCount, 3, "all promoted opportunities were simulated");
     assert.equal(result.promotedCount, result.simulatedCount, "simulatedCount matches promotedCount");
+  });
+
+  // -- Concurrency integration tests --
+
+  it("concurrency > 1 scores all opportunities in parallel", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        concurrency: 3,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Same counts as sequential -- concurrency doesn't change correctness
+    assert.equal(result.scoredCount, 3, "3 scored with concurrency=3");
+    assert.equal(result.errorCount, 0, "no errors");
+    assert.equal(result.concurrency, 3, "concurrency recorded in result");
+    assert.ok(result.avgPerOppMs >= 0, "avgPerOppMs is non-negative");
+  });
+
+  it("timed-out opportunity produces error entry, not a hang", async () => {
+    const fixture = makeFixtureExport();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    // chatFn that hangs forever for Opp-A
+    const chatFn = async (
+      messages: Array<{ role: string; content: string }>,
+      _format: Record<string, unknown>,
+    ): Promise<ChatResult> => {
+      const prompt = messages.map((m) => m.content).join(" ");
+      if (prompt.includes("Opp-A")) {
+        // Hang forever (will be timed out)
+        return new Promise(() => {});
+      }
+      return {
+        success: true as const,
+        content: JSON.stringify({
+          data_readiness: { score: 2, reason: "Good" },
+          aera_platform_fit: { score: 2, reason: "Good" },
+          archetype_confidence: { score: 2, reason: "Good" },
+          decision_density: { score: 2, reason: "Good" },
+          financial_gravity: { score: 2, reason: "Good" },
+          impact_proximity: { score: 2, reason: "Good" },
+          confidence_signal: { score: 2, reason: "Good" },
+          value_density: { score: 2, reason: "Good" },
+          simulation_viability: { score: 2, reason: "Good" },
+        }),
+        durationMs: 100,
+      };
+    };
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        concurrency: 3,
+        requestTimeoutMs: 200, // 200ms timeout
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Opp-A should timeout, Opp-B and Opp-C should score
+    assert.equal(result.scoredCount, 2, "2 scored (Opp-A timed out)");
+    assert.equal(result.errorCount, 1, "1 error (timeout)");
+    assert.ok(
+      result.errors.some((e) => e.includes("timed out")),
+      "error message mentions timeout",
+    );
+  });
+
+  // -- Cost tracker integration tests --
+
+  it("PipelineResult includes costSummary when costTracker is provided", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    // Mock cost tracker
+    let started = false;
+    let stopped = false;
+    const mockCostTracker: CostTracker = {
+      start: () => { started = true; },
+      stop: () => { stopped = true; },
+      summary: () => ({
+        gpuSeconds: 120,
+        gpuHours: "0h 2m 0s",
+        estimatedCost: "$0.19",
+        ratePerHour: 5.58,
+      }),
+    };
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        costTracker: mockCostTracker,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.ok(result.costSummary, "costSummary is present");
+    assert.equal(result.costSummary!.gpuSeconds, 120, "gpuSeconds from mock");
+    assert.equal(result.costSummary!.estimatedCost, "$0.19", "estimatedCost from mock");
+    assert.equal(result.costSummary!.ratePerHour, 5.58, "ratePerHour from mock");
+  });
+
+  it("PipelineResult has no costSummary when costTracker is not provided (Ollama path)", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.equal(result.costSummary, undefined, "costSummary is undefined for Ollama path");
+  });
+
+  // -- Cloud cost artifact tests --
+
+  it("writes cloud-cost.json when costTracker is provided", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    const expectedCost: CostSummary = {
+      gpuSeconds: 240,
+      gpuHours: "0h 4m 0s",
+      estimatedCost: "$0.37",
+      ratePerHour: 5.58,
+    };
+
+    const mockCostTracker: CostTracker = {
+      start: () => {},
+      stop: () => {},
+      summary: () => expectedCost,
+    };
+
+    await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        costTracker: mockCostTracker,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    const costPath = path.join(tmpDir, "evaluation", "cloud-cost.json");
+    assert.ok(fs.existsSync(costPath), "cloud-cost.json exists");
+    const written = JSON.parse(fs.readFileSync(costPath, "utf-8"));
+    assert.deepStrictEqual(written, expectedCost, "cloud-cost.json matches CostSummary");
+  });
+
+  it("does not write cloud-cost.json when no costTracker", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    const costPath = path.join(tmpDir, "evaluation", "cloud-cost.json");
+    assert.ok(!fs.existsSync(costPath), "cloud-cost.json does NOT exist for Ollama path");
+  });
+
+  it("checkpoint writer is flushed after pipeline completes with concurrency", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        concurrency: 2,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    const cp = loadCheckpoint(tmpDir);
+    assert.ok(cp !== null, "checkpoint file exists after concurrent run");
+    assert.equal(cp!.entries.length, 3, "3 entries (one per scored opp)");
+    assert.ok(cp!.entries.every((e) => e.status === "scored"), "all entries scored");
   });
 });
