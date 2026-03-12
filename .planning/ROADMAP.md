@@ -71,7 +71,10 @@ Plans:
   1. User passes `--skip-sim` and the pipeline completes scoring without entering the simulation phase
   2. User passes `--sim-timeout 60000` and simulations that exceed 60 seconds are terminated and logged as errors
   3. A simulation failure for one opportunity does not prevent remaining opportunities from being scored and reported
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 16-01-PLAN.md — Per-opportunity error isolation and timeout in simulation pipeline (TDD)
+- [ ] 16-02-PLAN.md — CLI flags, pipeline-runner integration, and report formatter skip-sim awareness
 
 ### Phase 17: CLI Automation
 **Goal**: A single CLI invocation handles the full cloud evaluation lifecycle -- score, retry errors, generate reports, tear down infrastructure
@@ -137,7 +140,7 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 13. Concurrent Pipeline Runner | v1.1 | 2/2 | Complete | 2026-03-11 |
 | 14. Cloud Infrastructure | v1.1 | 3/3 | Complete | 2026-03-11 |
 | 15. Report Generation Fix | 1/1 | Complete    | 2026-03-12 | - |
-| 16. Simulation Configuration | v1.2 | 0/0 | Not started | - |
+| 16. Simulation Configuration | v1.2 | 0/2 | Not started | - |
 | 17. CLI Automation | v1.2 | 0/0 | Not started | - |
 | 18. RunPod Provisioning Fix | v1.2 | 0/0 | Not started | - |
 | 19. Output Directory Management | v1.2 | 0/0 | Not started | - |
