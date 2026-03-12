@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cloud Pipeline Hardening
 status: executing
-stopped_at: Phase 17 context gathered
-last_updated: "2026-03-12T21:55:32.751Z"
-last_activity: 2026-03-12 -- Completed 16-01 (per-opportunity error isolation and timeout)
+stopped_at: Completed 16-02-PLAN.md
+last_updated: "2026-03-12T21:57:50Z"
+last_activity: 2026-03-12 -- Completed 16-02 (CLI simulation flags and report formatter awareness)
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 3
-  completed_plans: 2
-  percent: 33
+  completed_plans: 3
+  percent: 50
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 
 ## Current Position
 
-Phase: 16 of 20 (Simulation Configuration) -- Plan 01 complete
-Plan: 01 of 02 (16-01 complete)
-Status: Phase 16 in progress
-Last activity: 2026-03-12 -- Completed 16-01 (per-opportunity error isolation and timeout)
+Phase: 16 of 20 (Simulation Configuration) -- Phase 16 complete
+Plan: 02 of 02 (16-02 complete)
+Status: Phase 16 complete, ready for Phase 17
+Last activity: 2026-03-12 -- Completed 16-02 (CLI simulation flags and report formatter awareness)
 
-Progress: [###░░░░░░░] 33%
+Progress: [#####░░░░░] 50%
 
 ## Performance Metrics
 
@@ -38,9 +38,10 @@ Progress: [###░░░░░░░] 33%
 - v1.0 plans completed: 31
 - v1.1 plans completed: 7
 - v1.1 execution time: 26min
-- v1.2 plans completed: 1
+- v1.2 plans completed: 3
 - v1.2 plan 15-01: 3min (2 tasks, 4 files)
 - v1.2 plan 16-01: 4min (1 task TDD, 2 files)
+- v1.2 plan 16-02: 4min (2 tasks TDD, 8 files)
 
 ## Accumulated Context
 
@@ -54,6 +55,9 @@ All v1.0 and v1.1 decisions logged in PROJECT.md Key Decisions table (16 decisio
 - 16-01: Outer try/catch wraps entire processOpp() block; inner per-generator graceful failure preserved
 - 16-01: No default timeout value -- simulations run unbounded unless timeoutMs explicitly passed
 - 16-01: Failed opps get default empty artifacts pushed to results for consistent output shape
+- 16-02: simTimeoutMs threaded as SimulationPipelineOptions object (not positional arg)
+- 16-02: Simulation failures (simErrorCount) do NOT affect pipeline exit code
+- 16-02: Optional trailing simSkipped parameter pattern for backward-compatible formatter signatures
 
 ### Pending Todos
 
@@ -65,6 +69,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-12T21:55:32.745Z
-Stopped at: Phase 17 context gathered
+Last session: 2026-03-12T21:57:50Z
+Stopped at: Completed 16-02-PLAN.md
 Resume file: .planning/phases/17-cli-automation/17-CONTEXT.md

@@ -43,7 +43,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 **Milestone Goal:** Make the cloud evaluation pipeline reliable, automated, and fast enough to complete a full 362-opportunity Ford hierarchy evaluation in under 30 minutes on a single A100 GPU with zero manual intervention.
 
 - [x] **Phase 15: Report Generation Fix** — Reports correctly reflect all scored opportunities including checkpoint-resumed data (completed 2026-03-12)
-- [ ] **Phase 16: Simulation Configuration** — Users can skip or configure simulation phase without code changes
+- [x] **Phase 16: Simulation Configuration** — Users can skip or configure simulation phase without code changes (completed 2026-03-12)
 - [ ] **Phase 17: CLI Automation** — Single CLI invocation handles full lifecycle with retries and teardown
 - [ ] **Phase 18: RunPod Provisioning Fix** — Pod provisioning succeeds on first attempt with correct model loaded
 - [ ] **Phase 19: Output Directory Management** — Backend-aware output namespacing prevents local/cloud clobber
@@ -71,7 +71,7 @@ Plans:
   1. User passes `--skip-sim` and the pipeline completes scoring without entering the simulation phase
   2. User passes `--sim-timeout 60000` and simulations that exceed 60 seconds are terminated and logged as errors
   3. A simulation failure for one opportunity does not prevent remaining opportunities from being scored and reported
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 16-01-PLAN.md — Per-opportunity error isolation and timeout in simulation pipeline (TDD)
 - [ ] 16-02-PLAN.md — CLI flags, pipeline-runner integration, and report formatter skip-sim awareness
@@ -140,7 +140,7 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 13. Concurrent Pipeline Runner | v1.1 | 2/2 | Complete | 2026-03-11 |
 | 14. Cloud Infrastructure | v1.1 | 3/3 | Complete | 2026-03-11 |
 | 15. Report Generation Fix | 1/1 | Complete    | 2026-03-12 | - |
-| 16. Simulation Configuration | v1.2 | 1/2 | In progress | - |
+| 16. Simulation Configuration | 2/2 | Complete   | 2026-03-12 | - |
 | 17. CLI Automation | v1.2 | 0/0 | Not started | - |
 | 18. RunPod Provisioning Fix | v1.2 | 0/0 | Not started | - |
 | 19. Output Directory Management | v1.2 | 0/0 | Not started | - |
