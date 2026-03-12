@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cloud Pipeline Hardening
-status: executing
-stopped_at: Completed 15-01-PLAN.md
-last_updated: "2026-03-12T21:01:13.000Z"
-last_activity: 2026-03-12 -- Completed Phase 15 Plan 01 (Report Generation Fix)
+status: completed
+stopped_at: Completed 15-01-PLAN.md (Report Generation Fix)
+last_updated: "2026-03-12T21:04:30.051Z"
+last_activity: 2026-03-12 -- Completed 15-01 (loadArchivedScores + pipeline-runner integration)
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 1
   completed_plans: 1
   percent: 17
