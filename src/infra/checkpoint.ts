@@ -164,13 +164,29 @@ export function createCheckpointWriter(
     const sigintHandler = () => handler('SIGINT');
     const sigtermHandler = () => handler('SIGTERM');
 
+    // Flush on uncaught exceptions/rejections before the process crashes.
+    // Unlike SIGINT/SIGTERM, we don't re-raise — Node.js will exit after
+    // the handler runs. The goal is just to save scored results.
+    const uncaughtHandler = (err: Error) => {
+      console.error(`[checkpoint] Uncaught exception, flushing checkpoint: ${err.message}`);
+      flush();
+    };
+    const unhandledHandler = (_reason: unknown) => {
+      console.error('[checkpoint] Unhandled rejection, flushing checkpoint');
+      flush();
+    };
+
     process.on('SIGINT', sigintHandler);
     process.on('SIGTERM', sigtermHandler);
+    process.on('uncaughtException', uncaughtHandler);
+    process.on('unhandledRejection', unhandledHandler);
 
     // Return cleanup function to remove handlers (useful in tests)
     return () => {
       process.removeListener('SIGINT', sigintHandler);
       process.removeListener('SIGTERM', sigtermHandler);
+      process.removeListener('uncaughtException', uncaughtHandler);
+      process.removeListener('unhandledRejection', unhandledHandler);
     };
   }
 
