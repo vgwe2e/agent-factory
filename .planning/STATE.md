@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cloud Pipeline Hardening
 status: completed
-stopped_at: Completed 16-02-PLAN.md
-last_updated: "2026-03-12T22:01:37.828Z"
+stopped_at: Phase 17 planned (2 plans, verified)
+last_updated: "2026-03-12T22:08:33.897Z"
 last_activity: 2026-03-12 -- Completed 16-02 (CLI simulation flags and report formatter awareness)
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 4
+  total_plans: 5
   completed_plans: 3
   percent: 50
 ---
@@ -69,6 +69,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-12T21:57:50Z
-Stopped at: Completed 16-02-PLAN.md
-Resume file: .planning/phases/17-cli-automation/17-CONTEXT.md
+Last session: 2026-03-12T22:08:33.892Z
+Stopped at: Phase 17 planned (2 plans, verified)
+Resume file: .planning/phases/17-cli-automation/17-01-PLAN.md
