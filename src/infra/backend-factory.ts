@@ -27,9 +27,10 @@ type ChatFn = (
 ) => Promise<ChatResult>;
 
 export interface VllmBackendOptions {
-  vllmUrl?: string;        // If omitted and runpodApiKey set, auto-provision
+  vllmUrl?: string;           // If omitted and runpodApiKey set, auto-provision
   vllmModel?: string;
-  runpodApiKey?: string;   // From RUNPOD_API_KEY env var
+  runpodApiKey?: string;      // From RUNPOD_API_KEY env var
+  networkVolumeId?: string;   // RunPod network volume for model weight caching
 }
 
 export interface BackendConfig {
@@ -82,7 +83,10 @@ export async function createBackend(
 
       // Path 2: Auto-provision via RunPod
       if (options?.runpodApiKey) {
-        const provider = createCloudProvider({ apiKey: options.runpodApiKey });
+        const provider = createCloudProvider({
+          apiKey: options.runpodApiKey,
+          networkVolumeId: options.networkVolumeId,
+        });
         const endpoint = await provider.provision();
         console.log(`RunPod endpoint: ${endpoint.endpointId}`);
 

@@ -88,6 +88,125 @@ describe("backend-factory", () => {
 
   // -- Cloud provisioning tests (mock cloud-provider) --
 
+  it("createBackend('vllm') with runpodApiKey and networkVolumeId passes volume ID to cloud provider", async () => {
+    // Mock fetch to intercept the GraphQL mutation and check networkVolumeId
+    const originalFetch = globalThis.fetch;
+    let capturedGraphqlBody = "";
+
+    const mockFetch = async (url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+      const u = String(url);
+      const body = typeof init?.body === "string" ? init.body : "";
+
+      if (u.includes("graphql")) {
+        if (!body.includes("deleteEndpoint")) {
+          capturedGraphqlBody = body;
+        }
+        if (body.includes("deleteEndpoint")) {
+          return new Response(JSON.stringify({ data: { deleteEndpoint: null } }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        return new Response(JSON.stringify({
+          data: { saveEndpoint: { id: "ep-vol-test", name: "test" } },
+        }), { status: 200, headers: { "Content-Type": "application/json" } });
+      }
+
+      if (u.includes("/health")) {
+        return new Response(JSON.stringify({
+          workers: { ready: 1 },
+        }), { status: 200, headers: { "Content-Type": "application/json" } });
+      }
+
+      if (u.includes("/v1/models") || u.includes("/openai/v1/models")) {
+        return new Response(JSON.stringify({
+          data: [{ id: "Qwen/Qwen2.5-32B-Instruct" }],
+        }), { status: 200, headers: { "Content-Type": "application/json" } });
+      }
+
+      return new Response("Not found", { status: 404 });
+    };
+
+    globalThis.fetch = mockFetch as typeof globalThis.fetch;
+    try {
+      const config = await createBackend("vllm", {
+        runpodApiKey: "test-key",
+        networkVolumeId: "vol_test123",
+      });
+
+      assert.equal(config.backend, "vllm");
+      assert.ok(
+        capturedGraphqlBody.includes("vol_test123"),
+        `Expected GraphQL body to contain 'vol_test123', got: ${capturedGraphqlBody.slice(0, 300)}`,
+      );
+      assert.ok(
+        capturedGraphqlBody.includes("networkVolumeId"),
+        `Expected GraphQL body to contain 'networkVolumeId', got: ${capturedGraphqlBody.slice(0, 300)}`,
+      );
+
+      // Cleanup
+      if (config.cleanup) await config.cleanup();
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it("createBackend('vllm') with runpodApiKey but no networkVolumeId omits volume from mutation", async () => {
+    const originalFetch = globalThis.fetch;
+    let capturedGraphqlBody = "";
+
+    const mockFetch = async (url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+      const u = String(url);
+      const body = typeof init?.body === "string" ? init.body : "";
+
+      if (u.includes("graphql")) {
+        if (!body.includes("deleteEndpoint")) {
+          capturedGraphqlBody = body;
+        }
+        if (body.includes("deleteEndpoint")) {
+          return new Response(JSON.stringify({ data: { deleteEndpoint: null } }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        return new Response(JSON.stringify({
+          data: { saveEndpoint: { id: "ep-no-vol", name: "test" } },
+        }), { status: 200, headers: { "Content-Type": "application/json" } });
+      }
+
+      if (u.includes("/health")) {
+        return new Response(JSON.stringify({
+          workers: { ready: 1 },
+        }), { status: 200, headers: { "Content-Type": "application/json" } });
+      }
+
+      if (u.includes("/v1/models") || u.includes("/openai/v1/models")) {
+        return new Response(JSON.stringify({
+          data: [{ id: "Qwen/Qwen2.5-32B-Instruct" }],
+        }), { status: 200, headers: { "Content-Type": "application/json" } });
+      }
+
+      return new Response("Not found", { status: 404 });
+    };
+
+    globalThis.fetch = mockFetch as typeof globalThis.fetch;
+    try {
+      const config = await createBackend("vllm", {
+        runpodApiKey: "test-key",
+      });
+
+      assert.equal(config.backend, "vllm");
+      assert.ok(
+        !capturedGraphqlBody.includes("networkVolumeId"),
+        `Expected GraphQL body NOT to contain 'networkVolumeId', got: ${capturedGraphqlBody.slice(0, 300)}`,
+      );
+
+      if (config.cleanup) await config.cleanup();
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
   it("createBackend('vllm') with runpodApiKey provisions cloud endpoint", async () => {
     // We test indirectly: if runpodApiKey is given without vllmUrl,
     // createBackend calls createCloudProvider().provision().

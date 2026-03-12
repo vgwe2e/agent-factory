@@ -138,7 +138,8 @@ program
   .option("--sim-timeout <ms>", "Per-opportunity simulation timeout in milliseconds")
   .option("--retry <n>", "Retry errored opportunities up to N times at concurrency 1", "0")
   .option("--teardown", "Tear down cloud resources after pipeline completes")
-  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; retry: string; teardown?: boolean }) => {
+  .option("--network-volume <id>", "RunPod network volume ID for model weight caching")
+  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; retry: string; teardown?: boolean; networkVolume?: string }) => {
     console.log(`${BOLD}Aera Skill Feasibility Engine v1.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
@@ -241,6 +242,7 @@ program
         vllmUrl: opts.vllmUrl,
         vllmModel: undefined,
         runpodApiKey: process.env.RUNPOD_API_KEY,
+        networkVolumeId: opts.networkVolume,
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -289,6 +291,9 @@ program
     }
     if (opts.teardown) {
       console.log(`Teardown:    enabled`);
+    }
+    if (opts.networkVolume) {
+      console.log(`Volume:      ${opts.networkVolume}`);
     }
     console.log();
 
