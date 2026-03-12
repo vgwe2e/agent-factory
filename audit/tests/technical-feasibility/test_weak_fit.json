@@ -1,0 +1,17 @@
+{
+  "test_id": "tech-weak-01",
+  "description": "Weak-fit opportunity with sparse data, no platform mapping, and weak archetype alignment",
+  "opportunity": "Technology & Innovation Scouting",
+  "domain": "Procure Source & Buy > Commodity Management & Market Intelligence",
+  "archetype": "DETERMINISTIC",
+  "expected_scores": {
+    "data_readiness": { "min": 0, "max": 1, "rationale": "L4s reference qualitative assessments with few structured data signals" },
+    "aera_platform_fit": { "min": 0, "max": 0, "rationale": "Innovation scouting is outside Aera's analytical decision scope" },
+    "archetype_confidence": { "min": 0, "max": 1, "rationale": "Scouting activities do not follow deterministic or agentic decision patterns" }
+  },
+  "expected_confidence": "MEDIUM",
+  "anti_patterns": [
+    "platform_fit should NOT be >= 2 — no specific Aera capabilities match",
+    "data_readiness should NOT be 3 — data signals are qualitative not structured"
+  ]
+}

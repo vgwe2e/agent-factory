@@ -1,0 +1,18 @@
+{
+  "test_id": "adopt-strong-01",
+  "description": "Strong adoption opportunity with articulated decisions, high financial gravity, and immediate impact",
+  "opportunity": "Capacity Planning & Optimization",
+  "domain": "Plan > Production Planning & Scheduling",
+  "archetype": "AGENTIC",
+  "expected_scores": {
+    "decision_density": { "min": 2, "max": 3, "rationale": "L4s have specific decision_articulation with quantifiable triggers composing into coherent planning sequence" },
+    "financial_gravity": { "min": 2, "max": 3, "rationale": "Majority HIGH financial ratings with FIRST-order impact on production throughput" },
+    "impact_proximity": { "min": 2, "max": 3, "rationale": "Capacity decisions directly affect production scheduling; value visible within weeks" },
+    "confidence_signal": { "min": 1, "max": 2, "rationale": "Most L4s have MEDIUM rating_confidence; some uncertainty in constraint modeling" }
+  },
+  "expected_confidence": "HIGH",
+  "anti_patterns": [
+    "decision_density should NOT be 3 unless >75% of L4s have specific trigger-action-outcome chains",
+    "confidence_signal should NOT be 3 — there is genuine uncertainty in constraint modeling"
+  ]
+}

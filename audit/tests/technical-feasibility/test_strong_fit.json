@@ -1,0 +1,17 @@
+{
+  "test_id": "tech-strong-01",
+  "description": "Strong-fit opportunity with rich data, clear platform mapping, and strong archetype alignment",
+  "opportunity": "Warehouse & Inventory Management",
+  "domain": "Move & Fulfill > Inbound Logistics & Material Flow",
+  "archetype": "DETERMINISTIC",
+  "expected_scores": {
+    "data_readiness": { "min": 2, "max": 3, "rationale": "Multiple L4s reference inventory levels, receipts, stock movements with quantifiable metrics" },
+    "aera_platform_fit": { "min": 2, "max": 3, "rationale": "Maps to Safety Stock Service + STREAMS; clear implementation path" },
+    "archetype_confidence": { "min": 2, "max": 3, "rationale": "DETERMINISTIC strongly supported by rule-based replenishment and exception flows" }
+  },
+  "expected_confidence": "HIGH",
+  "anti_patterns": [
+    "platform_fit should NOT be 0 — clear capability matches exist",
+    "All three scores should NOT be identical unless genuinely warranted"
+  ]
+}

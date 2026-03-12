@@ -1,0 +1,16 @@
+{
+  "test_id": "value-mid-01",
+  "description": "Mid-range value with low capped value but excellent simulation isolation",
+  "opportunity": "Material Requirements Planning (MRP) Integration",
+  "domain": "Plan > Production Planning & Scheduling",
+  "archetype": "DETERMINISTIC",
+  "expected_scores": {
+    "value_density": { "min": 0, "max": 1, "rationale": "Combined max value <0.1% of revenue, though MRP has broad operational impact not fully captured in capped figure" },
+    "simulation_viability": { "min": 2, "max": 3, "rationale": "Clear decision flows with self-contained inputs (BOM, demand, inventory) testable in isolation" }
+  },
+  "expected_confidence": "HIGH",
+  "anti_patterns": [
+    "value_density and simulation_viability should NOT be the same — this is a case where they diverge significantly",
+    "simulation_viability should NOT be 1 — inputs are self-contained and isolatable"
+  ]
+}

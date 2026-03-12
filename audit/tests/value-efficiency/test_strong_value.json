@@ -1,0 +1,16 @@
+{
+  "test_id": "value-strong-01",
+  "description": "Strong value with high revenue percentage and identifiable but complex simulation flows",
+  "opportunity": "Strategic Network Design & Optimization",
+  "domain": "Plan > Supply Network Design & Planning",
+  "archetype": "DETERMINISTIC",
+  "expected_scores": {
+    "value_density": { "min": 2, "max": 3, "rationale": "Combined max value >1% of revenue with clear value metrics across L4s" },
+    "simulation_viability": { "min": 1, "max": 2, "rationale": "Decision flows identifiable but cross-system data dependencies and feedback loops between capacity and demand" }
+  },
+  "expected_confidence": "HIGH",
+  "anti_patterns": [
+    "simulation_viability should NOT be 3 — cross-system dependencies prevent isolated testing",
+    "value_density should NOT be 0 — combined_max_value is significant relative to revenue"
+  ]
+}

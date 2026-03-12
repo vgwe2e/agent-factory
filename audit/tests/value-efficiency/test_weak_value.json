@@ -1,0 +1,16 @@
+{
+  "test_id": "value-weak-01",
+  "description": "Weak value with low revenue percentage and dependency-neutering simulation risk",
+  "opportunity": "Packaging Exception & Issue Management",
+  "domain": "Move & Fulfill > Packaging & Returnable Container Management",
+  "archetype": "AGENTIC",
+  "expected_scores": {
+    "value_density": { "min": 0, "max": 1, "rationale": "Combined max value <0.1% of revenue; value limited to exception cost avoidance" },
+    "simulation_viability": { "min": 0, "max": 1, "rationale": "Exception handling depends on real-time data; simplifying would remove core detection logic" }
+  },
+  "expected_confidence": "MEDIUM",
+  "anti_patterns": [
+    "simulation_viability should NOT be 3 — dependencies cannot be isolated without neutering",
+    "value_density should NOT be penalized for being low — values are intentionally capped"
+  ]
+}

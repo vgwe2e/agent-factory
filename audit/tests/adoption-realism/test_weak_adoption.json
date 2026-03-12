@@ -1,0 +1,18 @@
+{
+  "test_id": "adopt-weak-01",
+  "description": "Weak adoption opportunity with vague decisions, low financial impact, and distant value realization",
+  "opportunity": "Technology & Innovation Scouting",
+  "domain": "Procure Source & Buy > Commodity Management & Market Intelligence",
+  "archetype": "DETERMINISTIC",
+  "expected_scores": {
+    "decision_density": { "min": 0, "max": 1, "rationale": "decision_articulation is vague with no specific triggers or thresholds" },
+    "financial_gravity": { "min": 0, "max": 1, "rationale": "Mixed financial ratings, mostly LOW; indirect financial impact" },
+    "impact_proximity": { "min": 0, "max": 0, "rationale": "Only SECOND-order impact; benefits require multi-year technology adoption cycles" },
+    "confidence_signal": { "min": 0, "max": 1, "rationale": "Mixed confidence with several LOW signals; assessments are speculative" }
+  },
+  "expected_confidence": "MEDIUM",
+  "anti_patterns": [
+    "decision_density should NOT be 3 — articulation is vague",
+    "financial_gravity and impact_proximity should NOT both be 3"
+  ]
+}

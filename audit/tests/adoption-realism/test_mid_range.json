@@ -1,0 +1,18 @@
+{
+  "test_id": "adopt-mid-01",
+  "description": "Mid-range adoption with articulated but overlapping decisions, mixed financial signals",
+  "opportunity": "Paint Material Management",
+  "domain": "Make > Paint Operations",
+  "archetype": "DETERMINISTIC",
+  "expected_scores": {
+    "decision_density": { "min": 1, "max": 2, "rationale": "Specific decision_articulation about material thresholds but some overlap in exception handling" },
+    "financial_gravity": { "min": 1, "max": 2, "rationale": "Mix of HIGH and MEDIUM financial ratings; significant but not dominant costs" },
+    "impact_proximity": { "min": 1, "max": 2, "rationale": "Some FIRST-order impact on waste reduction; other benefits are SECOND-order" },
+    "confidence_signal": { "min": 1, "max": 2, "rationale": "Majority MEDIUM confidence; paint ops well-understood but data integration uncertain" }
+  },
+  "expected_confidence": "MEDIUM",
+  "anti_patterns": [
+    "No sub-dimension should be 3 — signals are mixed across all dimensions",
+    "decision_density should NOT be 3 — overlapping exception flows prevent coherent sequencing"
+  ]
+}
