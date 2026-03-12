@@ -114,7 +114,6 @@ program
   .option(
     "--output-dir <path>",
     "Output directory for evaluation results",
-    "./evaluation",
   )
   .addOption(
     new Option("--backend <backend>", "Scoring backend (ollama or vllm)")
@@ -139,7 +138,7 @@ program
   .option("--sim-timeout <ms>", "Per-opportunity simulation timeout in milliseconds")
   .option("--retry <n>", "Retry errored opportunities up to N times at concurrency 1", "0")
   .option("--teardown", "Tear down cloud resources after pipeline completes")
-  .action(async (opts: { input: string; logLevel: string; outputDir: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; retry: string; teardown?: boolean }) => {
+  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; retry: string; teardown?: boolean }) => {
     console.log(`${BOLD}Aera Skill Feasibility Engine v1.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
@@ -153,6 +152,9 @@ program
     }
 
     const { meta, company_context, hierarchy, l3_opportunities } = result.data;
+
+    // Resolve output directory: backend-aware default when not explicitly set
+    opts.outputDir = resolveOutputDir(opts.outputDir, opts.backend);
 
     // Format revenue
     const revenueStr =
