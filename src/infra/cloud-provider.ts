@@ -20,6 +20,8 @@ export interface CloudProviderConfig {
   templateId?: string;
   maxProvisionTimeoutMs?: number;
   maxHealthTimeoutMs?: number;
+  /** RunPod network volume ID for persistent model weight caching. */
+  networkVolumeId?: string;
   /** Override poll interval for testing (ms). */
   pollIntervalMs?: number;
 }
@@ -61,6 +63,7 @@ export function createCloudProvider(config: CloudProviderConfig): CloudProvider 
     gpuType = DEFAULT_GPU_TYPE,
     model = DEFAULT_MODEL,
     templateId = DEFAULT_TEMPLATE_ID,
+    networkVolumeId,
     maxProvisionTimeoutMs = DEFAULT_PROVISION_TIMEOUT_MS,
     maxHealthTimeoutMs = DEFAULT_HEALTH_TIMEOUT_MS,
     pollIntervalMs = DEFAULT_POLL_INTERVAL_MS,
@@ -136,12 +139,17 @@ export function createCloudProvider(config: CloudProviderConfig): CloudProvider 
     try {
       // 1. Create serverless endpoint via GraphQL mutation
       const name = `aera-eval-${Date.now()}`;
+      const volumeField = networkVolumeId
+        ? `networkVolumeId: "${networkVolumeId}"`
+        : "";
+
       const createMutation = `
         mutation {
           saveEndpoint(input: {
             name: "${name}"
             templateId: "${templateId}"
             gpuIds: "${gpuType}"
+            ${volumeField}
             idleTimeout: 60
             workersMax: 1
             workersMin: 0

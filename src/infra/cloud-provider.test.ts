@@ -399,6 +399,111 @@ describe("CloudProvider", () => {
     await provider.teardown(endpoint);
   });
 
+  // ---- CACHE-01: networkVolumeId included in mutation when provided ------
+
+  it("provision() includes networkVolumeId in saveEndpoint mutation when config.networkVolumeId is provided", async () => {
+    const endpointId = "ep-vol-test";
+    let capturedGraphqlBody = "";
+
+    const mockFetch: MockFetchFn = async (url, init) => {
+      const u = String(url);
+
+      if (u.includes("graphql")) {
+        const body = typeof init?.body === "string" ? init.body : "";
+        if (!body.includes("deleteEndpoint")) {
+          capturedGraphqlBody = body;
+        }
+        return jsonResponse({
+          data: { saveEndpoint: { id: endpointId, name: "test" } },
+        });
+      }
+
+      if (u.includes("/health")) {
+        return jsonResponse({
+          workers: { ready: 1, idle: 0, initializing: 0, running: 0, throttled: 0 },
+          jobs: { completed: 0, failed: 0, inProgress: 0, inQueue: 0, retried: 0 },
+        });
+      }
+
+      if (u.includes("/v1/models") || u.includes("/openai/v1/models")) {
+        return jsonResponse({ data: [{ id: "Qwen/Qwen2.5-32B-Instruct" }] });
+      }
+
+      return new Response("Not found", { status: 404 });
+    };
+
+    globalThis.fetch = mockFetch as typeof globalThis.fetch;
+
+    const provider = createCloudProvider({
+      apiKey: "test-key",
+      networkVolumeId: "vol_abc123",
+      pollIntervalMs: 10,
+      maxProvisionTimeoutMs: 5000,
+      maxHealthTimeoutMs: 5000,
+    });
+    const endpoint = await provider.provision();
+
+    assert.equal(endpoint.endpointId, endpointId);
+    assert.ok(
+      capturedGraphqlBody.includes("vol_abc123"),
+      `Expected mutation body to include 'vol_abc123', got: ${capturedGraphqlBody.slice(0, 300)}`,
+    );
+    assert.ok(
+      capturedGraphqlBody.includes("networkVolumeId"),
+      `Expected mutation body to include 'networkVolumeId', got: ${capturedGraphqlBody.slice(0, 300)}`,
+    );
+  });
+
+  // ---- CACHE-01: networkVolumeId omitted from mutation when not provided --
+
+  it("provision() does NOT include networkVolumeId in mutation when config.networkVolumeId is undefined", async () => {
+    const endpointId = "ep-no-vol-test";
+    let capturedGraphqlBody = "";
+
+    const mockFetch: MockFetchFn = async (url, init) => {
+      const u = String(url);
+
+      if (u.includes("graphql")) {
+        const body = typeof init?.body === "string" ? init.body : "";
+        if (!body.includes("deleteEndpoint")) {
+          capturedGraphqlBody = body;
+        }
+        return jsonResponse({
+          data: { saveEndpoint: { id: endpointId, name: "test" } },
+        });
+      }
+
+      if (u.includes("/health")) {
+        return jsonResponse({
+          workers: { ready: 1, idle: 0, initializing: 0, running: 0, throttled: 0 },
+          jobs: { completed: 0, failed: 0, inProgress: 0, inQueue: 0, retried: 0 },
+        });
+      }
+
+      if (u.includes("/v1/models") || u.includes("/openai/v1/models")) {
+        return jsonResponse({ data: [{ id: "Qwen/Qwen2.5-32B-Instruct" }] });
+      }
+
+      return new Response("Not found", { status: 404 });
+    };
+
+    globalThis.fetch = mockFetch as typeof globalThis.fetch;
+
+    const provider = createCloudProvider({
+      apiKey: "test-key",
+      pollIntervalMs: 10,
+      maxProvisionTimeoutMs: 5000,
+      maxHealthTimeoutMs: 5000,
+    });
+    const endpoint = await provider.provision();
+
+    assert.equal(endpoint.endpointId, endpointId);
+    assert.ok(
+      !capturedGraphqlBody.includes("networkVolumeId"),
+      `Expected mutation body NOT to include 'networkVolumeId', got: ${capturedGraphqlBody.slice(0, 300)}`,
+    );
+  });
+
   it("teardown() is idempotent -- calling twice does not throw", async () => {
     let callCount = 0;
     globalThis.fetch = (async () => {
