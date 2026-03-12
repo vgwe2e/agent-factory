@@ -1,0 +1,26 @@
+decision: >-
+  Which logistics facilities to invest in now vs later, balancing capital cost,
+  capacity expansion, service level, and total landed cost
+input:
+  financial_context:
+    Annual Revenue: 184992000001
+    COGS: 158434000000
+    EBITDA: 12786000000
+    Inventory Value: 14951000000
+  trigger: Prioritize logistics facility investments for Q3 2024
+  parameters:
+    service_level_target: 98%
+    capacity_expansion_needed: 20%
+expected_output:
+  action: Approve investment in Facility A and defer Facility B
+  outcome: >-
+    Optimized capex allocation reducing total landed cost by 3.2% while meeting
+    98% OTIF target
+  affected_components:
+    - Facility A
+    - Facility B
+rationale: >-
+  The test validates the engine's ability to balance capex against actual COGS
+  (158.434B) and EBITDA (12.786B) while meeting service level targets, achieving
+  a 3.2% landed cost reduction through facility prioritization aligned with the
+  trigger parameters.

@@ -1,0 +1,25 @@
+decision: >-
+  Develop and maintain standardized work instructions with versioned changes,
+  and decide on updates based on process changes, training impact, and quality
+  considerations
+input:
+  financial_context:
+    Annual Revenue: 184992000001
+    COGS: 158434000000
+    EBITDA: 12786000000
+    Inventory Value: 14951000000
+  trigger: >-
+    Process change from Assembly Line Layout & Ergonomics Optimization
+    implementation
+expected_output:
+  action: Version 2.1 work instructions deployment
+  outcome: 1.2% defect reduction and 15% faster new-hire training adoption
+  affected_components:
+    - Assembly Line 3
+    - Training Department
+rationale: >-
+  The trigger (process change from layout optimization) required versioned work
+  instruction updates. The decision considered training impact (reduced
+  onboarding time) and quality considerations (defect reduction), directly
+  leveraging Ford's high COGS ($158.4B) and EBITDA ($12.8B) context to validate
+  the update's financial impact through reduced waste and improved throughput.

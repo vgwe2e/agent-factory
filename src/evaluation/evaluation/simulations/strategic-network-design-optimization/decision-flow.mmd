@@ -1,0 +1,14 @@
+flowchart TD
+A[Strategic Network Design Opportunity] --> PB:Process
+PB:Process --> Cortex:Global Network Footprint Definition
+Cortex:Global Network Footprint Definition --> Cortex:Regional Hub & Spoke Model
+Cortex:Regional Hub & Spoke Model --> Cortex:Future State Simulation
+Cortex:Future State Simulation --> Cortex:Network Redesign Business Case
+Cortex:Network Redesign Business Case --> IF[Scenario Valid?]
+IF -->|Valid| Cortex:Post-Merger Integration Planning
+IF -->|Invalid| PB:Process
+Cortex:Post-Merger Integration Planning --> IF[Optimization Converged?]
+IF -->|Yes| PB:Transaction
+IF -->|No| Cortex:Future State Simulation
+PB:Transaction --> UI:Network Design Dashboard
+UI:Network Design Dashboard --> End
