@@ -231,4 +231,44 @@ describe("formatMetaReflection", () => {
     const md = formatMetaReflection([], [], makeSimResults(), FIXED_DATE);
     assert.ok(md.endsWith("\n"));
   });
+
+  // -- skipSim awareness tests --
+
+  it("shows skip note when simSkipped=true", () => {
+    const triaged = [makeTriage()];
+    const scored = [makeScoring()];
+    const md = formatMetaReflection(triaged, scored, makeSimResults(), FIXED_DATE, true);
+    assert.ok(md.includes("**Simulation: skipped (--skip-sim)**"), "should show skip note in overview");
+    assert.ok(!md.includes("**Total Simulated:**"), "should NOT show total simulated line");
+  });
+
+  it("shows N/A for simulation success rate when simSkipped=true", () => {
+    const triaged = [makeTriage()];
+    const scored = [makeScoring()];
+    const simResults = makeSimResults({ totalSimulated: 5, totalFailed: 1 });
+    const md = formatMetaReflection(triaged, scored, simResults, FIXED_DATE, true);
+    assert.ok(md.includes("N/A"), "success rate should be N/A when skipped");
+  });
+
+  it("shows knowledge skip message when simSkipped=true", () => {
+    const md = formatMetaReflection([], [], makeSimResults(), FIXED_DATE, true);
+    assert.ok(md.includes("Simulation was skipped"), "should show knowledge skip message");
+  });
+
+  it("shows simulation stats as before when simSkipped=false", () => {
+    const triaged = [makeTriage()];
+    const scored = [makeScoring()];
+    const simResults = makeSimResults({ totalSimulated: 3 });
+    const md = formatMetaReflection(triaged, scored, simResults, FIXED_DATE, false);
+    assert.ok(md.includes("**Total Simulated:** 3"), "should show total simulated");
+    assert.ok(!md.includes("skipped (--skip-sim)"), "should NOT show skip note");
+  });
+
+  it("backward compat when simSkipped not provided", () => {
+    const triaged = [makeTriage()];
+    const scored = [makeScoring()];
+    const simResults = makeSimResults({ totalSimulated: 2 });
+    const md = formatMetaReflection(triaged, scored, simResults, FIXED_DATE);
+    assert.ok(md.includes("**Total Simulated:** 2"), "backward compat");
+  });
 });

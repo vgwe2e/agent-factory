@@ -205,4 +205,31 @@ describe("formatSummary", () => {
     const md = formatSummary([], [], makeSimResults(), "Ford", FIXED_DATE);
     assert.ok(md.endsWith("\n"));
   });
+
+  // -- skipSim awareness tests --
+
+  it("shows skip note when simSkipped=true", () => {
+    const scored = [makeScoring()];
+    const triaged = [makeTriage()];
+    const md = formatSummary(scored, triaged, makeSimResults(), "Ford", FIXED_DATE, true);
+    assert.ok(md.includes("**Simulation: skipped (--skip-sim)**"), "should show skip note");
+    assert.ok(!md.includes("**Simulations Completed:**"), "should NOT show simulations completed line");
+  });
+
+  it("shows simulations completed when simSkipped=false", () => {
+    const scored = [makeScoring()];
+    const triaged = [makeTriage()];
+    const simResults = makeSimResults({ totalSimulated: 3 });
+    const md = formatSummary(scored, triaged, simResults, "Ford", FIXED_DATE, false);
+    assert.ok(md.includes("**Simulations Completed:** 3"), "should show simulations completed");
+    assert.ok(!md.includes("skipped (--skip-sim)"), "should NOT show skip note");
+  });
+
+  it("defaults to showing simulations completed when simSkipped not provided", () => {
+    const scored = [makeScoring()];
+    const triaged = [makeTriage()];
+    const simResults = makeSimResults({ totalSimulated: 2 });
+    const md = formatSummary(scored, triaged, simResults, "Ford", FIXED_DATE);
+    assert.ok(md.includes("**Simulations Completed:** 2"), "backward compat");
+  });
 });
