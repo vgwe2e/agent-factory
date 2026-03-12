@@ -68,6 +68,24 @@ export function getCompletedNames(checkpoint: Checkpoint | null): Set<string> {
   return new Set(checkpoint.entries.map((e) => e.l3Name));
 }
 
+/**
+ * Remove all error entries from the checkpoint file on disk.
+ * Returns the number of entries cleared (0 if no checkpoint or no errors).
+ */
+export function clearCheckpointErrors(outputDir: string): number {
+  const checkpoint = loadCheckpoint(outputDir);
+  if (!checkpoint) return 0;
+
+  const before = checkpoint.entries.length;
+  checkpoint.entries = checkpoint.entries.filter(e => e.status !== 'error');
+  const cleared = before - checkpoint.entries.length;
+
+  if (cleared > 0) {
+    saveCheckpoint(outputDir, checkpoint);
+  }
+  return cleared;
+}
+
 // ---------------------------------------------------------------------------
 // Durable checkpoint writer
 // ---------------------------------------------------------------------------

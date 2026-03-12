@@ -9,6 +9,7 @@ import {
   getCompletedNames,
   checkpointPath,
   createCheckpointWriter,
+  clearCheckpointErrors,
   CHECKPOINT_FILENAME,
 } from './checkpoint.js';
 import type { Checkpoint, CheckpointEntry } from './checkpoint.js';
@@ -277,5 +278,129 @@ describe('createCheckpointWriter', () => {
     assert.equal(typeof cleanup, 'function');
     // Clean up immediately to avoid affecting other tests
     cleanup();
+  });
+});
+
+describe('clearCheckpointErrors', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = mkdtempSync(join(tmpdir(), 'checkpoint-clear-test-'));
+  });
+
+  afterEach(() => {
+    rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  function makeCheckpointWith(entries: CheckpointEntry[]): Checkpoint {
+    return {
+      version: 1,
+      inputFile: '/test/input.json',
+      startedAt: '2026-03-11T10:00:00Z',
+      entries,
+    };
+  }
+
+  function entry(name: string, status: CheckpointEntry['status']): CheckpointEntry {
+    return { l3Name: name, completedAt: '2026-03-11T10:01:00Z', status };
+  }
+
+  it('returns count of cleared error entries and removes them from checkpoint', () => {
+    const cp = makeCheckpointWith([
+      entry('Alpha', 'scored'),
+      entry('Beta', 'scored'),
+      entry('Gamma', 'error'),
+    ]);
+    saveCheckpoint(tempDir, cp);
+
+    const cleared = clearCheckpointErrors(tempDir);
+    assert.equal(cleared, 1);
+
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries.length, 2);
+  });
+
+  it('returns 0 when there are no error entries', () => {
+    const cp = makeCheckpointWith([
+      entry('Alpha', 'scored'),
+      entry('Beta', 'skipped'),
+    ]);
+    saveCheckpoint(tempDir, cp);
+
+    const cleared = clearCheckpointErrors(tempDir);
+    assert.equal(cleared, 0);
+
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries.length, 2);
+  });
+
+  it('returns N and leaves 0 entries when all entries are errors', () => {
+    const cp = makeCheckpointWith([
+      entry('Alpha', 'error'),
+      entry('Beta', 'error'),
+      entry('Gamma', 'error'),
+    ]);
+    saveCheckpoint(tempDir, cp);
+
+    const cleared = clearCheckpointErrors(tempDir);
+    assert.equal(cleared, 3);
+
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries.length, 0);
+  });
+
+  it('returns 0 when no checkpoint file exists', () => {
+    const cleared = clearCheckpointErrors(tempDir);
+    assert.equal(cleared, 0);
+  });
+
+  it('preserves scored and skipped entries exactly (l3Name, completedAt, status)', () => {
+    const scored = entry('Alpha', 'scored');
+    const skipped = entry('Beta', 'skipped');
+    const errored = entry('Gamma', 'error');
+    const cp = makeCheckpointWith([scored, errored, skipped]);
+    saveCheckpoint(tempDir, cp);
+
+    clearCheckpointErrors(tempDir);
+
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.deepEqual(loaded!.entries, [scored, skipped]);
+  });
+
+  it('getCompletedNames excludes previously-errored names after clearing', () => {
+    const cp = makeCheckpointWith([
+      entry('Alpha', 'scored'),
+      entry('Beta', 'error'),
+      entry('Gamma', 'skipped'),
+    ]);
+    saveCheckpoint(tempDir, cp);
+
+    clearCheckpointErrors(tempDir);
+
+    const reloaded = loadCheckpoint(tempDir);
+    const names = getCompletedNames(reloaded);
+    assert.deepEqual(names, new Set(['Alpha', 'Gamma']));
+    assert.ok(!names.has('Beta'));
+  });
+
+  it('persists changes to disk (loadCheckpoint after returns filtered entries)', () => {
+    const cp = makeCheckpointWith([
+      entry('Alpha', 'scored'),
+      entry('Beta', 'error'),
+    ]);
+    saveCheckpoint(tempDir, cp);
+
+    clearCheckpointErrors(tempDir);
+
+    // Verify disk state independently
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries.length, 1);
+    assert.equal(loaded!.entries[0].l3Name, 'Alpha');
+    assert.equal(loaded!.entries[0].status, 'scored');
   });
 });
