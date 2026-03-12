@@ -38,7 +38,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 
 </details>
 
-### 🚧 v1.2 Cloud Pipeline Hardening (In Progress)
+### v1.2 Cloud Pipeline Hardening (In Progress)
 
 **Milestone Goal:** Make the cloud evaluation pipeline reliable, automated, and fast enough to complete a full 362-opportunity Ford hierarchy evaluation in under 30 minutes on a single A100 GPU with zero manual intervention.
 
@@ -85,7 +85,10 @@ Plans:
   2. User passes `--teardown` and the RunPod pod is stopped and deleted after pipeline completes (or fails)
   3. User runs a single CLI command and it handles score, retry, report generation, and teardown without manual steps
   4. Pipeline exits with code 0 when all opportunities scored, 1 when errors remain after retries, 2 on fatal failure
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 17-01-PLAN.md — clearCheckpointErrors function (TDD)
+- [ ] 17-02-PLAN.md — CLI --retry, --teardown flags, retry loop, and structured exit codes
 
 ### Phase 18: RunPod Provisioning Fix
 **Goal**: RunPod pod provisioning works correctly on the first attempt using the GraphQL API with proper model validation
@@ -141,7 +144,7 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 14. Cloud Infrastructure | v1.1 | 3/3 | Complete | 2026-03-11 |
 | 15. Report Generation Fix | 1/1 | Complete    | 2026-03-12 | - |
 | 16. Simulation Configuration | 2/2 | Complete    | 2026-03-12 | - |
-| 17. CLI Automation | v1.2 | 0/0 | Not started | - |
+| 17. CLI Automation | v1.2 | 0/2 | Not started | - |
 | 18. RunPod Provisioning Fix | v1.2 | 0/0 | Not started | - |
 | 19. Output Directory Management | v1.2 | 0/0 | Not started | - |
 | 20. Network Volume & Model Caching | v1.2 | 0/0 | Not started | - |
