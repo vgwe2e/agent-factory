@@ -1,0 +1,60 @@
+source_systems:
+  - name: SAP S/4HANA
+    status: identified
+aera_ingestion:
+  - stream_name: bom_data
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+  - stream_name: rfq_creation
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supplier_questions
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: bid_submissions
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: technical_evaluations
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: commercial_analysis
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: bom_sourcing_engine
+    type: orchestration
+    function: Creates BOM sourcing packages from SAP data
+  - component: rfq_engine
+    type: orchestration
+    function: Releases RFQs to suppliers and manages communication
+  - component: clarification_engine
+    type: orchestration
+    function: Manages supplier clarification questions
+  - component: bid_engine
+    type: orchestration
+    function: Handles bid submission and opening
+  - component: technical_evaluation_engine
+    type: analysis
+    function: Evaluates technical proposals
+  - component: commercial_analysis_engine
+    type: analysis
+    function: Performs commercial bid analysis and cost breakdowns
+ui_surface:
+  - component: bom_sourcing_screen
+    screen: BOM Sourcing Package
+    purpose: To create and manage BOM sourcing packages
+  - component: rfq_screen
+    screen: RFQ Release
+    purpose: To release RFQs to suppliers and track communication
+  - component: clarification_screen
+    screen: Supplier Clarification
+    purpose: To manage questions and answers with suppliers
+  - component: bid_screen
+    screen: Bid Submission
+    purpose: To handle bid submissions and openings
+  - component: technical_evaluation_screen
+    screen: Technical Proposal Evaluation
+    purpose: To evaluate technical proposals
+  - component: commercial_analysis_screen
+    screen: Commercial Bid Analysis
+    purpose: To perform cost breakdowns and commercial analysis

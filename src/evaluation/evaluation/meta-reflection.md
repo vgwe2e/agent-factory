@@ -5,13 +5,16 @@
 ## Overview
 
 - **Total Opportunities Triaged:** 362
-- **Total Scored:** 0
-- **Total Simulated:** 0
-- **Simulation Success Rate:** N/A
+- **Total Scored:** 286
+- **Total Simulated:** 11
+- **Simulation Success Rate:** 100.0%
 
 ## Archetype Distribution
 
-No scored opportunities.
+| Archetype | Count | Percentage |
+|-----------|-------|------------|
+| DETERMINISTIC | 163 | 57.0% |
+| AGENTIC | 123 | 43.0% |
 
 ## Red Flag Frequency
 
@@ -33,7 +36,13 @@ No scored opportunities.
 
 ## Domain Performance
 
-No scored opportunities to analyze by domain.
+| L1 Domain | Avg Composite | Count |
+|-----------|---------------|-------|
+| Plan | 0.75 | 57 |
+| Make | 0.74 | 73 |
+| Move & Fulfill | 0.74 | 53 |
+| Procure Source & Buy | 0.72 | 58 |
+| Service | 0.68 | 45 |
 
 ## Knowledge Base Coverage
 
@@ -42,6 +51,18 @@ No scored opportunities to analyze by domain.
 - **Total Components Referenced:** 0
 
 ## Key Patterns
+
+**Strongest Domains (by avg composite):**
+- Plan (0.75)
+- Make (0.74)
+- Move & Fulfill (0.74)
+
+**Weakest Domains (by avg composite):**
+- Service (0.68)
+- Procure Source & Buy (0.72)
+- Move & Fulfill (0.74)
+
+**Most Common Archetype:** DETERMINISTIC (163 occurrences)
 
 **Most Common Red Flag:** CONFIDENCE_GAP (57 occurrences)
 
