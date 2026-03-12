@@ -29,7 +29,7 @@ type ChatFn = (
 export interface ScoringPipelineInput {
   hierarchyExport: HierarchyExport;
   triageResults: TriageResult[];
-  knowledgeContext: { components: string; processBuilder: string };
+  knowledgeContext: { components: string; processBuilder: string; capabilities?: string };
   chatFn?: ChatFn;
 }
 
@@ -48,7 +48,7 @@ export async function scoreOneOpportunity(
   opp: L3Opportunity,
   l4s: L4Activity[],
   company: CompanyContext,
-  knowledgeContext: { components: string; processBuilder: string },
+  knowledgeContext: { components: string; processBuilder: string; capabilities?: string },
   chatFn: ChatFn = ollamaChat,
 ): Promise<ScoringPipelineResult> {
   const startMs = Date.now();
@@ -58,7 +58,11 @@ export async function scoreOneOpportunity(
   const archetypeHint = classification.archetype;
 
   // Build knowledge context string for technical prompt
-  const knowledgeStr = `UI Components:\n${knowledgeContext.components}\n\nProcess Builder Nodes:\n${knowledgeContext.processBuilder}`;
+  // Capabilities go first so the LLM reads high-level knowledge before component details
+  const capabilitiesSection = knowledgeContext.capabilities
+    ? `Platform Capabilities:\n${knowledgeContext.capabilities}\n\n`
+    : "";
+  const knowledgeStr = `${capabilitiesSection}UI Components:\n${knowledgeContext.components}\n\nProcess Builder Nodes:\n${knowledgeContext.processBuilder}`;
 
   // Score all three lenses
   const [techResult, adoptResult, valueResult] = await Promise.all([

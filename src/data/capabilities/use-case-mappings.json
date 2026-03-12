@@ -1,0 +1,145 @@
+{
+  "version": "1.0",
+  "mappings": [
+    {
+      "use_case": "Demand Forecasting",
+      "primary_components": ["Cortex Auto Forecast"],
+      "supporting_components": ["STREAMS", "Subject Areas"],
+      "skill_type": "AI/ML",
+      "keywords": ["forecast", "demand", "prediction", "time-series", "sales"]
+    },
+    {
+      "use_case": "Demand Forecasting with Overrides",
+      "primary_components": ["Cortex Auto Forecast", "CWB Lifecycle", "Remote Functions"],
+      "supporting_components": ["STREAMS", "UI Screens"],
+      "skill_type": "Hybrid",
+      "keywords": ["forecast", "override", "planner", "approval", "manual adjustment"]
+    },
+    {
+      "use_case": "Safety Stock Optimization",
+      "primary_components": ["Safety Stock Service"],
+      "supporting_components": ["STREAMS", "Subject Areas"],
+      "skill_type": "AI/ML",
+      "keywords": ["safety stock", "inventory", "optimization", "stockout", "service level"]
+    },
+    {
+      "use_case": "Safety Stock with Overrides",
+      "primary_components": ["Safety Stock Service", "CWB Lifecycle", "Remote Functions"],
+      "supporting_components": ["STREAMS", "UI Screens"],
+      "skill_type": "Hybrid",
+      "keywords": ["safety stock", "override", "manual adjustment", "inventory"]
+    },
+    {
+      "use_case": "KPI Root Cause Analysis",
+      "primary_components": ["RCA Service"],
+      "supporting_components": ["STREAMS", "Subject Areas"],
+      "skill_type": "AI/ML",
+      "keywords": ["root cause", "KPI", "OTIF", "fill rate", "degradation", "pattern"]
+    },
+    {
+      "use_case": "Product/Customer Segmentation",
+      "primary_components": ["AutoML"],
+      "supporting_components": ["STREAMS", "Subject Areas"],
+      "skill_type": "AI/ML",
+      "keywords": ["segmentation", "classification", "ABC", "XYZ", "clustering", "churn"]
+    },
+    {
+      "use_case": "Exception Approval Workflow",
+      "primary_components": ["CWB Lifecycle", "Remote Functions"],
+      "supporting_components": ["STREAMS", "UI Screens"],
+      "skill_type": "Rule-Based",
+      "keywords": ["exception", "approval", "workflow", "accept", "reject", "routing"]
+    },
+    {
+      "use_case": "Pricing Exception Management",
+      "primary_components": ["STREAMS", "CWB Lifecycle", "Remote Functions"],
+      "supporting_components": ["UI Screens", "Subject Areas"],
+      "skill_type": "Rule-Based",
+      "keywords": ["pricing", "exception", "margin", "threshold", "approval"]
+    },
+    {
+      "use_case": "ETL Pipeline",
+      "primary_components": ["STREAMS", "DDM/Crawlers"],
+      "supporting_components": ["Subject Areas", "Dimensions"],
+      "skill_type": "Rule-Based",
+      "keywords": ["ETL", "data", "transformation", "ingestion", "pipeline"]
+    },
+    {
+      "use_case": "Multi-Level Approval Chain",
+      "primary_components": ["Process Builder", "Remote Functions"],
+      "supporting_components": ["STREAMS", "UI Screens"],
+      "skill_type": "Rule-Based",
+      "keywords": ["approval", "routing", "escalation", "multi-level", "conditional"]
+    },
+    {
+      "use_case": "Capacity Planning",
+      "primary_components": ["Cortex Auto Forecast"],
+      "supporting_components": ["STREAMS", "Subject Areas", "Dashboard"],
+      "skill_type": "AI/ML",
+      "keywords": ["capacity", "planning", "forecast", "resource", "utilization"]
+    },
+    {
+      "use_case": "Inventory Replenishment",
+      "primary_components": ["STREAMS", "Remote Functions"],
+      "supporting_components": ["Subject Areas", "Dimensions"],
+      "skill_type": "Rule-Based",
+      "keywords": ["replenishment", "reorder", "inventory", "lead time", "min/max"]
+    },
+    {
+      "use_case": "Quality Monitoring & Defect Analysis",
+      "primary_components": ["RCA Service", "STREAMS"],
+      "supporting_components": ["Subject Areas", "CWB Lifecycle", "UI Screens"],
+      "skill_type": "Hybrid",
+      "keywords": ["quality", "defect", "monitoring", "inspection", "compliance", "warranty"]
+    },
+    {
+      "use_case": "Supply Chain Network Optimization",
+      "primary_components": ["AutoML", "Remote Functions"],
+      "supporting_components": ["STREAMS", "Subject Areas", "Process Builder"],
+      "skill_type": "AI/ML",
+      "keywords": ["network", "optimization", "supply chain", "distribution", "logistics", "allocation"]
+    },
+    {
+      "use_case": "Performance Monitoring Dashboard",
+      "primary_components": ["UI Screens", "Subject Areas"],
+      "supporting_components": ["STREAMS", "Dimensions"],
+      "skill_type": "Rule-Based",
+      "keywords": ["dashboard", "KPI", "monitoring", "performance", "visualization", "report"]
+    },
+    {
+      "use_case": "Regulatory Compliance Tracking",
+      "primary_components": ["STREAMS", "Remote Functions"],
+      "supporting_components": ["Subject Areas", "Process Builder", "CWB Lifecycle"],
+      "skill_type": "Rule-Based",
+      "keywords": ["compliance", "regulatory", "audit", "policy", "trade", "tariff"]
+    },
+    {
+      "use_case": "Supplier Performance Management",
+      "primary_components": ["STREAMS", "RCA Service"],
+      "supporting_components": ["Subject Areas", "CWB Lifecycle", "UI Screens"],
+      "skill_type": "Hybrid",
+      "keywords": ["supplier", "vendor", "performance", "scorecard", "quality", "delivery"]
+    },
+    {
+      "use_case": "Bid/Quote Management",
+      "primary_components": ["Remote Functions", "CWB Lifecycle"],
+      "supporting_components": ["STREAMS", "UI Screens", "Subject Areas"],
+      "skill_type": "Rule-Based",
+      "keywords": ["bid", "quote", "RFQ", "proposal", "pricing", "negotiation"]
+    },
+    {
+      "use_case": "Manufacturing Process Optimization",
+      "primary_components": ["AutoML", "Remote Functions"],
+      "supporting_components": ["STREAMS", "Subject Areas", "Process Builder"],
+      "skill_type": "Hybrid",
+      "keywords": ["manufacturing", "process", "optimization", "yield", "OEE", "efficiency"]
+    },
+    {
+      "use_case": "ERP/WMS Writeback Integration",
+      "primary_components": ["Remote Functions"],
+      "supporting_components": ["STREAMS", "Process Builder"],
+      "skill_type": "Rule-Based",
+      "keywords": ["writeback", "ERP", "WMS", "SAP", "integration", "API", "sync"]
+    }
+  ]
+}

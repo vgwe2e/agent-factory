@@ -1,0 +1,141 @@
+{
+  "version": "1.1",
+  "pillars": [
+    {
+      "name": "Data Foundation",
+      "capabilities": [
+        {
+          "name": "STREAMS (ETL)",
+          "description": "SQL-based data transformation, cleansing, aggregation, and validation",
+          "best_for": ["data integration", "ETL pipelines", "master data management", "CWB lifecycle orchestration"],
+          "not_for": ["complex Python logic", "direct database queries", "real-time streaming"],
+          "keywords": ["data", "integration", "ETL", "transformation", "ingestion", "SQL", "cleansing", "aggregation"]
+        },
+        {
+          "name": "Subject Areas",
+          "description": "Star/snowflake schema data warehouse with fact and dimension tables",
+          "best_for": ["data warehouse modeling", "product/customer/location hierarchies", "business metrics storage"],
+          "not_for": ["transactional databases", "operational systems", "frequent real-time updates"],
+          "keywords": ["data model", "warehouse", "fact table", "dimension", "hierarchy", "schema", "grain"]
+        },
+        {
+          "name": "Dimensions",
+          "description": "Hierarchical master data (Product > Category > Brand, Region > Country > City)",
+          "best_for": ["hierarchy management", "master data", "dimensional navigation"],
+          "not_for": ["frequently changing dimensions", "transactional data", "real-time hierarchies"],
+          "keywords": ["hierarchy", "master data", "dimension", "product", "location", "customer"]
+        },
+        {
+          "name": "DDM/Crawlers",
+          "description": "Automated data collection from files, databases, APIs",
+          "best_for": ["external data ingestion", "ERP/WMS/TMS/CRM integration", "CSV/Excel uploads"],
+          "not_for": ["real-time event streaming", "sub-second data feeds", "direct database queries"],
+          "keywords": ["ingestion", "crawler", "external data", "ERP", "SAP", "file upload"]
+        },
+        {
+          "name": "Data Quality & Validation",
+          "description": "SQL-based data quality checks, outlier detection, referential integrity",
+          "best_for": ["outlier detection", "business rule enforcement", "data profiling"],
+          "not_for": ["real-time streaming validation", "complex ML-based anomaly detection", "image/video quality checks"],
+          "keywords": ["validation", "quality", "outlier", "integrity", "profiling"]
+        }
+      ]
+    },
+    {
+      "name": "Intelligence Layer",
+      "capabilities": [
+        {
+          "name": "Cortex Auto Forecast",
+          "description": "Time-series forecasting with 33+ algorithms, automatic selection, SHAP explainability",
+          "best_for": ["demand forecasting", "sales forecasting", "capacity planning", "trend analysis"],
+          "not_for": ["real-time predictions", "non-time-series problems", "forecasts with fewer than 12 data points", "one-time strategic decisions"],
+          "keywords": ["forecast", "demand", "prediction", "time-series", "MAPE", "seasonality", "trend"]
+        },
+        {
+          "name": "RCA Service",
+          "description": "ML-driven root cause analysis, pattern mining, feature impact scoring",
+          "best_for": ["KPI degradation analysis", "pattern discovery", "corrective action prioritization"],
+          "not_for": ["real-time incident analysis", "unstructured text analysis", "image-based root cause detection"],
+          "keywords": ["root cause", "RCA", "KPI", "OTIF", "fill rate", "pattern", "anomaly"]
+        },
+        {
+          "name": "Safety Stock Service",
+          "description": "ML-based inventory optimization balancing service level vs. cost",
+          "best_for": ["safety stock calculation", "inventory optimization", "stockout prevention"],
+          "not_for": ["linear programming", "general optimization problems", "non-inventory optimization"],
+          "keywords": ["safety stock", "inventory", "optimization", "stockout", "service level", "reorder"]
+        },
+        {
+          "name": "AutoML",
+          "description": "Custom ML models: classification, regression, clustering with automated training",
+          "best_for": ["ABC/XYZ segmentation", "product classification", "customer segmentation", "churn prediction"],
+          "not_for": ["simple rule-based categorization", "deep learning", "NLP/computer vision tasks"],
+          "keywords": ["classification", "regression", "clustering", "segmentation", "ML model", "scoring"]
+        },
+        {
+          "name": "Cortex Monitoring",
+          "description": "Job monitoring, MAPE metrics, algorithm comparison for AI/ML services",
+          "best_for": ["forecast accuracy tracking", "model performance monitoring", "algorithm comparison"],
+          "not_for": ["infrastructure monitoring", "application performance monitoring", "real-time alerting"],
+          "keywords": ["monitoring", "accuracy", "MAPE", "model performance", "job tracking"]
+        }
+      ]
+    },
+    {
+      "name": "Decision & Action",
+      "capabilities": [
+        {
+          "name": "CWB Lifecycle",
+          "description": "Recommendation workflows: present AI recommendations for accept/reject/override",
+          "best_for": ["AI forecast overrides", "exception approvals", "price change approvals", "human-in-the-loop"],
+          "not_for": ["fully automated decisions", "real-time decision making", "decisions without human review"],
+          "keywords": ["recommendation", "approval", "override", "accept", "reject", "human-in-the-loop", "CWB", "exception"]
+        },
+        {
+          "name": "Remote Functions",
+          "description": "Complex Python logic, API calls, business calculations, writeback to external systems",
+          "best_for": ["complex calculations", "API integrations", "ERP writeback", "approval logic"],
+          "not_for": ["simple SQL operations", "direct database writes without APIs", "real-time event processing"],
+          "keywords": ["Python", "API", "calculation", "writeback", "integration", "function"]
+        },
+        {
+          "name": "Exception Management",
+          "description": "Detect, prioritize, and route business exceptions via rules + CWB",
+          "best_for": ["inventory exceptions", "pricing exceptions", "quality exceptions", "delivery exceptions"],
+          "not_for": ["real-time alerting", "sub-second latency requirements", "direct operational control"],
+          "keywords": ["exception", "alert", "threshold", "stockout", "excess", "defect", "late shipment"]
+        },
+        {
+          "name": "UI Screens",
+          "description": "User interaction screens: dashboards, data entry, CWB recommendation views",
+          "best_for": ["dashboards", "data entry forms", "recommendation list/detail views", "KPI visualization"],
+          "not_for": ["consumer-facing UIs", "mobile-first applications", "real-time collaboration interfaces"],
+          "keywords": ["dashboard", "screen", "UI", "visualization", "form", "report"]
+        }
+      ]
+    },
+    {
+      "name": "Orchestration",
+      "capabilities": [
+        {
+          "name": "Process Builder",
+          "description": "Visual workflow designer with 25+ node types for multi-step automated processes",
+          "best_for": ["ETL orchestration", "decision workflows", "scheduled batch processing", "multi-component integration"],
+          "not_for": ["real-time event processing", "sub-second triggers", "simple single-component jobs"],
+          "keywords": ["workflow", "orchestration", "scheduling", "batch", "automation", "process"]
+        },
+        {
+          "name": "Agentic AI",
+          "description": "LLM-powered agents for conversational interfaces, unstructured data, adaptive reasoning",
+          "best_for": ["natural language interfaces", "unstructured data processing", "multi-agent collaboration", "adaptive reasoning"],
+          "not_for": ["deterministic rule-based workflows", "simple data transformations", "batch ETL processing"],
+          "keywords": ["agent", "LLM", "conversational", "unstructured", "autonomous", "reasoning"]
+        }
+      ]
+    }
+  ],
+  "platform_boundaries": {
+    "aera_is": "an analytical decision intelligence platform for batch-oriented supply chain planning and decision automation",
+    "aera_is_not": ["MES (Manufacturing Execution System)", "WMS (Warehouse Management System)", "TMS (Transportation Management System)", "ERP", "CRM", "real-time operational control system", "sub-second latency system"]
+  }
+}

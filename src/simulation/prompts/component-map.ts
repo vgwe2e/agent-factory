@@ -3,8 +3,14 @@
  *
  * Constructs system + user messages for the Ollama 32B model to generate
  * a YAML component map mapping an opportunity to Aera platform components.
- * Includes PB node names, UI component names, and integration patterns
- * as a reference glossary for the LLM.
+ * Includes PB node names, UI component names, integration patterns, and
+ * platform capability names as a reference glossary for the LLM.
+ *
+ * @version 2.0 — 2026-03-12
+ * @changelog
+ * - v2.0: Added capabilitiesContext parameter (SIM-01) so Cortex capabilities
+ *   are included in the glossary instead of being hallucinated.
+ * - v1.0: Initial implementation with PB nodes, UI components, and integration patterns.
  */
 
 import type { SimulationInput } from "../../types/simulation.js";
@@ -16,6 +22,7 @@ import type { SimulationInput } from "../../types/simulation.js";
  * @param pbNodeNames - All 22 Process Builder node names
  * @param uiComponentNames - All 21 UI component names
  * @param integrationPatternNames - Integration pattern names
+ * @param capabilitiesContext - Optional enriched platform capabilities context string
  * @returns Array of {role, content} messages for Ollama chat API
  */
 export function buildComponentMapPrompt(
@@ -23,7 +30,12 @@ export function buildComponentMapPrompt(
   pbNodeNames: string[],
   uiComponentNames: string[],
   integrationPatternNames: string[],
+  capabilitiesContext?: string,
 ): Array<{ role: string; content: string }> {
+  const capabilitiesSection = capabilitiesContext
+    ? `\nPlatform Capabilities & Use Cases:\n${capabilitiesContext}\n`
+    : "";
+
   const systemPrompt = `You are an Aera platform solutions engineer mapping opportunities to Aera components.
 
 Generate a YAML component map following these rules:
@@ -36,7 +48,7 @@ Generate a YAML component map following these rules:
 - Set confidence to "inferred" for components you believe would be needed but cannot confirm
 
 Component Reference Glossary:
-
+${capabilitiesSection}
 Process Builder Nodes (22): ${pbNodeNames.join(", ")}
 
 UI Components (21): ${uiComponentNames.join(", ")}

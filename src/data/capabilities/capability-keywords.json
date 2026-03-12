@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "classifications": {
+    "ai_ml": {
+      "keywords": ["prediction", "forecast", "optimization", "anomaly", "classification", "clustering", "pattern", "root cause", "segmentation", "demand", "time-series", "MAPE", "seasonality", "safety stock", "churn"],
+      "components": ["Cortex Auto Forecast", "RCA Service", "Safety Stock Service", "AutoML", "Cortex Monitoring"]
+    },
+    "rule_based": {
+      "keywords": ["validation", "calculation", "threshold", "workflow", "approval", "routing", "ETL", "transformation", "aggregation", "policy", "compliance", "reorder", "pricing", "exception detection", "data quality"],
+      "components": ["STREAMS", "Remote Functions", "Subject Areas", "Dimensions", "DDM/Crawlers", "CWB Lifecycle", "Process Builder"]
+    },
+    "hybrid": {
+      "keywords": ["recommendation", "override", "decision support", "cognitive", "human-in-the-loop", "forecast with approval", "AI with manual review", "exception analysis", "adaptive"],
+      "components": ["CWB Lifecycle + Cortex", "Process Builder + Agent Teams", "Cortex + Remote Functions", "Safety Stock + CWB"]
+    }
+  }
+}

@@ -16,6 +16,7 @@ import { validateComponentMap, validateComponentRef } from "../validators/knowle
 import { getAllPBNodes, getWorkflowPatterns } from "../../knowledge/process-builder.js";
 import { getAllComponents } from "../../knowledge/components.js";
 import { getIntegrationPatterns } from "../../knowledge/orchestration.js";
+import { buildKnowledgeContext } from "../../scoring/knowledge-context.js";
 
 // -- Constants --
 
@@ -61,8 +62,9 @@ export async function generateComponentMap(
   const pbNodeNames = getAllPBNodes().map((n) => n.name);
   const uiComponentNames = getAllComponents().map((c) => c.name);
   const integrationPatternNames = getIntegrationPatterns().map((p) => p.name);
+  const knowledgeCtx = buildKnowledgeContext();
 
-  const messages = buildComponentMapPrompt(input, pbNodeNames, uiComponentNames, integrationPatternNames);
+  const messages = buildComponentMapPrompt(input, pbNodeNames, uiComponentNames, integrationPatternNames, knowledgeCtx.capabilities);
   const conversationMessages = [...messages];
   const errors: string[] = [];
 
