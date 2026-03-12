@@ -34,6 +34,7 @@ import { generateMockTest as defaultGenerateMockTest } from "./generators/mock-t
 import { generateIntegrationSurface as defaultGenerateIntegrationSurface } from "./generators/integration-surface-gen.js";
 import { buildKnowledgeIndex as defaultBuildKnowledgeIndex } from "./validators/knowledge-validator.js";
 import { slugify } from "./utils.js";
+import { withTimeout, TimeoutError } from "../infra/timeout.js";
 
 // -- Types --
 
@@ -72,6 +73,14 @@ const DEFAULT_DEPS: PipelineDeps = {
 
 // -- Pipeline --
 
+/** Options for simulation pipeline behavior. */
+export interface SimulationPipelineOptions {
+  /** Per-opportunity timeout in milliseconds. When set, each opportunity's
+   *  4-generator sequence is wrapped in withTimeout. When omitted,
+   *  simulations run unbounded (current behavior preserved). */
+  timeoutMs?: number;
+}
+
 /**
  * Run the simulation pipeline for a set of promoted opportunities.
  *
@@ -79,12 +88,14 @@ const DEFAULT_DEPS: PipelineDeps = {
  * @param outputDir - Root directory for output files (e.g., evaluation/simulations)
  * @param ollamaUrl - Optional Ollama API URL override
  * @param deps - Optional dependency injection for testing
+ * @param options - Optional pipeline options (e.g., timeoutMs)
  */
 export async function runSimulationPipeline(
   inputs: SimulationInput[],
   outputDir: string,
   ollamaUrl?: string,
   deps: PipelineDeps = DEFAULT_DEPS,
+  options?: SimulationPipelineOptions,
 ): Promise<SimulationPipelineResult> {
   if (inputs.length === 0) {
     return {
@@ -118,68 +129,7 @@ export async function runSimulationPipeline(
     // Create output directory
     fs.mkdirSync(oppDir, { recursive: true });
 
-    // Track artifacts and validation
-    let mermaid: string | undefined;
-    let componentMap: ComponentMap | undefined;
-    let validation: ValidationResult[] = [];
-    let mockTest: MockTest | undefined;
-    let integrationSurface: IntegrationSurface | undefined;
-    let mermaidValid = false;
-    let artifactFailures = 0;
-
-    // 1. Decision flow
-    const dfResult = await deps.generateDecisionFlow(input, ollamaUrl);
-    if (dfResult.success) {
-      mermaid = dfResult.data.mermaid;
-      mermaidValid = true;
-      fs.writeFileSync(path.join(oppDir, "decision-flow.mmd"), mermaid, "utf-8");
-    } else {
-      console.error(`  Decision flow failed for ${l3Name}: ${dfResult.error}`);
-      artifactFailures++;
-    }
-
-    // 2. Component map
-    const cmResult = await deps.generateComponentMap(input, knowledgeIndex, ollamaUrl);
-    if (cmResult.success) {
-      componentMap = cmResult.data.componentMap;
-      validation = cmResult.data.validation;
-      fs.writeFileSync(path.join(oppDir, "component-map.yaml"), yaml.dump(componentMap), "utf-8");
-    } else {
-      console.error(`  Component map failed for ${l3Name}: ${cmResult.error}`);
-      artifactFailures++;
-    }
-
-    // 3. Mock test
-    const mtResult = await deps.generateMockTest(input, ollamaUrl);
-    if (mtResult.success) {
-      mockTest = mtResult.data.mockTest;
-      fs.writeFileSync(path.join(oppDir, "mock-test.yaml"), yaml.dump(mockTest), "utf-8");
-    } else {
-      console.error(`  Mock test failed for ${l3Name}: ${mtResult.error}`);
-      artifactFailures++;
-    }
-
-    // 4. Integration surface
-    const isResult = await deps.generateIntegrationSurface(input, ollamaUrl);
-    if (isResult.success) {
-      integrationSurface = isResult.data.integrationSurface;
-      fs.writeFileSync(path.join(oppDir, "integration-surface.yaml"), yaml.dump(integrationSurface), "utf-8");
-    } else {
-      console.error(`  Integration surface failed for ${l3Name}: ${isResult.error}`);
-      artifactFailures++;
-    }
-
-    // Count confirmed/inferred from validation results
-    const confirmed = validation.filter((v) => v.status === "confirmed").length;
-    const inferred = validation.filter((v) => v.status === "inferred").length;
-    totalConfirmed += confirmed;
-    totalInferred += inferred;
-
-    if (artifactFailures === 4) {
-      totalFailed++;
-    }
-
-    // Build default empty artifacts for any failures
+    // Build default empty artifacts (used on partial/total failure)
     const defaultComponentMap: ComponentMap = { streams: [], cortex: [], process_builder: [], agent_teams: [], ui: [] };
     const defaultMockTest: MockTest = {
       decision: "",
@@ -194,21 +144,118 @@ export async function runSimulationPipeline(
       ui_surface: [],
     };
 
-    results.push({
-      l3Name,
-      slug,
-      artifacts: {
-        decisionFlow: mermaid ?? "",
-        componentMap: componentMap ?? defaultComponentMap,
-        mockTest: mockTest ?? defaultMockTest,
-        integrationSurface: integrationSurface ?? defaultIntegrationSurface,
-      },
-      validationSummary: {
-        confirmedCount: confirmed,
-        inferredCount: inferred,
-        mermaidValid,
-      },
-    });
+    try {
+      // Process all 4 generators for this opportunity
+      const processOpp = async () => {
+        // Track artifacts and validation
+        let mermaid: string | undefined;
+        let componentMap: ComponentMap | undefined;
+        let validation: ValidationResult[] = [];
+        let mockTest: MockTest | undefined;
+        let integrationSurface: IntegrationSurface | undefined;
+        let mermaidValid = false;
+        let artifactFailures = 0;
+
+        // 1. Decision flow
+        const dfResult = await deps.generateDecisionFlow(input, ollamaUrl);
+        if (dfResult.success) {
+          mermaid = dfResult.data.mermaid;
+          mermaidValid = true;
+          fs.writeFileSync(path.join(oppDir, "decision-flow.mmd"), mermaid, "utf-8");
+        } else {
+          console.error(`  Decision flow failed for ${l3Name}: ${dfResult.error}`);
+          artifactFailures++;
+        }
+
+        // 2. Component map
+        const cmResult = await deps.generateComponentMap(input, knowledgeIndex, ollamaUrl);
+        if (cmResult.success) {
+          componentMap = cmResult.data.componentMap;
+          validation = cmResult.data.validation;
+          fs.writeFileSync(path.join(oppDir, "component-map.yaml"), yaml.dump(componentMap), "utf-8");
+        } else {
+          console.error(`  Component map failed for ${l3Name}: ${cmResult.error}`);
+          artifactFailures++;
+        }
+
+        // 3. Mock test
+        const mtResult = await deps.generateMockTest(input, ollamaUrl);
+        if (mtResult.success) {
+          mockTest = mtResult.data.mockTest;
+          fs.writeFileSync(path.join(oppDir, "mock-test.yaml"), yaml.dump(mockTest), "utf-8");
+        } else {
+          console.error(`  Mock test failed for ${l3Name}: ${mtResult.error}`);
+          artifactFailures++;
+        }
+
+        // 4. Integration surface
+        const isResult = await deps.generateIntegrationSurface(input, ollamaUrl);
+        if (isResult.success) {
+          integrationSurface = isResult.data.integrationSurface;
+          fs.writeFileSync(path.join(oppDir, "integration-surface.yaml"), yaml.dump(integrationSurface), "utf-8");
+        } else {
+          console.error(`  Integration surface failed for ${l3Name}: ${isResult.error}`);
+          artifactFailures++;
+        }
+
+        // Count confirmed/inferred from validation results
+        const confirmed = validation.filter((v) => v.status === "confirmed").length;
+        const inferred = validation.filter((v) => v.status === "inferred").length;
+        totalConfirmed += confirmed;
+        totalInferred += inferred;
+
+        if (artifactFailures === 4) {
+          totalFailed++;
+        }
+
+        results.push({
+          l3Name,
+          slug,
+          artifacts: {
+            decisionFlow: mermaid ?? "",
+            componentMap: componentMap ?? defaultComponentMap,
+            mockTest: mockTest ?? defaultMockTest,
+            integrationSurface: integrationSurface ?? defaultIntegrationSurface,
+          },
+          validationSummary: {
+            confirmedCount: confirmed,
+            inferredCount: inferred,
+            mermaidValid,
+          },
+        });
+      };
+
+      // Apply timeout wrapping if configured
+      if (options?.timeoutMs != null) {
+        await withTimeout((_signal) => processOpp(), options.timeoutMs);
+      } else {
+        await processOpp();
+      }
+    } catch (err: unknown) {
+      // Per-opportunity error isolation: log and continue to next opportunity
+      if (err instanceof TimeoutError) {
+        console.error(`  Simulation timed out for ${l3Name} after ${(err as TimeoutError).timeoutMs}ms`);
+      } else {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error(`  Simulation failed for ${l3Name}: ${message}`);
+      }
+      totalFailed++;
+      results.push({
+        l3Name,
+        slug,
+        artifacts: {
+          decisionFlow: "",
+          componentMap: defaultComponentMap,
+          mockTest: defaultMockTest,
+          integrationSurface: defaultIntegrationSurface,
+        },
+        validationSummary: {
+          confirmedCount: 0,
+          inferredCount: 0,
+          mermaidValid: false,
+        },
+      });
+    }
   }
 
   return {

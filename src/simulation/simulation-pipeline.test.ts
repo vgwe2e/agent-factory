@@ -268,11 +268,6 @@ describe("per-opportunity error isolation", () => {
 
   beforeEach(() => {
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "sim-isolation-"));
-    mockDecisionFlow.mock.resetCalls();
-    mockComponentMap.mock.resetCalls();
-    mockMockTest.mock.resetCalls();
-    mockIntegrationSurface.mock.resetCalls();
-    mockBuildKnowledgeIndex.mock.resetCalls();
   });
 
   afterEach(() => {
@@ -280,16 +275,30 @@ describe("per-opportunity error isolation", () => {
   });
 
   it("when generator 2 throws for opp 1, opp 2 still runs all 4 generators", async () => {
-    let callCount = 0;
-    // Component map (generator 2) throws on first call only
-    mockComponentMap.mock.mockImplementation(async (_input: SimulationInput, _ki: Map<string, string>, _url?: string) => {
-      callCount++;
-      if (callCount === 1) throw new Error("Unexpected crash in generator 2");
+    let cmCallCount = 0;
+    const localDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+      success: true as const,
+      data: { mermaid: MOCK_MERMAID, attempts: 1 },
+    } as { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string }));
+
+    const localComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _url?: string) => {
+      cmCallCount++;
+      if (cmCallCount === 1) throw new Error("Unexpected crash in generator 2");
       return {
         success: true as const,
         data: { componentMap: MOCK_COMPONENT_MAP, validation: MOCK_VALIDATION, attempts: 1 },
       } as { success: true; data: { componentMap: ComponentMap; validation: ValidationResult[]; attempts: number } } | { success: false; error: string };
     });
+
+    const localMockTest = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+      success: true as const,
+      data: { mockTest: MOCK_MOCK_TEST, attempts: 1 },
+    } as { success: true; data: { mockTest: MockTest; attempts: number } } | { success: false; error: string }));
+
+    const localIntSurface = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+      success: true as const,
+      data: { integrationSurface: MOCK_INTEGRATION_SURFACE, attempts: 1 },
+    } as { success: true; data: { integrationSurface: IntegrationSurface; attempts: number } } | { success: false; error: string }));
 
     const pipeline = await import("./simulation-pipeline.js");
     const inputs = [
@@ -298,21 +307,21 @@ describe("per-opportunity error isolation", () => {
     ];
 
     const result = await pipeline.runSimulationPipeline(inputs, tmpDir, undefined, {
-      generateDecisionFlow: mockDecisionFlow,
-      generateComponentMap: mockComponentMap,
-      generateMockTest: mockMockTest,
-      generateIntegrationSurface: mockIntegrationSurface,
+      generateDecisionFlow: localDecisionFlow,
+      generateComponentMap: localComponentMap,
+      generateMockTest: localMockTest,
+      generateIntegrationSurface: localIntSurface,
       buildKnowledgeIndex: mockBuildKnowledgeIndex,
     });
 
-    // Opp 1 failed, opp 2 succeeded -- both should be in results
+    // Opp 1 failed (componentMap threw), opp 2 succeeded -- both in results
     assert.equal(result.results.length, 2);
     assert.equal(result.totalSimulated, 2);
     assert.equal(result.totalFailed, 1);
-    // Opp 2 should have all 4 generators called
-    assert.equal(mockDecisionFlow.mock.callCount(), 2);
-    assert.equal(mockMockTest.mock.callCount(), 2);
-    assert.equal(mockIntegrationSurface.mock.callCount(), 2);
+    // Opp 1: decisionFlow called (before crash), opp 2: all 4 generators called
+    assert.equal(localDecisionFlow.mock.callCount(), 2);
+    assert.equal(localMockTest.mock.callCount(), 1); // only opp 2
+    assert.equal(localIntSurface.mock.callCount(), 1); // only opp 2
   });
 
   it("when all 4 generators fail for one opp, totalFailed increments and result has default artifacts", async () => {
