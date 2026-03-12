@@ -84,6 +84,10 @@ export interface PipelineOptions {
   maxTier?: number;
   /** Cost tracker for cloud GPU usage (injected from BackendConfig). */
   costTracker?: CostTracker;
+  /** Skip the simulation phase entirely (scoring only). */
+  skipSim?: boolean;
+  /** Per-opportunity simulation timeout in milliseconds. */
+  simTimeoutMs?: number;
 }
 
 export interface PipelineResult {
@@ -94,6 +98,7 @@ export interface PipelineResult {
   errorCount: number;
   resumedCount: number;
   simulatedCount: number;
+  simErrorCount: number;
   totalDurationMs: number;
   concurrency: number;
   avgPerOppMs: number;
@@ -440,16 +445,33 @@ export async function runPipeline(
   const simDir = path.join(options.outputDir, "evaluation", "simulations");
 
   let simResult: SimulationPipelineResult;
-  try {
-    const runSim = options.runSimulationPipelineFn ?? defaultRunSimulationPipeline;
-    simResult = await runSim(simInputs, simDir);
-    logger.info(
-      { simulated: simResult.totalSimulated, failed: simResult.totalFailed },
-      "Simulation pipeline complete",
-    );
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    logger.warn({ error: msg }, "Simulation pipeline failed (non-fatal)");
+  if (!options.skipSim) {
+    try {
+      const runSim = options.runSimulationPipelineFn ?? defaultRunSimulationPipeline;
+      simResult = await runSim(
+        simInputs,
+        simDir,
+        undefined,
+        undefined,
+        options.simTimeoutMs ? { timeoutMs: options.simTimeoutMs } : undefined,
+      );
+      logger.info(
+        { simulated: simResult.totalSimulated, failed: simResult.totalFailed },
+        "Simulation pipeline complete",
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      logger.warn({ error: msg }, "Simulation pipeline failed (non-fatal)");
+      simResult = {
+        results: [],
+        totalSimulated: 0,
+        totalFailed: 0,
+        totalConfirmed: 0,
+        totalInferred: 0,
+      };
+    }
+  } else {
+    logger.info("Simulation phase skipped (--skip-sim)");
     simResult = {
       results: [],
       totalSimulated: 0,
@@ -518,6 +540,7 @@ export async function runPipeline(
     errorCount: errors.length,
     resumedCount,
     simulatedCount: simResult.totalSimulated,
+    simErrorCount: simResult.totalFailed,
     totalDurationMs,
     concurrency,
     avgPerOppMs: scoredCount > 0 ? Math.round(totalDurationMs / scoredCount) : 0,

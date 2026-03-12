@@ -61,7 +61,9 @@ program
     "Only score opportunities up to this tier (1, 2, or 3)",
     "3",
   )
-  .action(async (opts: { input: string; logLevel: string; outputDir: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string }) => {
+  .option("--skip-sim", "Skip simulation phase (scoring only)")
+  .option("--sim-timeout <ms>", "Per-opportunity simulation timeout in milliseconds")
+  .action(async (opts: { input: string; logLevel: string; outputDir: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string }) => {
     console.log(`${BOLD}Aera Skill Feasibility Engine v1.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
@@ -120,6 +122,16 @@ program
     if (isNaN(maxTier) || maxTier < 1 || maxTier > 3) {
       console.error(`${RED}Error: --max-tier must be 1, 2, or 3${RESET}`);
       process.exit(1);
+    }
+
+    // Validate sim-timeout
+    let simTimeoutMs: number | undefined;
+    if (opts.simTimeout != null) {
+      simTimeoutMs = parseInt(opts.simTimeout, 10);
+      if (isNaN(simTimeoutMs) || simTimeoutMs < 1) {
+        console.error(`${RED}Error: --sim-timeout must be a positive integer${RESET}`);
+        process.exit(1);
+      }
     }
 
     // Validate vLLM backend requirements
@@ -205,6 +217,8 @@ program
           backend,
           concurrency,
           maxTier,
+          skipSim: opts.skipSim ?? false,
+          simTimeoutMs,
           costTracker: backendConfig.costTracker,
         },
         logger,
@@ -226,6 +240,10 @@ program
     console.log(`Skipped:   ${pipelineResult.skippedCount}`);
     console.log(`Scored:    ${pipelineResult.scoredCount}`);
     console.log(`Promoted:  ${pipelineResult.promotedCount} to simulation`);
+    console.log(`Simulated: ${opts.skipSim ? "skipped" : pipelineResult.simulatedCount}`);
+    if (pipelineResult.simErrorCount > 0) {
+      console.log(`Sim errors: ${pipelineResult.simErrorCount}`);
+    }
     console.log(`Errors:    ${pipelineResult.errorCount}`);
     console.log(`Duration:  ${durationSec}s`);
 
