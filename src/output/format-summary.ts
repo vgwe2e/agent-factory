@@ -16,6 +16,7 @@ export function formatSummary(
   simResults: SimulationPipelineResult,
   companyName: string,
   date?: string,
+  simSkipped?: boolean,
 ): string {
   const dateStr = date ?? new Date().toISOString().slice(0, 10);
   const lines: string[] = [];
@@ -28,7 +29,11 @@ export function formatSummary(
   const promotedCount = scored.filter(s => s.promotedToSimulation).length;
   lines.push(`**Total Evaluated:** ${scored.length}`);
   lines.push(`**Promoted to Simulation:** ${promotedCount}`);
-  lines.push(`**Simulations Completed:** ${simResults.totalSimulated}`);
+  if (simSkipped) {
+    lines.push(`**Simulation: skipped (--skip-sim)**`);
+  } else {
+    lines.push(`**Simulations Completed:** ${simResults.totalSimulated}`);
+  }
   lines.push("");
 
   if (scored.length === 0) {

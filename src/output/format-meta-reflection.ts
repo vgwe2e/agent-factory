@@ -86,6 +86,7 @@ export function formatMetaReflection(
   scored: ScoringResult[],
   simResults: SimulationPipelineResult,
   date?: string,
+  simSkipped?: boolean,
 ): string {
   const dateStr = date ?? new Date().toISOString().slice(0, 10);
   const stats = computeCatalogStats(triaged, scored, simResults);
@@ -102,13 +103,17 @@ export function formatMetaReflection(
   lines.push("");
   lines.push(`- **Total Opportunities Triaged:** ${triaged.length}`);
   lines.push(`- **Total Scored:** ${scored.length}`);
-  lines.push(`- **Total Simulated:** ${simResults.totalSimulated}`);
-
-  const rateStr =
-    stats.simulationSuccessRate !== null
-      ? `${(stats.simulationSuccessRate * 100).toFixed(1)}%`
-      : "N/A";
-  lines.push(`- **Simulation Success Rate:** ${rateStr}`);
+  if (simSkipped) {
+    lines.push(`- **Simulation: skipped (--skip-sim)**`);
+    lines.push(`- **Simulation Success Rate:** N/A`);
+  } else {
+    lines.push(`- **Total Simulated:** ${simResults.totalSimulated}`);
+    const rateStr =
+      stats.simulationSuccessRate !== null
+        ? `${(stats.simulationSuccessRate * 100).toFixed(1)}%`
+        : "N/A";
+    lines.push(`- **Simulation Success Rate:** ${rateStr}`);
+  }
   lines.push("");
 
   // Archetype Distribution
@@ -188,13 +193,17 @@ export function formatMetaReflection(
   // Knowledge Base Coverage
   lines.push("## Knowledge Base Coverage");
   lines.push("");
-  const totalComponents = stats.knowledgeCoverage.confirmed + stats.knowledgeCoverage.inferred;
-  lines.push(`- **Confirmed Components:** ${stats.knowledgeCoverage.confirmed}`);
-  lines.push(`- **Inferred Components:** ${stats.knowledgeCoverage.inferred}`);
-  lines.push(`- **Total Components Referenced:** ${totalComponents}`);
-  if (totalComponents > 0) {
-    const confirmedPct = ((stats.knowledgeCoverage.confirmed / totalComponents) * 100).toFixed(1);
-    lines.push(`- **Knowledge Coverage:** ${confirmedPct}% confirmed`);
+  if (simSkipped) {
+    lines.push("Simulation was skipped -- no knowledge coverage data.");
+  } else {
+    const totalComponents = stats.knowledgeCoverage.confirmed + stats.knowledgeCoverage.inferred;
+    lines.push(`- **Confirmed Components:** ${stats.knowledgeCoverage.confirmed}`);
+    lines.push(`- **Inferred Components:** ${stats.knowledgeCoverage.inferred}`);
+    lines.push(`- **Total Components Referenced:** ${totalComponents}`);
+    if (totalComponents > 0) {
+      const confirmedPct = ((stats.knowledgeCoverage.confirmed / totalComponents) * 100).toFixed(1);
+      lines.push(`- **Knowledge Coverage:** ${confirmedPct}% confirmed`);
+    }
   }
   lines.push("");
 

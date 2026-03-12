@@ -30,6 +30,7 @@ export async function writeFinalReports(
   simResults: SimulationPipelineResult,
   companyName: string,
   date?: string,
+  simSkipped?: boolean,
 ): Promise<WriteResult> {
   try {
     const evalDir = path.join(outputDir, "evaluation");
@@ -37,9 +38,9 @@ export async function writeFinalReports(
     await fs.mkdir(simDir, { recursive: true });
 
     // Generate content from formatters
-    const summaryMd = formatSummary(scored, triaged, simResults, companyName, date);
+    const summaryMd = formatSummary(scored, triaged, simResults, companyName, date, simSkipped);
     const deadZonesMd = formatDeadZones(triaged, scored, date);
-    const metaReflectionMd = formatMetaReflection(triaged, scored, simResults, date);
+    const metaReflectionMd = formatMetaReflection(triaged, scored, simResults, date, simSkipped);
 
     // Define markdown output files
     const mdFiles: { name: string; content: string }[] = [

@@ -499,6 +499,8 @@ export async function runPipeline(
     triageResults,
     simResult,
     companyName,
+    undefined,
+    options.skipSim,
   );
   if (reportResult.success) {
     logger.info({ files: reportResult.files.length }, "Final reports written");
