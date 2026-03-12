@@ -1,5 +1,5 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, copyFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { z } from 'zod';
 
 export const CheckpointEntrySchema = z.object({
@@ -19,15 +19,33 @@ export type Checkpoint = z.infer<typeof CheckpointSchema>;
 export type CheckpointEntry = z.infer<typeof CheckpointEntrySchema>;
 
 export const CHECKPOINT_FILENAME = '.checkpoint.json';
+const BACKUP_SUFFIX = '.bak';
+const TMP_SUFFIX = '.tmp';
 
 export function checkpointPath(outputDir: string): string {
   return join(outputDir, CHECKPOINT_FILENAME);
 }
 
+/**
+ * Load a checkpoint from disk with validation. Tries the primary file first,
+ * then falls back to the backup copy if the primary is missing or corrupt.
+ */
 export function loadCheckpoint(outputDir: string): Checkpoint | null {
   const filePath = checkpointPath(outputDir);
-  if (!existsSync(filePath)) return null;
 
+  // Try primary file
+  const primary = tryLoadFrom(filePath);
+  if (primary) return primary;
+
+  // Try backup file
+  const backup = tryLoadFrom(filePath + BACKUP_SUFFIX);
+  if (backup) return backup;
+
+  return null;
+}
+
+function tryLoadFrom(filePath: string): Checkpoint | null {
+  if (!existsSync(filePath)) return null;
   try {
     const raw = readFileSync(filePath, 'utf-8');
     const parsed = JSON.parse(raw);
@@ -51,59 +69,110 @@ export function getCompletedNames(checkpoint: Checkpoint | null): Set<string> {
 }
 
 // ---------------------------------------------------------------------------
-// Concurrent-safe checkpoint writer
+// Durable checkpoint writer
 // ---------------------------------------------------------------------------
 
-const DEBOUNCE_MS = 100;
-const TMP_SUFFIX = '.tmp';
-
 export interface CheckpointWriter {
-  /** Add an entry and schedule a debounced write to disk. */
+  /** Add an entry and immediately persist to disk. */
   enqueue: (entry: CheckpointEntry) => void;
-  /** Force an immediate write (call at pipeline end). Clears pending debounce. */
+  /** Force an immediate write (call at pipeline end or signal handler). */
   flush: () => void;
   /** Live checkpoint reference — mutations from enqueue are visible here. */
   checkpoint: Checkpoint;
+  /** Install SIGINT/SIGTERM handlers that flush before exit. Returns cleanup fn. */
+  installSignalHandlers: () => () => void;
 }
 
 /**
- * Create a checkpoint writer that coalesces rapid enqueue() calls into
- * single atomic file writes via debouncing + rename.
+ * Create a durable checkpoint writer.
+ *
+ * Design rationale: scored results are precious (each takes 3-15 minutes on
+ * Apple Silicon with 30B MoE) and infrequent. We write to disk on every
+ * enqueue rather than debouncing, because losing even one scored result to
+ * a crash is unacceptable. The cost of a synchronous write every few minutes
+ * is negligible compared to the scoring time.
+ *
+ * Writes use atomic rename (write .tmp then rename) with a backup copy of the
+ * previous state, so a crash during write cannot corrupt the checkpoint.
+ * The output directory path is resolved to absolute at construction time to
+ * prevent ENOENT errors from relative path resolution changing.
  */
 export function createCheckpointWriter(
   outputDir: string,
   checkpoint: Checkpoint,
 ): CheckpointWriter {
-  let timer: ReturnType<typeof setTimeout> | undefined;
+  // Resolve to absolute path once at construction to prevent ENOENT from
+  // relative path resolution issues during long-running pipelines.
+  const resolvedDir = resolve(outputDir);
 
   function atomicWrite(): void {
-    mkdirSync(outputDir, { recursive: true });
-    const target = checkpointPath(outputDir);
-    const tmp = target + TMP_SUFFIX;
-    writeFileSync(tmp, JSON.stringify(checkpoint, null, 2), 'utf-8');
-    renameSync(tmp, target);
-  }
+    try {
+      mkdirSync(resolvedDir, { recursive: true });
+      const target = checkpointPath(resolvedDir);
+      const tmp = target + TMP_SUFFIX;
+      const bak = target + BACKUP_SUFFIX;
 
-  function scheduleDebouncedWrite(): void {
-    if (timer !== undefined) return; // already scheduled
-    timer = setTimeout(() => {
-      timer = undefined;
-      atomicWrite();
-    }, DEBOUNCE_MS);
+      // Back up current checkpoint before overwriting, so crash-during-write
+      // doesn't destroy the previous good state.
+      if (existsSync(target)) {
+        try {
+          copyFileSync(target, bak);
+        } catch {
+          // Non-fatal: backup is best-effort
+        }
+      }
+
+      writeFileSync(tmp, JSON.stringify(checkpoint, null, 2), 'utf-8');
+      renameSync(tmp, target);
+    } catch {
+      // Fallback: write directly if atomic rename fails
+      try {
+        mkdirSync(resolvedDir, { recursive: true });
+        writeFileSync(
+          checkpointPath(resolvedDir),
+          JSON.stringify(checkpoint, null, 2),
+          'utf-8',
+        );
+      } catch {
+        // Last resort: log to stderr so the operator knows
+        console.error('[checkpoint] CRITICAL: Failed to persist checkpoint to disk');
+      }
+    }
   }
 
   function enqueue(entry: CheckpointEntry): void {
     checkpoint.entries.push(entry);
-    scheduleDebouncedWrite();
-  }
-
-  function flush(): void {
-    if (timer !== undefined) {
-      clearTimeout(timer);
-      timer = undefined;
-    }
+    // Write immediately — scored results are too valuable to risk losing.
     atomicWrite();
   }
 
-  return { enqueue, flush, checkpoint };
+  function flush(): void {
+    atomicWrite();
+  }
+
+  function installSignalHandlers(): () => void {
+    const handler = (signal: string) => {
+      console.error(`[checkpoint] Received ${signal}, flushing checkpoint...`);
+      flush();
+      // Re-raise the signal after flushing so the process exits with the
+      // correct exit code. Remove our handler first to avoid infinite loop.
+      process.removeListener('SIGINT', sigintHandler);
+      process.removeListener('SIGTERM', sigtermHandler);
+      process.kill(process.pid, signal);
+    };
+
+    const sigintHandler = () => handler('SIGINT');
+    const sigtermHandler = () => handler('SIGTERM');
+
+    process.on('SIGINT', sigintHandler);
+    process.on('SIGTERM', sigtermHandler);
+
+    // Return cleanup function to remove handlers (useful in tests)
+    return () => {
+      process.removeListener('SIGINT', sigintHandler);
+      process.removeListener('SIGTERM', sigtermHandler);
+    };
+  }
+
+  return { enqueue, flush, checkpoint, installSignalHandlers };
 }

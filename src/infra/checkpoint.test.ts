@@ -85,6 +85,49 @@ describe('checkpoint', () => {
     const result = checkpointPath('/output/dir');
     assert.equal(result, join('/output/dir', '.checkpoint.json'));
   });
+
+  it('loadCheckpoint falls back to .bak file when primary is corrupt', () => {
+    const checkpoint: Checkpoint = {
+      version: 1,
+      inputFile: '/test/input.json',
+      startedAt: '2026-03-11T10:00:00Z',
+      entries: [
+        { l3Name: 'Recovered', completedAt: '2026-03-11T10:01:00Z', status: 'scored' },
+      ],
+    };
+
+    // Write corrupt primary and valid backup
+    writeFileSync(join(tempDir, CHECKPOINT_FILENAME), '{corrupt!!!');
+    writeFileSync(
+      join(tempDir, CHECKPOINT_FILENAME + '.bak'),
+      JSON.stringify(checkpoint, null, 2),
+    );
+
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries[0].l3Name, 'Recovered');
+  });
+
+  it('loadCheckpoint falls back to .bak file when primary is missing', () => {
+    const checkpoint: Checkpoint = {
+      version: 1,
+      inputFile: '/test/input.json',
+      startedAt: '2026-03-11T10:00:00Z',
+      entries: [
+        { l3Name: 'FromBackup', completedAt: '2026-03-11T10:01:00Z', status: 'scored' },
+      ],
+    };
+
+    // Only backup exists
+    writeFileSync(
+      join(tempDir, CHECKPOINT_FILENAME + '.bak'),
+      JSON.stringify(checkpoint, null, 2),
+    );
+
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries[0].l3Name, 'FromBackup');
+  });
 });
 
 describe('createCheckpointWriter', () => {
@@ -119,6 +162,18 @@ describe('createCheckpointWriter', () => {
     assert.equal(writer.checkpoint.entries[0].l3Name, 'Alpha');
   });
 
+  it('enqueue immediately persists to disk (no debounce)', () => {
+    const cp = makeCheckpoint();
+    const writer = createCheckpointWriter(tempDir, cp);
+    writer.enqueue(makeEntry('Alpha'));
+
+    // Should be on disk immediately — no need to wait for debounce
+    const loaded = loadCheckpoint(tempDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries.length, 1);
+    assert.equal(loaded!.entries[0].l3Name, 'Alpha');
+  });
+
   it('flush writes checkpoint file to disk', () => {
     const cp = makeCheckpoint();
     const writer = createCheckpointWriter(tempDir, cp);
@@ -143,24 +198,6 @@ describe('createCheckpointWriter', () => {
     assert.ok(loaded);
     assert.equal(loaded!.entries.length, 3);
     assert.equal(loaded!.entries[2].status, 'error');
-  });
-
-  it('multiple rapid enqueue calls coalesce into fewer writes (debounce)', async () => {
-    const cp = makeCheckpoint();
-    const writer = createCheckpointWriter(tempDir, cp);
-
-    // Enqueue 5 entries rapidly - should coalesce into one debounced write
-    for (let i = 0; i < 5; i++) {
-      writer.enqueue(makeEntry(`Item${i}`));
-    }
-
-    // No file yet (debounce hasn't fired)
-    // Wait for debounce to fire (100ms + buffer)
-    await new Promise((r) => setTimeout(r, 200));
-
-    const loaded = loadCheckpoint(tempDir);
-    assert.ok(loaded);
-    assert.equal(loaded!.entries.length, 5);
   });
 
   it('getCompletedNames works on the live checkpoint reference', () => {
@@ -190,5 +227,55 @@ describe('createCheckpointWriter', () => {
     // The original cp should also see the entry (same reference)
     assert.equal(cp.entries.length, 1);
     assert.equal(cp.entries[0].l3Name, 'Alpha');
+  });
+
+  it('creates backup copy on each write', () => {
+    const cp = makeCheckpoint();
+    const writer = createCheckpointWriter(tempDir, cp);
+
+    // First enqueue — no backup yet (nothing to back up)
+    writer.enqueue(makeEntry('Alpha'));
+
+    // Second enqueue — should create backup of the previous state
+    writer.enqueue(makeEntry('Beta'));
+
+    const bakPath = join(tempDir, CHECKPOINT_FILENAME + '.bak');
+    assert.ok(existsSync(bakPath), 'backup file should exist after second write');
+
+    // Backup should contain the state from before the second write
+    const bakRaw = readFileSync(bakPath, 'utf-8');
+    const bakData = JSON.parse(bakRaw);
+    assert.equal(bakData.entries.length, 1, 'backup should have 1 entry (before second enqueue)');
+    assert.equal(bakData.entries[0].l3Name, 'Alpha');
+  });
+
+  it('survives output directory deletion and recreates it', () => {
+    const cp = makeCheckpoint();
+    const subDir = join(tempDir, 'nested', 'output');
+    const writer = createCheckpointWriter(subDir, cp);
+
+    writer.enqueue(makeEntry('Alpha'));
+    assert.ok(existsSync(join(subDir, CHECKPOINT_FILENAME)));
+
+    // Delete the output directory (simulating accidental deletion)
+    rmSync(subDir, { recursive: true, force: true });
+    assert.ok(!existsSync(subDir));
+
+    // Enqueue should recreate the directory and write successfully
+    writer.enqueue(makeEntry('Beta'));
+    assert.ok(existsSync(join(subDir, CHECKPOINT_FILENAME)));
+
+    const loaded = loadCheckpoint(subDir);
+    assert.ok(loaded);
+    assert.equal(loaded!.entries.length, 2);
+  });
+
+  it('installSignalHandlers returns a cleanup function', () => {
+    const cp = makeCheckpoint();
+    const writer = createCheckpointWriter(tempDir, cp);
+    const cleanup = writer.installSignalHandlers();
+    assert.equal(typeof cleanup, 'function');
+    // Clean up immediately to avoid affecting other tests
+    cleanup();
   });
 });

@@ -464,7 +464,7 @@ describe("pipeline-runner", () => {
     const cp = loadCheckpoint(tmpDir);
     assert.ok(cp !== null, "checkpoint file exists");
     assert.equal(cp!.entries.length, 3, "3 entries (one per scored opp)");
-    assert.equal(cp!.inputFile, "__fixture__", "inputFile matches");
+    assert.equal(cp!.inputFile, path.resolve("__fixture__"), "inputFile matches (resolved to absolute)");
     assert.ok(cp!.entries.every((e) => e.status === "scored"), "all entries scored");
   });
 

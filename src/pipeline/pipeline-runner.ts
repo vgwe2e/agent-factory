@@ -153,7 +153,12 @@ export async function runPipeline(
   const completed = isStale ? new Set<string>() : getCompletedNames(existingCheckpoint);
 
   if (completed.size > 0) {
-    logger.info({ resuming: completed.size }, "Resuming from checkpoint");
+    const scoredFromCheckpoint = checkpoint.entries.filter((e) => e.status === 'scored').length;
+    const errorsFromCheckpoint = checkpoint.entries.filter((e) => e.status === 'error').length;
+    logger.info(
+      { resuming: completed.size, scored: scoredFromCheckpoint, errors: errorsFromCheckpoint },
+      `Resuming from checkpoint: ${scoredFromCheckpoint} scored, ${errorsFromCheckpoint} errors, ${completed.size} total completed`,
+    );
   }
 
   const resumedCount = completed.size;
@@ -227,6 +232,7 @@ export async function runPipeline(
   const requestTimeoutMs = options.requestTimeoutMs ?? 300_000;
   const semaphore = new Semaphore(concurrency);
   const writer = createCheckpointWriter(options.outputDir, checkpoint);
+  const cleanupSignalHandlers = writer.installSignalHandlers();
   const progress = createProgressTracker(processable.length, logger);
   const progressInterval = setInterval(() => progress.report(), 5000);
 
@@ -324,6 +330,7 @@ export async function runPipeline(
     await Promise.allSettled(tasks);
   } finally {
     clearInterval(progressInterval);
+    cleanupSignalHandlers();
   }
 
   // Flush checkpoint and log final progress
