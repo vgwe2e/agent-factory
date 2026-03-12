@@ -82,6 +82,301 @@
       "l3Name": "Asset Lifecycle Management & Tracking",
       "completedAt": "2026-03-11T20:13:31.739Z",
       "status": "scored"
+    },
+    {
+      "l3Name": "Statistical Demand Modeling & Analytics",
+      "completedAt": "2026-03-11T20:28:34.833Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "New Product Introduction (NPI) Network Readiness",
+      "completedAt": "2026-03-11T20:31:31.420Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Inbound Logistics & Material Handling",
+      "completedAt": "2026-03-11T20:34:25.046Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Finished Powertrain Logistics & Outbound Preparation",
+      "completedAt": "2026-03-11T20:37:23.961Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "New Model Launch Quality Readiness",
+      "completedAt": "2026-03-11T20:39:56.880Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Strategic Demand Planning & Scenario Modeling",
+      "completedAt": "2026-03-11T20:42:16.885Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Procurement Technology & Digitalization",
+      "completedAt": "2026-03-11T20:57:19.943Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Parts Supply Chain & Logistics Coordination",
+      "completedAt": "2026-03-11T21:00:11.773Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Continuous Improvement & Digital Transformation",
+      "completedAt": "2026-03-11T21:15:14.800Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Data & Technology Enablement for IBP",
+      "completedAt": "2026-03-11T21:24:11.538Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Warehouse & Inventory Management",
+      "completedAt": "2026-03-11T21:27:48.234Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Service Parts Master Data & Bill of Material (BOM) Management",
+      "completedAt": "2026-03-11T21:40:48.854Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "New Product Introduction (NPI) Demand Forecasting",
+      "completedAt": "2026-03-11T21:43:45.294Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Demand & Supply Data Integration",
+      "completedAt": "2026-03-11T21:46:43.655Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Environmental",
+      "completedAt": "2026-03-11T22:01:46.682Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Indirect Category Management & Stakeholder Engagement",
+      "completedAt": "2026-03-11T22:32:15.799Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Inbound Receiving & Putaway",
+      "completedAt": "2026-03-11T22:35:40.257Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Paint Material Management",
+      "completedAt": "2026-03-11T22:38:01.089Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Packaging Inventory Management",
+      "completedAt": "2026-03-11T22:53:04.157Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Process Validation & Simulation",
+      "completedAt": "2026-03-11T22:56:03.105Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Compliance",
+      "completedAt": "2026-03-11T22:59:00.111Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Sustainability & Circularity Planning",
+      "completedAt": "2026-03-11T23:06:23.755Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Outbound Shipping & Loading",
+      "completedAt": "2026-03-11T23:09:05.979Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Cost & Value Optimization Initiatives",
+      "completedAt": "2026-03-11T23:11:25.861Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Multi-Echelon Inventory Optimization",
+      "completedAt": "2026-03-11T23:13:59.348Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Production Schedule Execution & Monitoring",
+      "completedAt": "2026-03-11T23:16:24.249Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Stamping Supplier & Outsource Management",
+      "completedAt": "2026-03-11T23:18:56.514Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Compliance & Risk Management",
+      "completedAt": "2026-03-11T23:22:09.878Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Production Planning & Control",
+      "completedAt": "2026-03-11T23:24:33.151Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "New Product Introduction & Lifecycle Planning",
+      "completedAt": "2026-03-11T23:26:56.438Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Manufacturing Anomaly & Issue Resolution",
+      "completedAt": "2026-03-11T23:30:33.327Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Request for Quote (RFQ) & Bid Management",
+      "completedAt": "2026-03-11T23:45:36.467Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Order Fulfillment Exception & Escalation Management",
+      "completedAt": "2026-03-11T23:53:55.070Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Production Quality Control & Assurance",
+      "completedAt": "2026-03-11T23:56:50.453Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Carrier Performance & Relationship Management",
+      "completedAt": "2026-03-12T00:00:25.268Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Supplier Identification & Pre-Qualification",
+      "completedAt": "2026-03-12T00:03:43.734Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "New Supplier Quality Assessment & Selection",
+      "completedAt": "2026-03-12T00:07:49.177Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "PO Performance Analysis & Continuous Improvement",
+      "completedAt": "2026-03-12T00:10:20.801Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Indirect Supplier Qualification & Selection",
+      "completedAt": "2026-03-12T00:14:16.587Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Service Parts Inventory & Distribution",
+      "completedAt": "2026-03-12T00:17:49.567Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Battery Pack Assembly",
+      "completedAt": "2026-03-12T00:19:56.546Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Order Fulfillment & Picking",
+      "completedAt": "2026-03-12T00:23:11.855Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Returnable Container Fleet Management",
+      "completedAt": "2026-03-12T00:25:32.116Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Inbound Transportation Execution & Monitoring",
+      "completedAt": "2026-03-12T00:29:26.227Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Production Planning & Execution Control",
+      "completedAt": "2026-03-12T00:32:47.939Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Global Market & Economic Intelligence",
+      "completedAt": "2026-03-12T00:36:22.884Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Connected Services & Aftermarket Order Integration",
+      "completedAt": "2026-03-12T00:39:28.765Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Inventory Positioning & Optimization",
+      "completedAt": "2026-03-12T00:42:06.242Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Production Planning & Scheduling (Stamping)",
+      "completedAt": "2026-03-12T00:45:09.874Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Demand Forecasting & Analysis",
+      "completedAt": "2026-03-12T00:47:54.426Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Material Flow & Inventory Planning for Launch",
+      "completedAt": "2026-03-12T00:51:19.725Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Supply Base Risk & Resilience Management",
+      "completedAt": "2026-03-12T00:54:49.554Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Supplier Quality Assurance & Improvement",
+      "completedAt": "2026-03-12T01:09:52.627Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Supplier Relationship Management (Operational & Strategic)",
+      "completedAt": "2026-03-12T01:18:53.716Z",
+      "status": "error"
+    },
+    {
+      "l3Name": "Inbound Logistics Exception Management",
+      "completedAt": "2026-03-12T01:22:14.848Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Service Parts Network Design & Operations",
+      "completedAt": "2026-03-12T01:25:23.938Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Capacity Scenario Modeling & Simulation",
+      "completedAt": "2026-03-12T01:28:08.861Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Supplier Launch Readiness Management",
+      "completedAt": "2026-03-12T01:30:41.351Z",
+      "status": "scored"
+    },
+    {
+      "l3Name": "Commodity Data Analytics & Reporting",
+      "completedAt": "2026-03-12T01:45:44.415Z",
+      "status": "error"
     }
   ]
 }

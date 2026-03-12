@@ -1,0 +1,1617 @@
+{
+  "Warranty Performance Monitoring & Analytics": {
+    "l3Name": "Warranty Performance Monitoring & Analytics",
+    "l2Name": "Warranty Administration & Claims Management",
+    "l1Name": "Service",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 3,
+            "reason": "All 5 L4 activities reference structured data with quantifiable decision points (e.g., cost trends, component failure rates, dealer rankings)."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Clear mapping to Process Builder: Data View for data access and IF for rule-based decisions in all L4 activities, enabling end-to-end automation."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All L4 activities consistently use rule-based decisions on structured data, fully aligning with deterministic archetype patterns."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 9,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4 activities have decision_exists=true, exceeding the 75% threshold for high density with clear decision articulation."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 3,
+            "reason": "Majority (3/5) of L4s have HIGH financial ratings with FIRST-order impact on COGS reduction and profitability."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "4 out of 5 L4s demonstrate FIRST-order impact on measurable KPIs like warranty cost reduction and dealer performance."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "Majority (3/5) of L4s have MEDIUM confidence, with two LOW ratings limiting certainty in assessments."
+          }
+        ],
+        "total": 11,
+        "maxPossible": 12,
+        "normalized": 0.9166666666666666,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $78M represents 0.04% of annual revenue, below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows for cost containment and predictive modeling with measurable inputs (warranty claims, component data) and outputs (COGS reduction, risk mitigation) are explicitly defined across all L4 activities."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.8791666666666665,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 182582
+  },
+  "Material Handling & Preparation": {
+    "l3Name": "Material Handling & Preparation",
+    "l2Name": "Stamping Operations",
+    "l1Name": "Make",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 3,
+            "reason": "All 6 L4 activities have quantifiable decision points (e.g., quantity inspection, inventory levels, scrap segregation rules) with structured data inputs, enabling measurable EBITDA uplift as described in the initiative scope."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Clear rule-based decision flows map directly to Process Builder nodes (IF for quality/quantity checks, Data View for inventory metrics, Transaction for delivery/scrap actions), enabling full automation of all L4 decision points."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All 6 L4 activities demonstrate consistent deterministic patterns (rule-based decisions with clear inputs/outputs), fully aligning with the DETERMINISTIC archetype requirements."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 9,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 6 L4 activities have decision_exists=true (100% >75%), with clear decision_articulation for each."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 3,
+            "reason": "4 of 6 L4s have HIGH financial ratings (66.7% majority), directly driving EBITDA uplift with FIRST-order impact."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "4 of 6 L4s have FIRST-order impact on measurable KPIs (e.g., working capital, COGS), directly affecting business outcomes."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "All 6 L4s have MEDIUM confidence (100% majority), with no HIGH ratings but sufficient certainty for deterministic automation."
+          }
+        ],
+        "total": 11,
+        "maxPossible": 12,
+        "normalized": 0.9166666666666666,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $68.0M represents 0.04% of annual revenue, below the 0.1% threshold for moderate value density. Value metrics are quantifiable but too low to significantly impact revenue."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows exist across six defined L4 processes with measurable inputs (e.g., inventory levels, scrap rates) and outputs (e.g., reduced working capital, COGS optimization). The initiative explicitly enables autonomous optimization modeling."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.8791666666666665,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 162917
+  },
+  "Service Parts Network Strategy & Optimization": {
+    "l3Name": "Service Parts Network Strategy & Optimization",
+    "l2Name": "Service Parts Logistics & Distribution",
+    "l1Name": "Move & Fulfill",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 3,
+            "reason": "4 of 5 L4 activities have quantifiable inputs (e.g., demand forecasts, cost data, inventory levels) with decision_exists=true, supporting real-time optimization flows."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Clear mapping to Process Builder nodes: IF (conditional routing), Data View (real-time inventory/transportation data), and Transaction (order orchestration) enable deterministic automation."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "4 of 5 L4 activities demonstrate consistent deterministic patterns (e.g., transportation mode rules, capacity thresholds), aligning with DETERMINISTIC archetype requirements."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 9,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4 activities have decision_exists=true with clear articulation, exceeding the 75% threshold for high density."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 3,
+            "reason": "3 out of 5 L4s have HIGH financial ratings (60% majority), with FIRST-order impact driving strong urgency."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "4 out of 5 L4s have FIRST-order impact on measurable KPIs, directly affecting core business outcomes."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "4 out of 5 L4s have MEDIUM confidence (80% majority), but one has LOW confidence limiting certainty."
+          }
+        ],
+        "total": 11,
+        "maxPossible": 12,
+        "normalized": 0.9166666666666666,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $42.0M represents 0.0227% of annual revenue, below 0.1% threshold for low value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 2,
+            "reason": "Clear decision flows exist with measurable inputs/outputs (e.g., COGS, working capital), but complex multi-echelon dependencies prevent straightforward simulation."
+          }
+        ],
+        "total": 3,
+        "maxPossible": 6,
+        "normalized": 0.5,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.8374999999999999,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 178559
+  },
+  "Service Network Performance & Quality Management": {
+    "l3Name": "Service Network Performance & Quality Management",
+    "l2Name": "Customer Experience & Service Quality",
+    "l1Name": "Service",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 2,
+            "reason": "Two L4 activities (Dealer Performance Audit & Scorecarding, Underperforming Dealer Service Improvement Plan) reference structured data with decision points, but other activities lack clear data signals or metrics."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Clear rule-based flows map directly to Process Builder nodes (Data View for metrics, IF for scoring thresholds, Transaction for certification/remedies), enabling full automation of audit-to-improvement workflows."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "Three L4 activities (Dealer Service Standards, Performance Audit, Improvement Plan) exhibit consistent deterministic decision patterns, strongly aligning with the DETERMINISTIC archetype."
+          }
+        ],
+        "total": 8,
+        "maxPossible": 9,
+        "normalized": 0.8888888888888888,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4 activities explicitly state decision_exists=true with clear decision_articulation, exceeding the 75% threshold for high density."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "4 out of 5 L4s have MEDIUM financial ratings (only one LOW), meeting the majority MEDIUM requirement for a reasonable financial case."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 2,
+            "reason": "Two L4s show FIRST-order impact with measurable KPIs (e.g., warranty cost reduction, OTIF), supported by the opportunity summary's 'measurable savings' claim."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 0,
+            "reason": "Three L4s have LOW confidence ratings (60% majority), indicating high uncertainty in assessments despite some MEDIUM ratings."
+          }
+        ],
+        "total": 7,
+        "maxPossible": 12,
+        "normalized": 0.5833333333333334,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $42.0M represents 0.0227% of Ford's annual revenue ($184,992M), falling below the 0.1% threshold for low value density. Value metrics are described but lack specificity beyond financial categories."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows exist (e.g., dynamic target adjustment based on audit scores) with measurable inputs (performance metrics) and outputs (warranty cost reduction, OTIF improvement), enabling straightforward simulation modeling."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.6958333333333333,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 205596
+  },
+  "Executive S&OP / IBP Review & Decision Making": {
+    "l3Name": "Executive S&OP / IBP Review & Decision Making",
+    "l2Name": "Integrated Business Planning (IBP)",
+    "l1Name": "Plan",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 1,
+            "reason": "L4 activities describe review meetings and executive alignment without structured data references or quantifiable inputs for decisions."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 1,
+            "reason": "No rule-based decision flows for Process Builder; opportunity focuses on human review without defined business rules for IF/Data View nodes."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 0,
+            "reason": "L4 activities involve human executive decisions (not rule-based), contradicting the deterministic archetype requirement."
+          }
+        ],
+        "total": 2,
+        "maxPossible": 9,
+        "normalized": 0.2222222222222222,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4 activities explicitly have decision_exists=true with clear decision_articulation, exceeding the 75% threshold for high density."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "All 5 L4s have MEDIUM financial ratings, meeting the majority MEDIUM requirement for a reasonable financial case."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "4 out of 5 L4s have FIRST-order impact on measurable KPIs (OTIF, EBITDA, working capital) as directly stated in the summary."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "3 out of 5 L4s have MEDIUM confidence (60% majority), with only 2 LOW ratings, meeting the majority MEDIUM threshold."
+          }
+        ],
+        "total": 10,
+        "maxPossible": 12,
+        "normalized": 0.8333333333333334,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $34.0M represents 0.02% of annual revenue, below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Five well-defined L4 processes with measurable financial metrics (WORKING_CAPITAL, EBITDA) and clear decision flows enable straightforward simulation modeling."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.6083333333333333,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 187693
+  },
+  "Body-In-White (BIW) Assembly Execution": {
+    "l3Name": "Body-In-White (BIW) Assembly Execution",
+    "l2Name": "Body Shop & Welding",
+    "l1Name": "Make",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 1,
+            "reason": "L4 activities reference decisions but lack explicit structured data signals or metrics (e.g., no mention of real-time production data, quality thresholds, or scheduling inputs)."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Deterministic decisions map directly to Process Builder nodes: IF for constraint checks, Data View for structured inputs, and Transaction for atomic scheduling updates."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All 5 L4 activities explicitly follow rule-based patterns (e.g., 'according to build specifications', 'structural/dimensional inspection thresholds') matching deterministic archetype requirements."
+          }
+        ],
+        "total": 7,
+        "maxPossible": 9,
+        "normalized": 0.7777777777777778,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4 activities explicitly identify decisions (decision_exists=true) with clear articulation, exceeding the 75% threshold for high density."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 3,
+            "reason": "All L4s have HIGH financial ratings with FIRST-order impact on COGS reduction and operational efficiency, creating strong financial urgency."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "All L4s demonstrate FIRST-order impact on measurable KPIs (e.g., COGS, rework reduction, on-time delivery) with direct business outcomes."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 3,
+            "reason": "All L4s have HIGH rating_confidence, indicating strong certainty in the assessments and decision validity."
+          }
+        ],
+        "total": 12,
+        "maxPossible": 12,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $32M represents 0.017% of annual revenue, below the 0.1% threshold for low value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows (scheduling, sequencing, quality release) with measurable inputs/outputs are defined, and constraint-based coordination enables straightforward simulation modeling."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.85,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 164229
+  },
+  "Supplier Quality Strategy & Governance": {
+    "l3Name": "Supplier Quality Strategy & Governance",
+    "l2Name": "Supplier Quality Management",
+    "l1Name": "Procure Source & Buy",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 1,
+            "reason": "Sparse data signals; L4 activities describe policy/standard creation without quantifiable inputs or metrics for decision points."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 1,
+            "reason": "Weak fit; opportunity lacks rule-based decision flows for Process Builder (no If/Data View/Transaction mappings)."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 1,
+            "reason": "Weak archetype support; L4 activities focus on policy/system design (not deterministic rule execution)."
+          }
+        ],
+        "total": 3,
+        "maxPossible": 9,
+        "normalized": 0.3333333333333333,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 4 L4 activities have decision_exists=true with clear decision_articulation (e.g., 'Establish global supplier quality policy', 'Define technical quality standards')."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "3 out of 4 activities have MEDIUM/HIGH financial ratings (75%), but only 1 is HIGH (not majority HIGH)."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "3 out of 4 activities have FIRST-order impact on measurable KPIs (e.g., reducing defects, improving yield, cutting COGS)."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 1,
+            "reason": "Two activities have LOW confidence (50%), making it mixed with many LOW signals."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 12,
+        "normalized": 0.75,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined value of $26.0M represents 0.0139% of Ford's $184,992M annual revenue, falling below the 0.1% threshold for low value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows exist for automated policy creation, standards definition, and SQMS deployment with measurable inputs (supplier quality data) and outputs (defect reduction, COGS savings), enabling straightforward simulation modeling."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.6041666666666666,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 215937
+  },
+  "Order to Production Scheduling Integration": {
+    "l3Name": "Order to Production Scheduling Integration",
+    "l2Name": "Order Management & Fulfillment",
+    "l1Name": "Move & Fulfill",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 3,
+            "reason": "All 4 L4 activities have quantifiable inputs (e.g., order sequencing, material availability, production monitoring) with clear decision points, enabling structured optimization of throughput and COGS."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Direct mapping to Process Builder nodes: Data View for real-time data access, IF for rule-based sequencing/release decisions, and Transaction for atomic schedule updates, enabling full automation path."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All L4 activities explicitly support deterministic decisions with high ai_suitability (3/4 at HIGH) and decision_exists=true, confirming strong archetype alignment."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 9,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 4 L4 activities explicitly have decision_exists=true with clear decision_articulation, exceeding 75% threshold."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 3,
+            "reason": "3 out of 4 L4s have HIGH financial ratings (75%), with FIRST-order impact driving strong COGS reduction and working capital urgency."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "3 out of 4 L4s demonstrate FIRST-order impact on measurable KPIs (throughput, on-time completion, constraint resolution)."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "3 out of 4 L4s have MEDIUM confidence (75%), with only one LOW confidence rating limiting certainty."
+          }
+        ],
+        "total": 11,
+        "maxPossible": 12,
+        "normalized": 0.9166666666666666,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $26.0M represents 0.0139% of annual revenue, below the 0.1% threshold for low value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows (order sequencing, release timing, schedule changes, material resolution) with measurable inputs/outputs are explicitly defined for simulation modeling."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.8791666666666665,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 159209
+  },
+  "Supplier Acknowledgment & Communication": {
+    "l3Name": "Supplier Acknowledgment & Communication",
+    "l2Name": "Purchase Order Management & Execution",
+    "l1Name": "Procure Source & Buy",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 3,
+            "reason": "All 4 L4 activities have decision_exists=true with quantifiable inputs (e.g., PO status, term comparisons, integration metrics) enabling structured data-driven decisions."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Clear PB node mapping: Data View for PO status checks, IF for discrepancy resolution/follow-up rules, and Transaction for atomic acknowledgment/escalation workflows."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All L4 activities demonstrate deterministic rule-based patterns (e.g., time-based escalation, term comparison) with no AI dependency, fully aligning with DETERMINISTIC archetype."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 9,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 4 L4 activities have decision_exists=true with clear decision_articulation, meeting >75% threshold for high density."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 3,
+            "reason": "3 out of 4 activities have HIGH financial ratings, driving FIRST-order impact on COGS and working capital with strong urgency."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "3 out of 4 activities have FIRST-order impact on measurable KPIs (cycle time, COGS, working capital), directly tied to business outcomes."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 3,
+            "reason": "3 out of 4 activities have HIGH rating_confidence, indicating strong certainty in assessments and implementation viability."
+          }
+        ],
+        "total": 12,
+        "maxPossible": 12,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $25M represents 0.0135% of annual revenue ($184,992M), falling below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows (acknowledgment, discrepancy resolution, integration, escalation) with measurable inputs (PO data, discrepancy details) and outputs (cycle time reduction, COGS impact) are well-defined across 4 L4 activities."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.9166666666666666,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 161572
+  },
+  "Customs": {
+    "l3Name": "Customs",
+    "l2Name": "Inbound Logistics & Material Flow",
+    "l1Name": "Move & Fulfill",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 1,
+            "reason": "Only one L4 activity with no explicit structured data references. Decision_exists=true but no quantifiable inputs or metrics described."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 2,
+            "reason": "Rule-based decisions (IF, Data View) map to PB nodes, but minimal L4 activity prevents clear automation path. No transactional flow details provided."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 2,
+            "reason": "Single L4 activity aligns with deterministic archetype (decision_exists=true), but insufficient L4s for strong consistency or majority support."
+          }
+        ],
+        "total": 5,
+        "maxPossible": 9,
+        "normalized": 0.5555555555555556,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "100% of L4 activities (1 out of 1) have decision_exists=true with clear articulation of automated decisions for customs classification and documentation."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 3,
+            "reason": "Single L4 activity has HIGH financial rating, directly reducing COGS and improving cash flow with FIRST-order impact on supply chain costs."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "L4 activity specifies FIRST-order impact on measurable KPIs including COGS reduction, lead time shortening, and on-time delivery metrics."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "Sole L4 activity has MEDIUM confidence rating, resulting in majority MEDIUM confidence despite clear decision articulation."
+          }
+        ],
+        "total": 11,
+        "maxPossible": 12,
+        "normalized": 0.9166666666666666,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $24.0M represents 0.01% of annual revenue, below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows (tariff classification, duty calculation) with measurable inputs (product data, origin) and outputs (duty savings, COGS impact) for a single L4 activity."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.7458333333333332,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 182911
+  },
+  "Packaging Compliance & Sustainability": {
+    "l3Name": "Packaging Compliance & Sustainability",
+    "l2Name": "Packaging & Returnable Container Management",
+    "l1Name": "Move & Fulfill",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 2,
+            "reason": "Moderate structured data signals; L4 activities require compliance data and environmental metrics but lack explicit evidence of rich, quantifiable inputs across all activities (e.g., no mention of specific databases or metrics)."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Strong Process Builder fit: Clear rule-based flows map directly to IF (compliance checks), Data View (regulatory databases), and Transaction (material implementation) nodes for all L4 activities."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "Archetype strongly supported: All four L4 activities are deterministic rule-based decisions (compliance validation, impact scoring, regulatory adaptation, material implementation) with no ambiguity."
+          }
+        ],
+        "total": 8,
+        "maxPossible": 9,
+        "normalized": 0.8888888888888888,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 4 L4 activities explicitly have decision_exists=true with clear decision_articulation, exceeding 75% threshold for high density."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "3 of 4 L4s have MEDIUM financial ratings (75% majority), with one HIGH, forming a reasonable financial case without strong urgency."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 2,
+            "reason": "Mix of FIRST (1) and SECOND (3) order impacts with measurable KPIs for the FIRST-order L4, but not dominant."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 0,
+            "reason": "3 of 4 L4s have LOW confidence ratings (75% majority), indicating high uncertainty in assessments."
+          }
+        ],
+        "total": 7,
+        "maxPossible": 12,
+        "normalized": 0.5833333333333334,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $24.0M represents 0.01% of annual revenue, below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 1,
+            "reason": "No clear decision scenarios or measurable inputs/outputs for simulation are specified beyond high-level process coordination."
+          }
+        ],
+        "total": 2,
+        "maxPossible": 6,
+        "normalized": 0.3333333333333333,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.6125,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 169687
+  },
+  "Finished Goods Handling & Dispatch": {
+    "l3Name": "Finished Goods Handling & Dispatch",
+    "l2Name": "Electric Vehicle Battery & Drive Unit Production",
+    "l1Name": "Make",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 3,
+            "reason": "All 5 L4 activities reference structured data inputs (e.g., inventory levels, inspection results, packaging specs, scheduling data) with clear quantifiable decision points."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Multiple L4 activities map directly to Process Builder nodes (IF for conditionals, Data View for inventory/scheduling data, Transaction for inventory updates) enabling full rule-based automation."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All L4 activities demonstrate deterministic rule-based patterns (e.g., inspection pass/fail, inventory thresholds, packaging rules) perfectly aligning with the DETERMINISTIC archetype."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 9,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4 activities have decision_exists=true with clear decision_articulation, exceeding the 75% threshold for high density."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "4 of 5 L4s have MEDIUM financial rating (1 HIGH), forming a majority MEDIUM mix with reasonable financial case."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "All L4s demonstrate FIRST-order impact on measurable KPIs like COGS reduction, OTIF, and fulfillment speed."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "All 5 L4s have MEDIUM confidence ratings, resulting in majority MEDIUM confidence with reasonable certainty."
+          }
+        ],
+        "total": 10,
+        "maxPossible": 12,
+        "normalized": 0.8333333333333334,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $21.0M represents 0.011% of annual revenue, below 0.1% threshold for low value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows across 5 L4 activities with measurable inputs/outputs (e.g., inventory levels, load planning) enable straightforward simulation modeling."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.8416666666666667,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 150622
+  },
+  "Asset Lifecycle Management & Tracking": {
+    "l3Name": "Asset Lifecycle Management & Tracking",
+    "l2Name": "Plant Maintenance & Reliability",
+    "l1Name": "Make",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 2,
+            "reason": "Multiple L4 activities reference structured data for decisions (e.g., BOM management, maintenance scheduling), but one activity (Asset Register) has low data suitability, preventing a 'rich' score."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Clear rule-based decision flows map directly to Process Builder nodes (IF for conditionals, Data View for data access, Transaction for updates) across all L4 activities."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All L4 activities have decision_exists=true with deterministic patterns, and 4/5 activities align with deterministic archetype (only Asset Register has low AI suitability, which doesn't conflict with determinism)."
+          }
+        ],
+        "total": 8,
+        "maxPossible": 9,
+        "normalized": 0.8888888888888888,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4 activities have decision_exists=true with clear decision_articulation, exceeding 75% threshold."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "4/5 activities rated MEDIUM (1 HIGH), with majority MEDIUM financial impact but no majority HIGH ratings."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "3/5 activities have FIRST-order impact on measurable KPIs (COGS, working capital, EBITDA) as stated in summary."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "All 5 activities rated MEDIUM confidence, resulting in majority MEDIUM confidence rating."
+          }
+        ],
+        "total": 10,
+        "maxPossible": 12,
+        "normalized": 0.8333333333333334,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $21.0M represents 0.011% of annual revenue, below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Deterministic optimization for maintenance scheduling and BOM decisions provides clear, measurable decision flows with defined inputs/outputs for simulation modeling."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.8083333333333332,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 225856
+  },
+  "New Product Introduction (NPI) Network Readiness": {
+    "l3Name": "New Product Introduction (NPI) Network Readiness",
+    "l2Name": "Supply Network Design & Planning",
+    "l1Name": "Plan",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 1,
+            "reason": "Sparse data signals; only two L4 activities (Launch Readiness and Production Ramp-Up) imply structured data needs, but no explicit structured metrics or references are provided for decision points."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Clear rule-based flows map directly to Process Builder nodes: IF for capacity validation, Data View for metrics, and Transaction for atomic coordination steps across all L4 activities."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All five L4 activities feature explicit decision points with measurable inputs, fully aligning with deterministic archetype patterns of rule-based decisioning."
+          }
+        ],
+        "total": 7,
+        "maxPossible": 9,
+        "normalized": 0.7777777777777778,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4 activities have decision_exists=true with clear decision_articulation, exceeding 75% threshold."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "4 out of 5 L4s have MEDIUM financial rating (1 HIGH), meeting majority MEDIUM criterion."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "All 5 L4s demonstrate FIRST-order impact on measurable KPIs like ramp costs and stockouts."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 0,
+            "reason": "Majority (3/5) of L4s have LOW confidence, indicating high uncertainty in assessments."
+          }
+        ],
+        "total": 8,
+        "maxPossible": 12,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $18.0M represents 0.01% of Ford's $184,992M annual revenue, falling below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows exist across five L4 processes with measurable inputs (e.g., capacity validation, pilot build coordination) and outputs (COGS, working capital reductions), enabling straightforward simulation modeling."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.7,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 176580
+  },
+  "Inbound Logistics & Material Handling": {
+    "l3Name": "Inbound Logistics & Material Handling",
+    "l2Name": "Powertrain Manufacturing (Engine & Transmission)",
+    "l1Name": "Make",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 1,
+            "reason": "Sparse data signals; L4 activities describe decision points but lack explicit structured data references or metrics for inputs."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Clear rule-based decision flows map directly to PB nodes (IF for conditionals, Data View for data access, Transaction for updates)."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All 5 L4 activities confirm decision_exists=true with deterministic patterns, fully aligning with the DETERMINISTIC archetype."
+          }
+        ],
+        "total": 7,
+        "maxPossible": 9,
+        "normalized": 0.7777777777777778,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4s have decision_exists=true with clear decision_articulation, exceeding 75% threshold."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "4/5 L4s have MEDIUM financial rating (80% majority), with no HIGH ratings present."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 2,
+            "reason": "Mix of FIRST (1 L4) and SECOND (4 L4s) impact orders with measurable KPIs in the FIRST case."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "4/5 L4s have MEDIUM confidence (80% majority), with no HIGH ratings."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 12,
+        "normalized": 0.75,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $18.0M represents 0.0097% of annual revenue, below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 2,
+            "reason": "Decision flows are defined across L4 activities with measurable value metrics, but complex multi-echelon inventory dependencies prevent straightforward simulation modeling."
+          }
+        ],
+        "total": 3,
+        "maxPossible": 6,
+        "normalized": 0.5,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.6958333333333333,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 173621
+  },
+  "Finished Powertrain Logistics & Outbound Preparation": {
+    "l3Name": "Finished Powertrain Logistics & Outbound Preparation",
+    "l2Name": "Powertrain Manufacturing (Engine & Transmission)",
+    "l1Name": "Make",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 3,
+            "reason": "All 5 L4 activities involve structured data inputs (e.g., inventory levels, demand forecasts, routing metrics) with quantifiable decision points driving COGS reduction and OTIF improvements."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Deterministic decisions map directly to Process Builder nodes (IF for conditions, Data View for inputs, Transaction for atomic updates), enabling clear rule-based automation."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All 5 L4 activities consistently demonstrate rule-based decision patterns (e.g., inventory thresholds, routing rules), fully aligning with the DETERMINISTIC archetype."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 9,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4 activities explicitly have decision_exists=true, exceeding the 75% threshold for high density with clear decision articulation."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 3,
+            "reason": "3 out of 5 activities have HIGH financial ratings, targeting 2–10% COGS reduction with strong FIRST-order financial urgency."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "4 out of 5 activities have FIRST-order impact on measurable KPIs (COGS, OTIF), directly driving business outcomes."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "All 5 activities have MEDIUM confidence ratings, resulting in a majority MEDIUM confidence without HIGH certainty."
+          }
+        ],
+        "total": 11,
+        "maxPossible": 12,
+        "normalized": 0.9166666666666666,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $18.0M represents 0.01% of annual revenue, below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows (inventory positioning, route optimization, sequencing) with measurable inputs (inventory levels, demand, costs) and outputs (COGS reduction, OTIF)."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.8791666666666665,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 178910
+  },
+  "New Model Launch Quality Readiness": {
+    "l3Name": "New Model Launch Quality Readiness",
+    "l2Name": "Quality Control & In-Process Inspection",
+    "l1Name": "Make",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 1,
+            "reason": "L4 activities describe quality checks but lack explicit structured data references or quantifiable metrics in the description."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Clear rule-based decision flows map directly to Process Builder nodes (IF for quality thresholds, Data View for metrics, Transaction for status updates)."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All 4 L4 activities explicitly confirm decision_exists=true with deterministic quality validation patterns."
+          }
+        ],
+        "total": 7,
+        "maxPossible": 9,
+        "normalized": 0.7777777777777778,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 4 L4 activities have decision_exists=true with clear decision_articulation, exceeding 75% threshold."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "All 4 activities rated MEDIUM financial impact, forming a majority MEDIUM case without HIGH ratings."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 2,
+            "reason": "Mix of 2 FIRST-order (pre-production, IPR) and 2 SECOND-order (launch gate, PPAP) impacts with measurable KPIs."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "All 4 activities rated MEDIUM confidence, indicating majority MEDIUM certainty without HIGH ratings."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 12,
+        "normalized": 0.75,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $18.0M is 0.01% of annual revenue ($184,992M), below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear sequential decision flows across four L4 activities with measurable working capital inputs/outputs enable straightforward simulation modeling of quality readiness coordination."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.7374999999999999,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 152916
+  },
+  "Strategic Demand Planning & Scenario Modeling": {
+    "l3Name": "Strategic Demand Planning & Scenario Modeling",
+    "l2Name": "Demand Forecasting & Sensing",
+    "l1Name": "Plan",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 3,
+            "reason": "All 4 L4 activities reference structured data inputs (historical demand, macroeconomic indicators, EV adoption rates) with clear quantifiable decision points for projections and scenario modeling."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Deterministic nature maps directly to Process Builder: Data View for input data access, IF nodes for scenario branching, and Transaction for capacity input generation with clear automation path."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All L4 activities exhibit rule-based decision flows with quantifiable inputs, fully aligning with the deterministic archetype pattern and decision_exists=true markers."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 9,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 4 L4 activities explicitly state decision_exists=true with clear decision_articulation, exceeding the 75% threshold for high density."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "Two HIGH and two MEDIUM financial ratings form a mix (not majority HIGH), meeting the moderate financial case threshold for score 2."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 3,
+            "reason": "All L4s demonstrate FIRST-order impact on measurable KPIs (working capital, OIFF, CAPEX alignment) per the opportunity summary."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "All 4 L4s have MEDIUM confidence ratings, establishing a clear majority for score 2 without HIGH confidence."
+          }
+        ],
+        "total": 10,
+        "maxPossible": 12,
+        "normalized": 0.8333333333333334,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined max value of $17.6M represents 0.0095% of annual revenue, below the 0.1% threshold for moderate value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows with measurable inputs (macroeconomic scenarios, technology shifts) and outputs (working capital reduction, OIFF improvement) enable straightforward simulation modeling."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.8416666666666667,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 140004
+  },
+  "Parts Supply Chain & Logistics Coordination": {
+    "l3Name": "Parts Supply Chain & Logistics Coordination",
+    "l2Name": "Recall & Field Service Action Management",
+    "l1Name": "Service",
+    "archetype": "DETERMINISTIC",
+    "archetypeSource": "export",
+    "lenses": {
+      "technical": {
+        "lens": "technical",
+        "subDimensions": [
+          {
+            "name": "data_readiness",
+            "score": 3,
+            "reason": "All 5 L4 activities have decision_exists=true and high AI suitability, indicating rich structured data with quantifiable inputs for decision points (e.g., inventory levels, forecast volumes, logistics metrics)."
+          },
+          {
+            "name": "aera_platform_fit",
+            "score": 3,
+            "reason": "Clear rule-based decision flows map directly to Process Builder nodes: Data View (for inventory/forecast data), IF (for threshold-based triggers), and Transaction (for order/expediting actions)."
+          },
+          {
+            "name": "archetype_confidence",
+            "score": 3,
+            "reason": "All L4 activities demonstrate deterministic decision patterns (e.g., reorder triggers, expediting rules) with no probabilistic elements, fully aligning with the deterministic archetype."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 9,
+        "normalized": 1,
+        "confidence": "HIGH"
+      },
+      "adoption": {
+        "lens": "adoption",
+        "subDimensions": [
+          {
+            "name": "decision_density",
+            "score": 3,
+            "reason": "All 5 L4 activities have decision_exists=true with clear decision_articulation, exceeding 75% threshold."
+          },
+          {
+            "name": "financial_gravity",
+            "score": 2,
+            "reason": "All activities rated MEDIUM financial impact, with no HIGH ratings present."
+          },
+          {
+            "name": "impact_proximity",
+            "score": 2,
+            "reason": "60% of activities (3/5) have FIRST-order impact with measurable KPIs like OTIF and working capital."
+          },
+          {
+            "name": "confidence_signal",
+            "score": 2,
+            "reason": "4 of 5 activities have MEDIUM confidence, with only one LOW rating."
+          }
+        ],
+        "total": 9,
+        "maxPossible": 12,
+        "normalized": 0.75,
+        "confidence": "HIGH"
+      },
+      "value": {
+        "lens": "value",
+        "subDimensions": [
+          {
+            "name": "value_density",
+            "score": 1,
+            "reason": "Combined value of $17M represents 0.009% of annual revenue, below 0.1% threshold for low value density."
+          },
+          {
+            "name": "simulation_viability",
+            "score": 3,
+            "reason": "Clear decision flows (forecasting, inventory, dispatch) with measurable inputs/outputs, typical for supply chain simulation models."
+          }
+        ],
+        "total": 4,
+        "maxPossible": 6,
+        "normalized": 0.6666666666666666,
+        "confidence": "HIGH"
+      }
+    },
+    "composite": 0.8041666666666666,
+    "overallConfidence": "HIGH",
+    "promotedToSimulation": true,
+    "scoringDurationMs": 171828
+  }
+}
