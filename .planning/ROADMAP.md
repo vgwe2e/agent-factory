@@ -111,7 +111,9 @@ Plans:
   1. Running with `--backend vllm` (without explicit `--output-dir`) writes results to `evaluation-vllm/` instead of `evaluation/`
   2. Running with `--backend ollama` (without explicit `--output-dir`) writes results to `evaluation-ollama/`
   3. A user who runs both local and cloud evaluations on the same hierarchy finds both result sets intact with no overwritten files
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 19-01-PLAN.md — resolveOutputDir helper + CLI wiring for backend-aware output namespacing
 
 ### Phase 20: Network Volume & Model Caching
 **Goal**: Model weights are cached on a RunPod network volume so subsequent pod launches skip the HuggingFace download
@@ -148,5 +150,5 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 16. Simulation Configuration | 2/2 | Complete    | 2026-03-12 | - |
 | 17. CLI Automation | 2/2 | Complete    | 2026-03-12 | - |
 | 18. RunPod Provisioning Fix | 1/1 | Complete    | 2026-03-12 | - |
-| 19. Output Directory Management | v1.2 | 0/0 | Not started | - |
+| 19. Output Directory Management | v1.2 | 0/1 | Not started | - |
 | 20. Network Volume & Model Caching | v1.2 | 0/0 | Not started | - |
