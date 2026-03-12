@@ -14,6 +14,7 @@ import os from "node:os";
 import yaml from "js-yaml";
 import type { SimulationInput, ComponentMap, MockTest, IntegrationSurface } from "../types/simulation.js";
 import type { ValidationResult } from "./validators/knowledge-validator.js";
+import { TimeoutError } from "../infra/timeout.js";
 
 // -- Test fixtures --
 
@@ -259,6 +260,210 @@ describe("runSimulationPipeline", () => {
     assert.equal(mockBuildKnowledgeIndex.mock.callCount(), 1);
     // componentMap called twice (once per opp), each with the knowledge index
     assert.equal(mockComponentMap.mock.callCount(), 2);
+  });
+});
+
+describe("per-opportunity error isolation", () => {
+  let tmpDir: string;
+
+  beforeEach(() => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "sim-isolation-"));
+    mockDecisionFlow.mock.resetCalls();
+    mockComponentMap.mock.resetCalls();
+    mockMockTest.mock.resetCalls();
+    mockIntegrationSurface.mock.resetCalls();
+    mockBuildKnowledgeIndex.mock.resetCalls();
+  });
+
+  afterEach(() => {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("when generator 2 throws for opp 1, opp 2 still runs all 4 generators", async () => {
+    let callCount = 0;
+    // Component map (generator 2) throws on first call only
+    mockComponentMap.mock.mockImplementation(async (_input: SimulationInput, _ki: Map<string, string>, _url?: string) => {
+      callCount++;
+      if (callCount === 1) throw new Error("Unexpected crash in generator 2");
+      return {
+        success: true as const,
+        data: { componentMap: MOCK_COMPONENT_MAP, validation: MOCK_VALIDATION, attempts: 1 },
+      } as { success: true; data: { componentMap: ComponentMap; validation: ValidationResult[]; attempts: number } } | { success: false; error: string };
+    });
+
+    const pipeline = await import("./simulation-pipeline.js");
+    const inputs = [
+      makeSimulationInput({ name: "Opp Crash", composite: 0.90 }),
+      makeSimulationInput({ name: "Opp OK", composite: 0.80 }),
+    ];
+
+    const result = await pipeline.runSimulationPipeline(inputs, tmpDir, undefined, {
+      generateDecisionFlow: mockDecisionFlow,
+      generateComponentMap: mockComponentMap,
+      generateMockTest: mockMockTest,
+      generateIntegrationSurface: mockIntegrationSurface,
+      buildKnowledgeIndex: mockBuildKnowledgeIndex,
+    });
+
+    // Opp 1 failed, opp 2 succeeded -- both should be in results
+    assert.equal(result.results.length, 2);
+    assert.equal(result.totalSimulated, 2);
+    assert.equal(result.totalFailed, 1);
+    // Opp 2 should have all 4 generators called
+    assert.equal(mockDecisionFlow.mock.callCount(), 2);
+    assert.equal(mockMockTest.mock.callCount(), 2);
+    assert.equal(mockIntegrationSurface.mock.callCount(), 2);
+  });
+
+  it("when all 4 generators fail for one opp, totalFailed increments and result has default artifacts", async () => {
+    const throwingDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => {
+      throw new Error("Generator crash");
+    });
+    const throwingComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _url?: string) => {
+      throw new Error("Generator crash");
+    });
+    const throwingMockTest = mock.fn(async (_input: SimulationInput, _url?: string) => {
+      throw new Error("Generator crash");
+    });
+    const throwingIntSurface = mock.fn(async (_input: SimulationInput, _url?: string) => {
+      throw new Error("Generator crash");
+    });
+
+    const pipeline = await import("./simulation-pipeline.js");
+    const inputs = [makeSimulationInput({ name: "All Fail", composite: 0.80 })];
+
+    const result = await pipeline.runSimulationPipeline(inputs, tmpDir, undefined, {
+      generateDecisionFlow: throwingDecisionFlow,
+      generateComponentMap: throwingComponentMap,
+      generateMockTest: throwingMockTest,
+      generateIntegrationSurface: throwingIntSurface,
+      buildKnowledgeIndex: mockBuildKnowledgeIndex,
+    });
+
+    assert.equal(result.totalFailed, 1);
+    assert.equal(result.results.length, 1);
+    // Default artifacts should be present
+    assert.equal(result.results[0].artifacts.decisionFlow, "");
+    assert.deepEqual(result.results[0].artifacts.componentMap.streams, []);
+  });
+
+  it("when timeoutMs is set and generators exceed it, TimeoutError is caught and remaining opps continue", async () => {
+    // First opp hangs forever, second opp succeeds
+    let oppIndex = 0;
+    const slowDecisionFlow = mock.fn(async (input: SimulationInput, _url?: string) => {
+      oppIndex++;
+      if (oppIndex === 1) {
+        // Simulate a hang by waiting longer than timeout
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+      return {
+        success: true as const,
+        data: { mermaid: MOCK_MERMAID, attempts: 1 },
+      } as { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string };
+    });
+
+    const pipeline = await import("./simulation-pipeline.js");
+    const inputs = [
+      makeSimulationInput({ name: "Slow Opp", composite: 0.90 }),
+      makeSimulationInput({ name: "Fast Opp", composite: 0.80 }),
+    ];
+
+    const result = await pipeline.runSimulationPipeline(inputs, tmpDir, undefined, {
+      generateDecisionFlow: slowDecisionFlow,
+      generateComponentMap: mockComponentMap,
+      generateMockTest: mockMockTest,
+      generateIntegrationSurface: mockIntegrationSurface,
+      buildKnowledgeIndex: mockBuildKnowledgeIndex,
+    }, { timeoutMs: 50 });
+
+    assert.equal(result.totalSimulated, 2);
+    assert.equal(result.totalFailed, 1);
+    assert.equal(result.results.length, 2);
+    // Fast opp should have succeeded
+    assert.equal(result.results[1].l3Name, "Fast Opp");
+  });
+
+  it("when timeoutMs is NOT set, generators run without timeout wrapping", async () => {
+    // Use a generator that takes 100ms -- should succeed without timeout
+    const delayedDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      return {
+        success: true as const,
+        data: { mermaid: MOCK_MERMAID, attempts: 1 },
+      } as { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string };
+    });
+
+    const pipeline = await import("./simulation-pipeline.js");
+    const inputs = [makeSimulationInput({ name: "No Timeout", composite: 0.80 })];
+
+    const result = await pipeline.runSimulationPipeline(inputs, tmpDir, undefined, {
+      generateDecisionFlow: delayedDecisionFlow,
+      generateComponentMap: mockComponentMap,
+      generateMockTest: mockMockTest,
+      generateIntegrationSurface: mockIntegrationSurface,
+      buildKnowledgeIndex: mockBuildKnowledgeIndex,
+    });
+    // No options passed = no timeout = should succeed
+    assert.equal(result.totalFailed, 0);
+    assert.equal(result.totalSimulated, 1);
+  });
+
+  it("when timeout fires after generator 1, result includes default artifacts for remaining", async () => {
+    // Decision flow succeeds fast, then component map hangs
+    const fastDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+      success: true as const,
+      data: { mermaid: MOCK_MERMAID, attempts: 1 },
+    } as { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string }));
+
+    const hangingComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _url?: string) => {
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      return {
+        success: true as const,
+        data: { componentMap: MOCK_COMPONENT_MAP, validation: MOCK_VALIDATION, attempts: 1 },
+      } as { success: true; data: { componentMap: ComponentMap; validation: ValidationResult[]; attempts: number } } | { success: false; error: string };
+    });
+
+    const pipeline = await import("./simulation-pipeline.js");
+    const inputs = [makeSimulationInput({ name: "Partial Timeout", composite: 0.80 })];
+
+    const result = await pipeline.runSimulationPipeline(inputs, tmpDir, undefined, {
+      generateDecisionFlow: fastDecisionFlow,
+      generateComponentMap: hangingComponentMap,
+      generateMockTest: mockMockTest,
+      generateIntegrationSurface: mockIntegrationSurface,
+      buildKnowledgeIndex: mockBuildKnowledgeIndex,
+    }, { timeoutMs: 50 });
+
+    assert.equal(result.totalFailed, 1);
+    assert.equal(result.results.length, 1);
+    // Result should have default artifacts (timeout killed the whole opp block)
+    assert.equal(result.results[0].artifacts.decisionFlow, "");
+    assert.deepEqual(result.results[0].artifacts.componentMap.streams, []);
+  });
+
+  it("error count is returned so callers can track simulation failures", async () => {
+    const throwingDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => {
+      throw new Error("Unexpected error");
+    });
+
+    const pipeline = await import("./simulation-pipeline.js");
+    const inputs = [
+      makeSimulationInput({ name: "Fail Opp", composite: 0.90 }),
+      makeSimulationInput({ name: "OK Opp", composite: 0.80 }),
+    ];
+
+    const result = await pipeline.runSimulationPipeline(inputs, tmpDir, undefined, {
+      generateDecisionFlow: throwingDecisionFlow,
+      generateComponentMap: mockComponentMap,
+      generateMockTest: mockMockTest,
+      generateIntegrationSurface: mockIntegrationSurface,
+      buildKnowledgeIndex: mockBuildKnowledgeIndex,
+    });
+
+    // First opp throws, second opp also throws (same mock) -- both fail
+    assert.equal(result.totalFailed, 2);
+    assert.equal(result.totalSimulated, 2);
+    assert.equal(typeof result.totalFailed, "number");
   });
 });
 
