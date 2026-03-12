@@ -28,10 +28,10 @@ Requirements for Cloud Pipeline Hardening milestone. Each maps to roadmap phases
 
 ### RunPod Provisioning
 
-- [ ] **PROV-01**: `/setup-runpod-vllm` skill uses GraphQL API with `dockerArgs` instead of `VLLM_ARGS` env var
-- [ ] **PROV-02**: Provisioning validates model is loaded by checking `/v1/models` response matches requested model
-- [ ] **PROV-03**: Provisioning times out after 15 minutes if pod never becomes ready, with actionable error message
-- [ ] **PROV-04**: Provisioning uses correct `--gpu-id` flag (not `--gpu-type`) when falling back to `runpodctl`
+- [x] **PROV-01**: `/setup-runpod-vllm` skill uses GraphQL API with `dockerArgs` instead of `VLLM_ARGS` env var
+- [x] **PROV-02**: Provisioning validates model is loaded by checking `/v1/models` response matches requested model
+- [x] **PROV-03**: Provisioning times out after 15 minutes if pod never becomes ready, with actionable error message
+- [x] **PROV-04**: Provisioning uses correct `--gpu-id` flag (not `--gpu-type`) when falling back to `runpodctl`
 
 ### Output Management
 
@@ -78,10 +78,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTO-02 | Phase 17 | Complete |
 | AUTO-03 | Phase 17 | Complete |
 | AUTO-04 | Phase 17 | Complete |
-| PROV-01 | Phase 18 | Pending |
-| PROV-02 | Phase 18 | Pending |
-| PROV-03 | Phase 18 | Pending |
-| PROV-04 | Phase 18 | Pending |
+| PROV-01 | Phase 18 | Complete |
+| PROV-02 | Phase 18 | Complete |
+| PROV-03 | Phase 18 | Complete |
+| PROV-04 | Phase 18 | Complete |
 | OUT-01 | Phase 19 | Pending |
 | OUT-02 | Phase 19 | Pending |
 | CACHE-01 | Phase 20 | Pending |

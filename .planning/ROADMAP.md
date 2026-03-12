@@ -45,7 +45,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 - [x] **Phase 15: Report Generation Fix** — Reports correctly reflect all scored opportunities including checkpoint-resumed data (completed 2026-03-12)
 - [x] **Phase 16: Simulation Configuration** — Users can skip or configure simulation phase without code changes (completed 2026-03-12)
 - [x] **Phase 17: CLI Automation** — Single CLI invocation handles full lifecycle with retries and teardown (completed 2026-03-12)
-- [ ] **Phase 18: RunPod Provisioning Fix** — Pod provisioning succeeds on first attempt with correct model loaded
+- [x] **Phase 18: RunPod Provisioning Fix** — Pod provisioning succeeds on first attempt with correct model loaded (completed 2026-03-12)
 - [ ] **Phase 19: Output Directory Management** — Backend-aware output namespacing prevents local/cloud clobber
 - [ ] **Phase 20: Network Volume & Model Caching** — Model weights persist across pod launches via network volumes
 
@@ -99,7 +99,7 @@ Plans:
   2. After pod is running, provisioning confirms the requested model appears in `/v1/models` response before returning success
   3. If the pod does not become ready within 15 minutes, provisioning fails with a clear error message including pod ID and status
   4. When falling back to `runpodctl`, the correct `--gpu-id` flag is used instead of the non-existent `--gpu-type`
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 18-01-PLAN.md — GraphQL dockerArgs fix, model validation, 15min timeout, auto-teardown (TDD)
 
@@ -147,6 +147,6 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 15. Report Generation Fix | 1/1 | Complete    | 2026-03-12 | - |
 | 16. Simulation Configuration | 2/2 | Complete    | 2026-03-12 | - |
 | 17. CLI Automation | 2/2 | Complete    | 2026-03-12 | - |
-| 18. RunPod Provisioning Fix | v1.2 | 0/1 | Not started | - |
+| 18. RunPod Provisioning Fix | 1/1 | Complete   | 2026-03-12 | - |
 | 19. Output Directory Management | v1.2 | 0/0 | Not started | - |
 | 20. Network Volume & Model Caching | v1.2 | 0/0 | Not started | - |

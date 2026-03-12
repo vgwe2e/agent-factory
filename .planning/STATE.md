@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cloud Pipeline Hardening
 status: completed
-stopped_at: Phase 20 context gathered
-last_updated: "2026-03-12T22:19:46.698Z"
-last_activity: 2026-03-12 -- Completed 17-02 (--retry, --teardown, exit codes)
+stopped_at: Completed 18-01-PLAN.md
+last_updated: "2026-03-12T22:29:34.595Z"
+last_activity: 2026-03-12 -- Completed 18-01 (RunPod provisioning fix)
 progress:
   total_phases: 6
-  completed_phases: 3
-  total_plans: 5
-  completed_plans: 5
+  completed_phases: 4
+  total_plans: 6
+  completed_plans: 6
   percent: 100
 ---
 
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 
 ## Current Position
 
-Phase: 17 of 20 (CLI Automation) -- complete
-Plan: 02 of 02 (all complete)
-Status: Phase 17 complete, ready for Phase 18
-Last activity: 2026-03-12 -- Completed 17-02 (--retry, --teardown, exit codes)
+Phase: 18 of 20 (RunPod Provisioning Fix) -- in progress
+Plan: 01 of 01 (complete)
+Status: Phase 18 plan 01 complete
+Last activity: 2026-03-12 -- Completed 18-01 (RunPod provisioning fix)
 
 Progress: [██████████] 100%
 
@@ -38,12 +38,13 @@ Progress: [██████████] 100%
 - v1.0 plans completed: 31
 - v1.1 plans completed: 7
 - v1.1 execution time: 26min
-- v1.2 plans completed: 5
+- v1.2 plans completed: 6
 - v1.2 plan 15-01: 3min (2 tasks, 4 files)
 - v1.2 plan 16-01: 4min (1 task TDD, 2 files)
 - v1.2 plan 16-02: 4min (2 tasks TDD, 8 files)
 - v1.2 plan 17-01: 2min (1 task TDD, 2 files)
 - v1.2 plan 17-02: 3min (2 tasks TDD, 2 files)
+- v1.2 plan 18-01: 3min (2 tasks TDD, 2 files)
 
 ## Accumulated Context
 
@@ -66,6 +67,11 @@ All v1.0 and v1.1 decisions logged in PROJECT.md Key Decisions table (16 decisio
 - 17-02: Guard program.parse() with isMain check for safe test imports
 - 17-02: Retry concurrency forced to 1 via retryAttempt counter in pipelineFn closure
 - 17-02: Cost tracker start/stop wraps entire retry loop for accurate total GPU time
+- 18-01: dockerArgs with --model --max-model-len 16384 --dtype auto instead of env vars
+- 18-01: Case-insensitive contains match for model validation (handles path prefixes)
+- 18-01: 10min provision + 5min health = 15min combined timeout
+- 18-01: Auto-teardown via try/catch wrapper around entire provision() body
+- 18-01: Diagnostic /v1/models fetch on health timeout to distinguish model-mismatch from not-loaded
 
 ### Pending Todos
 
@@ -77,6 +83,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-12
-Stopped at: Phase 17 complete, ready to plan Phase 18
+Last session: 2026-03-12T22:29:34.591Z
+Stopped at: Completed 18-01-PLAN.md
 Resume file: None
