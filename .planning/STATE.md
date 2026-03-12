@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cloud Pipeline Hardening
-status: roadmap_complete
-stopped_at: Roadmap created, ready to plan Phase 15
-last_updated: "2026-03-12T13:00:00.000Z"
-last_activity: 2026-03-12 -- Roadmap created for v1.2 (6 phases, 18 requirements)
+status: executing
+stopped_at: Completed 15-01-PLAN.md
+last_updated: "2026-03-12T21:01:13.000Z"
+last_activity: 2026-03-12 -- Completed Phase 15 Plan 01 (Report Generation Fix)
 progress:
   total_phases: 6
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 1
+  completed_plans: 1
+  percent: 17
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 
 ## Current Position
 
-Phase: 15 of 20 (Report Generation Fix) -- ready to plan
-Plan: --
-Status: Ready to plan
-Last activity: 2026-03-12 -- Roadmap created for v1.2 (phases 15-20, 18 requirements mapped)
+Phase: 15 of 20 (Report Generation Fix) -- Plan 01 complete
+Plan: 01 of 01 (complete)
+Status: Phase 15 complete
+Last activity: 2026-03-12 -- Completed 15-01 (loadArchivedScores + pipeline-runner integration)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [##░░░░░░░░] 17%
 
 ## Performance Metrics
 
@@ -38,12 +38,18 @@ Progress: [░░░░░░░░░░] 0%
 - v1.0 plans completed: 31
 - v1.1 plans completed: 7
 - v1.1 execution time: 26min
+- v1.2 plans completed: 1
+- v1.2 plan 15-01: 3min (2 tasks, 4 files)
 
 ## Accumulated Context
 
 ### Decisions
 
 All v1.0 and v1.1 decisions logged in PROJECT.md Key Decisions table (16 decisions, all Good).
+
+- 15-01: Load archived scores only for completed (skipped) opportunities on resume
+- 15-01: Deduplicate using Map with last-writer-wins (current session overrides archived)
+- 15-01: No Zod validation on archive files (trusted, written by own code)
 
 ### Pending Todos
 
@@ -56,5 +62,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Roadmap created for v1.2 milestone
+Stopped at: Completed 15-01-PLAN.md (Report Generation Fix)
 Resume file: None

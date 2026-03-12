@@ -9,9 +9,9 @@ Requirements for Cloud Pipeline Hardening milestone. Each maps to roadmap phases
 
 ### Report Generation
 
-- [ ] **RPT-01**: Pipeline loads checkpoint data into `allScoredResults[]` on resume so reports reflect all scored opportunities, not just current run
-- [ ] **RPT-02**: `writeFinalReports` and `writeEvaluation` produce complete output without requiring external `regen-reports.ts` script
-- [ ] **RPT-03**: Summary report shows correct total counts (scored, simulated, errors) across all checkpoint entries
+- [x] **RPT-01**: Pipeline loads checkpoint data into `allScoredResults[]` on resume so reports reflect all scored opportunities, not just current run
+- [x] **RPT-02**: `writeFinalReports` and `writeEvaluation` produce complete output without requiring external `regen-reports.ts` script
+- [x] **RPT-03**: Summary report shows correct total counts (scored, simulated, errors) across all checkpoint entries
 
 ### Simulation Configuration
 
@@ -68,9 +68,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RPT-01 | Phase 15 | Pending |
-| RPT-02 | Phase 15 | Pending |
-| RPT-03 | Phase 15 | Pending |
+| RPT-01 | Phase 15 | Complete |
+| RPT-02 | Phase 15 | Complete |
+| RPT-03 | Phase 15 | Complete |
 | SIM-01 | Phase 16 | Pending |
 | SIM-02 | Phase 16 | Pending |
 | SIM-03 | Phase 16 | Pending |

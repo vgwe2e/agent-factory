@@ -42,7 +42,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 
 **Milestone Goal:** Make the cloud evaluation pipeline reliable, automated, and fast enough to complete a full 362-opportunity Ford hierarchy evaluation in under 30 minutes on a single A100 GPU with zero manual intervention.
 
-- [ ] **Phase 15: Report Generation Fix** — Reports correctly reflect all scored opportunities including checkpoint-resumed data
+- [x] **Phase 15: Report Generation Fix** — Reports correctly reflect all scored opportunities including checkpoint-resumed data (completed 2026-03-12)
 - [ ] **Phase 16: Simulation Configuration** — Users can skip or configure simulation phase without code changes
 - [ ] **Phase 17: CLI Automation** — Single CLI invocation handles full lifecycle with retries and teardown
 - [ ] **Phase 18: RunPod Provisioning Fix** — Pod provisioning succeeds on first attempt with correct model loaded
@@ -59,7 +59,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
   1. User resumes a partially-completed run and the final report includes all previously-checkpointed scores, not just the current session's scores
   2. User completes a run and `writeFinalReports` produces complete output without needing to manually run `regen-reports.ts`
   3. User inspects the summary report and sees correct totals for scored, simulated, and errored opportunities across all checkpoint entries
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 15-01-PLAN.md — Load archived scores on resume and wire into report generation
 
@@ -136,7 +136,7 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 12. vLLM Client Adapter | v1.1 | 2/2 | Complete | 2026-03-11 |
 | 13. Concurrent Pipeline Runner | v1.1 | 2/2 | Complete | 2026-03-11 |
 | 14. Cloud Infrastructure | v1.1 | 3/3 | Complete | 2026-03-11 |
-| 15. Report Generation Fix | v1.2 | 0/1 | Planning complete | - |
+| 15. Report Generation Fix | 1/1 | Complete   | 2026-03-12 | - |
 | 16. Simulation Configuration | v1.2 | 0/0 | Not started | - |
 | 17. CLI Automation | v1.2 | 0/0 | Not started | - |
 | 18. RunPod Provisioning Fix | v1.2 | 0/0 | Not started | - |
