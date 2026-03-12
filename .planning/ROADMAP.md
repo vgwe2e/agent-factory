@@ -44,7 +44,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 
 - [x] **Phase 15: Report Generation Fix** — Reports correctly reflect all scored opportunities including checkpoint-resumed data (completed 2026-03-12)
 - [x] **Phase 16: Simulation Configuration** — Users can skip or configure simulation phase without code changes (completed 2026-03-12)
-- [ ] **Phase 17: CLI Automation** — Single CLI invocation handles full lifecycle with retries and teardown
+- [x] **Phase 17: CLI Automation** — Single CLI invocation handles full lifecycle with retries and teardown (completed 2026-03-12)
 - [ ] **Phase 18: RunPod Provisioning Fix** — Pod provisioning succeeds on first attempt with correct model loaded
 - [ ] **Phase 19: Output Directory Management** — Backend-aware output namespacing prevents local/cloud clobber
 - [ ] **Phase 20: Network Volume & Model Caching** — Model weights persist across pod launches via network volumes
@@ -85,7 +85,7 @@ Plans:
   2. User passes `--teardown` and the RunPod pod is stopped and deleted after pipeline completes (or fails)
   3. User runs a single CLI command and it handles score, retry, report generation, and teardown without manual steps
   4. Pipeline exits with code 0 when all opportunities scored, 1 when errors remain after retries, 2 on fatal failure
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 17-01-PLAN.md — clearCheckpointErrors function (TDD)
 - [ ] 17-02-PLAN.md — CLI --retry, --teardown flags, retry loop, and structured exit codes
@@ -144,7 +144,7 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 14. Cloud Infrastructure | v1.1 | 3/3 | Complete | 2026-03-11 |
 | 15. Report Generation Fix | 1/1 | Complete    | 2026-03-12 | - |
 | 16. Simulation Configuration | 2/2 | Complete    | 2026-03-12 | - |
-| 17. CLI Automation | 1/2 | In Progress|  | - |
+| 17. CLI Automation | 2/2 | Complete   | 2026-03-12 | - |
 | 18. RunPod Provisioning Fix | v1.2 | 0/0 | Not started | - |
 | 19. Output Directory Management | v1.2 | 0/0 | Not started | - |
 | 20. Network Volume & Model Caching | v1.2 | 0/0 | Not started | - |

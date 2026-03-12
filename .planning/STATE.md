@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cloud Pipeline Hardening
 status: completed
-stopped_at: Phase 19 context gathered
-last_updated: "2026-03-12T22:15:17.678Z"
-last_activity: 2026-03-12 -- Completed 17-01 (clearCheckpointErrors TDD)
+stopped_at: Completed 17-02-PLAN.md
+last_updated: "2026-03-12T22:16:41.734Z"
+last_activity: 2026-03-12 -- Completed 17-02 (--retry, --teardown, exit codes)
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
   percent: 80
 ---
 
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 
 ## Current Position
 
-Phase: 17 of 20 (CLI Automation) -- in progress
-Plan: 01 of 02 (17-01 complete)
-Status: 17-01 complete, ready for 17-02
-Last activity: 2026-03-12 -- Completed 17-01 (clearCheckpointErrors TDD)
+Phase: 17 of 20 (CLI Automation) -- complete
+Plan: 02 of 02 (all complete)
+Status: Phase 17 complete, ready for Phase 18
+Last activity: 2026-03-12 -- Completed 17-02 (--retry, --teardown, exit codes)
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -38,11 +38,12 @@ Progress: [████████░░] 80%
 - v1.0 plans completed: 31
 - v1.1 plans completed: 7
 - v1.1 execution time: 26min
-- v1.2 plans completed: 4
+- v1.2 plans completed: 5
 - v1.2 plan 15-01: 3min (2 tasks, 4 files)
 - v1.2 plan 16-01: 4min (1 task TDD, 2 files)
 - v1.2 plan 16-02: 4min (2 tasks TDD, 8 files)
 - v1.2 plan 17-01: 2min (1 task TDD, 2 files)
+- v1.2 plan 17-02: 3min (2 tasks TDD, 2 files)
 
 ## Accumulated Context
 
@@ -61,6 +62,10 @@ All v1.0 and v1.1 decisions logged in PROJECT.md Key Decisions table (16 decisio
 - 16-02: Optional trailing simSkipped parameter pattern for backward-compatible formatter signatures
 - 17-01: Only write to disk when entries actually cleared (skip no-op saves)
 - 17-01: Return count of cleared entries for caller logging/reporting
+- 17-02: Extract runWithRetries as exported helper for testability (Commander untestable)
+- 17-02: Guard program.parse() with isMain check for safe test imports
+- 17-02: Retry concurrency forced to 1 via retryAttempt counter in pipelineFn closure
+- 17-02: Cost tracker start/stop wraps entire retry loop for accurate total GPU time
 
 ### Pending Todos
 
@@ -72,6 +77,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-12T22:15:17.673Z
-Stopped at: Phase 19 context gathered
-Resume file: .planning/phases/19-output-directory-management/19-CONTEXT.md
+Last session: 2026-03-12T22:16:41.729Z
+Stopped at: Completed 17-02-PLAN.md
+Resume file: None

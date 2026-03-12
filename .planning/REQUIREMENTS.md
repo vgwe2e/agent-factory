@@ -22,9 +22,9 @@ Requirements for Cloud Pipeline Hardening milestone. Each maps to roadmap phases
 ### Automation
 
 - [x] **AUTO-01**: CLI `--retry <N>` flag automatically retries errored opportunities up to N times with concurrency 1
-- [ ] **AUTO-02**: CLI `--teardown` flag automatically stops and deletes RunPod pod on pipeline completion or failure
-- [ ] **AUTO-03**: Single CLI invocation handles full lifecycle: score → retry → report → teardown
-- [ ] **AUTO-04**: Pipeline exit code reflects final status (0 = all scored, 1 = errors remain, 2 = fatal)
+- [x] **AUTO-02**: CLI `--teardown` flag automatically stops and deletes RunPod pod on pipeline completion or failure
+- [x] **AUTO-03**: Single CLI invocation handles full lifecycle: score → retry → report → teardown
+- [x] **AUTO-04**: Pipeline exit code reflects final status (0 = all scored, 1 = errors remain, 2 = fatal)
 
 ### RunPod Provisioning
 
@@ -75,9 +75,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SIM-02 | Phase 16 | Complete |
 | SIM-03 | Phase 16 | Complete |
 | AUTO-01 | Phase 17 | Complete |
-| AUTO-02 | Phase 17 | Pending |
-| AUTO-03 | Phase 17 | Pending |
-| AUTO-04 | Phase 17 | Pending |
+| AUTO-02 | Phase 17 | Complete |
+| AUTO-03 | Phase 17 | Complete |
+| AUTO-04 | Phase 17 | Complete |
 | PROV-01 | Phase 18 | Pending |
 | PROV-02 | Phase 18 | Pending |
 | PROV-03 | Phase 18 | Pending |
