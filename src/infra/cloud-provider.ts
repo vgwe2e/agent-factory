@@ -47,8 +47,8 @@ const DEFAULT_GPU_TYPE = "NVIDIA H100 80GB HBM3";
 const DEFAULT_MODEL = "Qwen/Qwen2.5-32B-Instruct";
 // RunPod vLLM Serverless Quick Deploy template
 const DEFAULT_TEMPLATE_ID = "xkhgg72fuo";
-const DEFAULT_PROVISION_TIMEOUT_MS = 300_000; // 5 min
-const DEFAULT_HEALTH_TIMEOUT_MS = 180_000; // 3 min
+const DEFAULT_PROVISION_TIMEOUT_MS = 600_000; // 10 min
+const DEFAULT_HEALTH_TIMEOUT_MS = 300_000; // 5 min
 const DEFAULT_POLL_INTERVAL_MS = 5_000;
 
 // ---------------------------------------------------------------------------
@@ -107,6 +107,21 @@ export function createCloudProvider(config: CloudProviderConfig): CloudProvider 
     }
   }
 
+  // ---- Auto-teardown helper ---------------------------------------------
+
+  async function autoTeardown(endpointId: string): Promise<void> {
+    try {
+      const deleteMutation = `
+        mutation {
+          deleteEndpoint(id: "${endpointId}")
+        }
+      `;
+      await graphql(deleteMutation);
+    } catch {
+      // Best-effort teardown -- swallow errors
+    }
+  }
+
   // ---- Provider methods -------------------------------------------------
 
   async function provision(): Promise<ProvisionedEndpoint> {
@@ -116,102 +131,141 @@ export function createCloudProvider(config: CloudProviderConfig): CloudProvider 
       );
     }
 
-    // 1. Create serverless endpoint via GraphQL mutation
-    const name = `aera-eval-${Date.now()}`;
-    const createMutation = `
-      mutation {
-        saveEndpoint(input: {
-          name: "${name}"
-          templateId: "${templateId}"
-          gpuIds: "${gpuType}"
-          idleTimeout: 60
-          workersMax: 1
-          workersMin: 0
-          env: [
-            { key: "MODEL_NAME", value: "${model}" }
-          ]
-        }) {
-          id
-          name
+    let endpointId: string | undefined;
+
+    try {
+      // 1. Create serverless endpoint via GraphQL mutation
+      const name = `aera-eval-${Date.now()}`;
+      const createMutation = `
+        mutation {
+          saveEndpoint(input: {
+            name: "${name}"
+            templateId: "${templateId}"
+            gpuIds: "${gpuType}"
+            idleTimeout: 60
+            workersMax: 1
+            workersMin: 0
+            dockerArgs: "--model ${model} --max-model-len 16384 --dtype auto"
+          }) {
+            id
+            name
+          }
+        }
+      `;
+
+      const createResult = (await graphql(createMutation)) as {
+        data?: { saveEndpoint?: { id: string; name: string } };
+        errors?: Array<{ message: string }>;
+      };
+
+      if (createResult.errors?.length) {
+        throw new Error(
+          `Failed to create RunPod endpoint: ${createResult.errors.map((e) => e.message).join(", ")}`,
+        );
+      }
+
+      endpointId = createResult.data?.saveEndpoint?.id;
+      if (!endpointId) {
+        throw new Error("RunPod endpoint creation returned no endpoint ID");
+      }
+
+      // 2. Poll endpoint health until workers ready (exponential backoff)
+      const provisionStart = Date.now();
+      let interval = pollIntervalMs;
+
+      while (Date.now() - provisionStart < maxProvisionTimeoutMs) {
+        const ready = await pollEndpointHealth(endpointId);
+        if (ready) break;
+
+        if (Date.now() - provisionStart + interval >= maxProvisionTimeoutMs) {
+          throw new Error(
+            `RunPod endpoint ${endpointId} provision timed out after ${maxProvisionTimeoutMs}ms. ` +
+            `Check RunPod console for endpoint ${endpointId}. Verify GPU availability. ` +
+            `Use --vllm-url <url> to connect to a manually created pod.`,
+          );
+        }
+
+        await sleep(interval);
+        // Exponential backoff: 5s, 5s, 10s, 10s, 15s... capped at 15s
+        interval = Math.min(interval + pollIntervalMs, 15_000);
+      }
+
+      // Final timeout check after loop exits without break
+      const readyAfterLoop = await pollEndpointHealth(endpointId);
+      if (!readyAfterLoop) {
+        // Only throw if last check is also not ready (handles edge case where
+        // we exit loop due to time check but the endpoint just became ready)
+        const lastCheck = await pollEndpointHealth(endpointId);
+        if (!lastCheck) {
+          throw new Error(
+            `RunPod endpoint ${endpointId} provision timed out after ${maxProvisionTimeoutMs}ms. ` +
+            `Check RunPod console for endpoint ${endpointId}. Verify GPU availability. ` +
+            `Use --vllm-url <url> to connect to a manually created pod.`,
+          );
         }
       }
-    `;
 
-    const createResult = (await graphql(createMutation)) as {
-      data?: { saveEndpoint?: { id: string; name: string } };
-      errors?: Array<{ message: string }>;
-    };
+      // 3. Construct OpenAI-compatible proxy URL
+      const baseUrl = `${RUNPOD_SERVERLESS_BASE}/${endpointId}/openai/v1`;
 
-    if (createResult.errors?.length) {
+      // 4. Poll vLLM health (GET /v1/models) until model loaded
+      const healthStart = Date.now();
+      let healthInterval = pollIntervalMs;
+
+      while (Date.now() - healthStart < maxHealthTimeoutMs) {
+        const ep: ProvisionedEndpoint = {
+          endpointId,
+          baseUrl,
+          provisionedAt: new Date(),
+        };
+        const modelReady = await healthCheck(ep);
+        if (modelReady) {
+          return { endpointId, baseUrl, provisionedAt: new Date() };
+        }
+
+        await sleep(healthInterval);
+        healthInterval = Math.min(healthInterval + pollIntervalMs, 15_000);
+      }
+
+      // Health poll timed out -- attempt to identify the loaded model for diagnostics
+      const diagUrl = `${baseUrl}/models`;
+      let modelDiag = "";
+      try {
+        const diagResp = await fetch(diagUrl, {
+          headers: { Authorization: `Bearer ${apiKey}` },
+          signal: AbortSignal.timeout(10_000),
+        });
+        if (diagResp.ok) {
+          const diagData = (await diagResp.json()) as { data?: Array<{ id: string }> };
+          const loadedIds = (diagData?.data ?? []).map((m) => m.id);
+          if (loadedIds.length > 0) {
+            throw new Error(
+              `Expected model '${model}' but loaded: [${loadedIds.join(", ")}]. ` +
+              `Use --vllm-url <url> to connect to a manually created pod.`,
+            );
+          }
+        }
+      } catch (diagErr) {
+        // If the diagnostic fetch threw a model mismatch error, re-throw it
+        if (diagErr instanceof Error && diagErr.message.includes("Expected model")) {
+          throw diagErr;
+        }
+        // Otherwise fall through to generic timeout error
+        modelDiag = diagErr instanceof Error ? ` (diagnostic: ${diagErr.message})` : "";
+      }
+
       throw new Error(
-        `Failed to create RunPod endpoint: ${createResult.errors.map((e) => e.message).join(", ")}`,
+        `vLLM health check timed out after ${maxHealthTimeoutMs / 1000}s -- model may not be loaded on endpoint ${endpointId}.${modelDiag} ` +
+        `Check RunPod console for endpoint ${endpointId}. ` +
+        `Use --vllm-url <url> to connect to a manually created pod.`,
       );
-    }
-
-    const endpointId = createResult.data?.saveEndpoint?.id;
-    if (!endpointId) {
-      throw new Error("RunPod endpoint creation returned no endpoint ID");
-    }
-
-    // 2. Poll endpoint health until workers ready (exponential backoff)
-    const provisionStart = Date.now();
-    let interval = pollIntervalMs;
-
-    while (Date.now() - provisionStart < maxProvisionTimeoutMs) {
-      const ready = await pollEndpointHealth(endpointId);
-      if (ready) break;
-
-      if (Date.now() - provisionStart + interval >= maxProvisionTimeoutMs) {
-        throw new Error(
-          `RunPod endpoint ${endpointId} provision timed out after ${maxProvisionTimeoutMs}ms`,
-        );
+    } catch (err) {
+      // Auto-teardown on any provisioning failure (PROV-03)
+      if (endpointId) {
+        await autoTeardown(endpointId);
       }
-
-      await sleep(interval);
-      // Exponential backoff: 5s, 5s, 10s, 10s, 15s... capped at 15s
-      interval = Math.min(interval + pollIntervalMs, 15_000);
+      throw err;
     }
-
-    // Final timeout check after loop exits without break
-    const readyAfterLoop = await pollEndpointHealth(endpointId);
-    if (!readyAfterLoop) {
-      // Only throw if last check is also not ready (handles edge case where
-      // we exit loop due to time check but the endpoint just became ready)
-      const lastCheck = await pollEndpointHealth(endpointId);
-      if (!lastCheck) {
-        throw new Error(
-          `RunPod endpoint ${endpointId} provision timed out after ${maxProvisionTimeoutMs}ms`,
-        );
-      }
-    }
-
-    // 3. Construct OpenAI-compatible proxy URL
-    const baseUrl = `${RUNPOD_SERVERLESS_BASE}/${endpointId}/openai/v1`;
-
-    // 4. Poll vLLM health (GET /v1/models) until model loaded
-    const healthStart = Date.now();
-    let healthInterval = pollIntervalMs;
-
-    while (Date.now() - healthStart < maxHealthTimeoutMs) {
-      const ep: ProvisionedEndpoint = {
-        endpointId,
-        baseUrl,
-        provisionedAt: new Date(),
-      };
-      const modelReady = await healthCheck(ep);
-      if (modelReady) {
-        return { endpointId, baseUrl, provisionedAt: new Date() };
-      }
-
-      await sleep(healthInterval);
-      healthInterval = Math.min(healthInterval + pollIntervalMs, 15_000);
-    }
-
-    // Health poll timed out — vLLM model may not be loaded. Throw so the caller
-    // does not attempt to score against a non-responsive endpoint.
-    throw new Error(
-      `vLLM health check timed out after ${maxHealthTimeoutMs / 1000}s — model may not be loaded on endpoint ${endpointId}`,
-    );
   }
 
   async function healthCheck(endpoint: ProvisionedEndpoint): Promise<boolean> {
@@ -221,7 +275,19 @@ export function createCloudProvider(config: CloudProviderConfig): CloudProvider 
         headers: { Authorization: `Bearer ${apiKey}` },
         signal: AbortSignal.timeout(10_000),
       });
-      return resp.ok;
+
+      if (!resp.ok) return false;
+
+      // Parse /v1/models response and validate requested model is loaded
+      const data = (await resp.json()) as { data?: Array<{ id: string }> };
+      const modelIds = (data?.data ?? []).map((m) => m.id);
+
+      if (modelIds.length === 0) return false;
+
+      // Case-insensitive contains match
+      return modelIds.some(
+        (id) => id.toLowerCase().includes(model.toLowerCase()),
+      );
     } catch {
       return false;
     }
