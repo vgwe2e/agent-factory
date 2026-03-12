@@ -46,7 +46,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 - [x] **Phase 16: Simulation Configuration** — Users can skip or configure simulation phase without code changes (completed 2026-03-12)
 - [x] **Phase 17: CLI Automation** — Single CLI invocation handles full lifecycle with retries and teardown (completed 2026-03-12)
 - [x] **Phase 18: RunPod Provisioning Fix** — Pod provisioning succeeds on first attempt with correct model loaded (completed 2026-03-12)
-- [ ] **Phase 19: Output Directory Management** — Backend-aware output namespacing prevents local/cloud clobber
+- [x] **Phase 19: Output Directory Management** — Backend-aware output namespacing prevents local/cloud clobber (completed 2026-03-12)
 - [ ] **Phase 20: Network Volume & Model Caching** — Model weights persist across pod launches via network volumes
 
 ## Phase Details
@@ -111,7 +111,7 @@ Plans:
   1. Running with `--backend vllm` (without explicit `--output-dir`) writes results to `evaluation-vllm/` instead of `evaluation/`
   2. Running with `--backend ollama` (without explicit `--output-dir`) writes results to `evaluation-ollama/`
   3. A user who runs both local and cloud evaluations on the same hierarchy finds both result sets intact with no overwritten files
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 19-01-PLAN.md — resolveOutputDir helper + CLI wiring for backend-aware output namespacing
 
@@ -150,5 +150,5 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 16. Simulation Configuration | 2/2 | Complete    | 2026-03-12 | - |
 | 17. CLI Automation | 2/2 | Complete    | 2026-03-12 | - |
 | 18. RunPod Provisioning Fix | 1/1 | Complete    | 2026-03-12 | - |
-| 19. Output Directory Management | v1.2 | 0/1 | Not started | - |
+| 19. Output Directory Management | 1/1 | Complete   | 2026-03-12 | - |
 | 20. Network Volume & Model Caching | v1.2 | 0/0 | Not started | - |

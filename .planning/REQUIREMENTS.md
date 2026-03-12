@@ -35,8 +35,8 @@ Requirements for Cloud Pipeline Hardening milestone. Each maps to roadmap phases
 
 ### Output Management
 
-- [ ] **OUT-01**: Output directory auto-namespaces by backend type (`evaluation-ollama/`, `evaluation-vllm/`) when `--output-dir` is not explicitly set
-- [ ] **OUT-02**: Local Ollama runs and cloud vLLM runs never clobber each other's output by default
+- [x] **OUT-01**: Output directory auto-namespaces by backend type (`evaluation-ollama/`, `evaluation-vllm/`) when `--output-dir` is not explicitly set
+- [x] **OUT-02**: Local Ollama runs and cloud vLLM runs never clobber each other's output by default
 
 ### Model Caching
 
@@ -82,8 +82,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROV-02 | Phase 18 | Complete |
 | PROV-03 | Phase 18 | Complete |
 | PROV-04 | Phase 18 | Complete |
-| OUT-01 | Phase 19 | Pending |
-| OUT-02 | Phase 19 | Pending |
+| OUT-01 | Phase 19 | Complete |
+| OUT-02 | Phase 19 | Complete |
 | CACHE-01 | Phase 20 | Pending |
 | CACHE-02 | Phase 20 | Pending |
 

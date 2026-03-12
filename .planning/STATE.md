@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cloud Pipeline Hardening
 status: completed
-stopped_at: Completed 18-01-PLAN.md
-last_updated: "2026-03-12T22:32:17.201Z"
-last_activity: 2026-03-12 -- Completed 18-01 (RunPod provisioning fix)
+stopped_at: Completed 19-01-PLAN.md
+last_updated: "2026-03-12T22:41:20.000Z"
+last_activity: 2026-03-12 -- Completed 19-01 (output directory management)
 progress:
   total_phases: 6
-  completed_phases: 4
-  total_plans: 6
-  completed_plans: 6
+  completed_phases: 5
+  total_plans: 7
+  completed_plans: 7
   percent: 100
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 18 — RunPod Provisioning Fix
+**Current focus:** Phase 19 — Output Directory Management
 
 ## Current Position
 
-Phase: 18 of 20 (RunPod Provisioning Fix) -- in progress
+Phase: 19 of 20 (Output Directory Management) -- complete
 Plan: 01 of 01 (complete)
-Status: Phase 18 plan 01 complete
-Last activity: 2026-03-12 -- Completed 18-01 (RunPod provisioning fix)
+Status: Phase 19 plan 01 complete
+Last activity: 2026-03-12 -- Completed 19-01 (output directory management)
 
 Progress: [██████████] 100%
 
@@ -38,13 +38,14 @@ Progress: [██████████] 100%
 - v1.0 plans completed: 31
 - v1.1 plans completed: 7
 - v1.1 execution time: 26min
-- v1.2 plans completed: 6
+- v1.2 plans completed: 7
 - v1.2 plan 15-01: 3min (2 tasks, 4 files)
 - v1.2 plan 16-01: 4min (1 task TDD, 2 files)
 - v1.2 plan 16-02: 4min (2 tasks TDD, 8 files)
 - v1.2 plan 17-01: 2min (1 task TDD, 2 files)
 - v1.2 plan 17-02: 3min (2 tasks TDD, 2 files)
 - v1.2 plan 18-01: 3min (2 tasks TDD, 2 files)
+- v1.2 plan 19-01: 1min (2 tasks TDD, 2 files)
 
 ## Accumulated Context
 
@@ -72,6 +73,9 @@ All v1.0 and v1.1 decisions logged in PROJECT.md Key Decisions table (16 decisio
 - 18-01: 10min provision + 5min health = 15min combined timeout
 - 18-01: Auto-teardown via try/catch wrapper around entire provision() body
 - 18-01: Diagnostic /v1/models fetch on health timeout to distinguish model-mismatch from not-loaded
+- 19-01: resolveOutputDir as pure exported function before Commander setup for testability
+- 19-01: No migration warning for existing ./evaluation/ directory
+- 19-01: regen-reports.ts unchanged -- explicit-arg-only for standalone usage
 
 ### Pending Todos
 
@@ -83,6 +87,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-12T22:29:34.591Z
-Stopped at: Completed 18-01-PLAN.md
+Last session: 2026-03-12T22:41:20.000Z
+Stopped at: Completed 19-01-PLAN.md
 Resume file: None
