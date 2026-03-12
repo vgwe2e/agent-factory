@@ -41,7 +41,7 @@ Produce actionable, adoption-realistic implementation specs for Aera skills — 
 
 - [ ] Report generation includes checkpoint data on resume runs
 - [ ] Simulation phase can be skipped (`--skip-sim`) or configured with custom timeouts
-- [ ] End-to-end automation: one command handles score + retry + report + teardown
+- ✓ End-to-end automation: one command handles score + retry + report + teardown — v1.2 Phase 17
 - [ ] RunPod provisioning succeeds on first attempt with correct model via GraphQL API
 - [ ] Backend-aware output directories (auto-namespace by backend type)
 - [ ] Network volume support for model weight persistence across runs
@@ -117,6 +117,8 @@ Known tech debt: 12 items across v1.0 (9) and v1.1 (3). See `.planning/MILESTONE
 | Async createBackend factory | Cloud provisioning requires await for RunPod endpoint | ✓ Good — clean async/await flow |
 | costTracker via PipelineOptions (not global) | Testability and explicit dependency injection | ✓ Good — 2 new tests with deterministic assertions |
 | Non-fatal cloud-cost.json write | Artifact write failure should not break scoring pipeline | ✓ Good — consistent with evaluation artifact patterns |
+| Extract runWithRetries as testable helper | Commander action not unit-testable; isMain guard enables safe test imports | ✓ Good — 8 CLI tests, clean separation |
+| Retry concurrency forced to 1 | Retries target specific failures, not bulk scoring | ✓ Good — avoids overwhelming errored endpoints |
 
 ---
-*Last updated: 2026-03-12 after v1.2 milestone start*
+*Last updated: 2026-03-12 after Phase 17*

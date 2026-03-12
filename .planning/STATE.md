@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** v1.2 Cloud Pipeline Hardening -- reliability, automation, performance
+**Current focus:** Phase 18 — RunPod Provisioning Fix
 
 ## Current Position
 
@@ -77,6 +77,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-12T22:18:05.298Z
-Stopped at: Phase 20 context gathered
-Resume file: .planning/phases/20-network-volume-model-caching/20-CONTEXT.md
+Last session: 2026-03-12
+Stopped at: Phase 17 complete, ready to plan Phase 18
+Resume file: None
