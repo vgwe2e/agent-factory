@@ -99,7 +99,9 @@ Plans:
   2. After pod is running, provisioning confirms the requested model appears in `/v1/models` response before returning success
   3. If the pod does not become ready within 15 minutes, provisioning fails with a clear error message including pod ID and status
   4. When falling back to `runpodctl`, the correct `--gpu-id` flag is used instead of the non-existent `--gpu-type`
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 18-01-PLAN.md — GraphQL dockerArgs fix, model validation, 15min timeout, auto-teardown (TDD)
 
 ### Phase 19: Output Directory Management
 **Goal**: Local and cloud evaluation runs produce output in separate directories by default, preventing accidental overwrites
@@ -145,6 +147,6 @@ Note: Phases 15, 16, 18, 19 are independent and could execute in parallel. Phase
 | 15. Report Generation Fix | 1/1 | Complete    | 2026-03-12 | - |
 | 16. Simulation Configuration | 2/2 | Complete    | 2026-03-12 | - |
 | 17. CLI Automation | 2/2 | Complete    | 2026-03-12 | - |
-| 18. RunPod Provisioning Fix | v1.2 | 0/0 | Not started | - |
+| 18. RunPod Provisioning Fix | v1.2 | 0/1 | Not started | - |
 | 19. Output Directory Management | v1.2 | 0/0 | Not started | - |
 | 20. Network Volume & Model Caching | v1.2 | 0/0 | Not started | - |
