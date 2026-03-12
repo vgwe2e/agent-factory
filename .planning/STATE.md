@@ -4,7 +4,7 @@ milestone: v1.2
 milestone_name: Cloud Pipeline Hardening
 status: completed
 stopped_at: Phase 20 context gathered
-last_updated: "2026-03-12T22:18:05.302Z"
+last_updated: "2026-03-12T22:19:46.698Z"
 last_activity: 2026-03-12 -- Completed 17-02 (--retry, --teardown, exit codes)
 progress:
   total_phases: 6
