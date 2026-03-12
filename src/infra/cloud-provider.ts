@@ -40,8 +40,8 @@ export interface CloudProvider {
 // Constants
 // ---------------------------------------------------------------------------
 
-const RUNPOD_GRAPHQL_URL = "https://api.runpod.io/graphql";
-const RUNPOD_SERVERLESS_BASE = "https://api.runpod.io/v2";
+const RUNPOD_GRAPHQL_URL = "https://api.runpod.ai/graphql";
+const RUNPOD_SERVERLESS_BASE = "https://api.runpod.ai/v2";
 
 const DEFAULT_GPU_TYPE = "NVIDIA H100 80GB HBM3";
 const DEFAULT_MODEL = "Qwen/Qwen2.5-32B-Instruct";

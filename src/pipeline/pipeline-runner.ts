@@ -27,6 +27,7 @@ import {
   setStage,
   archiveAndReset,
 } from "./context-tracker.js";
+import { ollamaChat } from "../scoring/ollama-client.js";
 import { buildKnowledgeContext } from "../scoring/knowledge-context.js";
 import { groupL4sByL3 } from "../triage/red-flags.js";
 import { loadCheckpoint, getCompletedNames, createCheckpointWriter } from "../infra/checkpoint.js";
@@ -70,6 +71,8 @@ export interface PipelineOptions {
   concurrency?: number;
   /** Per-request timeout in ms for scoring calls (default: 300_000 = 5 min). */
   requestTimeoutMs?: number;
+  /** Only score opportunities up to this tier (1, 2, or 3). Default: 3. */
+  maxTier?: number;
   /** Cost tracker for cloud GPU usage (injected from BackendConfig). */
   costTracker?: CostTracker;
 }
@@ -158,9 +161,12 @@ export async function runPipeline(
   logger.info("Running triage");
   const triageResults = triageOpportunities(data);
 
-  const processable = triageResults.filter((t) => t.action === "process");
+  const maxTier = options.maxTier ?? 3;
+  const processable = triageResults.filter(
+    (t) => t.action === "process" && t.tier <= maxTier,
+  );
   const skipped = triageResults.filter(
-    (t) => t.action === "skip" || t.action === "demote",
+    (t) => t.action === "skip" || t.action === "demote" || (t.action === "process" && t.tier > maxTier),
   );
 
   const tier1 = processable.filter((t) => t.tier === 1).length;
@@ -246,12 +252,17 @@ export async function runPipeline(
       childLog.info("Scoring opportunity");
       progress.start(triage.l3Name);
 
+      // Use 8B model for Tier 3 (faster, acceptable quality for low-priority opps)
+      const tierChatFn = options.chatFn ?? (triage.tier >= 3
+        ? (msgs: Array<{ role: string; content: string }>, fmt: Record<string, unknown>) => ollamaChat(msgs, fmt, triageModel)
+        : undefined);
+
       try {
         // Use callWithResilience wrapped in withTimeout for stuck request protection
         const resilient = await withTimeout(
           (_signal) => callWithResilience({
             primaryCall: async () => {
-              const r = await scoreOneOpportunity(opp, l4s, data.company_context, knowledgeContext, options.chatFn);
+              const r = await scoreOneOpportunity(opp, l4s, data.company_context, knowledgeContext, tierChatFn);
               if ("error" in r) throw new Error(r.error);
               return JSON.stringify(r);
             },

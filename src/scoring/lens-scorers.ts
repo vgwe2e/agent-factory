@@ -80,6 +80,7 @@ export async function scoreTechnical(
       if (!chatResult.success) throw new Error(chatResult.error);
       return chatResult.content;
     },
+    2,
   );
 
   if (!result.success) {
@@ -123,6 +124,7 @@ export async function scoreAdoption(
       if (!chatResult.success) throw new Error(chatResult.error);
       return chatResult.content;
     },
+    2,
   );
 
   if (!result.success) {
@@ -167,6 +169,7 @@ export async function scoreValue(
       if (!chatResult.success) throw new Error(chatResult.error);
       return chatResult.content;
     },
+    2,
   );
 
   if (!result.success) {

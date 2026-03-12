@@ -40,8 +40,10 @@ interface VllmChatResponse {
  * @param model - Model name/path loaded in vLLM
  * @returns ChatFn-compatible async function
  */
-export function createVllmChatFn(baseUrl: string, model: string): ChatFn {
+export function createVllmChatFn(baseUrl: string, model: string, apiKey?: string): ChatFn {
   const endpoint = `${baseUrl}/v1/chat/completions`;
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
 
   return async (
     messages: Array<{ role: string; content: string }>,
@@ -54,7 +56,7 @@ export function createVllmChatFn(baseUrl: string, model: string): ChatFn {
 
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           model,
           messages,

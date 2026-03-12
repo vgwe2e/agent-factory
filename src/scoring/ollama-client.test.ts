@@ -114,4 +114,21 @@ describe("scoreWithRetry", () => {
     const result = await scoreWithRetry(schema, async () => "bad json", 1);
     assert.equal(result.success, false);
   });
+
+  it("does not retry on timeout errors", async () => {
+    const { scoreWithRetry } = await import("./ollama-client.js");
+    const { z } = await import("zod");
+
+    const schema = z.object({ value: z.number() });
+    let callCount = 0;
+    const callFn = async () => {
+      callCount++;
+      throw new Error("Ollama chat failed: The operation was aborted due to timeout");
+    };
+
+    const result = await scoreWithRetry(schema, callFn, 3);
+    assert.equal(result.success, false);
+    assert.equal(callCount, 1, "Should bail after first timeout, not retry");
+    assert.ok(result.error.includes("timeout"));
+  });
 });

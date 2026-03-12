@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This repo contains two distinct systems:
 
 1. **agent-factory** (root + `seed/`) — Autonomous agent discovery and builder loop. Finds problems from Reddit/HN/GitHub, scores them, builds specialized agents on a shared Next.js harness, ships to `builds/`.
-2. **Aera Skill Feasibility Engine** (`src/`) — CLI tool that evaluates Aera hierarchy exports (L3 opportunities, L4 activities), scores them across three lenses, and produces ranked feasibility reports. Currently the active development focus (Phases 1-3 complete, Phases 4-9 pending).
+2. **Aera Skill Feasibility Engine** (`src/`) — CLI tool that evaluates Aera hierarchy exports (L3 opportunities, L4 activities), scores them across three lenses, and produces ranked feasibility reports. v1.1 shipped with cloud-accelerated scoring via vLLM on RunPod GPUs.
 
 ## Build & Test Commands
 
@@ -51,10 +51,18 @@ npm run build  # Production build
 - **Types:** Zod schemas in `schemas/`, TypeScript types inferred from them in `types/`
 
 **Key design decisions:**
-- Runs fully offline via Ollama (no cloud APIs). Target models: Qwen 2.5 8B for triage, 32B for reasoning.
-- Hardware constraint: 36GB Apple Silicon — max ~32B quantized models.
+- Default: fully offline via Ollama. Optional cloud: vLLM on RunPod H100/A100 via `--backend vllm`.
+- Target models: Qwen 2.5 8B for triage, 32B for reasoning.
+- Hardware constraint: 36GB Apple Silicon — max ~32B quantized models locally.
 - Pure functions with no I/O side effects in core logic (triage, scoring).
 - Result type pattern: `{ success: true; data: T } | { success: false; error: string }`
+
+**Cloud backend (v1.1):**
+- `--backend vllm --vllm-url URL --concurrency N` for user-managed vLLM servers
+- `--backend vllm` with `RUNPOD_API_KEY` in `.env` auto-provisions RunPod serverless endpoint
+- RunPod API domain is `api.runpod.ai` (NOT `api.runpod.io` — common mistake)
+- RunPod Serverless requires separate permissions from Pods; API key needs "All" or "Serverless" scope
+- The `.env` file is at repo root; `dotenv/config` is imported in `cli.ts`
 
 ## Architecture: Agent Harness (seed/)
 
@@ -77,7 +85,8 @@ npm run build  # Production build
 
 The `.planning/` directory is managed by the GSD workflow system:
 - `PROJECT.md` — Project charter and key decisions
-- `ROADMAP.md` — 9-phase roadmap with requirements traceability
-- `REQUIREMENTS.md` — 44 requirements across 8 categories
+- `ROADMAP.md` — 14-phase roadmap across 2 milestones (v1.0 + v1.1)
+- `MILESTONES.md` — Shipped milestone records with stats and accomplishments
 - `STATE.md` — Current progress tracking
-- `phases/` — Per-phase plans, summaries, and verification docs
+- `milestones/` — Archived roadmaps, requirements, phases per shipped version
+- `phases/` — Active phase plans, summaries, and verification docs

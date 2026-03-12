@@ -76,7 +76,7 @@ export async function createBackend(
 
       // Path 1: User-managed vLLM instance
       if (options?.vllmUrl) {
-        const chatFn = createVllmChatFn(options.vllmUrl, model);
+        const chatFn = createVllmChatFn(options.vllmUrl, model, options?.runpodApiKey);
         return { chatFn, backend: "vllm" };
       }
 

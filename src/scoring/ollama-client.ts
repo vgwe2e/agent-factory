@@ -16,7 +16,7 @@ import type { Logger } from "../infra/logger.js";
 
 export const OLLAMA_CHAT_API = "http://localhost:11434/api/chat";
 export const SCORING_MODEL = "qwen3:30b";
-export const SCORING_TIMEOUT_MS = 600_000; // 10 minutes per call
+export const SCORING_TIMEOUT_MS = 240_000; // 4 minutes per call (successful calls finish in ~3 min)
 export const SCORING_TEMPERATURE = 0;
 
 // -- Types --
@@ -110,10 +110,17 @@ export async function scoreWithRetry<T>(
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       errors.push(`Attempt ${attempt + 1}: ${message}`);
+      const isTimeout = message.toLowerCase().includes("timeout") ||
+        message.toLowerCase().includes("aborted");
       if (logger) {
         logger.error(`[scoreWithRetry] Attempt ${attempt + 1}/${maxRetries} failed: ${message}`);
       } else {
         console.error(`[scoreWithRetry] Attempt ${attempt + 1}/${maxRetries} failed: ${message}`);
+      }
+
+      // Don't retry timeouts — if the model hung once, it'll hang again
+      if (isTimeout) {
+        break;
       }
 
       if (attempt < maxRetries - 1) {

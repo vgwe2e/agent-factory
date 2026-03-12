@@ -56,7 +56,12 @@ program
     "Number of opportunities to score in parallel (default: 1)",
     "1",
   )
-  .action(async (opts: { input: string; logLevel: string; outputDir: string; backend: string; vllmUrl?: string; concurrency: string }) => {
+  .option(
+    "--max-tier <n>",
+    "Only score opportunities up to this tier (1, 2, or 3)",
+    "3",
+  )
+  .action(async (opts: { input: string; logLevel: string; outputDir: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string }) => {
     console.log(`${BOLD}Aera Skill Feasibility Engine v1.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
@@ -107,6 +112,13 @@ program
     const concurrency = parseInt(opts.concurrency, 10);
     if (isNaN(concurrency) || concurrency < 1) {
       console.error(`${RED}Error: --concurrency must be a positive integer${RESET}`);
+      process.exit(1);
+    }
+
+    // Validate max-tier
+    const maxTier = parseInt(opts.maxTier, 10);
+    if (isNaN(maxTier) || maxTier < 1 || maxTier > 3) {
+      console.error(`${RED}Error: --max-tier must be 1, 2, or 3${RESET}`);
       process.exit(1);
     }
 
@@ -170,6 +182,9 @@ program
       console.log(`Backend:     ollama (local)`);
     }
     console.log(`Concurrency: ${concurrency}`);
+    if (maxTier < 3) {
+      console.log(`Max tier:    ${maxTier} (skipping tier ${maxTier + 1}+)`);
+    }
     console.log(`Log level:   ${opts.logLevel}`);
     console.log(`Output dir:  ${opts.outputDir}`);
     console.log();
@@ -189,6 +204,7 @@ program
           chatFn: backendConfig.chatFn,
           backend,
           concurrency,
+          maxTier,
           costTracker: backendConfig.costTracker,
         },
         logger,
