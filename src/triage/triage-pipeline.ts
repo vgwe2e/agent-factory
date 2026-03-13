@@ -2,43 +2,45 @@
  * Full triage pipeline for the triage subsystem.
  *
  * Orchestrates: red flag detection -> tier assignment -> sorting.
- * Skipped/demoted opportunities are forced to Tier 3.
+ * Now operates at SKILL level -- each skill is individually triaged.
+ * L4 activities without skills are skipped.
+ *
  * Output is sorted: Tier 1 first, then 2, then 3, value descending within tier.
  *
  * All functions are pure (no I/O, no side effects).
  */
 
-import type { HierarchyExport, L3Opportunity } from "../types/hierarchy.js";
+import type { HierarchyExport, SkillWithContext } from "../types/hierarchy.js";
 import type { TriageResult, Tier, RedFlag } from "../types/triage.js";
-import { groupL4sByL3, detectRedFlags, resolveAction } from "./red-flags.js";
-import { assignTier } from "./tier-engine.js";
+import { detectSkillRedFlags, resolveAction } from "./red-flags.js";
+import { assignSkillTier } from "./tier-engine.js";
+import { extractScoringSkills } from "../pipeline/extract-skills.js";
 
 /**
- * Runs the full triage pipeline on a hierarchy export.
+ * Runs the full triage pipeline on a hierarchy export at SKILL level.
  *
  * Steps:
- * 1. Group L4 activities by L3 name
- * 2. For each L3 opportunity: detect flags, resolve action, assign tier
+ * 1. Extract all skills with parent L4 context
+ * 2. For each skill: detect flags, resolve action, assign tier
  * 3. Skipped/demoted items forced to Tier 3
  * 4. Sort by tier ascending, then value descending (nulls last)
  */
 export function triageOpportunities(data: HierarchyExport): TriageResult[] {
-  const l4Map = groupL4sByL3(data.hierarchy);
+  const skills = extractScoringSkills(data.hierarchy);
   const results: TriageResult[] = [];
 
-  for (const opp of data.l3_opportunities) {
-    const l4s = l4Map.get(opp.l3_name) ?? [];
-    const redFlags = detectRedFlags(opp, l4s);
+  for (const skill of skills) {
+    const redFlags = detectSkillRedFlags(skill);
     const action = resolveAction(redFlags);
 
     let tier: Tier;
     if (action === "skip" || action === "demote") {
       tier = 3;
     } else {
-      tier = assignTier(opp, l4s);
+      tier = assignSkillTier(skill);
     }
 
-    results.push(buildTriageResult(opp, tier, redFlags, action, l4s.length));
+    results.push(buildSkillTriageResult(skill, tier, redFlags, action));
   }
 
   results.sort(compareTriage);
@@ -61,26 +63,26 @@ export function compareTriage(a: TriageResult, b: TriageResult): number {
 }
 
 /**
- * Maps an L3Opportunity to a TriageResult.
+ * Maps a SkillWithContext to a TriageResult.
  */
-function buildTriageResult(
-  opp: L3Opportunity,
+function buildSkillTriageResult(
+  skill: SkillWithContext,
   tier: Tier,
   redFlags: RedFlag[],
   action: "process" | "skip" | "demote",
-  l4Count: number,
 ): TriageResult {
   return {
-    l3Name: opp.l3_name,
-    l2Name: opp.l2_name,
-    l1Name: opp.l1_name,
+    l3Name: skill.l3Name,
+    l2Name: skill.l2Name,
+    l1Name: skill.l1Name,
+    skillId: skill.id,
+    skillName: skill.name,
     tier,
     redFlags,
     action,
-    combinedMaxValue: opp.combined_max_value,
-    quickWin: opp.quick_win,
-    leadArchetype: opp.lead_archetype,
-    l4Count: l4Count,
-    rationale: opp.rationale,
+    combinedMaxValue: skill.max_value,
+    quickWin: false, // skills don't have quick_win -- derived from L3 rollup
+    leadArchetype: skill.archetype,
+    l4Count: 1, // each skill is a single unit
   };
 }

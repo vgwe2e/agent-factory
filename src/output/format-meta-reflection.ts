@@ -13,6 +13,7 @@
 import type { ScoringResult } from "../types/scoring.js";
 import type { TriageResult } from "../types/triage.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
+import { countAssessmentVerdicts } from "../simulation/assessment.js";
 
 interface CatalogStats {
   archetypeDistribution: Map<string, number>;
@@ -21,6 +22,13 @@ interface CatalogStats {
   domainScores: Map<string, { total: number; count: number }>;
   knowledgeCoverage: { confirmed: number; inferred: number };
   simulationSuccessRate: number | null;
+  assessmentCounts: { ADVANCE: number; REVIEW: number; HOLD: number };
+  assessmentAverages: {
+    groundednessScore: number | null;
+    integrationConfidenceScore: number | null;
+    ambiguityRiskScore: number | null;
+    implementationReadinessScore: number | null;
+  };
 }
 
 function computeCatalogStats(
@@ -71,6 +79,17 @@ function computeCatalogStats(
   const simulationSuccessRate =
     totalAttempted > 0 ? simResults.totalSimulated / totalAttempted : null;
 
+  const assessments = simResults.results
+    .map((result) => result.assessment)
+    .filter((assessment): assessment is NonNullable<typeof assessment> => Boolean(assessment));
+  const assessmentCounts = countAssessmentVerdicts(assessments);
+  const assessmentAverages = {
+    groundednessScore: averageAssessment(assessments.map((assessment) => assessment.groundednessScore)),
+    integrationConfidenceScore: averageAssessment(assessments.map((assessment) => assessment.integrationConfidenceScore)),
+    ambiguityRiskScore: averageAssessment(assessments.map((assessment) => assessment.ambiguityRiskScore)),
+    implementationReadinessScore: averageAssessment(assessments.map((assessment) => assessment.implementationReadinessScore)),
+  };
+
   return {
     archetypeDistribution,
     tierDistribution,
@@ -78,6 +97,8 @@ function computeCatalogStats(
     domainScores,
     knowledgeCoverage,
     simulationSuccessRate,
+    assessmentCounts,
+    assessmentAverages,
   };
 }
 
@@ -113,6 +134,24 @@ export function formatMetaReflection(
         ? `${(stats.simulationSuccessRate * 100).toFixed(1)}%`
         : "N/A";
     lines.push(`- **Simulation Success Rate:** ${rateStr}`);
+  }
+  lines.push("");
+
+  // Simulation Filter Outcomes
+  lines.push("## Simulation Filter Outcomes");
+  lines.push("");
+  if (simSkipped) {
+    lines.push("Simulation was skipped -- no filter outcomes available.");
+  } else {
+    lines.push(`- **Advance:** ${stats.assessmentCounts.ADVANCE}`);
+    lines.push(`- **Review:** ${stats.assessmentCounts.REVIEW}`);
+    lines.push(`- **Hold:** ${stats.assessmentCounts.HOLD}`);
+    if (stats.assessmentAverages.groundednessScore !== null) {
+      lines.push(`- **Avg Groundedness Score:** ${stats.assessmentAverages.groundednessScore.toFixed(1)}`);
+      lines.push(`- **Avg Integration Confidence Score:** ${stats.assessmentAverages.integrationConfidenceScore!.toFixed(1)}`);
+      lines.push(`- **Avg Ambiguity Risk Score:** ${stats.assessmentAverages.ambiguityRiskScore!.toFixed(1)}`);
+      lines.push(`- **Avg Implementation Readiness Score:** ${stats.assessmentAverages.implementationReadinessScore!.toFixed(1)}`);
+    }
   }
   lines.push("");
 
@@ -258,4 +297,9 @@ export function formatMetaReflection(
   }
 
   return lines.join("\n") + "\n";
+}
+
+function averageAssessment(values: number[]): number | null {
+  if (values.length === 0) return null;
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
 }

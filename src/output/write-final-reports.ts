@@ -15,6 +15,8 @@ import yaml from "js-yaml";
 import { formatSummary } from "./format-summary.js";
 import { formatDeadZones } from "./format-dead-zones.js";
 import { formatMetaReflection } from "./format-meta-reflection.js";
+import { formatSimulationFilterTsv } from "./format-simulation-filter-tsv.js";
+import { formatImplementationShortlistTsv } from "./format-implementation-shortlist-tsv.js";
 import type { ScoringResult } from "../types/scoring.js";
 import type { TriageResult } from "../types/triage.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
@@ -41,6 +43,9 @@ export async function writeFinalReports(
     const summaryMd = formatSummary(scored, triaged, simResults, companyName, date, simSkipped);
     const deadZonesMd = formatDeadZones(triaged, scored, date);
     const metaReflectionMd = formatMetaReflection(triaged, scored, simResults, date, simSkipped);
+    const simulationFilterTsv = formatSimulationFilterTsv(simResults);
+    const implementationShortlistTsv = formatImplementationShortlistTsv(scored, simResults, ["ADVANCE"]);
+    const manualReviewQueueTsv = formatImplementationShortlistTsv(scored, simResults, ["REVIEW", "HOLD"]);
 
     // Define markdown output files
     const mdFiles: { name: string; content: string }[] = [
@@ -57,6 +62,18 @@ export async function writeFinalReports(
       writtenPaths.push(filePath);
     }
 
+    const simulationFilterPath = path.join(evalDir, "simulation-filter.tsv");
+    await fs.writeFile(simulationFilterPath, simulationFilterTsv, "utf-8");
+    writtenPaths.push(simulationFilterPath);
+
+    const shortlistPath = path.join(evalDir, "implementation-shortlist.tsv");
+    await fs.writeFile(shortlistPath, implementationShortlistTsv, "utf-8");
+    writtenPaths.push(shortlistPath);
+
+    const reviewQueuePath = path.join(evalDir, "manual-review-queue.tsv");
+    await fs.writeFile(reviewQueuePath, manualReviewQueueTsv, "utf-8");
+    writtenPaths.push(reviewQueuePath);
+
     // Write simulation artifact files per opportunity
     for (const result of simResults.results) {
       const oppDir = path.join(simDir, result.slug);
@@ -68,6 +85,12 @@ export async function writeFinalReports(
         { name: "mock-test.yaml", content: yaml.dump(result.artifacts.mockTest) },
         { name: "integration-surface.yaml", content: yaml.dump(result.artifacts.integrationSurface) },
       ];
+      if (result.assessment) {
+        artifacts.push({
+          name: "simulation-assessment.yaml",
+          content: yaml.dump(result.assessment),
+        });
+      }
 
       for (const artifact of artifacts) {
         const filePath = path.join(oppDir, artifact.name);

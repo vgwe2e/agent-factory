@@ -61,8 +61,10 @@ function makeScoring(overrides: Partial<ScoringResult> = {}): ScoringResult {
     l3Name: "Test Opp",
     l2Name: "L2 Domain",
     l1Name: "L1 Area",
+    skillId: "skill-test",
+    skillName: "Test Skill",
+    l4Name: "Test L4",
     archetype: "DETERMINISTIC",
-    archetypeSource: "export",
     lenses: {
       technical: makeLens("technical", [
         makeSub("data_readiness", 2),

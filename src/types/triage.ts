@@ -38,6 +38,10 @@ export interface TriageResult {
   l3Name: string;
   l2Name: string;
   l1Name: string;
+  /** Skill ID (present for skill-level triage). */
+  skillId?: string;
+  /** Skill name (present for skill-level triage). */
+  skillName?: string;
   tier: Tier;
   redFlags: RedFlag[];
   action: "process" | "skip" | "demote";

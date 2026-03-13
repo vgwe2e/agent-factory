@@ -3,12 +3,13 @@
  *
  * Reads .pipeline/checkpoint-*.json files (written by archiveAndReset in
  * context-tracker.ts) and returns a deduplicated array of ScoringResult
- * objects. Later files overwrite earlier entries for the same l3Name,
- * matching the pattern used by regen-reports.ts.
+ * objects. Later files overwrite earlier entries for the same key (skillId
+ * or l3Name for backward compat), matching the pattern used by regen-reports.ts.
  *
  * These archive files are DIFFERENT from .checkpoint.json (the resume
  * metadata file). Archive files contain full ScoringResult objects keyed
- * by l3Name; the resume file only contains entry metadata (status, etc.).
+ * by skillId (or l3Name in older archives); the resume file only contains
+ * entry metadata (status, etc.).
  */
 
 import fs from "node:fs/promises";

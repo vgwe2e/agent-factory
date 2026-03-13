@@ -11,7 +11,7 @@
  * All functions are pure (no I/O, no side effects).
  */
 
-import type { L3Opportunity, L4Activity } from "../types/hierarchy.js";
+import type { L3Opportunity, L4Activity, SkillWithContext } from "../types/hierarchy.js";
 import type { RedFlag } from "../types/triage.js";
 import { FLAG_ACTIONS } from "../types/triage.js";
 
@@ -81,6 +81,41 @@ export function detectRedFlags(
   const lowConfPct = lowConfCount / l4s.length;
   if (lowConfPct > 0.5) {
     flags.push({ type: "CONFIDENCE_GAP", lowConfidencePct: lowConfPct });
+  }
+
+  return flags;
+}
+
+/**
+ * Detects red flags for a single skill.
+ *
+ * Skill-level flags:
+ * - DEAD_ZONE: no actions and no constraints (nothing to automate)
+ * - NO_STAKES: LOW financial rating on parent L4 AND all SECOND order impact
+ * - CONFIDENCE_GAP: LOW rating_confidence on parent L4
+ */
+export function detectSkillRedFlags(
+  skill: SkillWithContext,
+): RedFlag[] {
+  const flags: RedFlag[] = [];
+
+  // DEAD_ZONE: no actions and no constraints means nothing to automate
+  if (skill.actions.length === 0 && skill.constraints.length === 0 && !skill.decision_made) {
+    flags.push({ type: "DEAD_ZONE", decisionDensity: 0 });
+  }
+
+  // NO_STAKES: LOW financial rating + SECOND order impact
+  if (skill.financialRating === "LOW" && skill.impactOrder === "SECOND") {
+    flags.push({
+      type: "NO_STAKES",
+      highFinancialCount: 0,
+      allSecondOrder: true,
+    });
+  }
+
+  // CONFIDENCE_GAP: LOW rating confidence
+  if (skill.ratingConfidence === "LOW") {
+    flags.push({ type: "CONFIDENCE_GAP", lowConfidencePct: 1.0 });
   }
 
   return flags;

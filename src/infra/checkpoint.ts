@@ -3,10 +3,12 @@ import { join, resolve } from 'node:path';
 import { z } from 'zod';
 
 export const CheckpointEntrySchema = z.object({
-  l3Name: z.string(),
+  /** Skill ID (or l3Name for backward compat with older checkpoints). */
+  skillId: z.string().optional(),
+  l3Name: z.string().optional(),
   completedAt: z.string(),
   status: z.enum(['scored', 'skipped', 'error']),
-});
+}).refine(data => data.skillId || data.l3Name, { message: "Either skillId or l3Name must be present" });
 
 export const CheckpointSchema = z.object({
   version: z.literal(1),
@@ -68,7 +70,7 @@ export function getCompletedNames(checkpoint: Checkpoint | null): Set<string> {
   return new Set(
     checkpoint.entries
       .filter((e) => e.status !== 'error')
-      .map((e) => e.l3Name),
+      .map((e) => e.skillId ?? e.l3Name ?? ""),
   );
 }
 

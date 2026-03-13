@@ -26,12 +26,10 @@ import type {
   ComponentMap,
   MockTest,
   IntegrationSurface,
+  ScenarioSpec,
 } from "../types/simulation.js";
 import type { ValidationResult } from "./validators/knowledge-validator.js";
-import { generateDecisionFlow as defaultGenerateDecisionFlow } from "./generators/decision-flow-gen.js";
-import { generateComponentMap as defaultGenerateComponentMap } from "./generators/component-map-gen.js";
-import { generateMockTest as defaultGenerateMockTest } from "./generators/mock-test-gen.js";
-import { generateIntegrationSurface as defaultGenerateIntegrationSurface } from "./generators/integration-surface-gen.js";
+import { generateScenarioSpec as defaultGenerateScenarioSpec } from "./generators/scenario-spec-gen.js";
 import {
   buildKnowledgeIndex as defaultBuildKnowledgeIndex,
   enforceKnowledgeConfidence,
@@ -40,13 +38,16 @@ import {
 import { slugify } from "./utils.js";
 import { withTimeout, TimeoutError } from "../infra/timeout.js";
 import type { SimulationLlmTarget } from "./llm-client.js";
+import { renderScenarioArtifacts } from "./renderers.js";
 import {
   ComponentMapSchema,
   IntegrationSurfaceSchema,
   MockTestSchema,
+  ScenarioSpecSchema,
   parseAndValidateYaml,
 } from "./schemas.js";
 import { validateMermaidFlowchart } from "./validators/mermaid-validator.js";
+import { assessSimulation } from "./assessment.js";
 
 // -- Types --
 
@@ -60,26 +61,14 @@ export interface SimulationPipelineResult {
 
 /** Dependency injection interface for testing. */
 export interface PipelineDeps {
-  generateDecisionFlow: (input: SimulationInput, llmTarget?: SimulationLlmTarget, signal?: AbortSignal) => Promise<
-    { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string }
-  >;
-  generateComponentMap: (input: SimulationInput, knowledgeIndex: Map<string, string>, llmTarget?: SimulationLlmTarget, signal?: AbortSignal) => Promise<
-    { success: true; data: { componentMap: ComponentMap; validation: ValidationResult[]; attempts: number } } | { success: false; error: string }
-  >;
-  generateMockTest: (input: SimulationInput, llmTarget?: SimulationLlmTarget, signal?: AbortSignal) => Promise<
-    { success: true; data: { mockTest: MockTest; attempts: number } } | { success: false; error: string }
-  >;
-  generateIntegrationSurface: (input: SimulationInput, llmTarget?: SimulationLlmTarget, signal?: AbortSignal) => Promise<
-    { success: true; data: { integrationSurface: IntegrationSurface; attempts: number } } | { success: false; error: string }
+  generateScenarioSpec: (input: SimulationInput, llmTarget?: SimulationLlmTarget, signal?: AbortSignal) => Promise<
+    { success: true; data: { scenarioSpec: ScenarioSpec; attempts: number } } | { success: false; error: string }
   >;
   buildKnowledgeIndex: () => Map<string, string>;
 }
 
 const DEFAULT_DEPS: PipelineDeps = {
-  generateDecisionFlow: defaultGenerateDecisionFlow,
-  generateComponentMap: defaultGenerateComponentMap,
-  generateMockTest: defaultGenerateMockTest,
-  generateIntegrationSurface: defaultGenerateIntegrationSurface,
+  generateScenarioSpec: defaultGenerateScenarioSpec,
   buildKnowledgeIndex: defaultBuildKnowledgeIndex,
 };
 
@@ -157,58 +146,36 @@ export async function runSimulationPipeline(
     fs.mkdirSync(oppDir, { recursive: true });
 
     try {
-      // Process all 4 generators for this opportunity
       const processOpp = async (signal?: AbortSignal) => {
-        // Track artifacts and validation
-        let mermaid: string | undefined;
-        let componentMap: ComponentMap | undefined;
-        let validation: ValidationResult[] = [];
-        let mockTest: MockTest | undefined;
-        let integrationSurface: IntegrationSurface | undefined;
-        let mermaidValid = false;
-        let artifactFailures = 0;
-
-        // 1. Decision flow
-        const dfResult = await deps.generateDecisionFlow(input, llmTarget, signal);
-        if (dfResult.success) {
-          mermaid = dfResult.data.mermaid;
-          mermaidValid = true;
-          fs.writeFileSync(path.join(oppDir, "decision-flow.mmd"), mermaid, "utf-8");
-        } else {
-          console.error(`  Decision flow failed for ${l3Name}: ${dfResult.error}`);
-          artifactFailures++;
+        const specResult = await deps.generateScenarioSpec(input, llmTarget, signal);
+        if (!specResult.success) {
+          throw new Error(specResult.error);
         }
 
-        // 2. Component map
-        const cmResult = await deps.generateComponentMap(input, knowledgeIndex, llmTarget, signal);
-        if (cmResult.success) {
-          componentMap = cmResult.data.componentMap;
-          validation = cmResult.data.validation;
-          fs.writeFileSync(path.join(oppDir, "component-map.yaml"), yaml.dump(componentMap), "utf-8");
-        } else {
-          console.error(`  Component map failed for ${l3Name}: ${cmResult.error}`);
-          artifactFailures++;
-        }
+        const scenarioSpec = specResult.data.scenarioSpec;
+        const rendered = renderScenarioArtifacts(input, scenarioSpec, knowledgeIndex);
+        const mermaid = rendered.artifacts.decisionFlow;
+        const componentMap = rendered.artifacts.componentMap;
+        const mockTest = rendered.artifacts.mockTest;
+        const integrationSurface = rendered.artifacts.integrationSurface;
+        const validation = rendered.validation;
+        const mermaidValid = rendered.mermaidValid;
 
-        // 3. Mock test
-        const mtResult = await deps.generateMockTest(input, llmTarget, signal);
-        if (mtResult.success) {
-          mockTest = mtResult.data.mockTest;
-          fs.writeFileSync(path.join(oppDir, "mock-test.yaml"), yaml.dump(mockTest), "utf-8");
-        } else {
-          console.error(`  Mock test failed for ${l3Name}: ${mtResult.error}`);
-          artifactFailures++;
-        }
+        const assessment = assessSimulation({
+          scenarioSpec,
+          mockTest,
+          integrationSurface,
+          confirmedCount: validation.filter((v) => v.status === "confirmed").length,
+          inferredCount: validation.filter((v) => v.status === "inferred").length,
+          mermaidValid,
+        });
 
-        // 4. Integration surface
-        const isResult = await deps.generateIntegrationSurface(input, llmTarget, signal);
-        if (isResult.success) {
-          integrationSurface = isResult.data.integrationSurface;
-          fs.writeFileSync(path.join(oppDir, "integration-surface.yaml"), yaml.dump(integrationSurface), "utf-8");
-        } else {
-          console.error(`  Integration surface failed for ${l3Name}: ${isResult.error}`);
-          artifactFailures++;
-        }
+        fs.writeFileSync(path.join(oppDir, "scenario-spec.yaml"), yaml.dump(scenarioSpec), "utf-8");
+        fs.writeFileSync(path.join(oppDir, "decision-flow.mmd"), mermaid, "utf-8");
+        fs.writeFileSync(path.join(oppDir, "component-map.yaml"), yaml.dump(componentMap), "utf-8");
+        fs.writeFileSync(path.join(oppDir, "mock-test.yaml"), yaml.dump(mockTest), "utf-8");
+        fs.writeFileSync(path.join(oppDir, "integration-surface.yaml"), yaml.dump(integrationSurface), "utf-8");
+        fs.writeFileSync(path.join(oppDir, "simulation-assessment.yaml"), yaml.dump(assessment), "utf-8");
 
         // Count confirmed/inferred from validation results
         const confirmed = validation.filter((v) => v.status === "confirmed").length;
@@ -216,18 +183,16 @@ export async function runSimulationPipeline(
         totalConfirmed += confirmed;
         totalInferred += inferred;
 
-        if (artifactFailures === 4) {
-          totalFailed++;
-        }
-
         results.push({
           l3Name,
           slug,
+          scenarioSpec,
+          assessment,
           artifacts: {
-            decisionFlow: mermaid ?? "",
-            componentMap: componentMap ?? defaultArtifacts.componentMap,
-            mockTest: mockTest ?? defaultArtifacts.mockTest,
-            integrationSurface: integrationSurface ?? defaultArtifacts.integrationSurface,
+            decisionFlow: mermaid,
+            componentMap,
+            mockTest,
+            integrationSurface,
           },
           validationSummary: {
             confirmedCount: confirmed,
@@ -255,6 +220,15 @@ export async function runSimulationPipeline(
       results.push({
         l3Name,
         slug,
+        scenarioSpec: undefined,
+        assessment: {
+          groundednessScore: 0,
+          integrationConfidenceScore: 0,
+          ambiguityRiskScore: 100,
+          implementationReadinessScore: 0,
+          verdict: "HOLD",
+          reasons: ["Simulation generation failed."],
+        },
         artifacts: {
           decisionFlow: "",
           componentMap: defaultArtifacts.componentMap,
@@ -303,12 +277,14 @@ async function loadExistingSimulationResult(
   slug: string,
   knowledgeIndex: Map<string, string>,
 ): Promise<SimulationResult | null> {
+  const scenarioSpecPath = path.join(oppDir, "scenario-spec.yaml");
   const decisionFlowPath = path.join(oppDir, "decision-flow.mmd");
   const componentMapPath = path.join(oppDir, "component-map.yaml");
   const mockTestPath = path.join(oppDir, "mock-test.yaml");
   const integrationSurfacePath = path.join(oppDir, "integration-surface.yaml");
 
   const requiredPaths = [
+    scenarioSpecPath,
     decisionFlowPath,
     componentMapPath,
     mockTestPath,
@@ -318,11 +294,13 @@ async function loadExistingSimulationResult(
     return null;
   }
 
+  const scenarioSpecRaw = fs.readFileSync(scenarioSpecPath, "utf-8");
   const decisionFlow = fs.readFileSync(decisionFlowPath, "utf-8");
   const componentMapRaw = fs.readFileSync(componentMapPath, "utf-8");
   const mockTestRaw = fs.readFileSync(mockTestPath, "utf-8");
   const integrationSurfaceRaw = fs.readFileSync(integrationSurfacePath, "utf-8");
 
+  const scenarioSpecResult = await parseAndValidateYaml(scenarioSpecRaw, ScenarioSpecSchema);
   const componentMapResult = await parseAndValidateYaml(componentMapRaw, ComponentMapSchema);
   const mockTestResult = await parseAndValidateYaml(mockTestRaw, MockTestSchema);
   const integrationSurfaceResult = await parseAndValidateYaml(
@@ -331,6 +309,7 @@ async function loadExistingSimulationResult(
   );
 
   if (
+    !scenarioSpecResult.success ||
     !componentMapResult.success ||
     !mockTestResult.success ||
     !integrationSurfaceResult.success
@@ -343,10 +322,21 @@ async function loadExistingSimulationResult(
   const validation = validateComponentMap(componentMap, knowledgeIndex);
   const confirmedCount = validation.filter((item) => item.status === "confirmed").length;
   const inferredCount = validation.filter((item) => item.status === "inferred").length;
+  const mermaidValid = validateMermaidFlowchart(decisionFlow).ok;
+  const assessment = assessSimulation({
+    scenarioSpec: scenarioSpecResult.data as ScenarioSpec,
+    mockTest: mockTestResult.data as MockTest,
+    integrationSurface: integrationSurfaceResult.data as IntegrationSurface,
+    confirmedCount,
+    inferredCount,
+    mermaidValid,
+  });
 
   return {
     l3Name,
     slug,
+    scenarioSpec: scenarioSpecResult.data as ScenarioSpec,
+    assessment,
     artifacts: {
       decisionFlow,
       componentMap,
@@ -356,7 +346,7 @@ async function loadExistingSimulationResult(
     validationSummary: {
       confirmedCount,
       inferredCount,
-      mermaidValid: validateMermaidFlowchart(decisionFlow).ok,
+      mermaidValid,
     },
   };
 }

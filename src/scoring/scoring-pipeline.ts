@@ -1,21 +1,18 @@
 /**
  * Scoring pipeline orchestrator.
  *
- * Wires together: triage filtering, archetype classification, lens scoring,
+ * Wires together: archetype classification, lens scoring,
  * composite computation, confidence aggregation, and threshold gating.
  *
- * Processes opportunities as an async generator for incremental consumption.
+ * Scores individual SKILLS (not L3 rollups) for accurate assessment.
  * Uses dependency injection (chatFn) for testability.
  */
 
-import type { HierarchyExport, L3Opportunity, L4Activity, CompanyContext } from "../types/hierarchy.js";
-import type { TriageResult } from "../types/triage.js";
+import type { SkillWithContext, CompanyContext } from "../types/hierarchy.js";
 import type { ScoringResult } from "../types/scoring.js";
-import { classifyArchetype } from "./archetype-router.js";
 import { scoreTechnical, scoreAdoption, scoreValue } from "./lens-scorers.js";
 import { computeComposite } from "./composite.js";
 import { computeOverallConfidence } from "./confidence.js";
-import { groupL4sByL3 } from "../triage/red-flags.js";
 import type { ChatResult } from "./ollama-client.js";
 import { ollamaChat } from "./ollama-client.js";
 
@@ -27,38 +24,35 @@ type ChatFn = (
 ) => Promise<ChatResult>;
 
 export interface ScoringPipelineInput {
-  hierarchyExport: HierarchyExport;
-  triageResults: TriageResult[];
+  skills: SkillWithContext[];
+  company: CompanyContext;
   knowledgeContext: { components: string; processBuilder: string; capabilities?: string };
   chatFn?: ChatFn;
 }
 
 export type ScoringPipelineResult =
   | ScoringResult
-  | { error: string; l3Name: string };
+  | { error: string; skillId: string; skillName: string };
 
 // -- Public API --
 
 /**
- * Score a single opportunity across all three lenses.
+ * Score a single skill across all three lenses.
  *
- * @returns Complete ScoringResult or error with l3Name for logging
+ * @returns Complete ScoringResult or error with skillId/skillName for logging
  */
-export async function scoreOneOpportunity(
-  opp: L3Opportunity,
-  l4s: L4Activity[],
+export async function scoreOneSkill(
+  skill: SkillWithContext,
   company: CompanyContext,
   knowledgeContext: { components: string; processBuilder: string; capabilities?: string },
   chatFn: ChatFn = ollamaChat,
 ): Promise<ScoringPipelineResult> {
   const startMs = Date.now();
 
-  // Classify archetype
-  const classification = classifyArchetype(opp, l4s);
-  const archetypeHint = classification.archetype;
+  // Skill carries its own archetype -- no inference needed
+  const archetypeHint = skill.archetype;
 
   // Build knowledge context string for technical prompt
-  // Capabilities go first so the LLM reads high-level knowledge before component details
   const capabilitiesSection = knowledgeContext.capabilities
     ? `Platform Capabilities:\n${knowledgeContext.capabilities}\n\n`
     : "";
@@ -66,20 +60,20 @@ export async function scoreOneOpportunity(
 
   // Score all three lenses
   const [techResult, adoptResult, valueResult] = await Promise.all([
-    scoreTechnical(opp, l4s, knowledgeStr, archetypeHint, chatFn),
-    scoreAdoption(opp, l4s, archetypeHint, chatFn),
-    scoreValue(opp, l4s, company, archetypeHint, chatFn),
+    scoreTechnical(skill, knowledgeStr, archetypeHint, chatFn),
+    scoreAdoption(skill, archetypeHint, chatFn),
+    scoreValue(skill, company, archetypeHint, chatFn),
   ]);
 
   // Check for failures
   if (!techResult.success) {
-    return { error: `Technical lens failed: ${techResult.error}`, l3Name: opp.l3_name };
+    return { error: `Technical lens failed: ${techResult.error}`, skillId: skill.id, skillName: skill.name };
   }
   if (!adoptResult.success) {
-    return { error: `Adoption lens failed: ${adoptResult.error}`, l3Name: opp.l3_name };
+    return { error: `Adoption lens failed: ${adoptResult.error}`, skillId: skill.id, skillName: skill.name };
   }
   if (!valueResult.success) {
-    return { error: `Value lens failed: ${valueResult.error}`, l3Name: opp.l3_name };
+    return { error: `Value lens failed: ${valueResult.error}`, skillId: skill.id, skillName: skill.name };
   }
 
   // Compute composite
@@ -99,11 +93,13 @@ export async function scoreOneOpportunity(
   const durationMs = Date.now() - startMs;
 
   return {
-    l3Name: opp.l3_name,
-    l2Name: opp.l2_name,
-    l1Name: opp.l1_name,
-    archetype: classification.archetype,
-    archetypeSource: classification.source,
+    skillId: skill.id,
+    skillName: skill.name,
+    l4Name: skill.l4Name,
+    l3Name: skill.l3Name,
+    l2Name: skill.l2Name,
+    l1Name: skill.l1Name,
+    archetype: skill.archetype,
     lenses: {
       technical: techResult.score,
       adoption: adoptResult.score,
@@ -117,42 +113,20 @@ export async function scoreOneOpportunity(
 }
 
 /**
- * Score all triaged opportunities (async generator for incremental consumption).
+ * Score all skills (async generator for incremental consumption).
  *
- * Filters to action === "process", sorts by tier priority, and yields results.
+ * Sorts by parent L3 name for progress tracking continuity.
  */
-export async function* scoreOpportunities(
+export async function* scoreSkills(
   input: ScoringPipelineInput,
 ): AsyncGenerator<ScoringPipelineResult> {
-  const { hierarchyExport, triageResults, knowledgeContext, chatFn = ollamaChat } = input;
+  const { skills, company, knowledgeContext, chatFn = ollamaChat } = input;
 
-  // Filter to processable opportunities only
-  const processable = triageResults.filter((tr) => tr.action === "process");
+  // Sort by L3 name for grouped progress tracking
+  const sorted = [...skills].sort((a, b) => a.l3Name.localeCompare(b.l3Name));
 
-  // Sort by tier (1 first, then 2, then 3)
-  processable.sort((a, b) => a.tier - b.tier);
-
-  // Group L4s by L3 name for efficient lookup
-  const l4Map = groupL4sByL3(hierarchyExport.hierarchy);
-
-  // Build L3 lookup by name
-  const l3Map = new Map<string, L3Opportunity>();
-  for (const opp of hierarchyExport.l3_opportunities) {
-    l3Map.set(opp.l3_name, opp);
-  }
-
-  const company = hierarchyExport.company_context;
-
-  for (const triage of processable) {
-    const opp = l3Map.get(triage.l3Name);
-    if (!opp) {
-      yield { error: `L3 opportunity not found: ${triage.l3Name}`, l3Name: triage.l3Name };
-      continue;
-    }
-
-    const l4s = l4Map.get(triage.l3Name) ?? [];
-
-    const result = await scoreOneOpportunity(opp, l4s, company, knowledgeContext, chatFn);
+  for (const skill of sorted) {
+    const result = await scoreOneSkill(skill, company, knowledgeContext, chatFn);
     yield result;
   }
 }

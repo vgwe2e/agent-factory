@@ -15,7 +15,7 @@ import os from "node:os";
 import { runPipeline } from "./pipeline-runner.js";
 import type { PipelineOptions, PipelineResult } from "./pipeline-runner.js";
 import { createLogger } from "../infra/logger.js";
-import type { HierarchyExport, L3Opportunity, L4Activity } from "../types/hierarchy.js";
+import type { HierarchyExport, L3Opportunity, L4Activity, Skill } from "../types/hierarchy.js";
 import type { ChatResult } from "../scoring/ollama-client.js";
 import { loadCheckpoint, saveCheckpoint } from "../infra/checkpoint.js";
 import type { Checkpoint } from "../infra/checkpoint.js";
@@ -25,6 +25,54 @@ import type { CostTracker, CostSummary } from "../infra/cost-tracker.js";
 import type { ScoringResult } from "../types/scoring.js";
 
 // -- Fixtures --
+
+function makeTestSkill(l3: string, l4Name: string, overrides: Partial<Skill> = {}): Skill {
+  return {
+    id: `skill-${l3}-${l4Name}`,
+    name: `Skill for ${l4Name} in ${l3}`,
+    description: `Description of skill in ${l4Name}`,
+    archetype: "DETERMINISTIC",
+    max_value: 1_000_000,
+    slider_percent: null,
+    overlap_group: null,
+    value_metric: "cost_reduction",
+    decision_made: "Automate process",
+    aera_skill_pattern: "AutoPilot",
+    is_actual: false,
+    source: null,
+    loe: null,
+    savings_type: null,
+    actions: [{ action_type: "alert", action_name: "Notify", description: "Notify team" }],
+    constraints: [{ constraint_type: "threshold", constraint_name: "Min", description: "Min value" }],
+    execution: {
+      target_systems: ["SAP"],
+      write_back_actions: [],
+      execution_trigger: null,
+      execution_frequency: null,
+      autonomy_level: "supervised",
+      approval_required: true,
+      approval_threshold: null,
+      rollback_strategy: null,
+    },
+    problem_statement: {
+      current_state: "Manual",
+      quantified_pain: "$1M annually",
+      root_cause: "No automation",
+      falsifiability_check: "Check",
+      outcome: "Reduce cost",
+    },
+    differentiation: null,
+    generated_at: null,
+    prompt_version: null,
+    is_cross_functional: null,
+    cross_functional_scope: null,
+    operational_flow: [],
+    walkthrough_decision: null,
+    walkthrough_actions: [],
+    walkthrough_narrative: null,
+    ...overrides,
+  };
+}
 
 function makeL4(l3: string, l2: string, l1: string, name: string, overrides: Partial<L4Activity> = {}): L4Activity {
   return {
@@ -110,19 +158,28 @@ function makeFixtureExport(): HierarchyExport {
       filtered_skills: [],
     },
     hierarchy: [
-      // L4s for Opp-A (Tier 1 candidate: quick_win + high value)
-      makeL4("Opp-A", "L2-A", "L1-A", "Act-A1"),
+      // L4s for Opp-A -- one L4 has a skill
+      makeL4("Opp-A", "L2-A", "L1-A", "Act-A1", {
+        skills: [makeTestSkill("Opp-A", "Act-A1")],
+      }),
       makeL4("Opp-A", "L2-A", "L1-A", "Act-A2"),
       makeL4("Opp-A", "L2-A", "L1-A", "Act-A3"),
-      // L4s for Opp-B (Tier 2 candidate: high AI suitability L4s)
-      makeL4("Opp-B", "L2-B", "L1-B", "Act-B1", { ai_suitability: "HIGH" }),
+      // L4s for Opp-B -- one L4 has a skill
+      makeL4("Opp-B", "L2-B", "L1-B", "Act-B1", {
+        ai_suitability: "HIGH",
+        skills: [makeTestSkill("Opp-B", "Act-B1")],
+      }),
       makeL4("Opp-B", "L2-B", "L1-B", "Act-B2", { ai_suitability: "HIGH" }),
       makeL4("Opp-B", "L2-B", "L1-B", "Act-B3", { ai_suitability: "HIGH" }),
-      // L4s for Opp-C (Tier 3: default -- low ai suitability, low value)
-      makeL4("Opp-C", "L2-C", "L1-C", "Act-C1", { ai_suitability: "LOW", financial_rating: "LOW" }),
+      // L4s for Opp-C -- one L4 has a skill
+      makeL4("Opp-C", "L2-C", "L1-C", "Act-C1", {
+        ai_suitability: "LOW",
+        financial_rating: "LOW",
+        skills: [makeTestSkill("Opp-C", "Act-C1")],
+      }),
       makeL4("Opp-C", "L2-C", "L1-C", "Act-C2", { ai_suitability: "LOW", financial_rating: "LOW" }),
       makeL4("Opp-C", "L2-C", "L1-C", "Act-C3", { ai_suitability: "LOW", financial_rating: "LOW" }),
-      // Opp-D will be phantom (opportunity_exists=false) -> skip
+      // Opp-D has no L4s with skills -> phantom effectively skipped
     ],
     l3_opportunities: [
       makeL3("Opp-A", "L2-A", "L1-A", {
@@ -280,9 +337,9 @@ describe("pipeline-runner", () => {
       logger,
     );
 
-    // Opp-D is phantom (skip), so 3 processable
-    assert.equal(result.triageCount, 4, "all 4 triaged");
-    assert.equal(result.skippedCount, 1, "1 skipped (phantom)");
+    // 3 skills extracted (one per L3 with skills), all processable
+    assert.equal(result.triageCount, 3, "all 3 skills triaged");
+    assert.equal(result.skippedCount, 0, "0 skipped");
     assert.equal(result.scoredCount, 3, "3 scored");
     assert.equal(result.errorCount, 0, "no errors");
     assert.ok(result.totalDurationMs >= 0, "has duration");
@@ -310,7 +367,7 @@ describe("pipeline-runner", () => {
     assert.equal(result.scoredCount, 2, "2 scored successfully");
     assert.equal(result.errorCount, 1, "1 error");
     assert.equal(result.errors.length, 1);
-    assert.ok(result.errors[0].includes("Opp-B"), "error mentions Opp-B");
+    assert.ok(result.errors[0].includes("Opp-B") || result.errors[0].includes("skill-Opp-B"), "error mentions Opp-B skill");
   });
 
   it("calls archiveAndReset after threshold opportunities", async () => {
@@ -376,13 +433,13 @@ describe("pipeline-runner", () => {
     const { fn: fetchFn } = makeFetchFn();
     const { fn: simFn } = makeMockSimulationPipeline();
 
-    // Pre-write a checkpoint marking Opp-A as already completed
+    // Pre-write a checkpoint marking Opp-A's skill as already completed
     const existingCheckpoint: Checkpoint = {
       version: 1,
       inputFile: "__fixture__",
       startedAt: new Date().toISOString(),
       entries: [
-        { l3Name: "Opp-A", completedAt: new Date().toISOString(), status: "scored" },
+        { skillId: "skill-Opp-A-Act-A1", completedAt: new Date().toISOString(), status: "scored" },
       ],
     };
     saveCheckpoint(tmpDir, existingCheckpoint);
@@ -401,8 +458,8 @@ describe("pipeline-runner", () => {
       logger,
     );
 
-    // Opp-A skipped via resume, Opp-B and Opp-C scored, Opp-D phantom skip
-    assert.equal(result.scoredCount, 2, "2 scored (Opp-A resumed)");
+    // Opp-A's skill skipped via resume, Opp-B and Opp-C scored
+    assert.equal(result.scoredCount, 2, "2 scored (Opp-A skill resumed)");
     assert.equal(result.resumedCount, 1, "1 resumed from checkpoint");
   });
 
@@ -418,7 +475,7 @@ describe("pipeline-runner", () => {
       inputFile: "old-file.json",
       startedAt: new Date().toISOString(),
       entries: [
-        { l3Name: "Opp-A", completedAt: new Date().toISOString(), status: "scored" },
+        { skillId: "skill-Opp-A-Act-A1", completedAt: new Date().toISOString(), status: "scored" },
       ],
     };
     saveCheckpoint(tmpDir, staleCheckpoint);
@@ -602,12 +659,12 @@ describe("pipeline-runner", () => {
     assert.equal(result.scoredCount, 2, "2 scored");
     assert.equal(result.errorCount, 1, "1 error");
 
-    // Verify checkpoint records error status for Opp-B
+    // Verify checkpoint records error status for Opp-B's skill
     const cp = loadCheckpoint(tmpDir);
     assert.ok(cp !== null, "checkpoint exists");
-    const oppBEntry = cp!.entries.find((e) => e.l3Name === "Opp-B");
-    assert.ok(oppBEntry, "Opp-B entry in checkpoint");
-    assert.equal(oppBEntry!.status, "error", "Opp-B status is error");
+    const oppBEntry = cp!.entries.find((e) => e.skillId === "skill-Opp-B-Act-B1" || e.l3Name === "Opp-B");
+    assert.ok(oppBEntry, "Opp-B skill entry in checkpoint");
+    assert.equal(oppBEntry!.status, "error", "Opp-B skill status is error");
   });
 
   // -- Simulation wiring integration tests --
@@ -981,13 +1038,15 @@ describe("pipeline-runner", () => {
   /**
    * Helper: create a ScoringResult fixture matching what archiveAndReset writes.
    */
-  function makeScoringResult(l3Name: string, l2Name: string, l1Name: string, composite: number = 0.67): ScoringResult {
+  function makeScoringResult(l3Name: string, l2Name: string, l1Name: string, composite: number = 0.67, skillIdOverride?: string): ScoringResult {
     return {
+      skillId: skillIdOverride ?? `skill-${l3Name}`,
+      skillName: `Skill for ${l3Name}`,
+      l4Name: `L4-${l3Name}`,
       l3Name,
       l2Name,
       l1Name,
       archetype: "DETERMINISTIC",
-      archetypeSource: "export",
       lenses: {
         technical: {
           lens: "technical",
@@ -1030,24 +1089,24 @@ describe("pipeline-runner", () => {
     const { fn: fetchFn } = makeFetchFn();
     const { fn: simFn } = makeMockSimulationPipeline();
 
-    // Pre-write checkpoint marking Opp-A as completed
+    // Pre-write checkpoint marking Opp-A skill as completed
     const existingCheckpoint: Checkpoint = {
       version: 1,
       inputFile: "__fixture__",
       startedAt: new Date().toISOString(),
       entries: [
-        { l3Name: "Opp-A", completedAt: new Date().toISOString(), status: "scored" },
+        { skillId: "skill-Opp-A-Act-A1", completedAt: new Date().toISOString(), status: "scored" },
       ],
     };
     saveCheckpoint(tmpDir, existingCheckpoint);
 
-    // Pre-write archive file with Opp-A's full ScoringResult
-    const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.75);
+    // Pre-write archive file with Opp-A skill's full ScoringResult
+    const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.75, "skill-Opp-A-Act-A1");
     const pipelineDir = path.join(tmpDir, ".pipeline");
     fs.mkdirSync(pipelineDir, { recursive: true });
     fs.writeFileSync(
       path.join(pipelineDir, "checkpoint-1000.json"),
-      JSON.stringify({ "Opp-A": archivedOppA }, null, 2),
+      JSON.stringify({ "skill-Opp-A-Act-A1": archivedOppA }, null, 2),
       "utf-8",
     );
 
@@ -1344,15 +1403,15 @@ describe("pipeline-runner", () => {
     const { fn: fetchFn } = makeFetchFn();
     const { fn: simFn } = makeMockSimulationPipeline();
 
-    // Archive has Opp-A scored, but do NOT mark it in the checkpoint resume
+    // Archive has Opp-A skill scored, but do NOT mark it in the checkpoint resume
     // file -- so Opp-A will be scored again in the current session.
     // The report should use the current session's score (not the archived one).
-    const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.30); // low composite
+    const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.30, "skill-Opp-A-Act-A1"); // low composite
     const pipelineDir = path.join(tmpDir, ".pipeline");
     fs.mkdirSync(pipelineDir, { recursive: true });
     fs.writeFileSync(
       path.join(pipelineDir, "checkpoint-1000.json"),
-      JSON.stringify({ "Opp-A": archivedOppA }, null, 2),
+      JSON.stringify({ "skill-Opp-A-Act-A1": archivedOppA }, null, 2),
       "utf-8",
     );
 
@@ -1396,17 +1455,17 @@ describe("pipeline-runner", () => {
       inputFile: "__fixture__",
       startedAt: new Date().toISOString(),
       entries: [
-        { l3Name: "Opp-A", completedAt: new Date().toISOString(), status: "error" },
+        { skillId: "skill-Opp-A-Act-A1", completedAt: new Date().toISOString(), status: "error" },
       ],
     };
     saveCheckpoint(tmpDir, existingCheckpoint);
 
-    const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.30);
+    const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.30, "skill-Opp-A-Act-A1");
     const pipelineDir = path.join(tmpDir, ".pipeline");
     fs.mkdirSync(pipelineDir, { recursive: true });
     fs.writeFileSync(
       path.join(pipelineDir, "checkpoint-1000.json"),
-      JSON.stringify({ "Opp-A": archivedOppA }, null, 2),
+      JSON.stringify({ "skill-Opp-A-Act-A1": archivedOppA }, null, 2),
       "utf-8",
     );
 

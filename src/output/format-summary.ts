@@ -9,6 +9,7 @@
 import type { ScoringResult } from "../types/scoring.js";
 import type { TriageResult } from "../types/triage.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
+import { countAssessmentVerdicts } from "../simulation/assessment.js";
 
 export function formatSummary(
   scored: ScoringResult[],
@@ -33,6 +34,13 @@ export function formatSummary(
     lines.push(`**Simulation: skipped (--skip-sim)**`);
   } else {
     lines.push(`**Simulations Completed:** ${simResults.totalSimulated}`);
+    const verdictCounts = countAssessmentVerdicts(simResults.results.map((result) => result.assessment));
+    const totalAssessed = verdictCounts.ADVANCE + verdictCounts.REVIEW + verdictCounts.HOLD;
+    if (totalAssessed > 0) {
+      lines.push(`**Simulation Filter:** ${verdictCounts.ADVANCE} advance / ${verdictCounts.REVIEW} review / ${verdictCounts.HOLD} hold`);
+      lines.push(`**Default Shortlist (ADVANCE):** ${verdictCounts.ADVANCE}`);
+      lines.push(`**Manual Review Queue:** ${verdictCounts.REVIEW + verdictCounts.HOLD}`);
+    }
   }
   lines.push("");
 
@@ -48,16 +56,23 @@ export function formatSummary(
 
   lines.push("## Top Opportunities");
   lines.push("");
-  lines.push("| Rank | Name | Composite | Archetype | Confidence | Simulated |");
-  lines.push("|------|------|-----------|-----------|------------|-----------|");
+  lines.push("| Rank | Name | Composite | Archetype | Confidence | Simulated | Verdict |");
+  lines.push("|------|------|-----------|-----------|------------|-----------|---------|");
 
-  const simulatedNames = new Set(simResults.results.map(r => r.l3Name));
+  const simulatedIds = new Set(simResults.results.map(r => r.l3Name));
+  const verdicts = new Map(
+    simResults.results
+      .filter((result) => result.assessment)
+      .map((result) => [result.l3Name, result.assessment!.verdict]),
+  );
 
   for (let i = 0; i < top.length; i++) {
     const s = top[i];
-    const simulated = simulatedNames.has(s.l3Name) ? "Yes" : "No";
+    const displayName = s.skillName ?? s.l3Name;
+    const simulated = simulatedIds.has(s.skillId ?? s.l3Name) ? "Yes" : "No";
+    const verdict = verdicts.get(s.skillId ?? s.l3Name) ?? "-";
     lines.push(
-      `| ${i + 1} | ${s.l3Name} | ${s.composite.toFixed(2)} | ${s.archetype} | ${s.overallConfidence} | ${simulated} |`,
+      `| ${i + 1} | ${displayName} | ${s.composite.toFixed(2)} | ${s.archetype} | ${s.overallConfidence} | ${simulated} | ${verdict} |`,
     );
   }
 

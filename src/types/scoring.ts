@@ -57,11 +57,18 @@ export interface CompositeResult {
 }
 
 export interface ScoringResult {
+  /** Skill ID from the JSON export */
+  skillId: string;
+  /** Skill name -- the exact name users see in the Aera app */
+  skillName: string;
+  /** Parent L4 activity name */
+  l4Name: string;
+  /** L3 category (kept for grouping/reporting) */
   l3Name: string;
   l2Name: string;
   l1Name: string;
+  /** Archetype from the skill's own archetype field (authoritative) */
   archetype: LeadArchetype;
-  archetypeSource: "export" | "inferred";
   lenses: {
     technical: LensScore;
     adoption: LensScore;

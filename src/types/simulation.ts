@@ -97,6 +97,69 @@ export interface IntegrationSurface {
   }>;
 }
 
+// -- Canonical scenario-spec types --
+
+export type ScenarioStepStage =
+  | "ingest"
+  | "analyze"
+  | "decide"
+  | "act"
+  | "review"
+  | "notify"
+  | "surface";
+
+export interface ScenarioSourceSystem {
+  name: string;
+  type?: string;
+  status: "identified" | "tbd";
+}
+
+export interface ScenarioKeyInput {
+  name: string;
+  source: string;
+  purpose: string;
+  preferred_stream_type?: string;
+}
+
+export interface ScenarioFlowStep {
+  step: string;
+  stage: ScenarioStepStage;
+  component: string;
+  purpose: string;
+}
+
+export interface ScenarioBranch {
+  condition: string;
+  response: string;
+  outcome: string;
+}
+
+export interface ScenarioSpec {
+  objective: string;
+  trigger: string;
+  decision: string;
+  expected_action: string;
+  expected_outcome: string;
+  rationale: string;
+  source_systems: ScenarioSourceSystem[];
+  key_inputs: ScenarioKeyInput[];
+  happy_path: ScenarioFlowStep[];
+  branches: ScenarioBranch[];
+}
+
+// -- Post-simulation assessment types --
+
+export type SimulationFilterVerdict = "ADVANCE" | "REVIEW" | "HOLD";
+
+export interface SimulationAssessment {
+  groundednessScore: number;
+  integrationConfidenceScore: number;
+  ambiguityRiskScore: number;
+  implementationReadinessScore: number;
+  verdict: SimulationFilterVerdict;
+  reasons: string[];
+}
+
 // -- Result types --
 
 export interface SimulationArtifacts {
@@ -110,6 +173,8 @@ export interface SimulationResult {
   l3Name: string;
   slug: string;
   artifacts: SimulationArtifacts;
+  scenarioSpec?: ScenarioSpec;
+  assessment?: SimulationAssessment;
   validationSummary: {
     confirmedCount: number;
     inferredCount: number;

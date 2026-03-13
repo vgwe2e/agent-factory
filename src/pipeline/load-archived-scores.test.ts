@@ -21,8 +21,10 @@ function makeScoringResult(l3Name: string, composite: number = 0.65): ScoringRes
     l3Name,
     l2Name: `L2-${l3Name}`,
     l1Name: `L1-${l3Name}`,
+    skillId: "skill-test",
+    skillName: "Test Skill",
+    l4Name: "Test L4",
     archetype: "DETERMINISTIC",
-    archetypeSource: "export",
     lenses: {
       technical: {
         lens: "technical",

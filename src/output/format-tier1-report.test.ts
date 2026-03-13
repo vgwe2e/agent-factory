@@ -28,12 +28,14 @@ function makeScoring(overrides: Partial<ScoringResult> = {}): ScoringResult {
     l3Name: "Test Opportunity",
     l2Name: "L2 Domain",
     l1Name: "L1 Area",
+    skillId: "skill-test",
+    skillName: "Test Skill",
+    l4Name: "Test L4",
     archetype: "DETERMINISTIC",
-    archetypeSource: "export",
     lenses: {
       technical: makeLens("technical", [
         makeSub("data_readiness", 2, "Good data availability across systems"),
-        makeSub("platform_fit", 3, "Strong alignment with Aera platform capabilities"),
+        makeSub("aera_platform_fit", 3, "Strong alignment with Aera platform capabilities"),
         makeSub("archetype_confidence", 2, "Clear deterministic pattern identified"),
       ]),
       adoption: makeLens("adoption", [
@@ -94,8 +96,8 @@ describe("formatTier1Report", () => {
 
   it("includes numbered ## sections for each opportunity", () => {
     const scored: ScoringResult[] = [
-      makeScoring({ l3Name: "First Opp", composite: 0.90 }),
-      makeScoring({ l3Name: "Second Opp", composite: 0.70 }),
+      makeScoring({ l3Name: "First Opp", skillName: "First Opp", composite: 0.90 }),
+      makeScoring({ l3Name: "Second Opp", skillName: "Second Opp", composite: 0.70 }),
     ];
     const tier1Names = new Set(["First Opp", "Second Opp"]);
     const result = formatTier1Report(scored, tier1Names, "Ford", FIXED_DATE);

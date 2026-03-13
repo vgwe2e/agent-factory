@@ -63,8 +63,10 @@ function makeScoringResult(l3Name: string, overrides: Partial<ScoringResult> = {
     l3Name,
     l2Name: "L2-Test",
     l1Name: "L1-Test",
+    skillId: "skill-test",
+    skillName: "Test Skill",
+    l4Name: "Test L4",
     archetype: "DETERMINISTIC",
-    archetypeSource: "export",
     lenses: {
       technical: { lens: "technical", subDimensions: [], total: 6, maxPossible: 9, normalized: 0.67, confidence: "HIGH" },
       adoption: { lens: "adoption", subDimensions: [], total: 8, maxPossible: 12, normalized: 0.67, confidence: "HIGH" },

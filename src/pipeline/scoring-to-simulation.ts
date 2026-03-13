@@ -2,8 +2,12 @@
  * Adapter: scoring results -> simulation inputs.
  *
  * Pure function that converts promoted ScoringResult[] into
- * SimulationInput[] by looking up L3 opportunities, L4 activities,
+ * SimulationInput[] by looking up parent L3 opportunities, L4 activities,
  * and archetype routing from the knowledge base.
+ *
+ * Since scoring now operates at skill level, this adapter bridges
+ * skill-level results back to the L3-level SimulationInput format
+ * expected by the simulation pipeline.
  */
 
 import type { ScoringResult } from "../types/scoring.js";
@@ -13,6 +17,11 @@ import { getRouteForArchetype } from "../knowledge/orchestration.js";
 
 /**
  * Convert promoted scoring results into simulation pipeline inputs.
+ *
+ * Groups skill-level results by L3 name and uses the highest-composite
+ * skill per L3 to drive simulation. This ensures simulation artifacts
+ * are generated at the opportunity level (L3) even though scoring is
+ * at the skill level.
  *
  * @param promoted - ScoringResult[] already filtered to promotedToSimulation === true
  * @param l3Map - Map of l3_name -> L3Opportunity
@@ -26,13 +35,22 @@ export function toSimulationInputs(
   l4Map: Map<string, L4Activity[]>,
   companyContext: CompanyContext,
 ): SimulationInput[] {
+  // Group promoted skills by L3, keeping the highest-composite skill per L3
+  const bestByL3 = new Map<string, ScoringResult>();
+  for (const sr of promoted) {
+    const existing = bestByL3.get(sr.l3Name);
+    if (!existing || sr.composite > existing.composite) {
+      bestByL3.set(sr.l3Name, sr);
+    }
+  }
+
   const inputs: SimulationInput[] = [];
 
-  for (const sr of promoted) {
-    const opp = l3Map.get(sr.l3Name);
+  for (const [l3Name, sr] of bestByL3) {
+    const opp = l3Map.get(l3Name);
     if (!opp) continue; // defensive: skip if L3 not found
 
-    const l4s = l4Map.get(sr.l3Name) ?? [];
+    const l4s = l4Map.get(l3Name) ?? [];
     const mapping = getRouteForArchetype(sr.archetype);
 
     inputs.push({

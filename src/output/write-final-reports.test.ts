@@ -60,8 +60,10 @@ function makeScoring(overrides: Partial<ScoringResult> = {}): ScoringResult {
     l3Name: "Test Opp",
     l2Name: "L2 Domain",
     l1Name: "L1 Area",
+    skillId: "skill-test",
+    skillName: "Test Skill",
+    l4Name: "Test L4",
     archetype: "DETERMINISTIC",
-    archetypeSource: "export",
     lenses: {
       technical: makeLens("technical", [
         makeSub("data_readiness", 2),
@@ -112,6 +114,14 @@ function makeSimResult(overrides: Partial<SimulationResult> = {}): SimulationRes
         processing: [],
         ui_surface: [],
       },
+    },
+    assessment: {
+      groundednessScore: 80,
+      integrationConfidenceScore: 75,
+      ambiguityRiskScore: 20,
+      implementationReadinessScore: 78,
+      verdict: "ADVANCE",
+      reasons: ["Scenario is grounded, integration-aware, and implementation-ready."],
     },
     validationSummary: {
       confirmedCount: 1,
@@ -169,6 +179,9 @@ describe("writeFinalReports", () => {
     assert.ok(entries.includes("summary.md"));
     assert.ok(entries.includes("dead-zones.md"));
     assert.ok(entries.includes("meta-reflection.md"));
+    assert.ok(entries.includes("simulation-filter.tsv"));
+    assert.ok(entries.includes("implementation-shortlist.tsv"));
+    assert.ok(entries.includes("manual-review-queue.tsv"));
   });
 
   it("writes summary.md with formatSummary content", async () => {
@@ -241,6 +254,7 @@ describe("writeFinalReports", () => {
     assert.ok(entries.includes("component-map.yaml"));
     assert.ok(entries.includes("mock-test.yaml"));
     assert.ok(entries.includes("integration-surface.yaml"));
+    assert.ok(entries.includes("simulation-assessment.yaml"));
 
     // Verify content is non-empty
     const mmd = await fs.readFile(path.join(slugDir, "decision-flow.mmd"), "utf-8");
@@ -254,6 +268,9 @@ describe("writeFinalReports", () => {
 
     const isYaml = await fs.readFile(path.join(slugDir, "integration-surface.yaml"), "utf-8");
     assert.ok(isYaml.includes("SAP"));
+
+    const assessmentYaml = await fs.readFile(path.join(slugDir, "simulation-assessment.yaml"), "utf-8");
+    assert.ok(assessmentYaml.includes("ADVANCE"));
   });
 
   it("returns success with all written file paths", async () => {
@@ -267,8 +284,8 @@ describe("writeFinalReports", () => {
     assert.equal(result.success, true);
     if (!result.success) return;
 
-    // 3 markdown files + 4 simulation artifact files = 7
-    assert.equal(result.files.length, 7);
+    // 3 markdown files + 3 TSVs + 5 simulation artifact files = 11
+    assert.equal(result.files.length, 11);
 
     for (const filePath of result.files) {
       assert.ok(path.isAbsolute(filePath), `Expected absolute path: ${filePath}`);
@@ -287,8 +304,8 @@ describe("writeFinalReports", () => {
     assert.equal(result.success, true);
     if (!result.success) return;
 
-    // Only 3 markdown files
-    assert.equal(result.files.length, 3);
+    // 3 markdown files + 3 TSVs
+    assert.equal(result.files.length, 6);
 
     const simDir = path.join(dir, "evaluation", "simulations");
     const entries = await fs.readdir(simDir);

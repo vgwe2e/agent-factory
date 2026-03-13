@@ -21,6 +21,112 @@ export type LeadArchetype = "DETERMINISTIC" | "AGENTIC" | "GENERATIVE";
 
 export type ImplementationComplexity = "LOW" | "MEDIUM" | "HIGH";
 
+// -- Skill sub-types --
+
+export interface SkillAction {
+  action_type: string | null;
+  action_name: string | null;
+  description: string | null;
+  typical_triggers?: string[];
+  target_system?: string | null;
+  [key: string]: unknown;
+}
+
+export interface SkillConstraint {
+  constraint_type: string | null;
+  constraint_name: string | null;
+  description: string | null;
+  data_source?: string | null;
+  [key: string]: unknown;
+}
+
+export interface SkillExecution {
+  target_systems: string[];
+  write_back_actions: string[];
+  execution_trigger: string | null;
+  execution_frequency: string | null;
+  autonomy_level: string | null;
+  approval_required: boolean | null;
+  approval_threshold: string | null;
+  rollback_strategy: string | null;
+  [key: string]: unknown;
+}
+
+export interface SkillProblemStatement {
+  current_state: string;
+  quantified_pain: string;
+  root_cause: string;
+  falsifiability_check: string;
+  outcome: string;
+  [key: string]: unknown;
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  description: string | null;
+  archetype: LeadArchetype;
+  max_value: number;
+  slider_percent: number | null;
+  overlap_group: string | null;
+  value_metric: string | null;
+  decision_made: string | null;
+  aera_skill_pattern: string | null;
+  is_actual: boolean;
+  source: string | null;
+  loe: string | null;
+  savings_type: string | null;
+  actions: SkillAction[];
+  constraints: SkillConstraint[];
+  execution: SkillExecution | null;
+  problem_statement: SkillProblemStatement | null;
+  differentiation: string | null;
+  generated_at: string | null;
+  prompt_version: string | null;
+  is_cross_functional: boolean | null;
+  cross_functional_scope: string | null;
+  operational_flow: unknown[];
+  walkthrough_decision: string | null;
+  walkthrough_actions: unknown[];
+  walkthrough_narrative: string | null;
+  program_focus_ids?: string[];
+  [key: string]: unknown;
+}
+
+/**
+ * Skill enriched with parent L4 activity context.
+ * Used as the unit of scoring throughout the pipeline.
+ * Guarantees non-null execution and problem_statement (defaults applied during extraction).
+ */
+export interface SkillWithContext extends Skill {
+  /** Non-null execution (defaults applied during extraction) */
+  execution: SkillExecution;
+  /** Non-null problem_statement (defaults applied during extraction) */
+  problem_statement: SkillProblemStatement;
+  /** Parent L4 activity name */
+  l4Name: string;
+  /** Parent L4 activity ID */
+  l4Id: string;
+  /** L3 category (for grouping/reporting) */
+  l3Name: string;
+  /** L2 domain */
+  l2Name: string;
+  /** L1 area */
+  l1Name: string;
+  /** Parent L4 financial rating */
+  financialRating: FinancialRating;
+  /** Parent L4 AI suitability */
+  aiSuitability: AiSuitability | null;
+  /** Parent L4 impact order */
+  impactOrder: ImpactOrder;
+  /** Parent L4 rating confidence */
+  ratingConfidence: RatingConfidence;
+  /** Parent L4 decision exists flag */
+  decisionExists: boolean;
+  /** Parent L4 decision articulation */
+  decisionArticulation: string | null;
+}
+
 // -- Sub-types --
 
 export interface Meta {
@@ -72,7 +178,7 @@ export interface L4Activity {
   decision_exists: boolean;
   decision_articulation: string | null;
   escalation_flag: string | null;
-  skills: unknown[];
+  skills: Skill[];
 }
 
 export interface L3Opportunity {

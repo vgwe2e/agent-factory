@@ -32,8 +32,10 @@ function makeScoring(overrides: Partial<ScoringResult> = {}): ScoringResult {
     l3Name: "Test Opportunity",
     l2Name: "L2 Domain",
     l1Name: "L1 Area",
+    skillId: "skill-test",
+    skillName: "Test Skill",
+    l4Name: "Test L4",
     archetype: "DETERMINISTIC",
-    archetypeSource: "export",
     lenses: {
       technical: makeLens("technical", [
         makeSub("data_readiness", 2),
@@ -115,7 +117,20 @@ describe("formatSummary", () => {
     ];
     const triaged = [makeTriage(), makeTriage({ l3Name: "NotPromoted" })];
     const simResults = makeSimResults({
-      results: [{ l3Name: "Test Opportunity", slug: "test-opportunity", artifacts: {} as any, validationSummary: { confirmedCount: 3, inferredCount: 1, mermaidValid: true } }],
+      results: [{
+        l3Name: "Test Opportunity",
+        slug: "test-opportunity",
+        artifacts: {} as any,
+        assessment: {
+          groundednessScore: 75,
+          integrationConfidenceScore: 70,
+          ambiguityRiskScore: 25,
+          implementationReadinessScore: 72,
+          verdict: "ADVANCE",
+          reasons: ["Ready"],
+        },
+        validationSummary: { confirmedCount: 3, inferredCount: 1, mermaidValid: true },
+      }],
       totalSimulated: 1,
     });
     const md = formatSummary(scored, triaged, simResults, "Ford", FIXED_DATE);
@@ -124,11 +139,11 @@ describe("formatSummary", () => {
 
   it("produces top 10 table sorted by composite DESC", () => {
     const scored = Array.from({ length: 12 }, (_, i) =>
-      makeScoring({ l3Name: `Opp ${i}`, composite: i * 0.08 }),
+      makeScoring({ l3Name: `Opp ${i}`, skillId: `skill-${i}`, skillName: `Skill ${i}`, composite: i * 0.08 }),
     );
     const triaged = scored.map(s => makeTriage({ l3Name: s.l3Name }));
     const md = formatSummary(scored, triaged, makeSimResults(), "Ford", FIXED_DATE);
-    // Top entry should be highest composite (Opp 11 = 0.88)
+    // Top entry should be highest composite (Skill 11 = 0.88)
     // Extract lines between "Top Opportunities" and "Tier Distribution"
     const allLines = md.split("\n");
     const topStart = allLines.findIndex(l => l.includes("Top Opportunities"));
@@ -136,7 +151,7 @@ describe("formatSummary", () => {
     const topSection = allLines.slice(topStart, tierStart);
     const dataRows = topSection.filter(l => l.startsWith("|") && !l.includes("---") && !l.includes("Rank"));
     assert.equal(dataRows.length, 10);
-    assert.ok(dataRows[0].includes("Opp 11"));
+    assert.ok(dataRows[0].includes("Skill 11"));
   });
 
   it("handles fewer than 10 scored opportunities", () => {
@@ -158,12 +173,25 @@ describe("formatSummary", () => {
 
   it("shows simulated Yes/No based on simulation results", () => {
     const scored = [
-      makeScoring({ l3Name: "Simulated One", composite: 0.9 }),
-      makeScoring({ l3Name: "Not Simulated", composite: 0.8 }),
+      makeScoring({ l3Name: "Simulated One", skillId: "sim-skill-1", skillName: "Simulated One", composite: 0.9 }),
+      makeScoring({ l3Name: "Not Simulated", skillId: "sim-skill-2", skillName: "Not Simulated", composite: 0.8 }),
     ];
     const triaged = scored.map(s => makeTriage({ l3Name: s.l3Name }));
     const simResults = makeSimResults({
-      results: [{ l3Name: "Simulated One", slug: "simulated-one", artifacts: {} as any, validationSummary: { confirmedCount: 3, inferredCount: 1, mermaidValid: true } }],
+      results: [{
+        l3Name: "sim-skill-1",
+        slug: "simulated-one",
+        artifacts: {} as any,
+        assessment: {
+          groundednessScore: 75,
+          integrationConfidenceScore: 70,
+          ambiguityRiskScore: 25,
+          implementationReadinessScore: 72,
+          verdict: "ADVANCE",
+          reasons: ["Ready"],
+        },
+        validationSummary: { confirmedCount: 3, inferredCount: 1, mermaidValid: true },
+      }],
       totalSimulated: 1,
     });
     const md = formatSummary(scored, triaged, simResults, "Ford", FIXED_DATE);
@@ -172,6 +200,34 @@ describe("formatSummary", () => {
     assert.ok(simLine?.includes("Yes"));
     const notSimLine = lines.find(l => l.includes("Not Simulated"));
     assert.ok(notSimLine?.includes("No"));
+  });
+
+  it("shows simulation filter verdict counts and verdict column", () => {
+    const scored = [makeScoring({ l3Name: "Advance Opp", skillId: "skill-advance", skillName: "Advance Opp", composite: 0.9 })];
+    const triaged = [makeTriage({ l3Name: "Advance Opp" })];
+    const simResults = makeSimResults({
+      results: [{
+        l3Name: "skill-advance",
+        slug: "advance-opp",
+        artifacts: {} as any,
+        assessment: {
+          groundednessScore: 80,
+          integrationConfidenceScore: 75,
+          ambiguityRiskScore: 20,
+          implementationReadinessScore: 78,
+          verdict: "ADVANCE",
+          reasons: ["Ready"],
+        },
+        validationSummary: { confirmedCount: 4, inferredCount: 1, mermaidValid: true },
+      }],
+      totalSimulated: 1,
+    });
+    const md = formatSummary(scored, triaged, simResults, "Ford", FIXED_DATE);
+    assert.ok(md.includes("**Simulation Filter:** 1 advance / 0 review / 0 hold"));
+    assert.ok(md.includes("**Default Shortlist (ADVANCE):** 1"));
+    assert.ok(md.includes("**Manual Review Queue:** 0"));
+    assert.ok(md.includes("| Rank | Name | Composite | Archetype | Confidence | Simulated | Verdict |"));
+    assert.ok(md.includes("| 1 | Advance Opp | 0.90 | DETERMINISTIC | HIGH | Yes | ADVANCE |"));
   });
 
   it("includes tier distribution summary", () => {

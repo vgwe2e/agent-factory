@@ -1,8 +1,8 @@
 /**
  * Lens scorer functions.
  *
- * Three async functions that call Ollama (via injected chatFn) to score
- * opportunities on Technical Feasibility, Adoption Realism, and Value & Efficiency.
+ * Three async functions that call the LLM (via injected chatFn) to score
+ * skills on Technical Feasibility, Adoption Realism, and Value & Efficiency.
  *
  * Each scorer:
  * 1. Builds a prompt via the corresponding prompt builder
@@ -13,7 +13,7 @@
  * chatFn parameter enables dependency injection for testing (defaults to ollamaChat).
  */
 
-import type { L3Opportunity, L4Activity, CompanyContext, LeadArchetype } from "../types/hierarchy.js";
+import type { SkillWithContext, CompanyContext, LeadArchetype } from "../types/hierarchy.js";
 import type { LensScore, SubDimensionScore, ConfidenceLevel } from "../types/scoring.js";
 import { MAX_SCORES } from "../types/scoring.js";
 import { ollamaChat, scoreWithRetry } from "./ollama-client.js";
@@ -30,7 +30,7 @@ import type { TechnicalLensOutput, AdoptionLensOutput, ValueLensOutput } from ".
 import { buildTechnicalPrompt } from "./prompts/technical.js";
 import { buildAdoptionPrompt } from "./prompts/adoption.js";
 import { buildValuePrompt } from "./prompts/value.js";
-import { computeTechnicalConfidence, computeAdoptionConfidence, computeValueConfidence } from "./confidence.js";
+import { computeSkillTechnicalConfidence, computeSkillAdoptionConfidence, computeSkillValueConfidence } from "./confidence.js";
 
 // -- Types --
 
@@ -62,16 +62,15 @@ function mapToSubDimensions(
 // -- Public API --
 
 /**
- * Score an opportunity on Technical Feasibility (3 sub-dimensions, max 9).
+ * Score a skill on Technical Feasibility (3 sub-dimensions, max 9).
  */
 export async function scoreTechnical(
-  opp: L3Opportunity,
-  l4s: L4Activity[],
+  skill: SkillWithContext,
   knowledgeContext: string,
   archetypeHint: LeadArchetype | null,
   chatFn: ChatFn = ollamaChat,
 ): Promise<LensScorerResult> {
-  const messages = buildTechnicalPrompt(opp, l4s, knowledgeContext, archetypeHint);
+  const messages = buildTechnicalPrompt(skill, knowledgeContext, archetypeHint);
 
   const result = await scoreWithRetry(
     TechnicalLensSchema,
@@ -91,7 +90,7 @@ export async function scoreTechnical(
   const fieldNames = ["data_readiness", "aera_platform_fit", "archetype_confidence"];
   const subDimensions = mapToSubDimensions(data as unknown as Record<string, { score: number; reason: string }>, fieldNames);
   const total = subDimensions.reduce((sum, sd) => sum + sd.score, 0);
-  const confidence: ConfidenceLevel = computeTechnicalConfidence(opp, l4s);
+  const confidence: ConfidenceLevel = computeSkillTechnicalConfidence(skill);
 
   return {
     success: true,
@@ -107,15 +106,14 @@ export async function scoreTechnical(
 }
 
 /**
- * Score an opportunity on Adoption Realism (4 sub-dimensions, max 12).
+ * Score a skill on Adoption Realism (4 sub-dimensions, max 12).
  */
 export async function scoreAdoption(
-  opp: L3Opportunity,
-  l4s: L4Activity[],
+  skill: SkillWithContext,
   archetypeHint: LeadArchetype | null,
   chatFn: ChatFn = ollamaChat,
 ): Promise<LensScorerResult> {
-  const messages = buildAdoptionPrompt(opp, l4s, archetypeHint);
+  const messages = buildAdoptionPrompt(skill, archetypeHint);
 
   const result = await scoreWithRetry(
     AdoptionLensSchema,
@@ -135,7 +133,7 @@ export async function scoreAdoption(
   const fieldNames = ["decision_density", "financial_gravity", "impact_proximity", "confidence_signal"];
   const subDimensions = mapToSubDimensions(data as unknown as Record<string, { score: number; reason: string }>, fieldNames);
   const total = subDimensions.reduce((sum, sd) => sum + sd.score, 0);
-  const confidence: ConfidenceLevel = computeAdoptionConfidence(l4s);
+  const confidence: ConfidenceLevel = computeSkillAdoptionConfidence(skill);
 
   return {
     success: true,
@@ -151,16 +149,15 @@ export async function scoreAdoption(
 }
 
 /**
- * Score an opportunity on Value & Efficiency (2 sub-dimensions, max 6).
+ * Score a skill on Value & Efficiency (2 sub-dimensions, max 6).
  */
 export async function scoreValue(
-  opp: L3Opportunity,
-  l4s: L4Activity[],
+  skill: SkillWithContext,
   company: CompanyContext,
   archetypeHint: LeadArchetype | null,
   chatFn: ChatFn = ollamaChat,
 ): Promise<LensScorerResult> {
-  const messages = buildValuePrompt(opp, l4s, company, archetypeHint);
+  const messages = buildValuePrompt(skill, company, archetypeHint);
 
   const result = await scoreWithRetry(
     ValueLensSchema,
@@ -180,7 +177,7 @@ export async function scoreValue(
   const fieldNames = ["value_density", "simulation_viability"];
   const subDimensions = mapToSubDimensions(data as unknown as Record<string, { score: number; reason: string }>, fieldNames);
   const total = subDimensions.reduce((sum, sd) => sum + sd.score, 0);
-  const confidence: ConfidenceLevel = computeValueConfidence(opp, company);
+  const confidence: ConfidenceLevel = computeSkillValueConfidence(skill, company);
 
   return {
     success: true,

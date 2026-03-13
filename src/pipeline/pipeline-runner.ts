@@ -9,7 +9,7 @@
  */
 
 import type { Logger } from "../infra/logger.js";
-import type { HierarchyExport } from "../types/hierarchy.js";
+import type { HierarchyExport, SkillWithContext } from "../types/hierarchy.js";
 import type { ChatResult } from "../scoring/ollama-client.js";
 import type { ScoringResult } from "../types/scoring.js";
 import type { ParseResult } from "../ingestion/parse-export.js";
@@ -18,7 +18,7 @@ import type { CostTracker, CostSummary } from "../infra/cost-tracker.js";
 import { z } from "zod";
 import { parseExport } from "../ingestion/parse-export.js";
 import { triageOpportunities } from "../triage/triage-pipeline.js";
-import { scoreOneOpportunity } from "../scoring/scoring-pipeline.js";
+import { scoreOneSkill } from "../scoring/scoring-pipeline.js";
 import { ModelManager } from "../infra/model-manager.js";
 import {
   createContext,
@@ -30,6 +30,7 @@ import {
 import { ollamaChat } from "../scoring/ollama-client.js";
 import { buildKnowledgeContext } from "../scoring/knowledge-context.js";
 import { groupL4sByL3 } from "../triage/red-flags.js";
+import { extractScoringSkills } from "./extract-skills.js";
 import { loadCheckpoint, getCompletedNames, createCheckpointWriter } from "../infra/checkpoint.js";
 import { checkOllama, warmUpModel, isOllamaHealthy } from "../infra/ollama.js";
 import type { Checkpoint } from "../infra/checkpoint.js";
@@ -152,10 +153,14 @@ export async function runPipeline(
     throw new Error(`Failed to parse export: ${parseResult.error}`);
   }
   const data: HierarchyExport = parseResult.data;
+  // Extract skills from hierarchy
+  const allSkills = extractScoringSkills(data.hierarchy);
+
   logger.info(
     {
       l3Count: data.l3_opportunities.length,
       l4Count: data.hierarchy.length,
+      skillCount: allSkills.length,
     },
     "Export parsed",
   );
@@ -184,9 +189,10 @@ export async function runPipeline(
   if (completed.size > 0) {
     const archived = await loadArchivedScores(options.outputDir);
     for (const sr of archived) {
-      // Only include scores for opportunities we're skipping (already completed)
+      // Only include scores for skills we're skipping (already completed)
       // Current-session scores will be added during scoring below
-      if (completed.has(sr.l3Name)) {
+      const key = sr.skillId ?? sr.l3Name;
+      if (completed.has(key)) {
         allScoredResults.push(sr);
       }
     }
@@ -278,18 +284,24 @@ export async function runPipeline(
   // 5. Load knowledge context
   const knowledgeContext = buildKnowledgeContext();
 
-  // 6. Group L4s by L3 for lookup
+  // 6. Group L4s by L3 for lookup (needed for simulation)
   const l4Map = groupL4sByL3(data.hierarchy);
 
-  // 7. Build L3 lookup
+  // 7. Build L3 lookup (needed for simulation)
   const l3Map = new Map(
     data.l3_opportunities.map((opp) => [opp.l3_name, opp]),
   );
 
+  // 7b. Build skill lookup from triage results (skillId -> SkillWithContext)
+  const skillMap = new Map<string, SkillWithContext>();
+  for (const skill of allSkills) {
+    skillMap.set(skill.id, skill);
+  }
+
   // 8. Sort processable by tier (1 first)
   processable.sort((a, b) => a.tier - b.tier);
 
-  // 9. Score each opportunity (concurrently via semaphore)
+  // 9. Score each skill (concurrently via semaphore)
   //
   // Thread-safety note: addResult/addError mutate EvaluationContext (Set, Map, Array).
   // In Node.js single-threaded event loop, these mutations are safe even with concurrent
@@ -304,28 +316,29 @@ export async function runPipeline(
 
   try {
     const tasks = processable.map((triage) => semaphore.run(async () => {
-      const opp = l3Map.get(triage.l3Name);
-      if (!opp) {
-        const msg = `L3 opportunity not found: ${triage.l3Name}`;
-        addError(ctx, triage.l3Name, "scoring", msg);
+      const skillId = triage.skillId;
+      const skillName = triage.skillName ?? triage.l3Name;
+      const skill = skillId ? skillMap.get(skillId) : undefined;
+      if (!skill) {
+        const msg = `Skill not found: ${skillName} (${skillId})`;
+        addError(ctx, skillId ?? triage.l3Name, "scoring", msg);
         errors.push(msg);
-        logger.warn({ oppId: triage.l3Name }, msg);
+        logger.warn({ skillId, skillName }, msg);
         return;
       }
 
-      const l4s = l4Map.get(triage.l3Name) ?? [];
-      const childLog = logger.child({ oppId: triage.l3Name, tier: triage.tier });
+      const childLog = logger.child({ skillId, skillName, tier: triage.tier });
 
-      // Skip already-completed opportunities (resume support)
-      if (completed.has(triage.l3Name)) {
+      // Skip already-completed skills (resume support)
+      if (completed.has(skillId ?? triage.l3Name)) {
         childLog.info("Skipping (already completed in previous run)");
         return;
       }
 
-      childLog.info("Scoring opportunity");
-      progress.start(triage.l3Name);
+      childLog.info("Scoring skill");
+      progress.start(skillName);
 
-      // Use 8B model for Tier 3 (faster, acceptable quality for low-priority opps)
+      // Use 8B model for Tier 3 (faster, acceptable quality for low-priority skills)
       const tierChatFn = options.chatFn ?? (triage.tier >= 3
         ? (msgs: Array<{ role: string; content: string }>, fmt: Record<string, unknown>) => ollamaChat(msgs, fmt, triageModel)
         : undefined);
@@ -335,13 +348,13 @@ export async function runPipeline(
         const resilient = await withTimeout(
           (_signal) => callWithResilience({
             primaryCall: async () => {
-              const r = await scoreOneOpportunity(opp, l4s, data.company_context, knowledgeContext, tierChatFn);
+              const r = await scoreOneSkill(skill, data.company_context, knowledgeContext, tierChatFn);
               if ("error" in r) throw new Error(r.error);
               return JSON.stringify(r);
             },
-            schema: z.any(),  // We validate via scoreOneOpportunity internally; this is a pass-through wrapper
-            label: triage.l3Name,
-            maxRetries: 1,  // scoreOneOpportunity already has internal retries via scoreWithRetry
+            schema: z.any(),  // We validate via scoreOneSkill internally; this is a pass-through wrapper
+            label: skillName,
+            maxRetries: 1,  // scoreOneSkill already has internal retries via scoreWithRetry
           }),
           requestTimeoutMs,
         );
@@ -356,25 +369,25 @@ export async function runPipeline(
             { composite: sr.composite.toFixed(2), promoted: sr.promotedToSimulation, resolvedVia: resilient.resolvedVia },
             "Scored",
           );
-          progress.complete(triage.l3Name);
+          progress.complete(skillName);
         } else {
-          addError(ctx, triage.l3Name, "scoring", resilient.skipReason ?? resilient.result.error);
+          addError(ctx, skillId ?? triage.l3Name, "scoring", resilient.skipReason ?? resilient.result.error);
           errors.push(resilient.skipReason ?? resilient.result.error);
           childLog.warn({ error: resilient.skipReason, resolvedVia: "skipped" }, "Scoring skipped");
-          progress.error(triage.l3Name);
+          progress.error(skillName);
         }
 
         // Enqueue checkpoint entry (atomic writer handles debounced disk writes)
         writer.enqueue({
-          l3Name: triage.l3Name,
+          skillId: skillId,
           completedAt: new Date().toISOString(),
           status: resilient.result.success ? "scored" : "error",
         });
       } catch (err) {
         // Handle timeout specifically
         if (err instanceof TimeoutError) {
-          const msg = `Scoring timed out after ${err.timeoutMs}ms for ${triage.l3Name}`;
-          addError(ctx, triage.l3Name, "scoring", msg);
+          const msg = `Scoring timed out after ${err.timeoutMs}ms for ${skillName}`;
+          addError(ctx, skillId ?? triage.l3Name, "scoring", msg);
           errors.push(msg);
           childLog.warn({ timeoutMs: err.timeoutMs }, "Scoring timed out");
 
@@ -388,14 +401,14 @@ export async function runPipeline(
           }
         } else {
           const msg = err instanceof Error ? err.message : String(err);
-          addError(ctx, triage.l3Name, "scoring", msg);
+          addError(ctx, skillId ?? triage.l3Name, "scoring", msg);
           errors.push(msg);
           childLog.warn({ error: msg }, "Scoring failed unexpectedly");
         }
-        progress.error(triage.l3Name);
+        progress.error(skillName);
 
         writer.enqueue({
-          l3Name: triage.l3Name,
+          skillId: skillId,
           completedAt: new Date().toISOString(),
           status: "error",
         });
@@ -424,7 +437,8 @@ export async function runPipeline(
   // 10-dedup. Deduplicate allScoredResults: current session scores override archived scores
   const deduped = new Map<string, ScoringResult>();
   for (const sr of allScoredResults) {
-    deduped.set(sr.l3Name, sr); // later entries (current session) overwrite earlier (archived)
+    const key = sr.skillId ?? sr.l3Name;
+    deduped.set(key, sr); // later entries (current session) overwrite earlier (archived)
   }
   const finalScoredResults = [...deduped.values()];
 

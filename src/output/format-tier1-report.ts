@@ -12,7 +12,7 @@ import type { ScoringResult, LensScore, SubDimensionScore } from "../types/scori
 /** Human-readable names for sub-dimensions. */
 const SUB_DIMENSION_LABELS: Record<string, string> = {
   data_readiness: "Data Readiness",
-  platform_fit: "Platform Fit",
+  aera_platform_fit: "Platform Fit",
   archetype_confidence: "Archetype Confidence",
   decision_density: "Decision Density",
   financial_gravity: "Financial Gravity",
@@ -79,7 +79,7 @@ function formatAssessment(r: ScoringResult): string {
   return lines.join(" ");
 }
 
-/** Format a single opportunity section. */
+/** Format a single skill section. */
 function formatOpportunitySection(r: ScoringResult, rank: number): string {
   const tech = r.lenses.technical;
   const adopt = r.lenses.adoption;
@@ -87,16 +87,17 @@ function formatOpportunitySection(r: ScoringResult, rank: number): string {
 
   const lines: string[] = [];
 
-  lines.push(`## ${rank}. ${r.l3Name}`);
+  const displayName = r.skillName ?? r.l3Name;
+  lines.push(`## ${rank}. ${displayName}`);
   lines.push("");
-  lines.push(`**${r.l1Name} > ${r.l2Name} > ${r.l3Name}**`);
+  lines.push(`**${r.l1Name} > ${r.l2Name} > ${r.l3Name} > ${r.l4Name ?? ""}**`);
   lines.push(`**Archetype:** ${r.archetype} | **Composite:** ${r.composite.toFixed(2)} | **Confidence:** ${r.overallConfidence}`);
   lines.push("");
 
   // Technical Feasibility
   lines.push(`### Technical Feasibility (${tech.total}/${tech.maxPossible})`);
   lines.push(formatSubLine(tech, "data_readiness"));
-  lines.push(formatSubLine(tech, "platform_fit"));
+  lines.push(formatSubLine(tech, "aera_platform_fit"));
   lines.push(formatSubLine(tech, "archetype_confidence"));
   lines.push("");
 
@@ -129,9 +130,9 @@ export function formatTier1Report(
 ): string {
   const dateStr = date ?? new Date().toISOString().slice(0, 10);
 
-  // Filter to tier 1 only, sort by composite DESC
+  // Filter to tier 1 only (match on skillId or l3Name for backward compat), sort by composite DESC
   const tier1 = scored
-    .filter(r => tier1Names.has(r.l3Name))
+    .filter(r => tier1Names.has(r.skillId ?? r.l3Name) || tier1Names.has(r.l3Name))
     .sort((a, b) => b.composite - a.composite);
 
   const lines: string[] = [];

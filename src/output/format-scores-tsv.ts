@@ -1,8 +1,9 @@
 /**
  * Feasibility scores TSV formatter.
  *
- * Pure function: takes ScoringResult[] and returns a 19-column TSV string.
+ * Pure function: takes ScoringResult[] and returns a TSV string.
  * Sorted by composite DESC (highest score first).
+ * Each row is one skill -- the unit of scoring.
  * Produces evaluation/feasibility-scores.tsv content.
  */
 
@@ -10,7 +11,7 @@ import type { ScoringResult, LensScore } from "../types/scoring.js";
 import { tsvCell, tsvRow } from "./tsv-utils.js";
 
 const HEADER = [
-  "l3_name", "l1_name", "l2_name", "archetype",
+  "skill_id", "skill_name", "l4_name", "l3_name", "l2_name", "l1_name", "archetype",
   "data_readiness", "platform_fit", "archetype_conf", "tech_total",
   "decision_density", "financial_gravity", "impact_proximity", "confidence_signal", "adoption_total",
   "value_density", "simulation_viability", "value_total",
@@ -31,12 +32,15 @@ export function formatScoresTsv(results: ScoringResult[]): string {
     const val = r.lenses.value;
 
     return tsvRow([
+      r.skillId,
+      tsvCell(r.skillName),
+      tsvCell(r.l4Name),
       r.l3Name,
-      r.l1Name,
       r.l2Name,
+      r.l1Name,
       tsvCell(r.archetype),
       subScore(tech, "data_readiness"),
-      subScore(tech, "platform_fit"),
+      subScore(tech, "aera_platform_fit"),
       subScore(tech, "archetype_confidence"),
       tech.total,
       subScore(adopt, "decision_density"),

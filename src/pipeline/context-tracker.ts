@@ -34,10 +34,11 @@ export function createContext(): EvaluationContext {
   };
 }
 
-/** Add a scoring result and mark the opportunity as processed. */
+/** Add a scoring result and mark the skill as processed. */
 export function addResult(ctx: EvaluationContext, result: ScoringResult): void {
-  ctx.results.set(result.l3Name, result);
-  ctx.processed.add(result.l3Name);
+  const key = result.skillId ?? result.l3Name;
+  ctx.results.set(key, result);
+  ctx.processed.add(key);
 }
 
 /** Record an error for a specific opportunity and stage. */

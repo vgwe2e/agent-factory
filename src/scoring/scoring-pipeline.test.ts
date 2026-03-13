@@ -2,58 +2,78 @@
  * Tests for the scoring pipeline orchestrator.
  *
  * All tests use mocked chatFn (no Ollama required).
- * Covers: process-only filtering, tier ordering, complete result structure,
- * promotion threshold, and failure handling.
+ * Covers: scoreOneSkill result structure, promotion threshold, failure handling,
+ * and scoreSkills generator behavior.
  */
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { scoreOpportunities, scoreOneOpportunity } from "./scoring-pipeline.js";
+import { scoreOneSkill, scoreSkills } from "./scoring-pipeline.js";
 import type { ChatResult } from "./ollama-client.js";
-import type { L3Opportunity, L4Activity, CompanyContext, HierarchyExport } from "../types/hierarchy.js";
-import type { TriageResult } from "../types/triage.js";
+import type { SkillWithContext, CompanyContext } from "../types/hierarchy.js";
 
 // -- Test fixtures --
 
-function makeL3(overrides: Partial<L3Opportunity> = {}): L3Opportunity {
+function makeSkill(overrides: Partial<SkillWithContext> = {}): SkillWithContext {
   return {
-    l3_name: "Test Opportunity",
-    l2_name: "Test L2",
-    l1_name: "Test L1",
-    opportunity_exists: true,
-    opportunity_name: "Test Opp Name",
-    opportunity_summary: "Test summary",
-    lead_archetype: "DETERMINISTIC",
-    supporting_archetypes: [],
-    combined_max_value: 5_000_000,
-    implementation_complexity: "MEDIUM",
-    quick_win: false,
-    competitive_positioning: null,
-    aera_differentiators: [],
-    l4_count: 3,
-    high_value_l4_count: 2,
-    rationale: "Test rationale",
-    ...overrides,
-  };
-}
-
-function makeL4(overrides: Partial<L4Activity> = {}): L4Activity {
-  return {
-    id: "l4-001",
-    name: "Test Activity",
+    id: "skill-001",
+    name: "Test Skill",
     description: "Test description",
-    l1: "Test L1",
-    l2: "Test L2",
-    l3: "Test Opportunity",
-    financial_rating: "HIGH",
-    value_metric: "revenue",
-    impact_order: "FIRST",
-    rating_confidence: "HIGH",
-    ai_suitability: "HIGH",
-    decision_exists: true,
-    decision_articulation: "Test decision",
-    escalation_flag: null,
-    skills: [],
+    archetype: "DETERMINISTIC",
+    max_value: 5_000_000,
+    slider_percent: null,
+    overlap_group: null,
+    value_metric: "cost_reduction",
+    decision_made: "Reduce lead times",
+    aera_skill_pattern: "AutoPilot",
+    is_actual: false,
+    source: null,
+    loe: null,
+    savings_type: null,
+    actions: [
+      { action_type: "alert", action_name: "Notify", description: "Notify team" },
+    ],
+    constraints: [
+      { constraint_type: "threshold", constraint_name: "Min value", description: "Must exceed $100K" },
+    ],
+    execution: {
+      target_systems: ["SAP", "Salesforce"],
+      write_back_actions: [],
+      execution_trigger: "daily",
+      execution_frequency: "daily",
+      autonomy_level: "supervised",
+      approval_required: true,
+      approval_threshold: "$50K",
+      rollback_strategy: null,
+    },
+    problem_statement: {
+      current_state: "Manual process",
+      quantified_pain: "Costs $2M annually",
+      root_cause: "No automation",
+      falsifiability_check: "If automated, savings realized",
+      outcome: "Reduce cost by 50%",
+    },
+    differentiation: null,
+    generated_at: null,
+    prompt_version: null,
+    is_cross_functional: null,
+    cross_functional_scope: null,
+    operational_flow: [],
+    walkthrough_decision: null,
+    walkthrough_actions: [],
+    walkthrough_narrative: null,
+    // Parent L4 context
+    l4Name: "Test Activity",
+    l4Id: "L4-001",
+    l3Name: "Test Opportunity",
+    l2Name: "Test L2",
+    l1Name: "Test L1",
+    financialRating: "HIGH",
+    aiSuitability: "HIGH",
+    impactOrder: "FIRST",
+    ratingConfidence: "HIGH",
+    decisionExists: true,
+    decisionArticulation: "Test decision",
     ...overrides,
   };
 }
@@ -87,49 +107,18 @@ function makeCompany(overrides: Partial<CompanyContext> = {}): CompanyContext {
   };
 }
 
-function makeTriage(overrides: Partial<TriageResult> = {}): TriageResult {
-  return {
-    l3Name: "Test Opportunity",
-    l2Name: "Test L2",
-    l1Name: "Test L1",
-    tier: 1,
-    redFlags: [],
-    action: "process",
-    combinedMaxValue: 5_000_000,
-    quickWin: false,
-    leadArchetype: "DETERMINISTIC",
-    l4Count: 3,
-    ...overrides,
-  };
-}
-
-function makeExport(opps: L3Opportunity[], l4s: L4Activity[], company?: CompanyContext): HierarchyExport {
-  return {
-    meta: {
-      project_name: "Test",
-      version_date: "2026-01-01",
-      created_date: "2026-01-01",
-      exported_by: null,
-      description: "Test export",
-    },
-    company_context: company ?? makeCompany(),
-    hierarchy: l4s,
-    l3_opportunities: opps,
-  };
-}
-
 // -- Mock chat functions --
 
 // Returns valid JSON for all three lenses based on the prompt content
-function makeMultiLensChatFn(options?: { failForL3?: string }): (
+function makeMultiLensChatFn(options?: { failForSkill?: string }): (
   messages: Array<{ role: string; content: string }>,
   format: Record<string, unknown>,
 ) => Promise<ChatResult> {
   return async (messages, _format) => {
     const userMsg = messages.find((m) => m.role === "user")?.content ?? "";
 
-    // Check if we should fail for a specific L3
-    if (options?.failForL3 && userMsg.includes(options.failForL3)) {
+    // Check if we should fail for a specific skill
+    if (options?.failForSkill && userMsg.includes(options.failForSkill)) {
       return { success: false as const, error: "Simulated LLM failure" };
     }
 
@@ -276,86 +265,33 @@ async function collectResults<T>(gen: AsyncGenerator<T>): Promise<T[]> {
 
 // -- Tests --
 
-describe("scoreOpportunities", () => {
-  it("only scores triage results with action === 'process'", async () => {
-    const opp1 = makeL3({ l3_name: "Opp A" });
-    const opp2 = makeL3({ l3_name: "Opp B" });
-    const opp3 = makeL3({ l3_name: "Opp C" });
-    const l4a = makeL4({ l3: "Opp A", id: "a1" });
-    const l4b = makeL4({ l3: "Opp B", id: "b1" });
-    const l4c = makeL4({ l3: "Opp C", id: "c1" });
-
-    const triageResults: TriageResult[] = [
-      makeTriage({ l3Name: "Opp A", action: "process", tier: 1 }),
-      makeTriage({ l3Name: "Opp B", action: "skip", tier: 2 }),
-      makeTriage({ l3Name: "Opp C", action: "demote", tier: 3 }),
-    ];
-
-    const gen = scoreOpportunities({
-      hierarchyExport: makeExport([opp1, opp2, opp3], [l4a, l4b, l4c]),
-      triageResults,
-      knowledgeContext: { components: "test", processBuilder: "test" },
-      chatFn: makeMultiLensChatFn(),
-    });
-
-    const results = await collectResults(gen);
-    assert.equal(results.length, 1);
-    assert.ok("l3Name" in results[0]);
-    assert.equal((results[0] as { l3Name: string }).l3Name, "Opp A");
-  });
-
-  it("processes opportunities in tier order (Tier 1 before Tier 2)", async () => {
-    const opp1 = makeL3({ l3_name: "Tier2 Opp" });
-    const opp2 = makeL3({ l3_name: "Tier1 Opp" });
-    const l4a = makeL4({ l3: "Tier2 Opp", id: "a1" });
-    const l4b = makeL4({ l3: "Tier1 Opp", id: "b1" });
-
-    const triageResults: TriageResult[] = [
-      makeTriage({ l3Name: "Tier2 Opp", action: "process", tier: 2 }),
-      makeTriage({ l3Name: "Tier1 Opp", action: "process", tier: 1 }),
-    ];
-
-    const gen = scoreOpportunities({
-      hierarchyExport: makeExport([opp1, opp2], [l4a, l4b]),
-      triageResults,
-      knowledgeContext: { components: "test", processBuilder: "test" },
-      chatFn: makeMultiLensChatFn(),
-    });
-
-    const results = await collectResults(gen);
-    assert.equal(results.length, 2);
-    assert.equal((results[0] as { l3Name: string }).l3Name, "Tier1 Opp");
-    assert.equal((results[1] as { l3Name: string }).l3Name, "Tier2 Opp");
-  });
-
+describe("scoreOneSkill", () => {
   it("produces complete ScoringResult with all fields", async () => {
-    const opp = makeL3();
-    const l4s = [makeL4(), makeL4({ id: "l4-002", name: "Activity 2" })];
+    const skill = makeSkill();
+    const company = makeCompany();
 
-    const gen = scoreOpportunities({
-      hierarchyExport: makeExport([opp], l4s),
-      triageResults: [makeTriage()],
-      knowledgeContext: { components: "test", processBuilder: "test" },
-      chatFn: makeMultiLensChatFn(),
-    });
+    const result = await scoreOneSkill(
+      skill, company,
+      { components: "test", processBuilder: "test" },
+      makeMultiLensChatFn(),
+    );
 
-    const results = await collectResults(gen);
-    assert.equal(results.length, 1);
-    const r = results[0];
-    assert.ok("archetype" in r);
-    // Full ScoringResult type check
-    const sr = r as {
+    assert.ok("archetype" in result);
+    const sr = result as {
+      skillId: string; skillName: string; l4Name: string;
       l3Name: string; l2Name: string; l1Name: string;
-      archetype: string; archetypeSource: string;
+      archetype: string;
       lenses: { technical: unknown; adoption: unknown; value: unknown };
       composite: number; overallConfidence: string;
       promotedToSimulation: boolean; scoringDurationMs: number;
     };
+    assert.equal(sr.skillId, "skill-001");
+    assert.equal(sr.skillName, "Test Skill");
+    assert.equal(sr.l4Name, "Test Activity");
     assert.equal(sr.l3Name, "Test Opportunity");
     assert.equal(sr.l2Name, "Test L2");
     assert.equal(sr.l1Name, "Test L1");
-    assert.ok(sr.archetype);
-    assert.ok(["export", "inferred"].includes(sr.archetypeSource));
+    assert.equal(sr.archetype, "DETERMINISTIC");
     assert.ok(sr.lenses.technical);
     assert.ok(sr.lenses.adoption);
     assert.ok(sr.lenses.value);
@@ -364,16 +300,13 @@ describe("scoreOpportunities", () => {
     assert.ok(typeof sr.promotedToSimulation === "boolean");
     assert.ok(typeof sr.scoringDurationMs === "number");
   });
-});
 
-describe("scoreOneOpportunity", () => {
-  it("opportunity with high scores has promotedToSimulation = true", async () => {
-    const opp = makeL3();
-    const l4s = [makeL4(), makeL4({ id: "l4-002" })];
+  it("skill with high scores has promotedToSimulation = true", async () => {
+    const skill = makeSkill();
     const company = makeCompany();
 
-    const result = await scoreOneOpportunity(
-      opp, l4s, company,
+    const result = await scoreOneSkill(
+      skill, company,
       { components: "test", processBuilder: "test" },
       makeHighScoringChatFn(),
     );
@@ -384,13 +317,12 @@ describe("scoreOneOpportunity", () => {
     assert.equal(sr.promotedToSimulation, true);
   });
 
-  it("opportunity with low scores has promotedToSimulation = false", async () => {
-    const opp = makeL3();
-    const l4s = [makeL4(), makeL4({ id: "l4-002" })];
+  it("skill with low scores has promotedToSimulation = false", async () => {
+    const skill = makeSkill();
     const company = makeCompany();
 
-    const result = await scoreOneOpportunity(
-      opp, l4s, company,
+    const result = await scoreOneSkill(
+      skill, company,
       { components: "test", processBuilder: "test" },
       makeLowScoringChatFn(),
     );
@@ -401,22 +333,65 @@ describe("scoreOneOpportunity", () => {
     assert.equal(sr.promotedToSimulation, false);
   });
 
-  it("LLM failure for one opportunity yields error, does not crash pipeline", async () => {
-    const opp1 = makeL3({ l3_name: "Good Opp" });
-    const opp2 = makeL3({ l3_name: "Bad Opp" });
-    const l4a = makeL4({ l3: "Good Opp", id: "a1" });
-    const l4b = makeL4({ l3: "Bad Opp", id: "b1" });
+  it("LLM failure yields error with skillId, does not throw", async () => {
+    const skill = makeSkill({ id: "skill-bad", name: "Bad Skill" });
+    const company = makeCompany();
 
-    const triageResults: TriageResult[] = [
-      makeTriage({ l3Name: "Good Opp", action: "process", tier: 1 }),
-      makeTriage({ l3Name: "Bad Opp", action: "process", tier: 2 }),
+    const failChatFn = async () => ({
+      success: false as const,
+      error: "Simulated LLM failure",
+    });
+
+    const result = await scoreOneSkill(
+      skill, company,
+      { components: "test", processBuilder: "test" },
+      failChatFn,
+    );
+
+    assert.ok("error" in result, "Result should be an error");
+    assert.equal((result as { skillId: string }).skillId, "skill-bad");
+    assert.equal((result as { skillName: string }).skillName, "Bad Skill");
+  });
+});
+
+describe("scoreSkills", () => {
+  it("scores multiple skills via generator", async () => {
+    const skills = [
+      makeSkill({ id: "s1", name: "Skill A", l3Name: "L3-B" }),
+      makeSkill({ id: "s2", name: "Skill B", l3Name: "L3-A" }),
     ];
+    const company = makeCompany();
 
-    const gen = scoreOpportunities({
-      hierarchyExport: makeExport([opp1, opp2], [l4a, l4b]),
-      triageResults,
+    const gen = scoreSkills({
+      skills,
+      company,
       knowledgeContext: { components: "test", processBuilder: "test" },
-      chatFn: makeMultiLensChatFn({ failForL3: "Bad Opp" }),
+      chatFn: makeMultiLensChatFn(),
+    });
+
+    const results = await collectResults(gen);
+    assert.equal(results.length, 2);
+
+    // Should be sorted by L3 name
+    const firstSkillId = "skillId" in results[0] ? (results[0] as { skillId: string }).skillId : "";
+    const secondSkillId = "skillId" in results[1] ? (results[1] as { skillId: string }).skillId : "";
+    // L3-A sorts before L3-B, so s2 (L3-A) should come first
+    assert.equal(firstSkillId, "s2");
+    assert.equal(secondSkillId, "s1");
+  });
+
+  it("continues on failure for one skill", async () => {
+    const skills = [
+      makeSkill({ id: "s-good", name: "Good Skill", l3Name: "L3-A" }),
+      makeSkill({ id: "s-bad", name: "Bad Skill", l3Name: "L3-B" }),
+    ];
+    const company = makeCompany();
+
+    const gen = scoreSkills({
+      skills,
+      company,
+      knowledgeContext: { components: "test", processBuilder: "test" },
+      chatFn: makeMultiLensChatFn({ failForSkill: "Bad Skill" }),
     });
 
     const results = await collectResults(gen);
@@ -427,6 +402,6 @@ describe("scoreOneOpportunity", () => {
 
     // Second result should be an error
     assert.ok("error" in results[1], "Second result should be an error");
-    assert.equal((results[1] as { l3Name: string }).l3Name, "Bad Opp");
+    assert.equal((results[1] as { skillId: string }).skillId, "s-bad");
   });
 });

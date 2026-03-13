@@ -138,8 +138,9 @@ program
   .option("--sim-timeout <ms>", "Per-opportunity simulation timeout in milliseconds")
   .option("--retry <n>", "Retry errored opportunities up to N times at concurrency 1", "0")
   .option("--teardown", "Tear down cloud resources after pipeline completes")
+  .option("--runpod-gpu <type>", "RunPod GPU type override for auto-provisioned pods")
   .option("--network-volume <id>", "RunPod network volume ID for model weight caching")
-  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; retry: string; teardown?: boolean; networkVolume?: string }) => {
+  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; retry: string; teardown?: boolean; runpodGpu?: string; networkVolume?: string }) => {
     console.log(`${BOLD}Aera Skill Feasibility Engine v1.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
@@ -183,9 +184,13 @@ program
       `ERP Stack:     ${company_context.enterprise_applications.join(", ")}`,
     );
     console.log();
+    // Count total skills
+    const totalSkills = hierarchy.reduce((sum, h) => sum + (h.skills?.length ?? 0), 0);
+
     console.log("=== Hierarchy ===");
     console.log(`L4 Activities: ${hierarchy.length}`);
-    console.log(`L3 Opportunities: ${l3_opportunities.length}`);
+    console.log(`Skills:        ${totalSkills} (unit of scoring)`);
+    console.log(`L3 Categories: ${l3_opportunities.length}`);
     console.log(`Domains:       ${domains.join(", ")}`);
     console.log();
 
@@ -243,6 +248,7 @@ program
         vllmModel: undefined,
         vllmApiKey: process.env.VLLM_API_KEY,
         runpodApiKey: process.env.RUNPOD_API_KEY,
+        runpodGpuType: opts.runpodGpu ?? process.env.RUNPOD_GPU_TYPE,
         networkVolumeId: opts.networkVolume,
         hfToken: process.env.HF_TOKEN,
       });
@@ -300,6 +306,9 @@ program
     }
     if (opts.networkVolume) {
       console.log(`Volume:      ${opts.networkVolume}`);
+    }
+    if ((opts.runpodGpu ?? process.env.RUNPOD_GPU_TYPE) && backend === "vllm" && !opts.vllmUrl) {
+      console.log(`GPU:         ${opts.runpodGpu ?? process.env.RUNPOD_GPU_TYPE}`);
     }
     console.log();
 
