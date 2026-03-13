@@ -74,7 +74,11 @@ Full details: `milestones/v1.2-ROADMAP.md`
   3. A pre-score TSV artifact appears in the output directory showing every candidate's rank, dimension scores, composite score, and survived status
   4. Pipeline output reports filter statistics: total candidates scored, survivors passed, candidates eliminated, and cutoff score
   5. Existing red flags (DEAD_ZONE, NO_STAKES, CONFIDENCE_GAP) result in near-zero deterministic scores or hard elimination, not separate triage logic
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 21-01-PLAN.md -- Types + dimensions + composite + red flags
+- [ ] 21-02-PLAN.md -- Top-N filter + pre-scorer orchestrator
+- [ ] 21-03-PLAN.md -- Pre-score TSV formatter + CLI --top-n flag
 
 ### Phase 22: Consolidated LLM Scorer
 **Goal**: Each top-N survivor receives exactly one LLM call that assesses platform fit with Aera component citations and sanity-checks the deterministic pre-score
@@ -119,9 +123,9 @@ Full details: `milestones/v1.2-ROADMAP.md`
 | 1-11 | v1.0 | 31/31 | Complete | 2026-03-11 |
 | 12-14 | v1.1 | 7/7 | Complete | 2026-03-12 |
 | 15-20 | v1.2 | 8/8 | Complete | 2026-03-12 |
-| 21. Types + Deterministic Foundation | v1.3 | 0/TBD | Not started | - |
+| 21. Types + Deterministic Foundation | v1.3 | 0/3 | Planning complete | - |
 | 22. Consolidated LLM Scorer | v1.3 | 0/TBD | Not started | - |
 | 23. Pipeline Integration | v1.3 | 0/TBD | Not started | - |
 | 24. Validation + Report Compatibility | v1.3 | 0/TBD | Not started | - |
 
-**Total:** 24 phases, 46+ plans, 3 milestones shipped, 1 in progress
+**Total:** 24 phases, 49+ plans, 3 milestones shipped, 1 in progress
