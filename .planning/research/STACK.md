@@ -1,216 +1,263 @@
-# Technology Stack: v1.1 Cloud-Accelerated Scoring
+# Technology Stack: v1.3 L4 Two-Pass Scoring Funnel
 
-**Project:** Aera Skill Feasibility Engine - Cloud Backend Milestone
-**Researched:** 2026-03-11
-**Overall confidence:** MEDIUM-HIGH
+**Project:** Aera Skill Feasibility Engine v1.3
+**Researched:** 2026-03-13
+**Overall confidence:** HIGH (all recommendations based on direct codebase analysis; zero external dependencies added)
 
-## Existing Stack (DO NOT CHANGE)
+## Executive Assessment
 
-Already validated in v1.0 -- listed for reference only:
+**No new dependencies required.** The entire v1.3 feature set builds on existing infrastructure. The deterministic pre-scoring is pure TypeScript arithmetic over already-parsed Zod-validated fields. The consolidated LLM prompt uses the same `chatFn` + `zodToJsonSchema` + `scoreWithRetry` pipeline already proven across 3 lenses and ~500 scoring runs. Adding libraries would increase surface area with zero benefit.
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| TypeScript (ESM strict) | ^5.7.0 | Core language |
-| Zod | ^3.24.0 | Schema validation |
-| Commander | ^13.0.0 | CLI framework |
-| Pino | ^10.3.1 | Structured logging |
-| js-yaml | ^4.1.1 | YAML output |
-| tsx | ^4.19.0 | Dev runner |
-| Node.js built-in test runner | N/A | Testing (412 tests) |
-| Raw `fetch` | Built-in | HTTP client (Ollama) |
+## Existing Stack -- Reuse As-Is
 
-## New Stack Additions
+Already validated across v1.0-v1.2 (552+ tests, 20 phases). Listed for reference -- DO NOT modify.
 
-### 1. vLLM Client Adapter -- NO new HTTP dependency
+| Technology | Version | v1.3 Role |
+|------------|---------|-----------|
+| TypeScript (ESM strict) | ^5.7.0 | All new modules |
+| Zod | ^3.24.0 | Validate consolidated LLM output, define `L4PreScore` shape |
+| zod-to-json-schema | ^3.25.1 | Convert `PlatformFitSchema` to JSON for Ollama/vLLM `format` parameter |
+| Commander | ^13.0.0 | `--top-n` flag |
+| Pino | ^10.3.1 | Structured logging for funnel stats |
+| Node.js built-in test runner | Node 22+ | TDD for all new scoring logic |
+| `Semaphore` (in-house) | N/A | Bounded concurrency for LLM calls on survivors |
+| Checkpoint system (in-house) | N/A | Resume support for LLM pass |
+| `callWithResilience` (in-house) | N/A | Retry + fallback for LLM calls |
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Raw `fetch` (built-in) | Node.js 22+ | HTTP calls to vLLM OpenAI-compatible API | The existing Ollama client already uses raw `fetch`. vLLM exposes an OpenAI-compatible `/v1/chat/completions` endpoint. Building a thin adapter with `fetch` avoids adding the `openai` npm package (130+ transitive deps) for what amounts to a single POST endpoint. The ChatFn interface already abstracts the transport. |
+## New Modules to Create (Zero New Dependencies)
 
-**vLLM API contract (HIGH confidence):**
-- Endpoint: `POST /v1/chat/completions`
-- Structured output: `response_format: { type: "json_schema", json_schema: { name, schema } }` (supported since vLLM 0.8.5)
-- This maps directly to the existing `format` parameter in `ChatFn` -- the adapter translates Ollama's `format` field to vLLM's `response_format` field
-- Temperature, model, messages all map 1:1 to OpenAI chat completions schema
+### 1. Deterministic Pre-Scorer: `scoring/l4-pre-score.ts`
 
-**Integration point:** New file `src/scoring/vllm-client.ts` implementing the same `ChatFn` type signature. The pipeline-runner selects which client based on `--backend` flag. Zero changes to scorers or simulation code.
+**What:** Pure function mapping L4 structured fields to a 0.0-1.0 deterministic score.
 
-### 2. Concurrent Pipeline Runner -- p-limit
+**Stack pattern:** Follows `scoring/composite.ts` -- pure arithmetic, typed constants, zero I/O. Export weights as named constants matching the existing `WEIGHTS` / `MAX_SCORES` pattern in `types/scoring.ts`.
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| p-limit | ^7.0.0 | Semaphore-bounded concurrency | Pure ESM (matches project), zero dependencies, TypeScript types included, battle-tested (Sindre Sorhus / npm ecosystem staple). Simpler API than async-sema for the use case of "run N promises concurrently." The project needs a counting semaphore to bound parallel scoring to 10-20 simultaneous opportunities against vLLM. |
+**Input fields (all already Zod-validated in `schemas/hierarchy.ts` and propagated to `SkillWithContext` via `extract-skills.ts`):**
 
-**Why p-limit over alternatives:**
-- **async-sema** (Vercel): Good library, but heavier API surface (rate limiting, weighted semaphores) that we don't need. p-limit's `limit(fn)` wrapper is the exact pattern needed.
-- **Hand-rolled semaphore**: Tempting since it is roughly 20 lines, but p-limit handles edge cases (error propagation, queue draining) correctly. Not worth the test burden.
-- **p-queue** (recommended in v1.0 research): p-queue adds priority and `.onIdle()` which are unnecessary for this use case. The concurrent runner just needs "run N at a time." p-limit is the simpler, right-sized tool.
-- **No concurrency library for Ollama path**: When `--backend ollama`, concurrency stays at 1 (sequential). p-limit with concurrency=1 degrades to sequential execution naturally.
+| Field | Type | Zod Schema | Weight | Rationale |
+|-------|------|------------|--------|-----------|
+| `ai_suitability` | `"HIGH" \| "MEDIUM" \| "LOW" \| "NOT_APPLICABLE" \| null` | `aiSuitabilitySchema` | 0.35 | Gate signal -- only field that directly measures automation potential. NOT_APPLICABLE/null = dead end. |
+| `financial_rating` | `"HIGH" \| "MEDIUM" \| "LOW"` | `financialRatingSchema` | 0.25 | Value proxy without dominating (avoids "technically dead but expensive" trap). |
+| `decision_exists` | `boolean` | `l4ActivitySchema` | 0.20 | Aera-specific signal -- articulated decision = maps to Decision Intelligence pattern. |
+| `impact_order` | `"FIRST" \| "SECOND"` | `impactOrderSchema` | 0.10 | Priority tiebreaker. |
+| `rating_confidence` | `"HIGH" \| "MEDIUM" \| "LOW"` | `ratingConfidenceSchema` | 0.10 | Meta-confidence discount -- LOW confidence in source ratings should reduce deterministic score. |
 
-**Integration point:** New file `src/pipeline/concurrent-runner.ts`. Wraps `scoreOneOpportunity` calls in `limit()`. The existing sequential loop in `pipeline-runner.ts` remains for Ollama; concurrent runner is a parallel code path selected by backend choice.
+**Scoring algorithm -- Weighted enum mapping:**
 
-### 3. Cloud Infrastructure -- runpod-sdk + RunPod Serverless
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| runpod-sdk | ^1.1.2 | Programmatic RunPod endpoint management | Official JS/TS SDK with typed API. Handles endpoint creation, health polling, and teardown. Serverless endpoints are the right abstraction -- they auto-scale, auto-teardown on idle, and bill per-second. |
-
-**Why RunPod Serverless (not Pods):**
-
-| Factor | Serverless Endpoint | On-Demand Pod |
-|--------|-------------------|---------------|
-| Auto-teardown | Built-in (idle timeout configurable, e.g. 15s) | Manual or scripted |
-| Billing | Per-second of compute | Per-hour while running |
-| Cold start | 10-15s with FlashBoot | 2-5 min (boot + model load) |
-| vLLM setup | Quick Deploy template (zero config) | Manual Docker + vLLM install |
-| H100 cost | ~$5.58/hr (pay only during inference) | ~$2.79/hr (pay while idle too) |
-| Best for | Batch scoring with idle gaps | Continuous high-throughput |
-
-For the use case (339 opportunities, approximately 30 min total, then done), serverless is clearly cheaper and simpler. The endpoint scales to 0 when idle -- no forgotten GPU instances burning money.
-
-**Pricing math (HIGH confidence):**
-- H100 serverless: ~$0.00155/sec = ~$5.58/hr
-- Ford 339-opp run at 10-20 concurrency: estimated 20-30 min active compute
-- Cost per run: ~$2-3 (well under the $10 target)
-- RunPod pricing sourced from docs.runpod.io/serverless/pricing (may change)
-
-**Why RunPod over other cloud GPU providers:**
-- **Modal**: Strong competitor, but RunPod has a dedicated vLLM Quick Deploy template that eliminates all Docker/config work. Modal requires writing a Python handler.
-- **Lambda Labs**: On-demand only, no serverless. Would require manual lifecycle management.
-- **AWS SageMaker**: 3-5x more expensive, slower cold starts, massive SDK complexity.
-- **Vast.ai**: Cheapest but unreliable for production use. Community GPUs with variable availability.
-
-**Integration point:** New file `src/infra/cloud-provider.ts`. Handles:
-1. Check for existing endpoint (idempotent via `RUNPOD_ENDPOINT_ID` env var)
-2. Create serverless endpoint with vLLM Quick Deploy template + Qwen model
-3. Poll health until ready
-4. Return endpoint URL for vLLM client
-5. Teardown after pipeline completes (or on error via `finally`)
-
-### 4. Concurrent-Safe Checkpointing -- NO new dependency
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Node.js `fs` + in-memory write queue | Built-in | Serialize concurrent checkpoint writes | The current checkpoint system uses synchronous `writeFileSync` which is already atomic at the OS level. For concurrent writes, we need a write queue (not a lock library). A simple async queue pattern (array + drain function) serializes writes without race conditions. No external dependency needed. |
-
-**Current checkpoint design:**
 ```typescript
-// Current: synchronous, single-writer
-export function saveCheckpoint(outputDir: string, checkpoint: Checkpoint): void {
-  writeFileSync(filePath, JSON.stringify(checkpoint, null, 2), 'utf-8');
+// Pattern: enum -> numeric lookup table + weighted sum
+// Matches existing WEIGHTS/MAX_SCORES pattern in types/scoring.ts
+
+const AI_SUITABILITY_MAP: Record<string, number> = {
+  HIGH: 1.0, MEDIUM: 0.6, LOW: 0.2, NOT_APPLICABLE: 0.0,
+};
+
+const FINANCIAL_RATING_MAP: Record<string, number> = {
+  HIGH: 1.0, MEDIUM: 0.6, LOW: 0.2,
+};
+
+const IMPACT_ORDER_MAP: Record<string, number> = {
+  FIRST: 1.0, SECOND: 0.5,
+};
+
+const CONFIDENCE_MAP: Record<string, number> = {
+  HIGH: 1.0, MEDIUM: 0.7, LOW: 0.4,
+};
+
+export const L4_FIELD_WEIGHTS = {
+  ai_suitability: 0.35,
+  financial_rating: 0.25,
+  decision_exists: 0.20,
+  impact_order: 0.10,
+  rating_confidence: 0.10,
+} as const;
+```
+
+**Why these specific weights:**
+- `ai_suitability` at 0.35: The only field measuring automation potential. An L4 with `NOT_APPLICABLE` is a dead end regardless of financial value. This mirrors how the existing v1.0-v1.2 system weighted adoption highest (0.45) -- the "can this actually be automated?" question dominates.
+- `financial_rating` at 0.25: Value matters but must not dominate. The v1.0 adoption-weighted composite was explicitly designed to prevent "technically dead but expensive" skills from scoring high. Same principle applies.
+- `decision_exists` at 0.20: Aera's core product is Decision Intelligence. If a decision has been articulated, the L4 maps directly to the platform's central pattern.
+- `impact_order` and `rating_confidence` at 0.10 each: Tiebreakers. Not strong enough to override the primary signals.
+
+**Why NOT reuse the existing 3-lens structure:** The 3-lens system (technical 0.30, adoption 0.45, value 0.25) requires LLM reasoning about platform fit, user adoption patterns, and simulation viability. L4 structured fields are pre-computed enums covering a strict subset. Deterministic scoring replaces LLM calls for the ~80% of L4s that are clearly low-priority.
+
+**Null handling:** `ai_suitability` can be `null` -- treat as 0.0 (same as NOT_APPLICABLE). This is consistent with the existing `confidence.ts` which treats null ai_suitability as a LOW confidence signal.
+
+### 2. Consolidated LLM Prompt: `scoring/prompts/platform-fit.ts`
+
+**What:** Single prompt combining platform fit assessment + sanity check into one LLM call.
+
+**Stack pattern:** Follows `scoring/prompts/technical.ts` -- pure function returning `ChatMessage[]`, string interpolation, archetype emphasis lookup. No templating library needed.
+
+**Why consolidate 3 calls into 1:**
+- v1.2: 826 candidates x 3 LLM calls = 2,478 calls (unsustainable)
+- v1.3: ~50 survivors x 1 LLM call = 50 calls (~15 min local, ~3 min cloud)
+- Platform fit is the ONLY dimension requiring LLM reasoning -- it needs domain knowledge about Aera component mappings that code cannot replicate
+- Adoption and value signals are already captured by `decision_exists`, `financial_rating`, `ai_suitability` in the deterministic pre-score
+
+**New Zod schema (add to `scoring/schemas.ts`):**
+
+```typescript
+export const PlatformFitSchema = z.object({
+  platform_fit: z.object({
+    score: z.number().int().min(0).max(3),
+    reason: z.string(),
+    components: z.array(z.string()),  // Aera components cited
+  }),
+  sanity_check: z.object({
+    override: z.enum(["PROMOTE", "DEMOTE", "NONE"]),
+    reason: z.string(),
+  }),
+});
+```
+
+**Why `sanity_check` in the same call:** The LLM already has full context loaded when assessing platform fit. Asking "does the deterministic score seem right?" adds ~10 output tokens and catches systematic errors (e.g., L4 scored HIGH by all fields but maps to no Aera capability). Separate call would double latency for marginal benefit.
+
+**Prompt design notes:**
+- Inject the same `knowledgeContext` (21 UI components, 22 PB nodes, capabilities) used by the existing technical prompt
+- Include the L4's deterministic pre-score so the LLM can assess whether to override
+- Use the same archetype emphasis patterns from `prompts/technical.ts`
+- Constrain `components` array to names from the bundled knowledge base to prevent hallucination
+
+### 3. Funnel Orchestrator: `scoring/l4-funnel.ts`
+
+**What:** Two-pass orchestrator: deterministic pre-score all L4s, sort, take top-N, run LLM on survivors.
+
+**Stack pattern:** Follows `scoring/scoring-pipeline.ts` -- async generator yielding results, dependency-injected `chatFn`.
+
+**Integration points (all existing infrastructure):**
+
+| Integration | Mechanism | Existing Code |
+|-------------|-----------|---------------|
+| L4 data access | `SkillWithContext` already carries L4 fields (`financialRating`, `aiSuitability`, `impactOrder`, `ratingConfidence`, `decisionExists`) | `pipeline/extract-skills.ts` |
+| LLM calls | Same `chatFn` injection + `scoreWithRetry` | `scoring/lens-scorers.ts`, `scoring/ollama-client.ts` |
+| Checkpoint/resume | Same `createCheckpointWriter` / `loadCheckpoint` | `infra/checkpoint.ts` |
+| Concurrency | Same `Semaphore` for bounded parallel LLM calls | `infra/semaphore.ts` |
+| Progress | Same `createProgressTracker` | `pipeline/progress.ts` |
+| Resilience | Same `callWithResilience` + `withTimeout` | `infra/retry-policy.ts`, `infra/timeout.ts` |
+
+### 4. CLI Extension (modify `cli.ts`)
+
+**What:** Add `--top-n <number>` flag.
+
+**Stack pattern:** Same as existing `--max-tier`, `--concurrency`, `--skip-sim` flags in Commander chain.
+
+```typescript
+.option('--top-n <number>', 'Number of L4 survivors for LLM scoring (default: 50)', parseInt)
+```
+
+### 5. Type Additions (extend `types/scoring.ts`)
+
+```typescript
+/** Deterministic pre-score for an L4 activity. */
+export interface L4PreScore {
+  l4Id: string;
+  l4Name: string;
+  l3Name: string;   // Retained for report grouping
+  l2Name: string;
+  l1Name: string;
+  fieldScores: {
+    ai_suitability: number;     // 0.0-1.0
+    financial_rating: number;   // 0.0-1.0
+    decision_exists: number;    // 0.0 or 1.0
+    impact_order: number;       // 0.0-1.0
+    rating_confidence: number;  // 0.0-1.0
+  };
+  deterministicScore: number;   // Weighted sum, 0.0-1.0
+  rank: number;                 // 1-based rank after sorting
+  survivedToLlm: boolean;      // true if rank <= top-N
+}
+
+/** Combined result after both passes. */
+export interface L4FunnelResult {
+  preScore: L4PreScore;
+  llmResult?: {
+    platformFit: { score: number; reason: string; components: string[] };
+    sanityCheck: { override: "PROMOTE" | "DEMOTE" | "NONE"; reason: string };
+  };
+  finalScore: number;           // Platform fit score (0.0-1.0) for survivors
+  promotedToSimulation: boolean;
 }
 ```
 
-**Concurrent-safe design:** Wrap in an async queue that serializes writes. Multiple concurrent scorers call `enqueueCheckpointEntry()` which appends to an in-memory buffer and flushes sequentially. `loadCheckpoint` and `getCompletedNames` remain unchanged (read-only, called before concurrency starts).
+## Architecture Decisions
 
-### 5. Environment Configuration -- dotenv
+### Decision: Deterministic Score as Gate, NOT Blend
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| dotenv | ^16.4.0 | Load RUNPOD_API_KEY from .env file | Standard approach for API keys. The project currently has zero cloud credentials. Adding dotenv keeps secrets out of CLI args and shell history. Single dependency, zero transitive deps. |
+The deterministic score is a filter (top-N survive to LLM), not a component of the final composite.
 
-**Note on Node 22 --env-file:** The v1.0 research recommended `--env-file` over dotenv. However, `--env-file` requires passing the flag at the Node level, which complicates the `tsx` dev workflow and the compiled `dist/cli.js` entry point. dotenv loaded at CLI entry is simpler and more portable.
+**Rationale:**
+- Blending deterministic + LLM scores creates coupling where tuning field weights changes LLM-scored results unpredictably
+- The existing `PROMOTION_THRESHOLD` (0.60) already gates simulation entry
+- Gate pattern is simpler to debug: "why was this L4 not scored?" is answered by rank vs. top-N
+- The LLM platform fit score becomes the primary quality signal for survivors, undiluted by enum arithmetic
+- `sanity_check.override` allows the LLM to DEMOTE a false-positive survivor or PROMOTE a near-miss
 
-**Integration point:** Load at CLI entry (`cli.ts`), read `RUNPOD_API_KEY` and optional `RUNPOD_ENDPOINT_ID` (for reusing existing endpoints). Add `.env` to `.gitignore`.
+### Decision: Do NOT Make Weights CLI-Configurable in v1.3
 
-## What NOT to Add
+**Rationale:**
+- Weights need validation against the Ford 826-L4 dataset before user exposure
+- CLI flag explosion (5 weights + normalization constraint) creates bad UX
+- Future ADVN-02 milestone already captures "Configurable scoring weights via CLI flags"
+- Export as named constants (matching `WEIGHTS` pattern) for easy adjustment during development
+
+### Decision: L4-Level Pre-Scoring, NOT Skill-Level
+
+The deterministic pre-score operates on L4 activities (826 candidates), not individual skills within L4s.
+
+**Rationale:**
+- The structured fields (`ai_suitability`, `financial_rating`, `decision_exists`, `impact_order`, `rating_confidence`) live on the L4 activity, not on individual skills
+- All skills under an L4 share the same field values (they inherit from parent)
+- Pre-scoring at L4 level matches the PROJECT.md target: "826 L4 scoring candidates"
+- After top-N selection, the LLM scores individual skills within surviving L4s for granularity
+
+## NOT Adding
 
 | Library | Why Not |
 |---------|---------|
-| `openai` npm package | 130+ transitive dependencies for a single POST endpoint. Raw `fetch` does the same thing in 40 lines. The existing codebase already uses `fetch` for Ollama -- stay consistent. |
-| `langchain` / `llamaindex` | Massive abstraction layers. The ChatFn DI pattern already solves provider switching cleanly. |
-| `litellm` (Python) | Wrong language. The project is TypeScript. |
-| `async-sema` | Over-engineered for a counting semaphore. p-limit is simpler and sufficient. |
-| `p-queue` | Priority queue semantics not needed. All opportunities are scored with equal priority. p-limit is right-sized. |
-| `pulumi` / `terraform` | Infrastructure-as-code is overkill for "create one serverless endpoint, use it, tear it down." The runpod-sdk API calls are 3-4 functions total. |
-| `bull` / `bullmq` | Job queue requires Redis. The concurrent runner is in-process only (single CLI run). p-limit is the right abstraction. |
-| `ioredis` | No shared state needed. Single process, in-memory concurrency. |
-| `proper-lockfile` | File locks are fragile. In-memory write queue is simpler and correct for single-process. |
-| `ws` / WebSocket libs | vLLM streaming not needed. Non-streaming `/v1/chat/completions` returns complete JSON, matching existing Ollama pattern (`stream: false`). |
-| `@vercel/ai` / AI SDK | Streaming-first, React-focused. Wrong abstraction for batch CLI processing. |
+| `mathjs`, `simple-statistics` | L4 field weighting is 5 enum lookups + a weighted sum. Pure TypeScript arithmetic. |
+| `convict`, `cosmiconfig` | Weight config is a typed constant object (like `WEIGHTS` in `types/scoring.ts`). No runtime config loading. |
+| `handlebars`, `mustache`, `langchain` | Existing string interpolation pattern in `prompts/*.ts` is clear, testable, zero-dependency. Template engines add indirection. |
+| `typebox`, `arktype` | Zod is the validated choice. Mixing schema libs creates confusion. |
+| `lodash`, `ramda` | `Array.sort()` with comparator is sufficient. Already proven in `triage-pipeline.ts`. |
+| `p-queue`, `p-limit` | Existing in-house `Semaphore` class handles bounded concurrency. Pre-scoring is synchronous. |
 
-## Alternatives Considered
+## Performance Characteristics
 
-| Category | Recommended | Alternative | Why Not Alternative |
-|----------|-------------|-------------|---------------------|
-| vLLM HTTP client | Raw `fetch` | `openai` npm | Unnecessary dependency weight; `fetch` already proven in codebase |
-| Concurrency | p-limit ^7 | async-sema | Larger API surface than needed; p-limit is simpler |
-| Concurrency | p-limit ^7 | Hand-rolled | Edge cases (error propagation, queue drain) not worth the test burden |
-| Cloud provider | RunPod Serverless | RunPod Pods | Higher effective cost for batch use case; manual teardown required |
-| Cloud provider | RunPod Serverless | Modal | No vLLM Quick Deploy; requires Python handler code |
-| Cloud provider | RunPod Serverless | Lambda Labs | No serverless option; manual lifecycle management |
-| Cloud SDK | runpod-sdk | Raw GraphQL API | SDK provides typed responses; only ~5 transitive deps vs hand-rolling GraphQL client |
-| Secrets | dotenv | Node --env-file | Complicates tsx workflow; dotenv is more portable |
-| Checkpoint safety | In-memory queue | `proper-lockfile` | File locks are fragile; in-memory queue correct for single-process |
+| Operation | Count (Ford dataset) | Expected Time | Stack Used |
+|-----------|---------------------|---------------|------------|
+| Parse + validate | 1 | ~200ms | Zod |
+| Deterministic pre-score all L4s | 826 | <50ms total | Pure TS arithmetic |
+| Sort + rank | 826 | <5ms | `Array.sort()` |
+| LLM platform fit (top-50, local Ollama) | 50 | ~15 min | chatFn + scoreWithRetry |
+| LLM platform fit (top-50, cloud vLLM) | 50 | ~3 min | chatFn + Semaphore |
 
-## Installation
-
-```bash
-cd src
-
-# New production dependencies (only 3 packages added)
-npm install p-limit runpod-sdk dotenv
-
-# No new dev dependencies needed
-```
-
-**Dependency impact:** +3 direct dependencies. p-limit has 0 transitive deps, dotenv has 0 transitive deps, runpod-sdk has approximately 5. Minimal footprint.
-
-## Version Verification
-
-| Package | Verified Version | Source | Confidence |
-|---------|-----------------|--------|------------|
-| p-limit | 7.3.0 (latest) | npm registry (WebSearch) | HIGH |
-| runpod-sdk | 1.1.2 (latest stable) | npm registry (WebSearch) | MEDIUM -- beta 1.2.0 exists but not stable |
-| dotenv | 16.4.x (latest) | npm registry (WebSearch) | HIGH |
-| vLLM structured output | 0.8.5+ supports response_format json_schema | vLLM official docs | HIGH |
-| RunPod H100 serverless pricing | ~$0.00155/sec | RunPod pricing docs | MEDIUM -- pricing may change |
-
-## Key Architecture Decision: Adapter Pattern Over SDK
-
-The most important stack decision is NOT adding the `openai` npm package. The reasoning:
-
-1. The existing `ChatFn` type is already a perfect abstraction:
-   ```typescript
-   type ChatFn = (
-     messages: Array<{ role: string; content: string }>,
-     format: Record<string, unknown>,
-   ) => Promise<ChatResult>;
-   ```
-
-2. The vLLM adapter translates this to OpenAI-compatible format:
-   - `messages` maps 1:1
-   - `format` (Ollama's JSON schema) maps to `response_format: { type: "json_schema", json_schema: { name: "output", schema: format } }`
-   - Response `choices[0].message.content` maps to `ChatResult.content`
-   - `usage.total_tokens` or timing headers map to `ChatResult.durationMs`
-
-3. This is approximately 40 lines of code. Adding a 130+ dependency package for this is the wrong trade-off.
-
-4. The DI pattern means zero changes to any scorer, simulation, or pipeline code -- only the CLI wiring changes to inject the right `chatFn`.
+**Total wall time reduction:** v1.2 scored 826 skills x 3 LLM calls = ~4-6 hours locally. v1.3 targets 50 x 1 LLM call = ~15 min locally. This is the primary motivation for the two-pass architecture.
 
 ## New File Map
 
 | File | Purpose | Dependencies |
 |------|---------|-------------|
-| `src/scoring/vllm-client.ts` | vLLM ChatFn adapter via raw fetch | None (built-in fetch) |
-| `src/pipeline/concurrent-runner.ts` | p-limit bounded parallel scoring | p-limit |
-| `src/infra/cloud-provider.ts` | RunPod endpoint lifecycle (create/health/teardown) | runpod-sdk |
-| `src/infra/checkpoint.ts` (modify) | Add async write queue for concurrent safety | None new |
-| `src/cli.ts` (modify) | Add --backend flag, dotenv loading, wiring | dotenv |
+| `src/scoring/l4-pre-score.ts` | Deterministic pre-score from L4 fields | None (pure arithmetic) |
+| `src/scoring/prompts/platform-fit.ts` | Consolidated LLM prompt builder | None (string interpolation) |
+| `src/scoring/l4-funnel.ts` | Two-pass orchestrator | Existing chatFn, scoreWithRetry, Semaphore |
+| `src/scoring/schemas.ts` (modify) | Add `PlatformFitSchema` | Existing Zod + zod-to-json-schema |
+| `src/types/scoring.ts` (modify) | Add `L4PreScore`, `L4FunnelResult` types | None |
+| `src/pipeline/pipeline-runner.ts` (modify) | Wire funnel into pipeline | Existing infrastructure |
+| `src/cli.ts` (modify) | Add `--top-n` flag | Existing Commander |
+
+## Installation
+
+```bash
+# No new packages needed
+cd src
+npm install  # Existing deps only
+```
 
 ## Sources
 
-- [vLLM OpenAI-Compatible Server docs](https://docs.vllm.ai/en/stable/serving/openai_compatible_server/)
-- [vLLM Structured Outputs docs](https://docs.vllm.ai/en/latest/features/structured_outputs/)
-- [vLLM Structured Outputs v0.8.2](https://docs.vllm.ai/en/v0.8.2/features/structured_outputs.html)
-- [RunPod Serverless vLLM deployment](https://docs.runpod.io/serverless/vllm/get-started)
-- [RunPod JS SDK GitHub](https://github.com/runpod/js-sdk)
-- [RunPod JS SDK docs](https://docs.runpod.io/sdks/javascript/overview)
-- [RunPod Pricing](https://www.runpod.io/pricing)
-- [RunPod Serverless Pricing docs](https://docs.runpod.io/serverless/pricing)
-- [RunPod OpenAI API compatibility](https://docs.runpod.io/serverless/vllm/openai-compatibility)
-- [p-limit npm](https://www.npmjs.com/package/p-limit)
-- [runpod-sdk npm](https://www.npmjs.com/package/runpod-sdk)
-- [Guide to Deploying Qwen 3 with vLLM on RunPod](https://medium.com/@mshojaei77/guide-to-deploying-qwen-3-with-vllm-on-runpod-31b9da6642d0)
-- [RunPod Serverless Scaling Strategy](https://www.runpod.io/blog/serverless-scaling-strategy-runpod)
-- [Ollama vs vLLM comparison 2026](https://www.glukhov.org/post/2025/11/hosting-llms-ollama-localai-jan-lmstudio-vllm-comparison/)
+- **Codebase analysis** (HIGH confidence): `src/scoring/composite.ts`, `src/scoring/confidence.ts`, `src/scoring/lens-scorers.ts`, `src/scoring/schemas.ts`, `src/scoring/prompts/technical.ts`, `src/types/scoring.ts`, `src/types/hierarchy.ts`, `src/schemas/hierarchy.ts`, `src/pipeline/extract-skills.ts`, `src/pipeline/pipeline-runner.ts`, `src/triage/triage-pipeline.ts`
+- **L4 field definitions** (HIGH confidence): `schemas/hierarchy.ts` lines 148-164 -- Zod schema is the source of truth
+- **Existing weighting pattern** (HIGH confidence): `types/scoring.ts` `WEIGHTS` constant -- shipped in v1.0, validated across 3 milestones
+- **Ford dataset dimensions** (HIGH confidence): PROJECT.md -- "826 L4 scoring candidates"
+- **Performance estimates** (MEDIUM confidence): Extrapolated from v1.2 cloud run timing -- single-call consolidation is untested

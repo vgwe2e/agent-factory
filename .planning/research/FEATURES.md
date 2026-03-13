@@ -1,160 +1,156 @@
 # Feature Landscape
 
-**Domain:** Cloud-accelerated LLM scoring pipeline (v1.1 milestone for Aera Skill Feasibility Engine)
-**Researched:** 2026-03-11
-**Scope:** NEW features only -- vLLM cloud backend, concurrent pipeline, ephemeral GPU provisioning
+**Domain:** Two-pass scoring funnel for L4 activity evaluation (Aera Skill Feasibility Engine v1.3)
+**Researched:** 2026-03-13
+**Confidence:** HIGH (based on direct codebase analysis of existing pipeline, L4 schema fields, and v1.3 requirements in PROJECT.md)
 
 ## Table Stakes
 
-Features the v1.1 milestone must have. Missing = milestone goal unmet.
+Features the two-pass funnel MUST have. Missing = the funnel is broken or worse than v1.2.
 
-| Feature | Why Expected | Complexity | Dependencies on Existing |
-|---------|--------------|------------|--------------------------|
-| vLLM ChatFn adapter | Core deliverable: swap Ollama for cloud vLLM while preserving the same `ChatFn` interface that `scoreOneOpportunity` already consumes | Medium | Implements same `ChatFn` type from `scoring/ollama-client.ts`; uses existing `scoreWithRetry` for validation |
-| OpenAI-compatible API client | vLLM exposes `/v1/chat/completions` -- use standard OpenAI SDK format rather than Ollama's proprietary `/api/chat` format | Low | New code, but must produce identical `ChatResult` shape (`{success, content, durationMs}`) |
-| JSON schema-constrained output via vLLM | Current pipeline uses Ollama's `format` param for structured JSON. vLLM uses `response_format: {type: "json_schema", json_schema: {name, schema}}` -- must translate Zod schemas to this format | Medium | Existing Zod schemas in `scoring/schemas.ts` must serialize to JSON Schema for vLLM's `response_format` param |
-| CLI `--backend ollama\|vllm` flag | User selects backend at invocation time. Default remains `ollama` to preserve offline-first guarantee | Low | Extends Commander config in `cli.ts`; routes to correct ChatFn factory |
-| Concurrent pipeline runner | Process 10-20 opportunities simultaneously instead of sequentially. This is the throughput multiplier | High | Wraps or replaces the `for (const triage of processable)` loop in `pipeline-runner.ts`; must integrate with existing triage sorting, checkpoint, and archive logic |
-| Semaphore-bounded concurrency | Must limit parallel LLM calls to avoid overwhelming vLLM server. Each opportunity = 3 concurrent lens calls, so N opportunities = 3N requests | Medium | New concurrency primitive; interacts with existing `callWithResilience` retry wrapper |
-| Concurrent-safe checkpoint system | Current checkpoint writes synchronously after each opportunity. With parallel execution, multiple completions may arrive simultaneously | Medium | Extends existing `checkpoint.ts` -- needs atomic writes or a write queue to prevent data races |
-| Backend health check | Verify vLLM server is reachable and model is loaded before starting the pipeline (analogous to existing `checkOllama()`) | Low | Mirrors `infra/ollama.ts` pattern; vLLM exposes `/health` and `/v1/models` endpoints |
-| Graceful fallback to sequential | If vLLM backend is unavailable or errors exceed threshold, degrade to sequential processing or fail early with clear message | Low | Reuses existing three-tier resilience pattern (`callWithResilience`) |
+### Deterministic Pre-Scoring
+
+| Feature | Why Expected | Complexity | Dependencies | Notes |
+|---------|--------------|------------|--------------|-------|
+| **Score from L4 structured fields only** | The entire point of pass 1 -- no LLM, milliseconds per candidate. L4Activity has `financial_rating`, `ai_suitability`, `impact_order`, `rating_confidence`, `decision_exists`. Skills add `archetype`, `max_value`, `actions[]`, `constraints[]`, `execution`, `problem_statement`. | Low | `types/hierarchy.ts` L4Activity + SkillWithContext types | Pure function, no I/O. Existing `confidence.ts` and `red-flags.ts` already demonstrate the pattern of algorithmic scoring from structured fields. |
+| **Financial signal dimension** | `financial_rating` (HIGH/MEDIUM/LOW) and `max_value` (number) are the primary economic indicators. Every scoring system that replaces the current 3-lens approach must capture economic viability or it loses the value lens entirely. | Low | `L4Activity.financial_rating`, `Skill.max_value` | Map HIGH=3, MEDIUM=2, LOW=1. `max_value` provides continuous scale for tiebreaking. |
+| **AI suitability dimension** | `ai_suitability` (HIGH/MEDIUM/LOW/NOT_APPLICABLE/null) is the most direct signal of automation potential. The existing tier engine already uses it (Tier 2 = >=50% HIGH). Omitting it would be a regression from triage. | Low | `L4Activity.ai_suitability` | Map HIGH=3, MEDIUM=2, LOW=1, NOT_APPLICABLE=0, null=0. This is the strongest single predictor of LLM scoring outcome. |
+| **Decision density dimension** | `decision_exists` (boolean) on L4 and `decision_made` (string/null) + `actions.length` + `constraints.length` on skill. The existing DEAD_ZONE red flag already checks this. Dense decisions = more automatable. | Low | `L4Activity.decision_exists`, `Skill.decision_made`, `Skill.actions`, `Skill.constraints` | Boolean + count-based. decision_exists=true AND (actions.length > 0 OR constraints.length > 0) = high density. |
+| **Impact order dimension** | `impact_order` (FIRST/SECOND) directly measures value proximity. FIRST-order impact skills deliver faster ROI. The adoption prompt already weights this heavily. | Low | `L4Activity.impact_order` | Binary: FIRST=2, SECOND=1. Simple but discriminating. |
+| **Archetype completeness dimension** | `archetype` presence + `execution` richness (non-null fields). The technical prompt's `archetype_confidence` sub-dimension already evaluates this via LLM; the deterministic version checks field presence. | Low | `Skill.archetype`, `Skill.execution`, `Skill.aera_skill_pattern` | Count non-null execution fields: autonomy_level, approval_required, execution_trigger, rollback_strategy. More = higher confidence. |
+| **Rating confidence dimension** | `rating_confidence` (HIGH/MEDIUM/LOW) on L4. The existing CONFIDENCE_GAP red flag already flags LOW confidence. This should directly feed the pre-score. | Low | `L4Activity.rating_confidence` | Map HIGH=3, MEDIUM=2, LOW=1. Multiplicative penalty: LOW confidence should cap overall score. |
+| **Weighted composite computation** | The six dimensions above need weighting. Must produce a single 0-1 normalized score comparable across all 826 candidates. | Low | All dimensions above | Pure arithmetic. Weights should be configurable but with sensible defaults. Existing `composite.ts` provides the pattern. |
+| **Red flag integration** | Existing `detectSkillRedFlags` (DEAD_ZONE, NO_STAKES, CONFIDENCE_GAP) must either be incorporated into pre-scoring or applied as hard filters before ranking. Candidates with DEAD_ZONE should not survive to top-N regardless of other signals. | Low | `triage/red-flags.ts` detectSkillRedFlags | Apply as binary elimination before ranking. Already implemented -- just needs wiring into the new pipeline position. |
+
+### Configurable Top-N Filtering
+
+| Feature | Why Expected | Complexity | Dependencies | Notes |
+|---------|--------------|------------|--------------|-------|
+| **`--top-n` CLI flag** | Users must control how many candidates pass to LLM scoring. Different runs have different time/cost budgets. Hard-coded N defeats the purpose of a funnel. | Low | `cli.ts` Commander setup | Integer flag, default sensible (50-100 for 826 candidates). Must validate: 1 <= N <= total candidates. |
+| **Rank-ordered cutoff** | Sort all pre-scored candidates by composite descending, take top N. Ties broken by max_value descending (existing triage does similar). | Low | Pre-score composite | Pure sort + slice. Trivial implementation. |
+| **Pre-score report artifact** | Write the full pre-scored ranking to disk (TSV) so users can inspect what was filtered out and why. Without this, the funnel is a black box. | Low | `output/` formatters | Follow existing `format-scores-tsv.ts` pattern. Columns: rank, skillId, skillName, l4Name, l3Name, preScoreComposite, each dimension score, red flags, survived (Y/N). |
+| **Filter statistics in pipeline output** | Pipeline result must report: total candidates, pre-scored count, filtered count, top-N count. Without this, users cannot assess funnel effectiveness. | Low | `PipelineResult` type | Add fields to existing PipelineResult interface. |
+
+### Consolidated LLM Scoring
+
+| Feature | Why Expected | Complexity | Dependencies | Notes |
+|---------|--------------|------------|--------------|-------|
+| **Single LLM call per survivor** | The whole point of the funnel is reducing 826 x 3 = 2,478 LLM calls to N x 1 calls. Each survivor gets ONE consolidated prompt covering platform fit + sanity check. | Med | `scoring/` module, chatFn interface | New prompt builder + new Zod schema. Replaces the 3 separate lens scorers for v1.3 path. |
+| **Platform fit assessment** | The LLM must evaluate whether the candidate maps to specific Aera components. This is the one thing code cannot do -- it requires domain reasoning about how skill descriptions map to Aera's 21 UI components, 22 PB nodes, and orchestration patterns. | Med | `knowledge/` modules, Aera knowledge base | The existing technical prompt's `aera_platform_fit` sub-dimension does this already. Extract and consolidate. |
+| **Sanity check on deterministic score** | The LLM should flag cases where the deterministic pre-score is misleadingly high (rich fields but nonsensical content) or misleadingly low (sparse fields but strong implicit signal). This is the error-correction layer. | Med | Pre-score result passed as context to LLM | New: LLM sees the pre-score and can adjust up/down with justification. Prevents over-reliance on field presence. |
+| **Structured JSON output with Zod validation** | Consistent with existing lens scorers. LLM output must be Zod-validated before consumption. Retry on validation failure. | Low | `scoring/schemas.ts` pattern, `scoreWithRetry` | Follow existing pattern exactly. New schema, same validation infrastructure. |
+| **Final composite that blends pre-score + LLM** | The final ranking must combine the deterministic pre-score with the LLM assessment. Pure pre-score is fast but shallow; pure LLM is expensive. The blend is the product. | Med | Pre-score composite + LLM output | Weighted blend. Suggested: 0.40 pre-score + 0.60 LLM (LLM has final say but pre-score provides strong prior). Needs to produce same 0-1 range as current composite for downstream compatibility. |
+| **Promotion threshold gate** | Existing PROMOTION_THRESHOLD (0.60) gates entry to simulation. The new composite must feed into the same gate. Changing this threshold or removing it would break the simulation pipeline contract. | Low | `types/scoring.ts` PROMOTION_THRESHOLD | Reuse existing constant. The blended composite passes through `computeComposite`-equivalent logic. |
+
+### L4-Level Simulation
+
+| Feature | Why Expected | Complexity | Dependencies | Notes |
+|---------|--------------|------------|--------------|-------|
+| **SimulationInput from L4 activity directly** | Current SimulationInput takes L3Opportunity + L4Activity[]. v1.3 scores at L4 level, so simulation should take a single L4 + its skills directly instead of the L3 rollup. | Med | `types/simulation.ts` SimulationInput, `simulation/simulation-pipeline.ts` | Breaking change to SimulationInput interface. The `scoring-to-simulation.ts` adapter currently aggregates skill results back to L3; the new adapter works at L4 level. |
+| **L3 names retained as metadata** | PROJECT.md explicitly requires "L3 names retained as metadata labels for report grouping only." Reports must still group by L3 for human readability even though scoring/simulation operate at L4. | Low | Report formatters in `output/` | Add l3Name as grouping key in report templates. No logic change -- just metadata propagation. |
 
 ## Differentiators
 
-Features that add significant value beyond the minimum viable milestone.
+Features that set the v1.3 funnel apart from a naive implementation. Not strictly required but significantly improve output quality.
 
-| Feature | Value Proposition | Complexity | Dependencies on Existing |
-|---------|-------------------|------------|--------------------------|
-| Ephemeral H100 provisioning | Spin up a cloud GPU, run the pipeline, tear it down automatically. No idle GPU costs. Target: <$10 per Ford-sized run | High | New infrastructure layer; no existing equivalent. Interacts with health check to gate pipeline start |
-| Auto-teardown after pipeline completion | GPU pod is terminated when pipeline finishes, preventing cost overrun from forgotten instances | Medium | Needs lifecycle hooks in pipeline-runner; could use process exit handler or explicit teardown call |
-| Progress dashboard for concurrent runs | With 20 simultaneous opportunities, sequential log lines become unreadable. Need aggregated progress (e.g., "47/339 scored, 3 errors, ETA 12min") | Medium | Extends existing Pino logging; could use a simple interval-based summary reporter |
-| Cost tracking per run | Track GPU time consumed, estimate cost based on provider rate, include in pipeline result | Low | New field in `PipelineResult`; requires tracking wallclock time of GPU provisioning |
-| Adaptive concurrency | Start with N=5, measure vLLM response times, ramp up to N=20 if server handles it. Prevents overloading a cold server | Medium | Enhancement to semaphore; no existing code to build on |
-| Model warm-up requests | Send a few throwaway requests to vLLM after server startup to prime KV cache and trigger compilation. Reduces first-batch latency | Low | New pre-pipeline step; vLLM benefits from JIT compilation on first requests |
-| Dual-backend comparison mode | Run same opportunity through both Ollama and vLLM, diff the scores. Validates cloud backend produces equivalent results | Medium | Uses existing ChatFn injection; compares `ScoringResult` objects |
+| Feature | Value Proposition | Complexity | Dependencies | Notes |
+|---------|-------------------|------------|--------------|-------|
+| **Dimension weight configurability** | Different clients have different priorities. A manufacturing client may weight financial_rating higher; a tech client may weight ai_suitability higher. Exposing weights as CLI flags or config enables per-client tuning without code changes. | Low | CLI flags or `.planning/config.json` | 6 weights that sum to 1.0. Sensible defaults hard-coded. Advanced users override. Not blocking for MVP. |
+| **Pre-score histogram in reports** | Visual distribution of pre-scores helps users understand the candidate landscape. Are most candidates clustered near the cutoff? Is there a clear gap between top-N and the rest? | Low | `output/` formatters | ASCII histogram in summary report. Shows score distribution + cutoff line. |
+| **LLM prompt includes pre-score breakdown** | Giving the LLM visibility into WHY the candidate pre-scored high (which dimensions contributed) lets it provide more targeted sanity checking. | Low | Consolidated prompt builder | Include dimension-by-dimension breakdown in user message. Zero implementation cost, significant quality improvement. |
+| **Overlap group deduplication** | `Skill.overlap_group` (string/null) groups skills that address the same problem differently. If multiple skills in the same overlap group survive to top-N, only the highest-scoring should advance to LLM. Prevents wasting LLM calls on near-duplicates. | Med | `Skill.overlap_group` field | Group by overlap_group after ranking, keep top per group. Reduces LLM calls further. |
+| **Tier-aware top-N allocation** | Reserve guaranteed slots for each tier (e.g., all Tier 1 survivors always pass, Tier 2 gets 60% of remaining N, Tier 3 fills remainder). Prevents Tier 1 quick-wins from being crowded out by volume of Tier 2/3 candidates. | Med | `triage/tier-engine.ts` tier assignment | Partition top-N by tier before filling. Existing assignSkillTier already provides tier labels. |
+| **Cross-functional skill flagging** | `Skill.is_cross_functional` and `cross_functional_scope` indicate skills spanning multiple departments. These are higher-risk but higher-impact. Flagging them in reports helps users prioritize organizational readiness work. | Low | `Skill.is_cross_functional`, `Skill.cross_functional_scope` | Metadata propagation to reports. Already in the schema. |
+| **Deterministic score caching** | Pre-scores are pure functions of field values. If the input export hasn't changed, pre-scores are identical. Cache pre-score results keyed by skill ID + field hash for instant re-runs. | Low | New cache module | File-based JSON cache. Skip re-computation on retry runs. |
 
 ## Anti-Features
 
-Features to explicitly NOT build for this milestone.
+Features to explicitly NOT build in v1.3.
 
 | Anti-Feature | Why Avoid | What to Do Instead |
 |--------------|-----------|-------------------|
-| Cloud-only mode | PROJECT.md mandates local Ollama always works. Cloud is opt-in acceleration | Keep `--backend ollama` as default; vLLM is additive |
-| Multi-GPU tensor parallelism | Qwen3 30B fits on a single H100 80GB. Multi-GPU adds deployment complexity for no benefit at this model size | Use single H100; revisit only if moving to 70B+ models |
-| Custom vLLM Docker image | RunPod/Modal have pre-built vLLM templates with Qwen support. Building custom images adds maintenance burden | Use provider's vLLM template; configure via environment variables |
-| Streaming token output | Current pipeline parses complete JSON responses. Streaming adds complexity to JSON schema validation | Keep `stream: false`; vLLM returns complete responses just like Ollama |
-| Persistent GPU server | Keeping an H100 running 24/7 costs ~$50-70/day. Pipeline runs take <30 min | Ephemeral: provision, run, teardown. Accept 2-5 min cold start |
-| OpenAI API fallback | Adding yet another backend increases surface area. Focus is vLLM specifically | vLLM IS the OpenAI-compatible endpoint; no need for actual OpenAI |
-| Serverless GPU (e.g., RunPod Serverless) | Serverless adds cold start per request (up to 60s), model loading overhead, and per-request pricing that is worse for batch workloads | Use a dedicated pod for the duration of the run; serverless is for sporadic API calls, not batch inference |
-| Automatic provider failover | Multi-provider orchestration is complex. Pick one provider, optimize for it | Choose RunPod or Modal; document manual fallback if provider is down |
-| Prompt optimization for vLLM | Existing prompts work. Optimizing for a different tokenizer risks drift from the Ollama path | Use identical prompts; only change the transport layer |
+| **Keep 3 separate LLM calls per candidate** | This is the entire problem v1.3 solves. 826 x 3 = 2,478 calls at ~3 min each = 124 hours on local hardware. The consolidated single-call approach cuts this to N x 1. | Single consolidated LLM prompt per top-N survivor. |
+| **LLM-based pre-scoring** | Using an LLM for pass 1 defeats the speed advantage. The deterministic pre-score must be pure computation -- milliseconds for all 826 candidates. | Pure function scoring from structured fields only. |
+| **Dynamic top-N based on score distribution** | Tempting to auto-detect a "natural break" in pre-scores, but this makes results unpredictable and non-reproducible. Users lose control over cost/time budget. | Fixed top-N from CLI flag. Users can inspect pre-score TSV and adjust N on re-run. |
+| **Removing existing triage phase** | Triage and pre-scoring serve different purposes. Triage applies binary red flags (skip/demote). Pre-scoring ranks survivors. Merging them loses the clear skip/process boundary. | Keep triage as pass 0 (eliminates bad candidates), pre-scoring as pass 1 (ranks good candidates). |
+| **Backward-incompatible ScoringResult** | Downstream consumers (report formatters, checkpoint system, evaluation writers) depend on the ScoringResult interface. Changing it breaks everything. | New L4ScoringResult type that extends or parallels ScoringResult. Existing report formatters get an adapter. |
+| **Platform fit as a deterministic dimension** | platform_fit requires understanding whether a skill's description maps to specific Aera components. This is inherently subjective and requires domain reasoning. Code can check field presence; it cannot assess semantic fit. | Platform fit stays in the LLM call (pass 2). Deterministic pre-scoring handles everything that can be computed from field values. |
+| **Eliminating the promotion threshold** | The 0.60 threshold gates simulation entry. Removing it would flood simulation with low-quality candidates, wasting LLM calls and producing garbage artifacts. | Keep PROMOTION_THRESHOLD. The blended composite (pre-score + LLM) feeds into the same gate. |
+| **Re-implementing simulation from scratch** | The simulation pipeline works. It needs an adapter change (L4 input instead of L3), not a rewrite. | Modify SimulationInput interface + update scoring-to-simulation adapter. |
 
 ## Feature Dependencies
 
 ```
-CLI --backend flag --> Backend factory (selects ChatFn implementation)
-Backend factory --> vLLM ChatFn adapter (if --backend vllm)
-Backend factory --> Ollama ChatFn (if --backend ollama, existing code)
-
-vLLM ChatFn adapter --> JSON schema translation (Zod --> response_format)
-vLLM ChatFn adapter --> Backend health check (verify before pipeline)
-
-Concurrent pipeline runner --> Semaphore-bounded concurrency
-Concurrent pipeline runner --> Concurrent-safe checkpoint
-Concurrent pipeline runner --> Existing triage sorting (Tier 1 first)
-Concurrent pipeline runner --> Existing callWithResilience (per-opportunity)
-Concurrent pipeline runner --> Existing archiveAndReset (periodic flush)
-
-Ephemeral provisioning --> Backend health check (wait for ready)
-Ephemeral provisioning --> Auto-teardown (pipeline complete hook)
-Ephemeral provisioning --> Cost tracking (GPU-hours consumed)
-
-Progress dashboard --> Concurrent pipeline runner (needs concurrent state)
-Adaptive concurrency --> Semaphore (dynamically resize)
-Model warm-up --> Backend health check (extends it with priming requests)
+extractScoringSkills (existing) --> detectSkillRedFlags (existing, pass 0)
+                                       |
+                                       v
+                              deterministic pre-scoring (NEW, pass 1)
+                                       |
+                                       v
+                              rank + top-N filter (NEW)
+                                       |
+                                       v
+                              consolidated LLM scoring (NEW, pass 2)
+                                       |
+                                       v
+                              blended composite (NEW)
+                                       |
+                                       v
+                              promotion threshold gate (existing, reused)
+                                       |
+                                       v
+                              L4-level simulation adapter (MODIFIED)
+                                       |
+                                       v
+                              simulation pipeline (existing, minor interface change)
+                                       |
+                                       v
+                              report generation (existing, grouping change)
 ```
 
-## Critical Implementation Notes
-
-### vLLM API Translation
-
-The existing Ollama API uses:
-```typescript
-// Ollama format (current)
-{ model, messages, stream: false, format: zodSchema, options: { temperature: 0 } }
-```
-
-vLLM's OpenAI-compatible API uses:
-```typescript
-// vLLM format (target)
-{ model, messages, stream: false, temperature: 0,
-  response_format: { type: "json_schema", json_schema: { name: "scoring", schema: jsonSchema } } }
-```
-
-The translation is mechanical: extract JSON schema from Zod via `zodToJsonSchema()`, wrap in `response_format`. The `guided_json` extra parameter (older vLLM style) is being deprecated in favor of standard `response_format`.
-
-**Confidence:** HIGH -- vLLM docs explicitly document `response_format` with `json_schema` type as of v0.8.5+.
-
-### Concurrency Model
-
-Current pipeline: sequential `for` loop, 1 opportunity at a time, 3 parallel lens calls per opportunity.
-
-Target: N concurrent opportunities, each with 3 parallel lens calls = 3N concurrent vLLM requests.
-
-With N=15 and Qwen3-30B on a single H100:
-- 45 concurrent requests hitting vLLM's continuous batching engine
-- vLLM handles this internally via PagedAttention and dynamic batching
-- H100 80GB can hold Qwen3-30B (~60GB at FP16, ~17GB at Q4) with ample KV cache headroom
-- Expected throughput: ~2,300 tok/s aggregate (based on gpustack.ai benchmarks for Qwen3-32B on H100)
-
-**Confidence:** MEDIUM -- benchmarks are for similar but not identical models/configs.
-
-### Cloud Provider Economics
-
-For a 339-opportunity Ford run at <30 min:
-- RunPod H100 SXM: $2.69/hr = ~$1.35 per 30-min run
-- Modal H100: $2.16/hr = ~$1.08 per 30-min run
-- Cold start (model loading): 2-5 min for 30B model from provider's cache
-- Total cost including cold start: $2-4 per run (well under $10 target)
-
-**Confidence:** MEDIUM -- pricing verified via provider websites as of 2026; actual cold start depends on model caching.
+Key dependency chain:
+- Pre-scoring MUST complete before top-N filter
+- Top-N filter MUST complete before LLM scoring
+- LLM scoring MUST produce a composite compatible with PROMOTION_THRESHOLD
+- Simulation adapter MUST accept L4-level input (breaking change from L3-level)
+- Reports MUST group by L3 name even though scoring is at L4
 
 ## MVP Recommendation
 
-**Phase 1: vLLM Client Adapter** (table stakes, lowest risk)
-1. vLLM ChatFn adapter implementing existing `ChatFn` interface
-2. JSON schema translation (Zod to `response_format`)
-3. CLI `--backend` flag with backend factory
-4. Backend health check
-5. Integration tests comparing vLLM vs Ollama output on a handful of opportunities
+Prioritize in this order:
 
-**Phase 2: Concurrent Pipeline Runner** (table stakes, highest complexity)
-1. Semaphore-bounded concurrent scoring (start with N=10)
-2. Concurrent-safe checkpoint system
-3. Progress reporting for parallel runs
-4. Preserve tier-priority ordering (Tier 1 starts first, but all tiers run concurrently)
+1. **Deterministic pre-scoring** (all 8 table-stakes dimensions) -- This is the foundation. Without it, nothing else works. Pure function, TDD, no I/O. Target: score 826 candidates in <100ms.
 
-**Phase 3: Cloud Infrastructure** (differentiator, highest value)
-1. Ephemeral H100 provisioning via RunPod or Modal API
-2. Auto-teardown after pipeline completion
-3. Cost tracking per run
-4. End-to-end integration test: provision, score Ford dataset, teardown
+2. **Top-N filter with `--top-n` CLI flag** -- Minimal implementation: sort + slice + pre-score TSV artifact. Unblocks LLM scoring development.
 
-**Defer:**
-- Adaptive concurrency: Optimize after measuring real vLLM throughput at N=10-20
-- Dual-backend comparison: Nice for validation, but manual spot-checking suffices
-- Model warm-up: Only matters if cold start latency is a real problem in practice
+3. **Consolidated LLM prompt with platform fit + sanity check** -- The quality-critical piece. One new prompt builder, one new Zod schema. Replaces 3 lens scorers with 1 consolidated scorer for the v1.3 path.
+
+4. **Blended composite + promotion gate** -- Arithmetic to combine pre-score + LLM output. Feeds into existing PROMOTION_THRESHOLD.
+
+5. **L4-level simulation adapter** -- Modify SimulationInput + scoring-to-simulation adapter. The simulation pipeline itself barely changes.
+
+6. **Report grouping by L3** -- Metadata propagation. Minimal effort after simulation works.
+
+Defer:
+- **Dimension weight configurability**: Ship with sensible hard-coded weights. Add CLI override in a follow-up.
+- **Overlap group deduplication**: Nice optimization but not blocking. Top-N already bounds cost.
+- **Tier-aware top-N allocation**: Adds complexity. Simple rank-order cutoff is sufficient for v1.3.
+- **Deterministic score caching**: Pre-scoring is already <100ms total. Caching is premature optimization.
+
+## Complexity Assessment Summary
+
+| Feature Area | Total Features | Low Complexity | Med Complexity | High Complexity |
+|-------------|---------------|----------------|----------------|-----------------|
+| Deterministic Pre-Scoring | 9 | 9 | 0 | 0 |
+| Top-N Filtering | 4 | 4 | 0 | 0 |
+| Consolidated LLM Scoring | 6 | 2 | 4 | 0 |
+| L4-Level Simulation | 2 | 1 | 1 | 0 |
+| Differentiators | 7 | 5 | 2 | 0 |
+
+**Total estimated effort:** The pre-scoring and filtering are pure functions with established patterns in the codebase. The consolidated LLM prompt is the design-intensive piece -- it must cover what 3 separate prompts currently do while adding sanity checking, and do so in a single call. The simulation adapter is a well-scoped interface change.
 
 ## Sources
 
-- [vLLM Structured Outputs docs](https://docs.vllm.ai/en/latest/features/structured_outputs/) -- response_format with json_schema (HIGH confidence)
-- [vLLM OpenAI-Compatible Server docs](https://docs.vllm.ai/en/latest/serving/openai_compatible_server/) -- API compatibility (HIGH confidence)
-- [Qwen3-32B H100 benchmarks (gpustack.ai)](https://docs.gpustack.ai/2.0/performance-lab/qwen3-32b/h100/) -- throughput numbers (MEDIUM confidence)
-- [RunPod Pricing](https://www.runpod.io/pricing) -- H100 cost per hour (HIGH confidence)
-- [H100 Rental Price Comparison 2026](https://intuitionlabs.ai/articles/h100-rental-prices-cloud-comparison) -- multi-provider pricing (MEDIUM confidence)
-- [RunPod vLLM Serverless docs](https://docs.runpod.io/serverless/vllm/get-started) -- deployment patterns (MEDIUM confidence)
-- [RunPod Serverless vs Pods comparison](https://www.runpod.io/articles/comparison/serverless-gpu-deployment-vs-pods) -- why pods for batch (MEDIUM confidence)
-- [p-queue (npm)](https://www.npmjs.com/package/p-queue) -- concurrency control library (HIGH confidence)
-- [Vercel async-sema](https://github.com/vercel/async-sema) -- lightweight semaphore (HIGH confidence)
-- [vLLM v0.6.0 performance update](https://blog.vllm.ai/2024/09/05/perf-update.html) -- throughput improvements (MEDIUM confidence)
+- Direct codebase analysis: `src/types/hierarchy.ts`, `src/types/scoring.ts`, `src/scoring/scoring-pipeline.ts`, `src/scoring/lens-scorers.ts`, `src/scoring/prompts/*.ts`, `src/scoring/confidence.ts`, `src/scoring/composite.ts`, `src/triage/red-flags.ts`, `src/triage/tier-engine.ts`, `src/pipeline/pipeline-runner.ts`, `src/pipeline/extract-skills.ts`, `src/pipeline/scoring-to-simulation.ts`, `src/simulation/simulation-pipeline.ts`, `src/types/simulation.ts`
+- Project requirements: `.planning/PROJECT.md` v1.3 milestone definition
+- Existing patterns: `confidence.ts` (algorithmic scoring from fields), `composite.ts` (weighted combination), `red-flags.ts` (deterministic elimination)

@@ -1,164 +1,167 @@
 # Project Research Summary
 
-**Project:** Aera Skill Feasibility Engine v1.1 -- Cloud-Accelerated Scoring
-**Domain:** Cloud-accelerated LLM scoring pipeline with ephemeral GPU provisioning
-**Researched:** 2026-03-11
-**Confidence:** MEDIUM-HIGH
+**Project:** Aera Skill Feasibility Engine v1.3 — L4 Two-Pass Scoring Funnel
+**Domain:** Pipeline optimization for LLM-based feasibility scoring at scale
+**Researched:** 2026-03-13
+**Confidence:** HIGH (all research based on direct codebase analysis; no external API or library unknowns)
 
 ## Executive Summary
 
-The v1.1 milestone adds a cloud GPU backend to the existing offline-first Aera Skill Feasibility Engine. The core problem is throughput: scoring 339 Ford opportunities takes 17 hours locally on Apple Silicon via Ollama. By routing the same scoring pipeline through vLLM on an ephemeral H100, the same workload completes in under 30 minutes for approximately $2-3 per run. The existing codebase is well-prepared for this -- the `ChatFn` dependency injection pattern means scoring logic needs zero changes. The work is purely additive: a new vLLM client adapter, a concurrent pipeline runner, and a cloud provisioner module layered on top of the untouched v1.0 code.
+The v1.3 milestone targets a 98% reduction in LLM calls (2,478 down to ~50) by inserting a deterministic pre-scoring pass before the existing LLM scoring phase. The approach is straightforward in concept: score all 826 L4 activity candidates algorithmically using their structured fields, rank them, and let only the top-N survivors through to a single consolidated LLM call that assesses platform fit and sanity-checks the algorithmic score. Zero new dependencies are required; every infrastructure primitive (Semaphore, checkpoint, retry, progress, chatFn injection) is already proven across v1.0–v1.2.
 
-The recommended approach is a three-phase build: (1) vLLM client adapter implementing the existing ChatFn interface, (2) semaphore-bounded concurrent pipeline runner with safe checkpointing, (3) ephemeral H100 provisioning via RunPod Serverless with automatic teardown. Only three new npm dependencies are needed: `p-limit` for concurrency, `runpod-sdk` for cloud lifecycle, and `dotenv` for API key management. The architecture stays minimal -- raw `fetch` for the vLLM HTTP client (no `openai` SDK), the existing checkpoint system extended with a write queue, and all cloud code gated behind the `--backend vllm` flag.
+The recommended approach is to build bottom-up in four phases: types and deterministic foundation first (pure functions, no LLM, no pipeline changes), then the consolidated LLM scorer in isolation, then pipeline integration with a `--scoring-mode` feature flag preserving v1.2 behavior for comparison runs, and finally a validation pass comparing promoted sets between modes on real Ford data. The critical architectural decision is to treat the deterministic score as a gate (filter), not a blend with the LLM score. This keeps the two scoring systems cleanly separated and avoids the score calibration drift problem that corrupts rankings when dissimilar scales are arithmetically combined.
 
-The key risks are: (1) concurrent checkpoint corruption from parallel writes to shared mutable state -- prevented by serializing writes through an async queue, (2) orphaned GPU instances burning money after crashes -- prevented by defense-in-depth teardown (signal handlers, try/finally, instance-level TTL, orphan checks), and (3) vLLM structured output schema incompatibility with the existing Zod schemas -- prevented by a pre-flight schema compatibility test suite run before every cloud invocation. The STACK and ARCHITECTURE researchers agree on approach but diverge on concurrency library choice (p-limit vs async-mutex); p-limit is the right call given its zero-dependency footprint and exact fit for the "run N at a time" pattern.
+The two highest-risk areas are: (1) score calibration between the deterministic pass and LLM output — top-N survivors must meaningfully correlate with what the LLM would have promoted, requiring a calibration test before committing to any top-N value; and (2) the simulation adapter — the current `scoring-to-simulation.ts` groups results by L3 and picks the best skill, which silently breaks when the scoring unit shifts to L4. Both risks are addressable with targeted integration tests and must be designed before implementation, not patched after.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The v1.0 stack (TypeScript/ESM, Zod, Commander, Pino) is unchanged. Three production dependencies are added with minimal footprint (combined ~5 transitive deps). The most important stack decision is NOT adding the `openai` npm package -- raw `fetch` handles the single POST endpoint to vLLM in ~40 lines, consistent with the existing Ollama client pattern.
+No new dependencies are required. The deterministic pre-scorer is pure TypeScript arithmetic (5-15 lines per signal function) following the same pattern as `scoring/confidence.ts`. The consolidated LLM prompt follows the same pattern as `scoring/prompts/technical.ts`: pure function returning `ChatMessage[]`, Zod-validated output, `chatFn` injection, `scoreWithRetry` wrapping. All new modules reuse Semaphore, checkpoint, retry-policy, timeout, and progress infrastructure unchanged.
 
-**Core technologies:**
-- **Raw `fetch` for vLLM**: OpenAI-compatible `/v1/chat/completions` endpoint -- avoids 130+ transitive deps from `openai` SDK
-- **p-limit ^7.0**: Semaphore-bounded concurrency -- zero deps, pure ESM, right-sized for "run N promises at a time"
-- **runpod-sdk ^1.1.2**: Serverless endpoint lifecycle (create, health poll, teardown) -- official typed SDK
-- **dotenv ^16.4**: API key management -- keeps secrets out of CLI args and shell history
-
-**Critical version requirement:** vLLM >= 0.8.5 for `response_format` with `json_schema` type (the current structured output API).
+**Core technologies (reused, no additions):**
+- TypeScript + Zod + zod-to-json-schema: type safety + LLM output validation — proven across 3 milestones, 552+ tests
+- Commander (`--top-n`, `--scoring-mode` flags): same pattern as existing `--max-tier`, `--concurrency`
+- In-house Semaphore + checkpoint: bounded concurrency and resume — no changes required
+- In-house `callWithResilience` + `withTimeout`: LLM retry and timeout — unchanged interface
+- Pino structured logging: funnel statistics output — already in place
 
 ### Expected Features
 
 **Must have (table stakes):**
-- vLLM ChatFn adapter implementing existing `ChatFn` interface
-- JSON schema translation from Ollama `format` to vLLM `response_format`
-- CLI `--backend ollama|vllm` flag (default remains `ollama`)
-- Concurrent pipeline runner with semaphore-bounded concurrency (10-20 simultaneous)
-- Concurrent-safe checkpoint writes
-- Backend health check before scoring starts
-- Graceful fallback on backend failure
+- Deterministic pre-scoring from L4 structured fields only (ai_suitability, financial_rating, decision_exists, impact_order, rating_confidence, plus skill-level continuous fields for tie-breaking) — core funnel gate
+- `--top-n` CLI flag with configurable default (50) — controls LLM budget per run
+- Pre-score TSV artifact written to output directory — makes the filter transparent and auditable
+- Single consolidated LLM call per survivor covering platform fit + deterministic sanity check — the 98% call reduction
+- Synthesized `lenses` field on ScoringResult from deterministic signals — ensures all 10+ existing report formatters work unchanged
+- Filter statistics in pipeline summary (total candidates, survivors, eliminated, cutoff score) — funnel observability
+- L3 names retained as metadata on every scored L4 — report grouping unchanged
+- `--scoring-mode two-pass | three-lens` flag — enables A/B validation against v1.2 behavior
 
 **Should have (differentiators):**
-- Ephemeral H100 provisioning via RunPod Serverless (auto-scale to zero)
-- Auto-teardown after pipeline completion (defense against cost overrun)
-- Progress dashboard for concurrent runs (aggregated status, not per-opportunity logs)
-- Cost tracking per run (GPU-hours consumed, estimated cost)
+- Cluster-aware top-N cutoff (include all L4s tied at the boundary score) — prevents splitting related L4s
+- LLM prompt includes deterministic score breakdown — enables targeted sanity checking
+- Tier-aware top-N slot allocation (Tier 1 always passes) — prevents quick-wins from being crowded out by volume
+- Overlap group deduplication (skip near-duplicate survivors) — reduces LLM calls further
+- Two-phase progress tracker (fast pre-score phase vs slow LLM phase) — accurate pipeline UX
 
-**Defer (v2+):**
-- Adaptive concurrency (dynamically resize semaphore based on throughput)
-- Dual-backend comparison mode (manual spot-checking suffices for validation)
-- Model warm-up requests (only matters if cold start latency is a real problem)
-- Multi-GPU tensor parallelism (Qwen 30B fits on a single H100)
+**Defer to v2+:**
+- Dimension weight configurability via CLI flags — weights need Ford dataset validation before user exposure
+- Deterministic score caching — pre-scoring is already <100ms total; premature optimization
+- Pre-score histogram in reports — nice to have, not blocking MVP
 
 ### Architecture Approach
 
-The architecture is an adapter pattern at the ChatFn boundary with a factory that wires the correct backend based on CLI flags. The existing sequential pipeline remains the default (Ollama path). The vLLM path branches to a concurrent runner that wraps `scoreOneOpportunity` calls in a semaphore. Cloud provisioning is a separate infrastructure layer that creates/destroys RunPod Serverless endpoints. All scoring, triage, simulation, and output code is unchanged.
+The new pipeline inserts three components between skill extraction and simulation: a synchronous deterministic scorer over all 826 candidates (<100ms), a top-N filter (pure rank + slice), then a semaphore-bounded consolidated LLM scorer over survivors only. A `lens-synthesis` step maps deterministic signals back to the existing `lenses: { technical, adoption, value }` shape so all downstream consumers (10+ report formatters, simulation bridge, checkpoint) remain unchanged. The `--scoring-mode` branch in `pipeline-runner.ts` allows running the v1.2 three-lens path for comparison and validation. The triage pipeline (`triageOpportunities`) is retired as a scoring gate — its red-flag signals are absorbed into deterministic scoring as near-zero scores rather than discrete skip/demote actions.
 
-**Major components:**
-1. **VllmClient** (`src/infra/vllm-client.ts`) -- translates ChatFn calls to OpenAI-compatible HTTP; maps Ollama format param to vLLM response_format
-2. **BackendFactory** (`src/infra/backend-factory.ts`) -- creates ChatFn + concurrency config from `--backend` flag; wires provisioner for cloud path
-3. **ConcurrentPipelineRunner** (`src/pipeline/concurrent-runner.ts`) -- semaphore-bounded parallel scoring; uses p-limit to cap concurrent opportunities
-4. **CloudProvisioner** (`src/infra/cloud-provisioner.ts`) -- RunPod Serverless endpoint lifecycle: create, health poll, teardown with signal handlers
-5. **ConcurrentCheckpointWriter** (extends `src/infra/checkpoint.ts`) -- async write queue serializing concurrent checkpoint updates
+**Major new components:**
+1. `scoring/deterministic-signals.ts` — 7 pure signal functions (financialSignal, aiSuitabilitySignal, dataReadiness, decisionClarity, impactSignal, specCompleteness, archetypeSignal), individually testable with no mocking
+2. `scoring/deterministic-scorer.ts` — weighted composite over all 826 L4 candidates, purely synchronous, <100ms total
+3. `pipeline/top-n-filter.ts` — rank-ordered cutoff producing `{ survivors, eliminated, cutoffScore, totalCandidates }`
+4. `scoring/consolidated-scorer.ts` — single LLM call per survivor: platformFit (score 0-3, components[], reason) + sanityCheck (AGREE/DISAGREE/PARTIAL)
+5. `scoring/lens-synthesis.ts` — maps deterministic signals to `lenses` shape, preserving all downstream consumers unchanged
+6. `scoring/composite.ts` (modified) — new `computeHybridComposite` alongside preserved `computeComposite`
 
 ### Critical Pitfalls
 
-1. **Concurrent checkpoint corruption** -- Multiple parallel scorers writing to shared checkpoint array and file simultaneously. Prevent with async write queue that serializes all checkpoint mutations. Test by running 20 concurrent mock scorings and verifying exact entry count.
+1. **Score calibration drift between deterministic and LLM scores** — Build a calibration test before anything else: run 50-100 L4s through both the deterministic scorer AND the full 3-call LLM pipeline, compute Spearman rank correlation. If rho < 0.6, widen top-N or add more features. Never arithmetically combine the two scores — the deterministic score is a gate only; the final composite comes exclusively from the LLM.
 
-2. **Orphaned GPU instances** -- Crashed pipeline leaves H100 running at $2-4/hr. Prevent with defense-in-depth: instance-level TTL at provision time, SIGINT/SIGTERM/uncaughtException handlers, try/finally teardown, post-run orphan check, and spending alerts on the cloud account.
+2. **Simulation adapter breakage (silent)** — The current `scoring-to-simulation.ts` groups by L3 and picks the best skill per group. V1.3 shifts the scoring unit to L4, causing the adapter to silently include unscored L4s in simulation input. Redesign the adapter contract alongside the scoring redesign; add an assertion `input.l4s.every(l4 => scoredL4Ids.has(l4.id))` and an integration test verifying fully populated SimulationInput from L4-level scored results.
 
-3. **vLLM structured output schema incompatibility** -- vLLM's xgrammar backend rejects certain JSON schema features that Ollama accepts. Prevent with pre-flight schema compatibility test against vLLM before provisioning GPU. Fall back to `--guided-decoding-backend outlines` if xgrammar fails.
+3. **Consolidated LLM prompt quality degradation** — Replacing 3 focused prompts (~1,100 tokens each) with 1 consolidated prompt risks positional attention bias on later sub-dimensions and rubric interference between lenses. Prototype and A/B test on 20 L4s before committing — if consolidated prompt score variance drops below 50% of 3-call variance, split into 2 calls. Use explicit XML-like delimiters to segment rubrics.
 
-4. **Backend behavioral divergence** -- Same prompt produces different scores on Ollama vs vLLM due to quantization, sampling, and template differences. Prevent with pinned sampling parameters, golden test suite of 10 opportunities, and documented tolerance band (0.05 mean absolute difference per lens).
+4. **Top-N threshold sensitivity** — The Ford hierarchy has clusters of similar L4s producing many tied deterministic scores. A hard rank cutoff at N vs N+1 may differ by 0.001. Implement cluster-aware cutoff (include all L4s tied at the boundary), add a sensitivity test asserting >90% overlap between top-48, top-50, and top-52 result sets.
 
-5. **Semaphore starvation from stuck requests** -- vLLM can hang under guided decoding. Prevent with per-request AbortController timeout (120s for scoring), circuit breaker pattern (3 consecutive timeouts = pause and health-check), and semaphore slot monitoring.
+5. **Checkpoint format migration** — V1.3 changes the scoring unit from skill to L4 activity. Safe approach: keep `version: 1`, add `l4Id` as optional field alongside `skillId`, update `getCompletedNames()` to check all three. Test with a real v1.2 `.checkpoint.json` from `evaluation-vllm/` before any scoring changes.
 
 ## Implications for Roadmap
 
-Based on research, suggested phase structure:
+Based on combined research, a 4-phase structure is recommended. The dependency chain is strict: types must precede scorers, scorers must precede pipeline wiring, pipeline wiring must precede validation.
 
-### Phase 1: vLLM Client Adapter
-**Rationale:** Foundation layer with zero dependencies on other new code. Can be unit-tested against a mock HTTP server without any cloud infrastructure. Validates the critical schema translation (Ollama format to vLLM response_format) before committing to cloud spend.
-**Delivers:** A drop-in ChatFn implementation for vLLM, CLI `--backend` flag, backend factory, health check.
-**Addresses:** vLLM ChatFn adapter, JSON schema translation, CLI flag, backend health check (table stakes).
-**Avoids:** Schema incompatibility (Pitfall 3) caught early by pre-flight tests; ChatFn interface issues (Pitfall 6) resolved before building on top of it.
+### Phase 1: Types + Deterministic Foundation
 
-### Phase 2: Concurrent Pipeline Runner
-**Rationale:** Can be developed and tested in parallel with Phase 1 using mock ChatFn. No cloud dependency -- concurrency logic is backend-agnostic. This is the highest-complexity table stakes feature and benefits from isolated development.
-**Delivers:** Semaphore-bounded concurrent scoring, concurrent-safe checkpointing, progress reporting for parallel runs.
-**Uses:** p-limit for semaphore, existing scoreOneOpportunity unchanged.
-**Implements:** ConcurrentPipelineRunner, ConcurrentCheckpointWriter.
-**Avoids:** Checkpoint corruption (Pitfall 1), context tracker races (Pitfall 10), semaphore starvation (Pitfall 5), concurrent git commits (Pitfall 9).
+**Rationale:** All downstream work depends on the new type contracts. Building pure functions first (no LLM, no pipeline changes) allows rapid TDD with `makeSkillWithContext()` factories and zero mocking. Checkpoint migration safety check belongs here — the pipeline must be able to resume before it runs at scale.
+**Delivers:** `DeterministicScore` and `ConsolidatedLlmResult` types on `ScoringResult` (optional, backward-compatible); 7 signal extractor functions with TDD; `deterministicScorer`; `filterTopN`; additive checkpoint migration.
+**Addresses:** Deterministic pre-scoring (all table-stakes dimensions), top-N CLI filter, filter statistics, L3 metadata preservation.
+**Avoids:** L3 metadata orphaning (Pitfall 7), checkpoint format breakage (Pitfall 5), feature selection bias — include skill-level continuous fields (actions count, constraint count, max_value) to generate >200 distinct scores across 826 L4s and avoid cluster ties.
+**Research flag:** Standard patterns. Follows existing `confidence.ts` and `composite.ts` patterns exactly. No deeper research needed.
 
-### Phase 3: Cloud Infrastructure
-**Rationale:** Depends on Phase 1 (needs vLLM client to test against) and Phase 2 (needs concurrent runner for throughput). Highest-value differentiator -- transforms the tool from "17 hours local" to "30 minutes for $3."
-**Delivers:** Ephemeral H100 provisioning via RunPod Serverless, auto-teardown, cost tracking.
-**Uses:** runpod-sdk, dotenv.
-**Implements:** CloudProvisioner with signal handler teardown.
-**Avoids:** Orphaned instances (Pitfall 2), volume storage costs (Pitfall 13).
+### Phase 2: Consolidated LLM Scorer
 
-### Phase 4: Integration and Validation
-**Rationale:** End-to-end validation requires all three previous phases. Runs the Ford 339-opportunity dataset through the full cloud path and validates results, timing, and cost.
-**Delivers:** Proven end-to-end pipeline, golden test suite for backend comparison, documented performance characteristics.
-**Addresses:** Backend behavioral divergence (Pitfall 4), error handling asymmetry (Pitfall 14), model version documentation (Pitfall 15).
+**Rationale:** The consolidated prompt is the design-intensive piece and the largest quality risk. Building and testing it in isolation (before touching the pipeline runner) allows rapid iteration with mock chatFn responses and side-by-side comparison against the 3-call pipeline before committing to the architecture.
+**Delivers:** `scoring/prompts/consolidated.ts` prompt builder; `ConsolidatedLensSchema` Zod schema + JSON schema; `scoreOneConsolidated` function with `chatFn` injection; `computeHybridComposite`; `synthesizeLenses`.
+**Uses:** Existing `buildKnowledgeContext()`, `chatFn` injection pattern, `scoreWithRetry`, `zod-to-json-schema`.
+**Implements:** Consolidated scorer with platform fit (0-3 score + Aera component citations) + sanity check (AGREE/DISAGREE/PARTIAL + optional adjustedComposite).
+**Avoids:** Consolidated prompt quality degradation (Pitfall 3) — A/B test against 3-call pipeline on 20 L4s before finalizing; test suite breakage (Pitfall 10) — write new tests first, mark old 3-call tests as `skip` with reason.
+**Research flag:** Needs prompt engineering validation. Define the A/B test protocol (which L4s, pass/fail threshold: variance >= 50% of 3-call, rho >= 0.6) in the phase plan before writing the prompt.
+
+### Phase 3: Pipeline Integration
+
+**Rationale:** Wire new components into the pipeline runner only after Phases 1+2 are independently validated. The `--scoring-mode` feature flag is the safety net — it preserves v1.2 behavior for Phase 4 A/B comparisons without a separate code branch.
+**Delivers:** Updated `pipeline-runner.ts` with two-pass flow and `--scoring-mode` branch; `--top-n` and `--scoring-mode` CLI flags; updated `scoring-to-simulation.ts` adapter for L4-level input; two-phase progress tracker (fast pre-score + slow LLM phases displayed separately).
+**Implements:** Full pipeline integration, explicit triage/deterministic-scoring boundary resolution, simulation adapter for L4-first flow.
+**Avoids:** Triage/deterministic overlap (Pitfall 8) — resolve explicitly which pipeline stages remain and which are retired; simulation adapter breakage (Pitfall 4) — redesign adapter contract in this phase, not after; LLM call regression (Pitfall 9) — set hard budget target (max calls = top-N x 1.5) and log actual vs budgeted prominently.
+**Research flag:** Standard patterns. Commander flags and pipeline-runner wiring follow established patterns. Simulation adapter needs an explicit design decision but not external research.
+
+### Phase 4: Validation + Report Compatibility
+
+**Rationale:** Cannot ship without verifying the funnel does not silently eliminate candidates the 3-call system would have promoted. The calibration test from Pitfall 1 is the acceptance gate.
+**Delivers:** Calibration test suite with Spearman rho measurement; full Ford 826-candidate run with both scoring modes side-by-side; report formatter verification (all 10+ formatters produce correct output from v1.3 `ScoringResult[]`); `pipeline-metadata.json` artifact in output directory (version, timestamp, top-N, weights, call count).
+**Addresses:** Score calibration drift (Pitfall 1), test suite compatibility (Pitfall 10), output structure consistency (Pitfall 12).
+**Avoids:** Shipping a funnel that silently downgrades quality without a detection mechanism.
+**Research flag:** Standard validation patterns. Define pass/fail thresholds in the phase plan: rho >= 0.6, subdimension score stdev >= 0.3 on 0-3 scale, LLM call count <= top-N x 1.5.
 
 ### Phase Ordering Rationale
 
-- Phases 1 and 2 can be developed in parallel (no dependency between them), but are listed sequentially for roadmap clarity. The concurrent runner works with any ChatFn, including mock and Ollama.
-- Phase 3 must follow Phase 1 because the provisioner creates the infrastructure that the vLLM client consumes.
-- Phase 4 is explicitly separated from Phase 3 because integration testing against real cloud GPUs is a distinct activity from building the provisioner. It requires budget, cloud credentials, and acceptance criteria.
-- This ordering avoids the most expensive pitfalls early: schema incompatibility is caught in Phase 1 (before any cloud spend), checkpoint corruption is caught in Phase 2 (before any concurrent cloud runs), and orphaned instances are guarded in Phase 3 (before the full-scale validation run).
+- Phase 1 before Phase 2: type contracts must exist before scorers are implemented; the checkpoint migration is a prerequisite for any scoring runs.
+- Phase 2 before Phase 3: consolidated prompt quality must be empirically validated before embedding in the pipeline runner; changing the prompt after pipeline integration is expensive.
+- Phase 3 before Phase 4: can only validate end-to-end behavior after the full pipeline is wired; simulation adapter contract is resolved in Phase 3 not Phase 4.
+- Checkpoint migration is Phase 1 (not Phase 3) because resume correctness is a precondition for any LLM scoring at scale.
+- Triage/deterministic overlap is Phase 3 (not deferred) because two conflicting filter stages in the pipeline cannot be left unresolved during integration.
 
 ### Research Flags
 
-Phases likely needing deeper research during planning:
-- **Phase 1 (vLLM Client Adapter):** Needs validation of exact JSON schema features supported by vLLM's xgrammar backend against the project's actual Zod scoring schemas. Known issues documented in vllm-project/vllm#15236.
-- **Phase 3 (Cloud Infrastructure):** RunPod Serverless API specifics (endpoint creation fields, proxy URL format, auto-scale configuration) need validation against current docs. The SDK is at v1.1.2 with a beta v1.2.0 -- API surface may shift. Also: STACK.md recommends RunPod Serverless while FEATURES.md lists "Serverless GPU" as an anti-feature (recommending dedicated pods for batch). This contradiction needs resolution -- STACK.md's serverless recommendation is better-reasoned for the ephemeral use case given FlashBoot cold starts of 10-15s.
+Phases needing deeper attention during planning:
+- **Phase 2 (Consolidated LLM Scorer):** Prompt quality is empirical, not derivable from code analysis. Must prototype and A/B test before committing. Phase plan must specify: which 20 L4s, what metrics (variance ratio, rank correlation), and the pass/fail thresholds.
+- **Phase 4 (Validation):** Calibration thresholds (rho >= 0.6, stdev >= 0.3) are informed estimates, not validated against Ford data. Phase plan must define what happens if thresholds are not met: widen top-N, add features to deterministic scorer, or split consolidated prompt into 2 calls.
 
 Phases with standard patterns (skip research-phase):
-- **Phase 2 (Concurrent Pipeline Runner):** Well-documented concurrency patterns. p-limit is a battle-tested library. Async write queue for checkpointing is a standard pattern.
-- **Phase 4 (Integration and Validation):** Standard end-to-end testing. No novel technical challenges -- just execution.
+- **Phase 1 (Types + Deterministic Foundation):** Follows `confidence.ts` / `composite.ts` patterns exactly. TDD, pure functions, no unknowns.
+- **Phase 3 (Pipeline Integration):** Follows established pipeline-runner and Commander patterns. Simulation adapter is a known interface change, not a discovery task.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Minimal additions (3 deps), all verified on npm, vLLM API well-documented |
-| Features | MEDIUM-HIGH | Table stakes are clear and well-scoped; cloud provider economics verified but pricing may change |
-| Architecture | HIGH | Adapter pattern is proven, ChatFn DI already exists, component boundaries are clean |
-| Pitfalls | MEDIUM-HIGH | Critical pitfalls well-documented with specific vLLM issue references; some edge cases (xgrammar compatibility) need runtime validation |
+| Stack | HIGH | Direct codebase analysis. All referenced modules exist with proven interfaces. Zero external dependencies needed. |
+| Features | HIGH | Derived from L4 Zod schema (source of truth), existing scoring patterns, and PROJECT.md requirements. |
+| Architecture | HIGH | Component boundaries are well-defined extensions of existing patterns. No greenfield design required. |
+| Pitfalls | HIGH | Derived from existing type contracts and pipeline flow analysis. Score calibration and simulation adapter risks are concrete, not speculative. |
 
-**Overall confidence:** MEDIUM-HIGH
+**Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **Serverless vs Pods contradiction:** STACK.md recommends RunPod Serverless; FEATURES.md lists serverless as an anti-feature. Resolution: use Serverless -- the cold-start concern is mitigated by RunPod's FlashBoot (10-15s) and the batch nature of the workload means cold start is amortized across 339 opportunities.
-- **Concurrency library disagreement:** STACK.md recommends p-limit; ARCHITECTURE.md code samples use async-mutex Semaphore. Resolution: use p-limit -- zero transitive dependencies, simpler API, naturally degrades to sequential at concurrency=1.
-- **Exact vLLM schema compatibility:** Cannot be validated without running the actual scoring schemas against a vLLM instance. Must be tested empirically in Phase 1 before committing to the cloud path.
-- **RunPod Serverless API details:** SDK is relatively new (v1.1.2). Exact endpoint creation parameters, cold start behavior with Qwen models, and proxy URL format need validation during Phase 3 implementation.
-- **Model version alignment:** Ollama runs `qwen3:30b` (quantized); vLLM would run `Qwen/Qwen2.5-32B-Instruct` (potentially different version). Need to pin compatible versions and document expected score variance.
+- **Consolidated prompt token budget:** Qwen 2.5 32B at 8K context may be tight once all Aera knowledge context (21 UI components, 22 PB nodes, capabilities) and sub-dimension rubrics are included in one system message. Measure actual token counts in Phase 2 prototype. If system message exceeds 5K tokens, either prune non-essential context or split into 2 calls (platform fit + sanity check separately).
+- **Deterministic weight validation:** The proposed weights (ai_suitability: 0.35, financial_rating: 0.25, decision_exists: 0.20, impact_order: 0.10, rating_confidence: 0.10) are rationale-backed but untested against real Ford data. Phase 4 calibration will surface whether they need adjustment. Export as named constants for easy tuning during development.
+- **platform_fit unresolved debt:** A memory note flags that `platform_fit` in scoring was not resolved during the 2026-03-13 pass. The consolidated LLM prompt is the intended resolution — the `platformFit.score` field in `ConsolidatedLlmResult` replaces the previously unresolved `aera_platform_fit` sub-dimension from the existing technical lens. This should be confirmed as the fix during Phase 2 planning.
+- **Feature discrimination target:** PITFALLS.md flags that using only L4 enum fields (low cardinality: 3-4 values each) may produce only 50-80 distinct deterministic scores across 826 L4s, causing excessive ties. The deterministic scorer must also include skill-level continuous fields (actions.length, constraints.length, max_value, execution field presence) to reach >200 distinct values. Validate this target during Phase 1 before building the top-N filter.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [vLLM OpenAI-Compatible Server docs](https://docs.vllm.ai/en/stable/serving/openai_compatible_server/) -- API contract, response_format
-- [vLLM Structured Outputs docs](https://docs.vllm.ai/en/latest/features/structured_outputs/) -- json_schema support since v0.8.5
-- [Qwen vLLM Deployment](https://qwen.readthedocs.io/en/latest/deployment/vllm.html) -- official Qwen + vLLM documentation
-- [p-limit npm](https://www.npmjs.com/package/p-limit) -- concurrency library API
-- [RunPod Pricing](https://www.runpod.io/pricing) -- H100 serverless rates
+- Codebase direct analysis: `src/scoring/composite.ts`, `src/scoring/confidence.ts`, `src/scoring/lens-scorers.ts`, `src/scoring/prompts/technical.ts`, `src/scoring/schemas.ts`, `src/types/scoring.ts`, `src/types/hierarchy.ts`, `src/schemas/hierarchy.ts` — scoring patterns, field inventory, type contracts
+- Codebase direct analysis: `src/pipeline/pipeline-runner.ts`, `src/pipeline/extract-skills.ts`, `src/pipeline/scoring-to-simulation.ts` — pipeline flow and adapter contracts
+- Codebase direct analysis: `src/infra/checkpoint.ts`, `src/infra/semaphore.ts`, `src/infra/retry-policy.ts`, `src/infra/timeout.ts` — infrastructure interfaces
+- Codebase direct analysis: `src/triage/triage-pipeline.ts`, `src/triage/red-flags.ts`, `src/triage/tier-engine.ts` — existing gate logic to be absorbed
+- Codebase direct analysis: `src/simulation/simulation-pipeline.ts`, `src/types/simulation.ts` — SimulationInput contract
+- Project charter: `.planning/PROJECT.md` — v1.3 milestone definition, Ford 826 L4 candidate count, pipeline flow target
 
 ### Secondary (MEDIUM confidence)
-- [RunPod Serverless vLLM docs](https://docs.runpod.io/serverless/vllm/get-started) -- deployment patterns
-- [RunPod JS SDK](https://docs.runpod.io/sdks/javascript/overview) -- programmatic endpoint management
-- [Qwen3-32B H100 benchmarks (gpustack.ai)](https://docs.gpustack.ai/2.0/performance-lab/qwen3-32b/h100/) -- throughput estimates
-- [H100 Rental Prices 2026](https://intuitionlabs.ai/articles/h100-rental-prices-cloud-comparison) -- multi-provider comparison
-- [vLLM Issue #15236](https://github.com/vllm-project/vllm/issues/15236) -- xgrammar schema compatibility bugs
-- [vLLM Issue #14151](https://github.com/vllm-project/vllm/issues/14151) -- structured output hang risk
-
-### Tertiary (LOW confidence)
-- [RunPod Cloud GPU Mistakes to Avoid](https://www.runpod.io/articles/guides/cloud-gpu-mistakes-to-avoid) -- operational guidance (vendor content)
-- [Ollama vs vLLM Comparison 2026](https://www.glukhov.org/post/2025/11/hosting-llms-ollama-localai-jan-lmstudio-vllm-comparison/) -- independent comparison
+- Performance extrapolation from v1.2 cloud run timings — single consolidated LLM call latency is untested; ~10 min for top-50 on H100 is estimated
+- Spearman rank correlation threshold (rho >= 0.6) for calibration validation — standard practice for two-stage ranking systems; exact threshold needs empirical validation on Ford data
+- Positional bias in long prompts — well-documented in transformer attention literature; specific degradation threshold for Qwen 2.5 32B at 8K context needs empirical measurement
 
 ---
-*Research completed: 2026-03-11*
+*Research completed: 2026-03-13*
 *Ready for roadmap: yes*

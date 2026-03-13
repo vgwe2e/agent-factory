@@ -1,505 +1,490 @@
 # Architecture Patterns
 
-**Domain:** Cloud-accelerated LLM scoring with ephemeral GPU provisioning
-**Researched:** 2026-03-11
+**Domain:** L4 Two-Pass Scoring Funnel for Aera Skill Feasibility Engine
+**Researched:** 2026-03-13
 
 ## Recommended Architecture
 
-Adapter pattern at the ChatFn boundary, semaphore-bounded concurrent pipeline runner, and a provisioner module that manages ephemeral H100 lifecycle. The existing sequential pipeline, Ollama path, and checkpoint system remain untouched -- cloud is layered on top.
+### High-Level Data Flow (v1.3)
 
 ```
-CLI (cli.ts)
-  |
-  +-- --backend ollama (default)    --backend vllm
-  |        |                              |
-  v        v                              v
-BackendFactory ---- creates ----> ChatFn adapter
-  |                                       |
-  |   +------- ollamaChat() <---+        |
-  |   |   (existing, unchanged)          |
-  |   |                                  v
-  |   |                         VllmClient.chat()
-  |   |                           |
-  |   |                           +-> POST /v1/chat/completions
-  |   |                           |   (OpenAI-compatible)
-  |   |                           |
-  |   |                           +-> response_format: { type: "json_schema", json_schema: {...} }
-  |   |                                  (vLLM structured output)
-  v   v
-PipelineRunner
-  |
-  +-- --backend ollama: sequential for-loop (existing code path)
-  |
-  +-- --backend vllm: ConcurrentPipelineRunner
-        |
-        +-- Semaphore(concurrency=N)
-        |     |
-        |     +-- scoreOneOpportunity(opp, l4s, company, knowledge, vllmChatFn)
-        |     +-- scoreOneOpportunity(opp, l4s, company, knowledge, vllmChatFn)
-        |     +-- ... (10-20 concurrent)
-        |
-        +-- ConcurrentCheckpoint
-              |
-              +-- append-with-lock (write serialization via async queue)
+CLI -> parse-export -> extractScoringSkills -> DETERMINISTIC PRE-SCORE (new)
+  -> TOP-N FILTER (new) -> CONSOLIDATED LLM SCORE (new, 1 call per survivor)
+  -> COMPOSITE + PROMOTION GATE (modified) -> simulation (modified) -> reports
 ```
 
-### Infrastructure Layer (Cloud Only)
-
-```
-CLI --backend vllm
-  |
-  v
-CloudProvisioner
-  |
-  +-- provision()
-  |     |
-  |     +-- RunPod API: create pod (H100, vLLM Docker image)
-  |     +-- Poll /v1/models until ready
-  |     +-- Return { baseUrl, podId }
-  |
-  +-- healthCheck()
-  |     +-- GET /v1/models (OpenAI-compatible)
-  |
-  +-- teardown()
-        +-- RunPod API: delete pod
-        +-- Called in finally{} block + process signal handlers
-```
+The new pipeline inserts three components between skill extraction and simulation, replacing the existing triage+scoring path. The existing triage pipeline (`triageOpportunities`) is retired as a scoring gate -- its red-flag detection is absorbed into deterministic pre-scoring, and tier assignment is replaced by continuous rank ordering.
 
 ### Component Boundaries
 
 | Component | Status | Responsibility | Communicates With |
 |-----------|--------|---------------|-------------------|
-| `src/infra/vllm-client.ts` | **NEW** | Translate ChatFn calls to OpenAI-compatible HTTP, map Ollama format param to vLLM response_format | PipelineRunner, scoring-pipeline |
-| `src/infra/backend-factory.ts` | **NEW** | Create ChatFn based on --backend flag, wire up provisioner if vllm | CLI, PipelineRunner |
-| `src/pipeline/concurrent-runner.ts` | **NEW** | Semaphore-bounded parallel scoring of opportunities | scoring-pipeline, checkpoint |
-| `src/infra/cloud-provisioner.ts` | **NEW** | Provision/teardown ephemeral H100 pod via RunPod API | backend-factory, CLI |
-| `src/infra/checkpoint.ts` | **MODIFY** | Add write serialization for concurrent access (async queue around writeFileSync) | concurrent-runner |
-| `src/pipeline/pipeline-runner.ts` | **MODIFY** | Branch: if backend=vllm, delegate to concurrent-runner; else existing sequential path | CLI, scoring-pipeline |
-| `src/cli.ts` | **MODIFY** | Add --backend option, wire backend-factory | pipeline-runner |
-| `src/scoring/scoring-pipeline.ts` | **UNCHANGED** | scoreOneOpportunity stays exactly as-is (already accepts ChatFn) | lens-scorers |
-| `src/scoring/ollama-client.ts` | **UNCHANGED** | ollamaChat remains the default ChatFn implementation | scoring-pipeline |
-| `src/infra/model-manager.ts` | **UNCHANGED** | Still manages Ollama model lifecycle for local path | pipeline-runner |
+| `scoring/deterministic-scorer.ts` | **NEW** | Score L4 activities from structured fields only (no LLM) | Receives `SkillWithContext[]`, produces `DeterministicScore[]` |
+| `scoring/deterministic-signals.ts` | **NEW** | Individual signal extractors (pure functions) | Called by deterministic-scorer |
+| `pipeline/top-n-filter.ts` | **NEW** | Rank by deterministic score, select top N | Receives `DeterministicScore[]`, produces `DeterministicScore[]` (survivors) |
+| `scoring/consolidated-scorer.ts` | **NEW** | Single LLM call per survivor: platform fit + sanity check | Receives `SkillWithContext`, `DeterministicScore`, produces `ConsolidatedLlmResult` |
+| `scoring/prompts/consolidated.ts` | **NEW** | Prompt builder for consolidated LLM call | Called by consolidated-scorer |
+| `scoring/schemas.ts` | **MODIFIED** | Add `ConsolidatedLensSchema` + JSON schema | Consumed by consolidated-scorer |
+| `scoring/composite.ts` | **MODIFIED** | Add `computeHybridComposite` alongside existing `computeComposite` | Now accepts `DeterministicScore` + `ConsolidatedLlmResult` |
+| `types/scoring.ts` | **MODIFIED** | New types: `DeterministicScore`, `ConsolidatedLlmResult`, extended `ScoringResult` | Used everywhere |
+| `pipeline/pipeline-runner.ts` | **MODIFIED** | Orchestrate new two-pass flow with `--scoring-mode` branch | Calls all new + modified components |
+| `pipeline/scoring-to-simulation.ts` | **MODIFIED** | Accept L4-level survivors directly (not L3 rollup) | Receives `ScoringResult[]`, produces `SimulationInput[]` |
+| `cli.ts` | **MODIFIED** | Add `--top-n` and `--scoring-mode` flags | Passes to pipeline runner |
+| `triage/triage-pipeline.ts` | **DEPRECATED for scoring gate** | Red flags folded into deterministic signals; may remain for report annotations | No longer called in v1.3 scoring path |
 
-### Data Flow: vLLM Path
+### Existing Components That Do NOT Change
 
-1. **CLI** parses `--backend vllm`, passes to BackendFactory
-2. **BackendFactory** calls CloudProvisioner.provision() -- creates RunPod H100 pod with vLLM serving Qwen 2.5 32B
-3. **BackendFactory** returns a `ChatFn` that wraps VllmClient.chat(baseUrl, messages, format)
-4. **PipelineRunner** sees backend=vllm, delegates scoring loop to ConcurrentPipelineRunner
-5. **ConcurrentPipelineRunner** creates Semaphore(N), maps processable opportunities into Promise array, each awaiting semaphore before calling scoreOneOpportunity with vllm ChatFn
-6. **scoreOneOpportunity** is unchanged -- it calls chatFn(messages, format) which now goes to vLLM instead of Ollama
-7. **ConcurrentCheckpoint** serializes writes via async queue (one write at a time, many concurrent scorers)
-8. On completion (or error/signal), **CloudProvisioner.teardown()** destroys the pod
+| Component | Why Unchanged |
+|-----------|--------------|
+| `ingestion/parse-export.ts` | Input format unchanged |
+| `schemas/hierarchy.ts` | L4 schema unchanged |
+| `pipeline/extract-skills.ts` | Already extracts `SkillWithContext[]` from hierarchy -- perfect input for deterministic scorer |
+| `infra/checkpoint.ts` | Checkpoint per-skill pattern still works (keys by skillId) |
+| `infra/semaphore.ts` | Still needed for concurrent LLM calls on survivors |
+| `infra/backend-factory.ts` | Backend selection (ollama/vllm) unchanged |
+| `infra/retry-policy.ts` | callWithResilience wraps LLM calls identically |
+| `simulation/simulation-pipeline.ts` | Receives `SimulationInput[]`, internal logic unchanged |
+| `output/` formatters | Consume `ScoringResult[]` which retains same shape via lens synthesis |
+| `scoring/ollama-client.ts` | ollamaChat remains default ChatFn for local path |
+| `scoring/confidence.ts` | Existing confidence functions reused by deterministic scorer |
 
-### Data Flow: Ollama Path (Unchanged)
+---
 
-Exactly the same as v1.0. The `--backend ollama` flag (default) skips all cloud code paths. No provisioner created, no concurrent runner used.
+## New Component Specifications
 
-## New Components: Detailed Design
+### 1. Deterministic Scorer (`scoring/deterministic-scorer.ts`)
 
-### VllmClient (`src/infra/vllm-client.ts`)
+**What:** Pure-function scorer that extracts numeric signals from L4 structured fields. Runs in milliseconds across all 826 candidates. No LLM, no network, no async.
 
-The critical insight: vLLM exposes an OpenAI-compatible `/v1/chat/completions` endpoint. The existing `ollamaChat` sends to Ollama's `/api/chat` with an Ollama-specific `format` parameter. The vLLM client must translate this to OpenAI's `response_format`.
+**Input:** `SkillWithContext` (already available from `extractScoringSkills`)
+
+**Output:**
+```typescript
+interface DeterministicScore {
+  skillId: string;
+  skillName: string;
+  l4Name: string;
+  l3Name: string;
+  l2Name: string;
+  l1Name: string;
+  archetype: LeadArchetype;
+
+  /** Individual signal scores, each 0.0-1.0 */
+  signals: {
+    financialSignal: number;     // from financial_rating + max_value
+    aiSuitabilitySignal: number; // from ai_suitability enum
+    dataReadiness: number;       // from execution.target_systems, constraints
+    decisionClarity: number;     // from decision_exists, decision_articulation
+    impactSignal: number;        // from impact_order + savings_type
+    specCompleteness: number;    // from problem_statement, actions, execution field presence
+    archetypeSignal: number;     // from archetype + aera_skill_pattern presence
+  };
+
+  /** Weighted composite of all signals, 0.0-1.0 */
+  deterministicComposite: number;
+
+  /** Algorithmic confidence from existing confidence functions */
+  confidence: ConfidenceLevel;
+}
+```
+
+**Signal design rationale:** Each signal maps directly to fields already present on `SkillWithContext`. The existing `confidence.ts` functions (`computeSkillTechnicalConfidence`, etc.) already demonstrate the pattern of deriving algorithmic assessments from these same fields. The deterministic scorer generalizes this into continuous 0-1 scores rather than HIGH/MEDIUM/LOW buckets.
+
+**Signal weight suggestion (tunable):**
+| Signal | Weight | Rationale |
+|--------|--------|-----------|
+| financialSignal | 0.20 | Value drives business case |
+| aiSuitabilitySignal | 0.20 | Expert-assigned automation fit |
+| dataReadiness | 0.15 | Integration feasibility |
+| decisionClarity | 0.15 | Adoption prerequisite |
+| impactSignal | 0.10 | First-order > second-order |
+| specCompleteness | 0.10 | Richer spec = better LLM assessment |
+| archetypeSignal | 0.10 | Known pattern = lower risk |
+
+**Absorbs from triage:** The existing red flags (DEAD_ZONE, PHANTOM, NO_STAKES, CONFIDENCE_GAP, ORPHAN) become zero or near-zero deterministic signals rather than discrete skip/demote actions:
+- DEAD_ZONE: `decisionClarity = 0`
+- NO_STAKES: `financialSignal = 0 + impactSignal = 0`
+- PHANTOM: Does not apply at skill level (L3-only concept)
+- CONFIDENCE_GAP: Low `specCompleteness`
+- ORPHAN: Low `specCompleteness` (single L4 with sparse fields)
+
+No separate skip/demote logic needed -- these naturally rank to the bottom of the ordered list and get eliminated by the top-N filter.
+
+### 2. Signal Extractors (`scoring/deterministic-signals.ts`)
+
+**What:** Pure functions, one per signal. Each takes `SkillWithContext` and returns `number` (0.0-1.0). Individually testable with no mocking needed.
 
 ```typescript
-// ChatFn signature (already defined in scoring-pipeline.ts and pipeline-runner.ts)
-type ChatFn = (
-  messages: Array<{ role: string; content: string }>,
-  format: Record<string, unknown>,
-) => Promise<ChatResult>;
+export function computeFinancialSignal(skill: SkillWithContext): number;
+export function computeAiSuitabilitySignal(skill: SkillWithContext): number;
+export function computeDataReadiness(skill: SkillWithContext): number;
+export function computeDecisionClarity(skill: SkillWithContext): number;
+export function computeImpactSignal(skill: SkillWithContext): number;
+export function computeSpecCompleteness(skill: SkillWithContext): number;
+export function computeArchetypeSignal(skill: SkillWithContext): number;
+```
 
-// vLLM adapter: same signature, different transport
-export function createVllmChatFn(baseUrl: string, model: string): ChatFn {
-  return async (messages, format) => {
-    const startMs = Date.now();
-    try {
-      const response = await fetch(`${baseUrl}/v1/chat/completions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model,
-          messages,
-          temperature: 0,
-          // vLLM structured output: translate Ollama format param to OpenAI response_format
-          response_format: {
-            type: "json_schema",
-            json_schema: { name: "response", strict: true, schema: format },
-          },
-        }),
-        signal: AbortSignal.timeout(300_000), // 5min -- H100 is fast
-      });
+**Pattern:** Follows the exact same pattern as `confidence.ts` -- pure functions operating on structured data with no external dependencies. Each function is 5-15 lines of field inspection and normalization.
 
-      if (!response.ok) {
-        return { success: false, error: `vLLM HTTP ${response.status}` };
-      }
+**Example implementation:**
+```typescript
+export function computeFinancialSignal(skill: SkillWithContext): number {
+  let score = 0;
+  if (skill.financialRating === "HIGH") score += 0.5;
+  else if (skill.financialRating === "MEDIUM") score += 0.25;
+  // max_value normalization against TIER1_VALUE_THRESHOLD
+  if (skill.max_value > 5_000_000) score += 0.5;
+  else if (skill.max_value > 1_000_000) score += 0.3;
+  else if (skill.max_value > 0) score += 0.1;
+  return Math.min(score, 1.0);
+}
+```
 
-      const data = await response.json();
-      const content = data.choices[0].message.content;
-      const durationMs = Date.now() - startMs;
-      return { success: true, content, durationMs };
-    } catch (err) {
-      return { success: false, error: `vLLM chat failed: ${err}` };
-    }
+### 3. Top-N Filter (`pipeline/top-n-filter.ts`)
+
+**What:** Ranks `DeterministicScore[]` by `deterministicComposite` descending, returns top N. Pure function.
+
+```typescript
+interface TopNFilterResult {
+  survivors: DeterministicScore[];
+  eliminated: DeterministicScore[];
+  cutoffScore: number;   // the score at the N-th position
+  totalCandidates: number;
+}
+
+export function filterTopN(
+  scores: DeterministicScore[],
+  topN: number,
+): TopNFilterResult;
+```
+
+**CLI integration:** New `--top-n` flag on Commander CLI. Default 50 for Ford's 826 candidates (~6% pass rate). Tunable per run based on budget and exploration needs.
+
+**Why a separate module:** Keeps the gate logic isolated and testable. The pipeline runner calls `filterTopN` and logs the cutoff score + elimination count for transparency and tuning.
+
+### 4. Consolidated LLM Scorer (`scoring/consolidated-scorer.ts`)
+
+**What:** Single LLM call per survivor that assesses platform fit and sanity-checks the deterministic score. Replaces the 3 separate lens calls (`scoreTechnical`, `scoreAdoption`, `scoreValue`).
+
+**Input:** `SkillWithContext` + `DeterministicScore` (so the LLM sees both the raw data and the algorithmic assessment)
+
+**Output:**
+```typescript
+interface ConsolidatedLlmResult {
+  platformFit: {
+    score: number;         // 0-3: how well this maps to Aera components
+    components: string[];  // suggested Aera components
+    reason: string;
+  };
+  sanityCheck: {
+    agreement: "AGREE" | "DISAGREE" | "PARTIAL";
+    adjustedComposite?: number;  // only if DISAGREE, LLM's suggested score
+    reason: string;
   };
 }
 ```
 
-**Key translation:** Ollama's `format` parameter is a raw JSON schema object. vLLM's OpenAI-compatible API expects it wrapped in `response_format: { type: "json_schema", json_schema: { name, strict, schema } }`. This is the only adaptation needed -- message format is already OpenAI-compatible.
+**Why one call instead of three:**
+- v1.2: 3 LLM calls x 826 candidates = 2,478 calls. Unsustainable at scale.
+- v1.3: 1 LLM call x 50 survivors = 50 calls. ~50x reduction.
+- Platform fit requires domain knowledge (Aera components) that code cannot assess deterministically.
+- Sanity check catches cases where deterministic signals are misleading (e.g., well-specified activity that is actually a duplicate or organizationally blocked).
 
-**Confidence:** HIGH. vLLM's OpenAI-compatible server is well-documented and the structured output via `response_format` with `json_schema` type is confirmed in vLLM docs.
+**Knowledge context injection:** The `buildKnowledgeContext()` output (components, process builder, capabilities) is still injected into the consolidated prompt, same as the current technical prompt uses it. This is the primary value of the LLM call -- matching skill descriptions to Aera platform capabilities.
 
-### ConcurrentPipelineRunner (`src/pipeline/concurrent-runner.ts`)
+**ChatFn injection:** Follows existing pattern. `scoreOneConsolidated(skill, detScore, knowledgeContext, chatFn)` accepts `chatFn` as parameter, defaulting to `ollamaChat`. Works identically with vllm backend.
 
-Replaces the sequential `for (const triage of processable)` loop with semaphore-bounded concurrency.
+### 5. Updated Composite (`scoring/composite.ts`)
+
+**Modified to merge two score sources. Existing `computeComposite` preserved for backward compatibility.**
 
 ```typescript
-import { Semaphore } from "async-mutex";
-
-export interface ConcurrentRunnerOptions {
-  concurrency: number;  // 10-20 for H100
-  chatFn: ChatFn;
-  onResult: (result: ScoringPipelineResult, l3Name: string) => void;
-  onError: (error: string, l3Name: string) => void;
-}
-
-export async function runConcurrentScoring(
-  processable: TriageResult[],
-  l3Map: Map<string, L3Opportunity>,
-  l4Map: Map<string, L4Activity[]>,
-  company: CompanyContext,
-  knowledgeContext: KnowledgeContext,
-  options: ConcurrentRunnerOptions,
-): Promise<void> {
-  const semaphore = new Semaphore(options.concurrency);
-
-  const tasks = processable.map((triage) =>
-    semaphore.runExclusive(async () => {
-      const opp = l3Map.get(triage.l3Name);
-      if (!opp) {
-        options.onError(`L3 not found: ${triage.l3Name}`, triage.l3Name);
-        return;
-      }
-      const l4s = l4Map.get(triage.l3Name) ?? [];
-      const result = await scoreOneOpportunity(
-        opp, l4s, company, knowledgeContext, options.chatFn
-      );
-      options.onResult(result, triage.l3Name);
-    })
-  );
-
-  await Promise.allSettled(tasks);
-}
+export function computeHybridComposite(
+  deterministic: DeterministicScore,
+  llm: ConsolidatedLlmResult,
+): CompositeResult;
 ```
 
-**Why async-mutex Semaphore over p-limit or p-queue:** The existing stack already has p-queue in the research recommendations, but async-mutex's Semaphore is simpler for this use case -- we just need bounded concurrency with no priority or queue semantics. It is well-typed TypeScript and zero-dependency. Either works; async-mutex is slightly cleaner.
+**Merge strategy:**
+- Base: `deterministicComposite` (0.0-1.0)
+- LLM platform fit normalized: `platformFit.score / 3` (0.0-1.0)
+- If `sanityCheck.agreement === "AGREE"`: final = `0.70 * deterministic + 0.30 * platformFit`
+- If `sanityCheck.agreement === "DISAGREE"` and `adjustedComposite` provided: final = `0.50 * deterministic + 0.20 * platformFit + 0.30 * adjustedComposite`
+- If `sanityCheck.agreement === "PARTIAL"`: final = `0.60 * deterministic + 0.30 * platformFit + 0.10 * deterministicComposite` (reduced LLM influence)
 
-**Why Promise.allSettled over Promise.all:** One failed opportunity must not abort the entire batch. allSettled ensures all opportunities are attempted regardless of individual failures.
+The existing `PROMOTION_THRESHOLD` (0.60) still gates simulation promotion.
 
-### ConcurrentCheckpoint (`src/infra/checkpoint.ts` modification)
+---
 
-The current checkpoint uses synchronous `writeFileSync`. With concurrent scoring, multiple completions may try to write simultaneously. Solution: serialize writes through an async queue.
+## Integration Points with Existing Pipeline
 
-```typescript
-// Add to existing checkpoint.ts
-export class ConcurrentCheckpointWriter {
-  private writeQueue: Promise<void> = Promise.resolve();
-  private checkpoint: Checkpoint;
+### Pipeline Runner Changes (`pipeline-runner.ts`)
 
-  constructor(checkpoint: Checkpoint, private outputDir: string) {
-    this.checkpoint = checkpoint;
-  }
-
-  append(entry: CheckpointEntry): void {
-    // Chain writes to ensure serial execution
-    this.writeQueue = this.writeQueue.then(() => {
-      this.checkpoint.entries.push(entry);
-      saveCheckpoint(this.outputDir, this.checkpoint);
-    });
-  }
-
-  async flush(): Promise<void> {
-    await this.writeQueue;
-  }
-}
+The pipeline runner currently follows this flow:
+```
+parse -> extractSkills -> triage -> modelSetup -> score(each skill, 3 LLM calls) -> simulation -> reports
 ```
 
-**Why not a mutex:** A simple promise chain is sufficient and avoids a dependency. Each write chains onto the previous one, guaranteeing serial file writes without blocking concurrent scorers.
-
-### CloudProvisioner (`src/infra/cloud-provisioner.ts`)
-
-Manages ephemeral H100 lifecycle via RunPod API.
-
-```typescript
-export interface CloudConfig {
-  apiKey: string;          // RUNPOD_API_KEY env var
-  gpuType: string;         // "NVIDIA H100 80GB HBM3"
-  model: string;           // "Qwen/Qwen2.5-32B-Instruct"
-  dockerImage: string;     // "vllm/vllm-openai:latest"
-  volumeSize: number;      // GB for model weights cache
-}
-
-export interface ProvisionedInstance {
-  podId: string;
-  baseUrl: string;         // https://{podId}-8000.proxy.runpod.net
-}
-
-export class CloudProvisioner {
-  async provision(config: CloudConfig): Promise<ProvisionedInstance> {
-    // 1. Create pod via RunPod REST API
-    // 2. Poll pod status until RUNNING
-    // 3. Poll /v1/models until vLLM reports model loaded
-    // 4. Return baseUrl for ChatFn
-  }
-
-  async healthCheck(instance: ProvisionedInstance): Promise<boolean> {
-    // GET /v1/models -- returns 200 if vLLM is serving
-  }
-
-  async teardown(instance: ProvisionedInstance): Promise<void> {
-    // DELETE pod via RunPod REST API
-  }
-}
+v1.3 changes it to:
+```
+parse -> extractSkills -> deterministicScore(all) -> topNFilter -> modelSetup -> consolidatedScore(each survivor, 1 LLM call) -> simulation -> reports
 ```
 
-**Provider choice: RunPod** because:
-- Per-millisecond billing (critical for ephemeral use -- a 30-min run should cost ~$1.50 not an hour minimum)
-- H100 80GB at ~$2/hr (sufficient for Qwen 2.5 32B unquantized at full FP16)
-- JavaScript SDK exists (`@runpod/sdk` on npm) though raw REST is simpler
-- Pod creation API is well-documented with programmatic access
-- Docker image support means we specify `vllm/vllm-openai:latest` directly
+**Key changes in `runPipeline`:**
 
-**Confidence:** MEDIUM. RunPod API specifics (exact pod creation fields, proxy URL format) need validation against current docs during implementation.
+1. **Branch on `--scoring-mode`:** When `scoringMode === "two-pass"` (default), use new path. When `scoringMode === "three-lens"`, preserve v1.2 behavior for comparison/validation runs.
 
-### BackendFactory (`src/infra/backend-factory.ts`)
+2. **Replace triage call** with deterministic scoring in the two-pass path. Triage is not called for scoring gating. It may optionally remain for report annotation (red flag labels in TSV output) but does not control which skills proceed.
 
-Wires everything together based on `--backend` flag.
+3. **Add deterministic scoring step** (synchronous, fast) right after `extractScoringSkills`:
+   ```typescript
+   const deterministicScores = scoreAllDeterministic(allSkills);
+   logger.info({ total: deterministicScores.length }, "Deterministic scoring complete");
+   ```
+
+4. **Add top-N filter** between deterministic scoring and LLM scoring:
+   ```typescript
+   const { survivors, eliminated, cutoffScore } = filterTopN(deterministicScores, options.topN ?? 50);
+   logger.info({ survivors: survivors.length, eliminated: eliminated.length, cutoffScore }, "Top-N filter applied");
+   ```
+
+5. **Replace semaphore-bounded `scoreOneSkill` loop** with semaphore-bounded `scoreOneConsolidated` loop over survivors only. Checkpoint system still works -- keys by `skillId`. The existing `Semaphore`, `withTimeout`, `callWithResilience`, and `createCheckpointWriter` are all reused.
+
+6. **Model management simplification:** Only one model needed for the two-pass path (the scoring model, for consolidated calls). The triage model (`qwen3:8b`) is no longer loaded. `modelManager.ensureScoringModel()` remains for Ollama backend.
+
+7. **Simulation bridge update:** `toSimulationInputs` currently groups by L3 and takes highest-composite skill. For v1.3, survivors are already the best candidates. The L3 grouping can remain for report organization, but each survivor passes through individually. The function signature stays the same; the input is just a smaller, pre-filtered set.
+
+### ScoringResult Type Evolution
+
+The existing `ScoringResult` type must accommodate both v1.2 (three lenses) and v1.3 (deterministic + consolidated) paths without breaking downstream consumers.
+
+**Strategy: Extend with optional fields, synthesize `lenses` for backward compatibility.**
 
 ```typescript
-export type Backend = "ollama" | "vllm";
-
-export interface BackendResult {
-  chatFn: ChatFn;
-  concurrency: number;      // 1 for ollama, 10-20 for vllm
-  cleanup?: () => Promise<void>;  // teardown for cloud
-}
-
-export async function createBackend(
-  backend: Backend,
-  logger: Logger,
-): Promise<BackendResult> {
-  if (backend === "ollama") {
-    return { chatFn: ollamaChat, concurrency: 1 };
-  }
-
-  // vLLM path
-  const provisioner = new CloudProvisioner();
-  const instance = await provisioner.provision({
-    apiKey: process.env.RUNPOD_API_KEY!,
-    gpuType: "NVIDIA H100 80GB HBM3",
-    model: "Qwen/Qwen2.5-32B-Instruct",
-    dockerImage: "vllm/vllm-openai:latest",
-    volumeSize: 50,
-  });
-
-  const chatFn = createVllmChatFn(instance.baseUrl, "Qwen/Qwen2.5-32B-Instruct");
-
-  return {
-    chatFn,
-    concurrency: 15,  // H100 handles 15+ concurrent requests easily
-    cleanup: () => provisioner.teardown(instance),
+export interface ScoringResult {
+  // Existing fields (unchanged)
+  skillId: string;
+  skillName: string;
+  l4Name: string;
+  l3Name: string;
+  l2Name: string;
+  l1Name: string;
+  archetype: LeadArchetype;
+  lenses: {
+    technical: LensScore;
+    adoption: LensScore;
+    value: LensScore;
   };
+  composite: number;
+  overallConfidence: ConfidenceLevel;
+  promotedToSimulation: boolean;
+  scoringDurationMs: number;
+
+  // NEW v1.3 fields (optional for backward compat)
+  deterministicScore?: DeterministicScore;
+  consolidatedLlm?: ConsolidatedLlmResult;
+  scoringMethod?: "three-lens" | "two-pass";
 }
 ```
+
+The `lenses` field is **synthesized** from deterministic signals to maintain report compatibility:
+- Technical lens: maps from `dataReadiness + archetypeSignal + aiSuitabilitySignal`
+- Adoption lens: maps from `decisionClarity + impactSignal + specCompleteness + financialSignal`
+- Value lens: maps from `financialSignal`
+
+This means all existing report formatters (`format-scores-tsv.ts`, `format-summary.ts`, `format-tier1-report.ts`, etc.) work **unchanged**.
+
+### CLI Changes
+
+New flags in `cli.ts` (Commander):
+
+| Flag | Type | Default | Purpose |
+|------|------|---------|---------|
+| `--top-n <number>` | number | 50 | Number of survivors after deterministic scoring |
+| `--scoring-mode <mode>` | "two-pass" or "three-lens" | "two-pass" | v1.3 funnel vs v1.2 legacy mode |
+
+The `--scoring-mode three-lens` flag preserves the complete v1.2 behavior (triage + 3 LLM calls per skill) for validation and comparison runs. This is important for the transition period.
+
+### Checkpoint Compatibility
+
+The checkpoint system keys entries by `skillId`. Both v1.2 and v1.3 use `skillId` as the key. The checkpoint entry gains an optional `scoringMethod` field for clarity but existing checkpoints are compatible. Resume across scoring modes is not supported (different skill sets may be scored), but resume within the same mode works.
+
+---
+
+## Data Flow Detail
+
+### v1.2 (current): Skill Through Pipeline
+
+```
+L4Activity[] --(extractScoringSkills)--> SkillWithContext[]
+  --(triageOpportunities)--> TriageResult[]  (skip/demote/process, tier 1/2/3)
+  --(filter processable, sort by tier)--> TriageResult[]
+  --(for each: scoreOneSkill)--> ScoringResult[]  (3 LLM calls each)
+    scoreTechnical:  chatFn(buildTechnicalPrompt(...), technicalJsonSchema)
+    scoreAdoption:   chatFn(buildAdoptionPrompt(...), adoptionJsonSchema)
+    scoreValue:      chatFn(buildValuePrompt(...), valueJsonSchema)
+  --(computeComposite)--> composite score + promotion gate (>= 0.60)
+  --(toSimulationInputs)--> SimulationInput[]  (groups by L3, takes best skill)
+  --(runSimulationPipeline)--> SimulationResult[]
+  --(writeFinalReports)--> Reports
+```
+
+### v1.3 (target): Skill Through Pipeline
+
+```
+L4Activity[] --(extractScoringSkills)--> SkillWithContext[]  (826 items)
+  --(scoreAllDeterministic)--> DeterministicScore[]  (826 items, <100ms)
+    7 signals extracted per skill (pure functions, no LLM)
+    Weighted composite computed per skill
+  --(filterTopN(scores, 50))--> survivors: DeterministicScore[]  (~50 items)
+    Log: cutoff score, eliminated count
+  --(for each survivor: scoreOneConsolidated)--> ConsolidatedLlmResult[]  (1 LLM call each)
+    chatFn(buildConsolidatedPrompt(skill, detScore, knowledge), consolidatedJsonSchema)
+  --(computeHybridComposite)--> final composite + promotion gate (>= 0.60)
+  --(synthesizeLenses for report compat)--> ScoringResult[]
+  --(toSimulationInputs)--> SimulationInput[]
+  --(runSimulationPipeline)--> SimulationResult[]
+  --(writeFinalReports)--> Reports
+```
+
+### LLM Call Reduction
+
+| Metric | v1.2 | v1.3 (N=50) | Reduction |
+|--------|------|-------------|-----------|
+| Candidates scored by LLM | 826 | 50 | 94% |
+| LLM calls per candidate | 3 | 1 | 67% |
+| Total LLM calls | 2,478 | 50 | **98%** |
+| Estimated cloud time (H100) | ~4 hours | ~10 min | 96% |
+| Estimated cloud cost | ~$22 | ~$1 | 95% |
+
+---
 
 ## Patterns to Follow
 
-### Pattern 1: ChatFn as the Seam
-
-**What:** The existing ChatFn type `(messages, format) => Promise<ChatResult>` is the integration seam. Both Ollama and vLLM implement this same signature. Scoring code never knows which backend it is talking to.
-
-**When:** All new backend code.
-
-**Why:** scoreOneOpportunity, all three lens scorers, and the retry policy already accept ChatFn via dependency injection. Zero changes needed to scoring logic.
-
-**Implication:** The `format` parameter translation (Ollama schema -> OpenAI response_format) lives inside the vLLM adapter, not in scoring code.
-
-### Pattern 2: Graceful Teardown with Signal Handlers
-
-**What:** Register process signal handlers (SIGINT, SIGTERM) that call CloudProvisioner.teardown() before exit. Also wrap the pipeline in try/finally.
-
-**When:** Any time a cloud resource is provisioned.
-
-**Why:** An interrupted run must not leave an H100 pod running at $2/hr. This is the most expensive failure mode.
-
+### Pattern 1: Pure Function Scoring Signals
+**What:** Each deterministic signal is a standalone pure function with no dependencies.
+**When:** Any signal derivation from structured data.
+**Why:** Matches existing `confidence.ts` pattern exactly. Trivially testable with `makeL4()` / skill factories -- no mocking, no async, no I/O.
+**Example:**
 ```typescript
-// In pipeline-runner.ts when backend=vllm
-const backend = await createBackend("vllm", logger);
-
-const cleanup = async () => {
-  if (backend.cleanup) {
-    logger.info("Tearing down cloud resources");
-    await backend.cleanup();
-  }
-};
-
-process.on("SIGINT", async () => { await cleanup(); process.exit(130); });
-process.on("SIGTERM", async () => { await cleanup(); process.exit(143); });
-
-try {
-  await runScoringPhase(/* ... */);
-} finally {
-  await cleanup();
+export function computeFinancialSignal(skill: SkillWithContext): number {
+  let score = 0;
+  if (skill.financialRating === "HIGH") score += 0.5;
+  else if (skill.financialRating === "MEDIUM") score += 0.25;
+  if (skill.max_value > 5_000_000) score += 0.5;
+  else if (skill.max_value > 1_000_000) score += 0.3;
+  else if (skill.max_value > 0) score += 0.1;
+  return Math.min(score, 1.0);
 }
 ```
 
-### Pattern 3: Health Check Before Scoring Starts
+### Pattern 2: Dependency Injection for LLM Calls
+**What:** `scoreOneConsolidated` takes `chatFn` as parameter, defaults to `ollamaChat`.
+**When:** Any LLM-calling function.
+**Why:** Matches existing `scoreOneSkill`, `scoreTechnical`, etc. Enables test injection with deterministic mock responses.
 
-**What:** After provisioning, poll the vLLM `/v1/models` endpoint until the model is loaded and ready before starting the scoring loop.
+### Pattern 3: Result Type Union for Error Propagation
+**What:** `{ success: true; data: T } | { success: false; error: string }`
+**When:** Any operation that can fail (LLM calls, I/O).
+**Why:** Established codebase convention (`ChatResult`, `ParseResult`). Prevents thrown exceptions from breaking the pipeline runner's `Promise.allSettled` pattern.
 
-**When:** During vLLM backend initialization.
+### Pattern 4: Backward-Compatible Type Extension
+**What:** Add optional fields to `ScoringResult` rather than creating a new incompatible type.
+**When:** Evolving existing types that have many downstream consumers.
+**Why:** All downstream consumers (10+ report formatters, simulation bridge, checkpoint, archived scores loader) continue working without modification. The `lenses` synthesis layer absorbs the format difference.
 
-**Why:** vLLM takes 30-90 seconds to load a 32B model. Starting scoring requests before the model is loaded causes immediate failures and wastes retry budget.
+### Pattern 5: Feature Flag via CLI Mode
+**What:** `--scoring-mode two-pass | three-lens` enables gradual migration.
+**When:** Replacing core pipeline behavior.
+**Why:** Allows A/B comparison of v1.2 vs v1.3 results on the same dataset. Critical for validating that the deterministic funnel doesn't eliminate high-quality candidates that the three-lens LLM scorer would have promoted.
 
-```typescript
-async function waitForReady(baseUrl: string, timeoutMs = 180_000): Promise<void> {
-  const start = Date.now();
-  while (Date.now() - start < timeoutMs) {
-    try {
-      const resp = await fetch(`${baseUrl}/v1/models`);
-      if (resp.ok) return;
-    } catch { /* not ready yet */ }
-    await new Promise(r => setTimeout(r, 5000));
-  }
-  throw new Error("vLLM failed to become ready within timeout");
-}
-```
-
-### Pattern 4: Concurrency Limit as Configuration
-
-**What:** The semaphore bound is configurable, not hardcoded. Default 15 for vLLM/H100, 1 for Ollama.
-
-**When:** Pipeline initialization.
-
-**Why:** Optimal concurrency depends on model size, GPU memory, prompt length. A fixed number will be wrong for some configurations. Start at 15, allow override via `--concurrency N` flag.
+---
 
 ## Anti-Patterns to Avoid
 
-### Anti-Pattern 1: Modifying scoreOneOpportunity for Concurrency
+### Anti-Pattern 1: Modifying Triage to Be the Deterministic Scorer
+**What:** Trying to retrofit `triageOpportunities()` to produce continuous scores.
+**Why bad:** Triage is designed for discrete categorization (skip/demote/process, tier 1/2/3). The `TriageResult` type is consumed by report formatters (`format-scores-tsv.ts` writes tier columns) and checkpoint logic. Forcing continuous scoring into triage creates an awkward hybrid that satisfies neither purpose.
+**Instead:** Build deterministic scorer as a new module. Triage remains available for report annotations if backward-compatible reports need tier labels.
 
-**What:** Adding concurrency awareness (locks, batching, result aggregation) inside scoreOneOpportunity.
-**Why bad:** scoreOneOpportunity is already a pure async function that accepts ChatFn. It works perfectly for both sequential and concurrent use. Adding concurrency concerns violates single responsibility and breaks the Ollama path.
-**Instead:** Concurrency is the runner's concern, not the scorer's concern. The concurrent runner wraps existing scoreOneOpportunity calls in a semaphore.
+### Anti-Pattern 2: Having Deterministic Score Feed Into Three Lens Calls
+**What:** Using deterministic score to "pre-filter" but still running 3 LLM calls per survivor.
+**Why bad:** 50 survivors x 3 calls = 150 calls. Better than 2,478 but misses the insight that platform fit is the only assessment requiring an LLM. Financial, adoption, and value dimensions are fully deterministic from the structured export fields.
+**Instead:** One consolidated LLM call per survivor covering platform fit (what code cannot assess) + sanity check (catches deterministic blind spots).
 
-### Anti-Pattern 2: Shared Mutable State Between Concurrent Scorers
+### Anti-Pattern 3: Breaking ScoringResult Shape
+**What:** Creating a new result type for v1.3 that omits the `lenses` field.
+**Why bad:** Every report formatter, the simulation bridge (`toSimulationInputs` reads `composite` and `archetype`), and the checkpoint system reference `ScoringResult.lenses`. Changing the shape requires touching 10+ files across output/, pipeline/, and simulation/.
+**Instead:** Synthesize `lenses` from deterministic signals so downstream consumers are completely unaware of the scoring method change.
 
-**What:** Multiple concurrent scoreOneOpportunity calls writing to shared arrays, counters, or context objects without synchronization.
-**Why bad:** Race conditions on result aggregation, corrupted checkpoint files, incorrect counts.
-**Instead:** Each scorer returns its result. The runner collects results via callbacks or a synchronized collector. Checkpoint writes go through the ConcurrentCheckpointWriter queue.
+### Anti-Pattern 4: Making Top-N a Fixed Constant
+**What:** Hardcoding N as a module-level constant in the scorer.
+**Why bad:** Optimal N depends on dataset size (826 for Ford, could be 200 or 5000 for other clients), run budget, and exploratory needs. A constant prevents tuning.
+**Instead:** CLI flag `--top-n` with sensible default. Log the cutoff score so users can evaluate whether N is too aggressive or too lenient.
 
-### Anti-Pattern 3: Leaving Cloud Resources on Error
+### Anti-Pattern 5: Putting Lens Synthesis in Report Formatters
+**What:** Each report formatter individually converting `DeterministicScore` to lens format.
+**Why bad:** Duplicates conversion logic across 6+ formatters. One formatter gets it wrong, reports become inconsistent.
+**Instead:** Lens synthesis happens once in the scoring layer (a `synthesizeLenses` function) before `ScoringResult` is constructed. Formatters receive the same `ScoringResult` shape they always have.
 
-**What:** Provisioning H100 but not tearing down on pipeline error, SIGINT, or uncaught exception.
-**Why bad:** An abandoned H100 pod costs $2/hr. A forgotten pod over a weekend costs $96.
-**Instead:** try/finally + signal handlers + process.on('uncaughtException'). Triple-defense teardown.
-
-### Anti-Pattern 4: Building a Custom vLLM Serving Layer
-
-**What:** Writing custom model loading, batching, or serving logic instead of using vLLM's built-in OpenAI-compatible server.
-**Why bad:** vLLM's server handles continuous batching, KV cache management, tensor parallelism, and GPU memory management. Reimplementing any of this is a multi-month project.
-**Instead:** Use `vllm serve Qwen/Qwen2.5-32B-Instruct` with its built-in server. Talk to it via standard OpenAI-compatible HTTP.
-
-### Anti-Pattern 5: Polling RunPod Status in a Tight Loop
-
-**What:** Checking pod status every 100ms during provisioning.
-**Why bad:** Wastes API rate limit, provides no faster feedback than 5s intervals.
-**Instead:** Poll every 5 seconds with exponential backoff up to 15 seconds. Pod creation takes 30-120 seconds typically.
-
-## Integration Points Summary
-
-### What Changes
-
-| File | Change Type | What Changes |
-|------|-------------|--------------|
-| `src/cli.ts` | MODIFY | Add `--backend <ollama\|vllm>` and `--concurrency <N>` options |
-| `src/pipeline/pipeline-runner.ts` | MODIFY | Branch on backend: sequential (existing) vs concurrent (new) |
-| `src/infra/checkpoint.ts` | MODIFY | Add ConcurrentCheckpointWriter class (existing functions unchanged) |
-
-### What Is New
-
-| File | Purpose |
-|------|---------|
-| `src/infra/vllm-client.ts` | ChatFn adapter for vLLM OpenAI-compatible API |
-| `src/infra/backend-factory.ts` | Create ChatFn + config from --backend flag |
-| `src/infra/cloud-provisioner.ts` | RunPod pod lifecycle (provision, health check, teardown) |
-| `src/pipeline/concurrent-runner.ts` | Semaphore-bounded parallel scoring |
-
-### What Does Not Change
-
-| File | Why Unchanged |
-|------|---------------|
-| `src/scoring/scoring-pipeline.ts` | scoreOneOpportunity already accepts ChatFn -- works as-is with vLLM adapter |
-| `src/scoring/lens-scorers.ts` | Pure scoring functions, backend-agnostic |
-| `src/scoring/ollama-client.ts` | Remains the default ChatFn for local path |
-| `src/infra/model-manager.ts` | Only used in Ollama path, skipped when backend=vllm |
-| `src/infra/retry-policy.ts` | callWithResilience wraps scoreOneOpportunity -- works identically in concurrent context |
-| `src/triage/` | Triage is pure function (no LLM in v1.0), runs before scoring |
-| `src/simulation/` | Runs after scoring, unchanged |
-| `src/output/` | Runs after scoring, unchanged |
+---
 
 ## Suggested Build Order
 
-Build from bottom up, validating each layer before adding the next.
+Based on dependency analysis, build bottom-up with testing at each layer.
 
-### Phase 1: vLLM Client Adapter
-- Build `vllm-client.ts` with createVllmChatFn
-- Unit test against mock HTTP server (same pattern as ollama-client tests)
-- Validate format parameter translation (Ollama schema -> OpenAI response_format)
-- **Dependency:** None. Can start immediately.
+### Phase 1: Types + Deterministic Foundation (no LLM, no pipeline changes)
+1. **`types/scoring.ts`** -- Add `DeterministicScore`, `ConsolidatedLlmResult` types; extend `ScoringResult` with optional v1.3 fields
+2. **`scoring/deterministic-signals.ts`** -- 7 pure signal functions, TDD with `makeSkillWithContext()` factory
+3. **`scoring/deterministic-scorer.ts`** -- Orchestrates signals into `DeterministicScore`, TDD
+4. **`pipeline/top-n-filter.ts`** -- Rank + slice with TDD
 
-### Phase 2: Concurrent Pipeline Runner
-- Build `concurrent-runner.ts` with Semaphore from async-mutex
-- Build ConcurrentCheckpointWriter in checkpoint.ts
-- Unit test with mock ChatFn (inject fake scorer)
-- Validate checkpoint file integrity under concurrent writes
-- **Dependency:** None. Can start in parallel with Phase 1.
+**Validation gate:** Run `scoreAllDeterministic` against Ford export. Verify distribution: top 50 should include high-value, high-AI-suitability skills. Compare against v1.2 triage Tier 1 results -- reasonable overlap expected.
 
-### Phase 3: Cloud Provisioner
-- Build `cloud-provisioner.ts` with RunPod API calls
-- Integration test: provision real pod, verify /v1/models responds, teardown
-- Validate signal handler teardown (SIGINT during provision)
-- **Dependency:** Needs RUNPOD_API_KEY. Can start in parallel with Phases 1-2.
+**Dependencies:** None. All pure functions, no LLM, no pipeline changes.
 
-### Phase 4: Backend Factory + CLI Integration
-- Build `backend-factory.ts` wiring provisioner + vllm client
-- Modify `cli.ts` to add --backend and --concurrency flags
-- Modify `pipeline-runner.ts` to branch on backend
-- Integration test: full pipeline with --backend vllm against real H100
-- **Dependency:** Phases 1, 2, 3 all complete.
+### Phase 2: Consolidated LLM Scorer (LLM layer, isolated from pipeline)
+5. **`scoring/prompts/consolidated.ts`** -- Prompt builder (follows existing `prompts/technical.ts` pattern)
+6. **`scoring/schemas.ts`** -- Add `ConsolidatedLensSchema` + `consolidatedJsonSchema`
+7. **`scoring/consolidated-scorer.ts`** -- Single LLM call with `chatFn` injection, TDD with mock chatFn
+8. **`scoring/composite.ts`** -- Add `computeHybridComposite`, TDD with deterministic inputs
+9. **`scoring/lens-synthesis.ts`** -- Map deterministic signals to `lenses` shape, TDD
 
-### Phase 5: End-to-End Validation
-- Run Ford 339-opp dataset with --backend vllm
-- Validate: results match Ollama path quality, <30min runtime, <$10 cost
-- Validate: checkpoint resume works with concurrent runner
-- Validate: teardown happens on SIGINT, error, and normal completion
-- **Dependency:** Phase 4 complete.
+**Dependencies:** Phase 1 types. LLM testing uses same mock patterns as existing lens scorers.
+
+### Phase 3: Pipeline Integration (wiring)
+10. **`pipeline/pipeline-runner.ts`** -- Wire new two-pass flow with `--scoring-mode` branch
+11. **`cli.ts`** -- Add `--top-n`, `--scoring-mode` flags via Commander
+12. **`pipeline/scoring-to-simulation.ts`** -- Verify it works with v1.3 `ScoringResult[]` (likely no changes needed due to lens synthesis)
+
+**Dependencies:** Phases 1 + 2 complete.
+
+### Phase 4: Validation + Report Compatibility
+13. **Report formatter verification** -- Run all formatters against v1.3 `ScoringResult[]`, verify output
+14. **Comparison run** -- Same Ford export with `--scoring-mode three-lens` and `--scoring-mode two-pass`, compare promoted sets
+15. **Ford E2E validation** -- Full 826-candidate run, verify top-N distribution matches expectations
+
+**Dependencies:** Phase 3 complete.
+
+---
 
 ## Scalability Considerations
 
-| Concern | Ollama (current) | vLLM on H100 (new) | Multiple H100s (future) |
-|---------|-------------------|---------------------|-------------------------|
-| Throughput | ~3 min/opp (sequential) | ~5 sec/opp (15 concurrent) | Horizontal scale via multiple pods |
-| Total time (339 opps) | ~17 hours | ~25 minutes | ~5 minutes with 5 pods |
-| Cost per run | $0 (local) | ~$1.50 (30 min * $2/hr + overhead) | ~$2.50 (higher parallelism, shorter) |
-| Memory constraint | 36GB shared (one model) | 80GB dedicated (one model, many requests) | 80GB each |
-| Failure blast radius | One opp fails, others continue | Same -- semaphore isolates failures | Pod failure loses in-flight opps only |
+| Concern | At 826 L4s (Ford) | At 5,000 L4s | At 50,000 L4s |
+|---------|-------------------|---------------|----------------|
+| Deterministic scoring | <100ms (sync) | <500ms (sync) | <5s (sync) |
+| Top-N filter | O(n log n) sort, trivial | Trivial | Trivial |
+| LLM calls (N=50) | 50 calls, ~10 min H100 | 50 calls (same N) | 100 calls (scale N linearly) |
+| Memory | All scores in memory, ~1MB | ~5MB | ~50MB, may want streaming |
+| Checkpoint | Per-survivor, ~50 entries | ~50 entries (same) | ~100 entries |
+
+The key scalability property: deterministic scoring is O(n) and the LLM call count is O(1) with respect to dataset size when N is fixed. This decouples cloud cost from dataset size.
+
+---
 
 ## Sources
 
-- [vLLM OpenAI-Compatible Server](https://docs.vllm.ai/en/stable/serving/openai_compatible_server/) - OpenAI-compatible API documentation (HIGH confidence)
-- [vLLM Structured Outputs](https://docs.vllm.ai/en/v0.8.2/features/structured_outputs.html) - JSON schema guided generation via response_format (HIGH confidence)
-- [RunPod Pod Creation API](https://docs.runpod.io/api-reference/pods/POST/pods) - Programmatic pod provisioning (MEDIUM confidence -- exact fields need validation)
-- [RunPod Cloud GPUs](https://www.runpod.io/product/cloud-gpus) - H100 pricing and availability (MEDIUM confidence)
-- [H100 Rental Prices 2026](https://intuitionlabs.ai/articles/h100-rental-prices-cloud-comparison) - Cross-provider pricing comparison
-- [async-mutex on GitHub](https://github.com/DirtyHairy/async-mutex) - TypeScript semaphore implementation (HIGH confidence)
-- [Qwen vLLM Deployment](https://qwen.readthedocs.io/en/latest/deployment/vllm.html) - Official Qwen + vLLM documentation (HIGH confidence)
-- [vLLM Structured Output Bug Report](https://github.com/vllm-project/vllm/issues/15236) - Known issues with guided generation as of v0.8.1 (MEDIUM confidence -- may be fixed in later versions)
+- Existing codebase analysis (HIGH confidence): `pipeline-runner.ts`, `scoring-pipeline.ts`, `lens-scorers.ts`, `composite.ts`, `confidence.ts`, `extract-skills.ts`, `triage-pipeline.ts`, `scoring-to-simulation.ts`, `tier-engine.ts`
+- Type system analysis (HIGH confidence): `types/scoring.ts`, `types/hierarchy.ts`, `types/simulation.ts`, `types/triage.ts`, `schemas/hierarchy.ts`
+- Project charter (HIGH confidence): `.planning/PROJECT.md` v1.3 milestone definition
+- L4 field inventory (HIGH confidence): `SkillWithContext` interface -- `financialRating`, `aiSuitability`, `impactOrder`, `ratingConfidence`, `decisionExists`, `execution`, `problem_statement`, `actions`, `constraints`, `aera_skill_pattern`, `max_value`, `archetype`

@@ -1,112 +1,194 @@
-# Domain Pitfalls: v1.1 Cloud-Accelerated Scoring
+# Domain Pitfalls: v1.3 L4 Two-Pass Scoring Funnel
 
-**Domain:** Adding cloud backend, concurrent pipeline, and ephemeral GPU provisioning to existing offline-first LLM scoring engine
-**Researched:** 2026-03-11
-**Focus:** Integration pitfalls when adding these features to an existing working v1.0 system
+**Domain:** Adding deterministic L4 pre-scoring funnel and consolidated LLM scoring to existing Aera Skill Feasibility Engine
+**Researched:** 2026-03-13
+**Focus:** Integration pitfalls when shifting scoring granularity from skill/L3 to L4, replacing 3 LLM calls with deterministic pre-score + 1 consolidated LLM call, and adapting downstream consumers
 
 ---
 
 ## Critical Pitfalls
 
-Mistakes that cause rewrites, data corruption, or significant cost overruns.
+Mistakes that cause rewrites, score corruption, or pipeline breakage.
 
-### Pitfall 1: Concurrent Checkpoint Corruption
+### Pitfall 1: Score Calibration Drift Between Deterministic and LLM Scores
 
-**What goes wrong:** The v1.0 checkpoint system (`saveCheckpoint` in `infra/checkpoint.ts`) uses synchronous `writeFileSync` to a single `.checkpoint.json` file. When 10-20 opportunities score concurrently via `Promise.all` or semaphore-bounded parallelism, multiple completions trigger `checkpoint.entries.push()` + `saveCheckpoint()` nearly simultaneously. Two concurrent pushes to the same in-memory array, followed by two writes, can lose entries -- the second write overwrites the first's entry because both read the same pre-push state.
-**Why it happens:** The v1.0 `for` loop in `pipeline-runner.ts` (line 196) is sequential -- each `scoreOneOpportunity` completes before the next starts. Developers converting this to concurrent execution often keep the same checkpoint logic without realizing the shared mutable state (`checkpoint.entries` array, `allScoredResults` array, `scoredCount`/`promotedCount` counters, and the `context-tracker` state via `addResult`/`addError`) is no longer safe.
-**Consequences:** Lost checkpoint entries mean a crashed concurrent run cannot resume correctly. Opportunities get re-scored on restart, wasting cloud GPU time and money. Worse, `allScoredResults` may have duplicate or missing entries, corrupting the final report.
-**Prevention:** (1) Gate all checkpoint writes through a single async mutex -- acquire lock, push entry, write file, release lock. (2) Use append-only JSONL format instead of rewriting the entire JSON on each save. (3) Collect results via a concurrent-safe collector (e.g., each worker returns its result, main loop appends sequentially after await). (4) Move `scoredCount`/`promotedCount` to be derived from results array length, not incremented independently.
-**Detection:** Run 20 concurrent mock scorings in a test. Verify checkpoint entry count matches exactly 20. Run twice with process kill at entry 10 -- verify resume skips exactly 10.
+**What goes wrong:** The deterministic pre-score uses algorithmic rules (financial_rating, ai_suitability, impact_order, rating_confidence, decision_exists) to produce a numeric score. The LLM consolidated call produces its own scores. The two scoring systems operate on different scales, use different evidence, and reward different qualities. A deterministic score of 0.75 does not mean the same thing as an LLM composite of 0.75. When the pipeline combines or compares them, rankings become incoherent -- high-deterministic-score items get low LLM scores and vice versa, confusing consumers of the output.
 
-### Pitfall 2: Orphaned Cloud GPU Instance Burning Money
+**Why it happens:** The existing system has 9 sub-dimensions across 3 lenses (data_readiness, aera_platform_fit, archetype_confidence, decision_density, financial_gravity, impact_proximity, confidence_signal, value_density, simulation_viability), each scored 0-3 by the LLM with detailed rubrics. A deterministic pre-score can only assess a subset: financial_rating maps loosely to financial_gravity, ai_suitability maps loosely to aera_platform_fit, but there is no deterministic proxy for simulation_viability or archetype_confidence. The deterministic score rewards "data completeness" while the LLM rewards "platform fit quality." These are correlated but not identical. Developers assume high correlation and get burned when the top-N from deterministic scoring includes items the LLM would have ranked low.
 
-**What goes wrong:** The pipeline provisions an H100 instance, begins scoring, then crashes mid-run (network timeout, unhandled rejection, SIGTERM). The teardown code never executes. The H100 continues running at $2-4/hour. Developer does not notice for hours or days.
-**Why it happens:** Teardown is typically placed in a `finally` block or shutdown handler, but: (1) `process.exit()` does not run `finally` blocks. (2) Unhandled promise rejections in Node.js can terminate without cleanup. (3) SIGKILL cannot be caught. (4) Network partitions mean the local process dies but the remote instance lives.
-**Consequences:** A single forgotten H100 instance costs $48-96/day. Over a weekend: $150-300 for zero work. The $10/run budget target becomes $150+ from a single failure.
-**Prevention:** (1) **Defense in depth:** Set a hard auto-terminate timer on the cloud instance itself at provision time (e.g., max 2 hours TTL via RunPod's pod-level timeout or a cron job inside the container). (2) Register `process.on('SIGTERM')`, `process.on('SIGINT')`, `process.on('uncaughtException')`, and `process.on('unhandledRejection')` handlers that all call teardown. (3) After the pipeline exits (success or failure), run a separate verification step that lists active instances and terminates any matching the run ID. (4) Log the instance ID prominently at startup so manual cleanup is possible. (5) Set a spending alert or hard budget cap on the cloud provider account.
-**Detection:** Add a post-run "orphan check" that queries the cloud API for running instances. If any exist after pipeline completion, log a CRITICAL warning and attempt termination.
+**Consequences:** The top-N filter passes through L4s that are data-rich but platform-poor (or vice versa). LLM budget is wasted on low-quality candidates while strong candidates were filtered out by the deterministic pass. Final reports show inconsistent rankings -- an L4 with deterministic score 0.82 gets LLM composite 0.45, undermining trust in the entire system.
 
-### Pitfall 3: vLLM Guided JSON Schema Incompatibility
+**Prevention:**
+1. **Calibration dataset:** Before building the funnel, run 50-100 L4s through BOTH the deterministic scorer AND the full 3-call LLM pipeline. Compute rank correlation (Spearman rho). If rho < 0.6, the deterministic features are insufficient -- add more features or widen the top-N to compensate.
+2. **Overshoot the funnel:** Set top-N = 2x the expected simulation count initially. Tighten only after validating correlation on real data.
+3. **Never combine the two scores arithmetically.** The deterministic score is a filter (pass/fail for LLM phase), not a component of the final composite. Final composite comes exclusively from the LLM.
+4. **Log both scores side-by-side** in the output TSV so calibration drift is visible over time.
 
-**What goes wrong:** The v1.0 system uses Ollama's `format` parameter for structured output (the `ChatFn` signature passes `format: Record<string, unknown>`). The developer assumes vLLM's OpenAI-compatible API handles the same JSON schemas identically. It does not. vLLM's guided decoding backend (xgrammar by default) rejects certain schema features with "The provided JSON schema contains features not supported by xgrammar." The pipeline fails on the first scoring call.
-**Why it happens:** Ollama and vLLM use completely different structured output enforcement mechanisms. Ollama uses its own constraint engine. vLLM has switched between multiple backends (outlines, xgrammar) across versions, with each supporting different JSON schema subsets. Features like `additionalProperties`, certain `enum` types, nested `$ref`, and complex `anyOf`/`oneOf` patterns may work in Ollama but fail in vLLM's xgrammar backend. This is a well-documented issue (vllm-project/vllm#15236) affecting versions through v0.8.x.
-**Consequences:** The vLLM backend appears to work during basic testing but fails on specific scoring schemas. If not caught early, the team discovers this after provisioning a cloud GPU and running the full pipeline.
-**Prevention:** (1) Extract all JSON schemas used in scoring prompts into a shared test fixture. (2) Write an integration test that sends each schema to vLLM's `/v1/chat/completions` with `response_format: { type: "json_schema", json_schema: { schema } }` and verifies acceptance. (3) Simplify schemas to avoid unsupported features: flatten nested refs, avoid `additionalProperties: false` if problematic, use explicit property lists. (4) If xgrammar rejects a schema, fall back to `--guided-decoding-backend outlines` on the vLLM server. (5) Consider using `response_format: { type: "json_object" }` (unguided JSON) with Zod validation as a simpler alternative that works identically on both backends.
-**Detection:** Run the schema compatibility test as a pre-flight check before every cloud run. If any schema fails, abort before provisioning the GPU.
+**Detection:** After each run, compute rank correlation between deterministic pre-score and LLM composite for the top-N. If Spearman rho drops below 0.5, the deterministic scorer needs retuning.
 
-### Pitfall 4: Backend Behavioral Divergence Producing Different Scores
+**Phase that should address this:** Deterministic pre-scoring implementation phase. Build the calibration test BEFORE the filter logic.
 
-**What goes wrong:** The same prompt + model produces meaningfully different scores on Ollama vs vLLM. A Ford evaluation scored locally gives composite 0.72 for an opportunity; the same evaluation on vLLM gives 0.58. Results are not reproducible across backends.
-**Why it happens:** (1) Ollama and vLLM use different default sampling parameters (temperature, top_p, repetition_penalty). (2) Different quantization: Ollama may serve Q4_K_M while vLLM serves the full-precision or GPTQ model. (3) vLLM's guided decoding constrains token probabilities differently than Ollama's format enforcement, subtly biasing outputs. (4) Different chat template application -- Ollama applies templates automatically while vLLM requires explicit `--chat-template` configuration. (5) Prompt formatting differences in how system/user messages are concatenated.
-**Consequences:** Users cannot trust that "the same engine" produces "the same results" regardless of backend. Cloud results and local results are incomparable. Regression testing becomes meaningless.
-**Prevention:** (1) Pin explicit sampling parameters in the `ChatFn` adapter: `temperature: 0.1, top_p: 0.9` on every call, for both backends. (2) Run a 10-opportunity golden set through both backends and compare score distributions. Accept if mean absolute difference is under 0.05 per lens. (3) Ensure the same model weights are used (same Qwen version, same quantization level where possible). (4) Verify chat template application produces identical prompt strings -- log the full prompt on both backends and diff. (5) Document expected variance and set an acceptable tolerance band.
-**Detection:** Golden test suite: 10 manually-scored opportunities run through both backends. Flag if any lens score diverges by more than 0.1.
+---
 
-### Pitfall 5: Semaphore Starvation from Slow or Stuck Requests
+### Pitfall 2: Top-N Threshold Sensitivity Creating Brittle Results
 
-**What goes wrong:** With a semaphore of 10-20, one stuck vLLM request (network hang, model OOM, infinite generation loop) holds a semaphore slot forever. Over time, multiple slots get stuck. Throughput drops to zero while the semaphore is fully acquired by zombie requests.
-**Why it happens:** vLLM can hang under certain conditions: large output with guided decoding (documented in vllm-project/vllm#14151 -- "Structured output requests can hang the server"), GPU OOM causing the server to become unresponsive, or network timeout not configured on the client side. Node.js `fetch` has no default timeout.
-**Consequences:** The pipeline appears to be running (no crash, no error) but makes zero progress. The cloud GPU burns money while producing nothing. The developer checks in the morning to find 15 of 20 semaphore slots stuck.
-**Prevention:** (1) Set an explicit per-request timeout on every vLLM call (120s for scoring, 30s for triage). Use `AbortController` with `setTimeout`. (2) On timeout, release the semaphore slot, log the failure, and move the opportunity to the retry/skip queue. (3) Implement a "circuit breaker": if 3 consecutive requests timeout, pause all new requests for 30s and health-check the vLLM server. (4) Monitor active semaphore count and elapsed time per slot -- if any slot exceeds 3x median duration, force-abort it.
-**Detection:** Log semaphore acquire/release events with timestamps. Alert if any slot is held for more than 5 minutes.
+**What goes wrong:** The --top-n CLI flag creates a hard cutoff. With 826 L4 candidates, the difference between rank 50 and rank 51 may be a deterministic score delta of 0.001. Small changes to the scoring formula (rounding, field weighting) reshuffle the boundary. The same input data produces different LLM-scored results depending on tiny, non-meaningful score differences.
+
+**Why it happens:** The Ford hierarchy has clusters of similar L4 activities (e.g., 15 procurement L4s with identical financial_rating=HIGH, ai_suitability=HIGH). Deterministic scoring from structured fields produces many tied or near-tied scores. A hard cutoff at rank N is arbitrary within these clusters.
+
+**Consequences:** (1) Non-reproducibility: adding one L4 activity to the export reshuffles the boundary, changing which L4s get LLM-scored. (2) Cluster splitting: related L4s within the same L3 get inconsistent treatment -- some scored, some filtered. Reports show gaps in L3 coverage that confuse stakeholders. (3) Over-sensitivity to --top-n value: changing from 50 to 55 changes results significantly, making the parameter feel arbitrary.
+
+**Prevention:**
+1. **Tie-breaking with secondary sort:** When deterministic scores are equal, use a deterministic tiebreaker (L4 ID alphabetical, or parent L3 group completeness). Document the tiebreaker.
+2. **Cluster-aware cutoff:** Instead of hard rank N, include all L4s whose deterministic score >= the score of the Nth item. This may admit N+K items but preserves cluster coherence.
+3. **L3-group preservation:** If any L4 within an L3 group passes the cutoff, include ALL L4s from that L3 group. This prevents partial L3 coverage in reports. Cost: may admit 10-20% more LLM calls than strict top-N.
+4. **Sensitivity analysis in tests:** Write a test that runs the deterministic scorer on the Ford export with top-N = 48, 50, 52. Assert that the overlap between the three sets is > 90%. If not, the scoring formula has insufficient discrimination.
+
+**Detection:** Log the score distribution at the cutoff boundary. If score[N] - score[N+5] < 0.01, warn that the cutoff is in a dense region.
+
+**Phase that should address this:** CLI/filter implementation phase. Design the cutoff logic with cluster awareness from the start, not as a patch.
+
+---
+
+### Pitfall 3: Consolidated LLM Prompt Quality Degradation
+
+**What goes wrong:** Replacing 3 focused lens prompts (technical: 1,200 tokens, adoption: 1,100 tokens, value: 900 tokens) with 1 consolidated prompt means cramming 9 sub-dimensions, 3 rubrics, and all constraints into a single system message. The LLM's attention degrades on later sub-dimensions, producing lower-quality and less-differentiated scores for dimensions that appear late in the prompt.
+
+**Why it happens:** The current 3-call architecture has a deliberate advantage: each prompt is laser-focused. The technical prompt includes Aera knowledge base context (which the adoption prompt does not need). The value prompt includes company financials (which the technical prompt does not need). A consolidated prompt must include ALL context for ALL lenses, inflating the system message significantly. With Qwen 2.5 32B at 8K context, this risks:
+- System message consuming 4-5K tokens, leaving only 3K for the L4 data and response
+- Positional bias: sub-dimensions described first (data_readiness, aera_platform_fit) get more attention than those described last (value_density, simulation_viability)
+- Rubric interference: constraints from one lens leak into scoring of another (e.g., "do not score platform_fit >= 2 without citing capabilities" causing the LLM to also demand citations for financial_gravity)
+
+**Consequences:** Score distributions collapse. Instead of discriminating across 9 sub-dimensions, the LLM produces clustered, undifferentiated scores. The adoption lens (currently weighted 0.45 -- the most important) may suffer most because its 4 sub-dimensions get squeezed between technical and value rubrics. The engine loses its core differentiator: adoption-weighted scoring.
+
+**Prevention:**
+1. **Measure before committing:** Run 20 L4s through both the 3-call pipeline and a consolidated prompt. Compare per-subdimension score variance. If consolidated prompt variance is <50% of 3-call variance, the prompt is too compressed.
+2. **Two-call compromise:** If 1 call degrades quality, consider 2 calls: (a) deterministic pre-score + LLM platform_fit check, (b) LLM adoption+value combined (these share more context overlap). This halves LLM cost vs 3 calls while preserving quality.
+3. **Structured prompt sections:** Use explicit XML-like delimiters (`<TECHNICAL_RUBRIC>`, `<ADOPTION_RUBRIC>`, `<VALUE_RUBRIC>`) to segment the consolidated prompt. This reduces cross-rubric interference.
+4. **Output structure matters:** Require the LLM to produce sub-dimensions in a fixed order. Include a worked example in the prompt showing distinct scores across sub-dimensions.
+5. **Context windowing:** Only include context relevant to the remaining LLM assessment. If deterministic scoring already handles financial_gravity and impact_proximity, the LLM prompt can omit those sub-dimensions entirely, reducing bloat.
+
+**Detection:** Track per-subdimension score standard deviation across a run. If stdev < 0.3 for any subdimension (on a 0-3 scale), that subdimension is not discriminating.
+
+**Phase that should address this:** Consolidated prompt design phase. Prototype and measure BEFORE replacing the existing 3-call pipeline.
+
+---
+
+### Pitfall 4: Simulation Pipeline Adapter Breakage
+
+**What goes wrong:** The simulation pipeline (`simulation-pipeline.ts`) expects `SimulationInput` which contains `opportunity: L3Opportunity`, `l4s: L4Activity[]`, and `archetype`. The adapter (`scoring-to-simulation.ts`) currently groups skill-level scoring results back to L3, picking the best skill per L3 group. When v1.3 shifts the scoring unit to L4, this adapter breaks silently: it still groups by `l3Name`, but the scoring results no longer carry the same `SkillWithContext` fields. The simulation receives incomplete or wrong input.
+
+**Why it happens:** The current flow is: Score skills -> group by L3 -> pick best per L3 -> build SimulationInput with L3Opportunity + all L4s under that L3. The v1.3 flow will be: Deterministic score L4s -> LLM score top-N L4s -> ??? -> simulation. The question mark is the adapter. If the adapter still groups by L3 and picks the "best L4" per L3, it may:
+- Pick an L4 whose archetype does not match the L3's lead_archetype
+- Include L4 activities in the simulation that were filtered OUT by the deterministic pass (the current adapter uses ALL L4s under an L3, not just scored ones)
+- Lose skill-level execution details that simulation generators need (scenario-spec-gen uses problem_statement, actions, constraints)
+
+**Consequences:** Simulation artifacts are generated from L3-level data that no longer reflects the actual scoring unit. Component maps cite Aera components from L4s that were not evaluated. Mock tests reference decisions from unscored activities. The simulation output is decorrelated from the scoring output.
+
+**Prevention:**
+1. **Redesign the adapter for L4-first flow:** The new adapter should take scored L4s (not skills, not L3 rollups) and pass them directly to simulation. Each L4 gets its own simulation, not one simulation per L3 group.
+2. **Or, if L3-level simulation is preserved:** The adapter must filter `l4s` to only include L4s that passed BOTH deterministic and LLM scoring. This prevents the simulation from seeing unscored L4s.
+3. **Type-level enforcement:** Change `SimulationInput` to accept either L3Opportunity or a new `L4ScoredActivity` type. Use a discriminated union so the simulation generators can handle both inputs. This prevents silent structural mismatches.
+4. **Integration test:** Score 5 L4s, run them through the adapter, verify every field in the resulting SimulationInput is populated and consistent. Pay special attention to `archetype`, `composite`, and `l4s` array contents.
+
+**Detection:** Add an assertion in the simulation pipeline: `assert(input.l4s.every(l4 => scoredL4Ids.has(l4.id)))` to verify every L4 fed to simulation was actually scored.
+
+**Phase that should address this:** Simulation adapter phase. Do not defer this to "after scoring works" -- design the adapter contract alongside the scoring redesign.
+
+---
+
+### Pitfall 5: Checkpoint Format Migration Breaking Resume
+
+**What goes wrong:** The v1.2 checkpoint schema stores `skillId` (or `l3Name` for backward compat) as the completion key. V1.3 changes the scoring unit to L4 activities. If the checkpoint format is updated to use `l4Id` instead of `skillId`, existing checkpoint files from interrupted v1.2 runs become unreadable. Worse, a partially-completed v1.3 run cannot resume if the checkpoint schema changes mid-development.
+
+**Why it happens:** The checkpoint schema (`CheckpointSchema` in `infra/checkpoint.ts`) uses `version: z.literal(1)`. Adding L4-based entries requires either: (a) keeping version 1 with `l4Id` added as optional (backward-compatible but confusing), or (b) bumping to version 2 (clean but breaks resume of in-progress runs). Developers often pick (b) and forget that a user might have a partially-scored run from v1.2 that they expect to resume after upgrading to v1.3.
+
+**Consequences:** (1) User upgrades to v1.3 mid-run, checkpoint is silently ignored, 400+ already-scored items are re-scored (hours of wasted GPU time). (2) Developer adds `l4Id` field but does not update `getCompletedNames()` to check it, causing the resume logic to skip nothing (all items re-scored). (3) Tests pass because they create fresh checkpoints; the migration path is never tested.
+
+**Prevention:**
+1. **Additive schema migration:** Keep `version: 1`. Add `l4Id` as an optional field alongside `skillId` and `l3Name`. Update `getCompletedNames()` to check all three: `e.l4Id ?? e.skillId ?? e.l3Name`. This is ugly but safe.
+2. **If version bump is needed:** Implement a `migrateCheckpoint(v1) -> v2` function. Load the checkpoint, check version, migrate if needed, save. Test the migration with a real v1 checkpoint fixture from the Ford evaluation.
+3. **Checkpoint migration test:** Take a real `.checkpoint.json` from `evaluation-vllm/` and write a test that loads it through the v1.3 code. Verify it reads correctly and resume logic skips the right items.
+4. **Two-phase rollout:** Phase A: add `l4Id` field, keep `skillId` working. Phase B: after all users have migrated, deprecate `skillId`.
+
+**Detection:** CI test that loads a v1.2 checkpoint fixture and verifies `getCompletedNames()` returns a non-empty set.
+
+**Phase that should address this:** Checkpoint migration should be the FIRST implementation task, before any scoring changes. The pipeline must be able to resume before it can run.
 
 ---
 
 ## Moderate Pitfalls
 
-### Pitfall 6: ChatFn Interface Too Narrow for Backend Differences
+### Pitfall 6: Deterministic Scorer Feature Selection Bias
 
-**What goes wrong:** The existing `ChatFn` type (`(messages, format) => Promise<ChatResult>`) does not accommodate vLLM-specific needs: different structured output parameters (`response_format` vs `format`), model selection per request, streaming vs non-streaming, or passing `extra_body` parameters.
-**Prevention:** Extend the interface before building the vLLM adapter. Add an optional `options` bag: `{ model?: string, responseFormat?: ResponseFormat, timeout?: number, signal?: AbortSignal }`. Keep backward compatibility -- Ollama adapter ignores fields it does not need. Do not fork the interface into two separate types.
+**What goes wrong:** The deterministic scorer uses L4 structured fields as features: `financial_rating` (HIGH/MEDIUM/LOW), `ai_suitability` (HIGH/MEDIUM/LOW/NOT_APPLICABLE), `impact_order` (FIRST/SECOND), `rating_confidence` (HIGH/MEDIUM/LOW), `decision_exists` (boolean). These fields have low cardinality (3-4 values each). With 826 L4s, the scorer produces only ~50-80 distinct score values, creating massive ties. The feature set does not include any skill-level data (actions, constraints, execution), which is where the real discriminating signal lives.
 
-### Pitfall 7: vLLM Server Configuration Drift
+**Prevention:** Include skill-level features in the deterministic score: count of actions, count of constraints, presence of execution.target_systems, non-null problem_statement fields, max_value magnitude. These continuous/count features break ties and increase discrimination. Test by computing the number of distinct deterministic scores across the Ford 826: target > 200 distinct values.
 
-**What goes wrong:** The vLLM server is provisioned with default settings. It works for small tests but fails at scale: `--max-model-len` is too low for long prompts, `--gpu-memory-utilization` is too aggressive causing OOM, guided decoding backend is not specified (defaults change between versions), or `--max-num-seqs` limits concurrent request throughput.
-**Prevention:** Pin a complete vLLM launch command in the provisioning script with every critical parameter explicitly set: `--model`, `--max-model-len 8192`, `--gpu-memory-utilization 0.90`, `--guided-decoding-backend xgrammar`, `--max-num-seqs 32`, `--dtype auto`. Version-pin vLLM itself (`pip install vllm==0.8.x`). Test the exact launch command locally or in CI before using in production.
+**Phase that should address this:** Deterministic scoring design phase. Validate feature discrimination before building the full pipeline.
 
-### Pitfall 8: Network Latency Surprise with Large Payloads
+### Pitfall 7: L3 Metadata Label Orphaning
 
-**What goes wrong:** Each scoring call includes knowledge base context, company context, and opportunity details. With 20 concurrent calls, the total payload throughput exceeds expectations. Response payloads with long reasoning chains add up. Network becomes the bottleneck instead of GPU inference.
-**Prevention:** (1) Measure payload sizes during development. If average request exceeds 8KB, consider compressing knowledge context or sending it once at session start. (2) Use HTTP keep-alive connections (vLLM supports this). (3) Deploy the client as close to the GPU as possible (same cloud region). (4) Monitor tokens/second throughput -- if well below H100 capability (~100+ tokens/s for Qwen 30B), the bottleneck is not the GPU.
+**What goes wrong:** V1.3 keeps L3 names as "metadata labels for report grouping only." But existing report formatters (format-summary.ts, format-tier1-report.ts, format-scores-tsv.ts, format-dead-zones.ts) heavily rely on L3-level aggregation. If scoring results no longer carry L3 context (because the scoring unit is L4), these formatters produce empty or broken reports.
 
-### Pitfall 9: Concurrent Git Commits from Parallel Workers
+**Prevention:** Every L4 scoring result MUST carry `l3Name`, `l2Name`, `l1Name` fields (inherited from the L4Activity's `l3`, `l2`, `l1` fields). This is already the pattern in `SkillWithContext` -- ensure the new L4 scoring result type preserves it. Write a report formatter test with L4-level scoring results and verify all existing report formats render correctly with L3 grouping intact.
 
-**What goes wrong:** The v1.0 pipeline calls `autoCommitEvaluation` after scoring. If the concurrent pipeline writes evaluation files in parallel and triggers git operations, concurrent `git add` / `git commit` commands corrupt the git index.
-**Prevention:** Remove per-batch git commits from the concurrent path entirely. Write all files to disk freely (file writes to different paths are safe). Run a single `autoCommitEvaluation` call only after the entire concurrent scoring phase completes. The existing post-pipeline commit pattern at line 304 is correct -- just ensure no intermediate commits happen during concurrent execution.
+**Phase that should address this:** Types/schema design phase (first phase). Get the type contract right before implementing scorers.
 
-### Pitfall 10: Context Tracker State Not Designed for Concurrency
+### Pitfall 8: Triage Pipeline Becomes Redundant but Is Not Removed
 
-**What goes wrong:** The `context-tracker.ts` module (`createContext`, `addResult`, `addError`, `archiveAndReset`) maintains in-memory arrays. Concurrent calls to `addResult` and `archiveAndReset` from parallel workers can interleave, losing results or archiving partial state.
-**Prevention:** (1) Each concurrent worker should accumulate its own results independently (local array). (2) After all workers complete, merge results into the context tracker sequentially. (3) `archiveAndReset` should only be called from the main orchestration loop, never from inside a worker. (4) Alternatively, replace the context tracker with a simple concurrent-safe results collector that does not need archiving during the run (cloud runs are fast enough that memory accumulation is not a concern for 30 minutes vs 17 hours).
+**What goes wrong:** The v1.2 triage pipeline assigns L3 opportunities to tiers (Tier 1/2/3) based on red flags and value thresholds. V1.3 replaces this with deterministic L4 pre-scoring. If triage is left in the pipeline, there are now TWO filtering steps (triage at L3 level, then deterministic pre-score at L4 level) that can conflict. An L4 passes the deterministic filter but its parent L3 was triaged to Tier 3, so the pipeline applies the wrong model (8B instead of 32B) or skips it entirely due to --max-tier.
+
+**Prevention:** Decide explicitly: does triage survive in v1.3, or does the deterministic pre-score replace it? If triage survives, it must operate on L4s (not L3s) and its output must be consistent with the deterministic pre-score. If triage is removed, update the CLI to remove --max-tier or redefine it in terms of deterministic score ranges. Do not leave two conflicting filter stages in the pipeline.
+
+**Phase that should address this:** Pipeline redesign phase. Resolve the triage/deterministic-scoring overlap in the architecture before implementation.
+
+### Pitfall 9: LLM Call Count Regression from Insufficient Deterministic Filtering
+
+**What goes wrong:** The whole point of the two-pass funnel is reducing 826 x 3 = 2,478 LLM calls to N x 1 calls. If the deterministic pre-score is too lenient (high top-N) or the consolidated LLM prompt requires follow-up calls (retries, schema validation failures), actual LLM call count approaches or exceeds v1.2 levels. The cost savings that justified the rewrite evaporate.
+
+**Prevention:** Set a hard budget target: max LLM calls = top-N x 1.5 (allowing 50% retry overhead). Track actual vs budgeted calls per run. If actual exceeds budget by > 20%, the funnel is not working -- either tighten deterministic filtering or fix the consolidated prompt's success rate. Log LLM call count prominently in the pipeline summary.
+
+**Phase that should address this:** End-to-end integration testing phase. Verify call count against budget target with real Ford data.
+
+### Pitfall 10: Existing Test Suite Assuming 3-Call Architecture
+
+**What goes wrong:** The codebase has 552 tests, many of which mock `chatFn` and expect exactly 3 calls per scoring unit (one per lens). V1.3 changes this to 1 call for the consolidated LLM prompt plus 0 calls for deterministic scoring. Tests that assert `chatFn.callCount === 3` or that inject separate technical/adoption/value mock responses will all fail. The developer starts disabling tests to "fix later" and never does.
+
+**Prevention:**
+1. **Do not delete tests.** Mark the 3-call tests as `{ skip: true, reason: 'v1.3 consolidated prompt' }` with a tracking comment.
+2. **Write replacement tests first** (TDD). The new consolidated prompt needs its own test suite: (a) test that a single chatFn call produces all 9 sub-dimensions, (b) test that deterministic scoring produces correct scores without any chatFn calls, (c) test that top-N filtering passes the right L4s.
+3. **Keep the 3-call path as a fallback.** If the consolidated prompt fails Zod validation, fall back to 3 separate calls. This preserves the existing test infrastructure as the fallback path's test suite.
+
+**Phase that should address this:** Every implementation phase. Write new tests BEFORE changing existing code. Never reduce test count.
 
 ---
 
 ## Minor Pitfalls
 
-### Pitfall 11: Forgetting to Health-Check vLLM Before Scoring
+### Pitfall 11: Deterministic Score Weights Hardcoded Without Configuration
 
-**What goes wrong:** Pipeline provisions GPU, starts scoring immediately. vLLM is still loading the model (can take 30-90 seconds for large models). First N requests fail with connection refused or 503.
-**Prevention:** After provisioning, poll vLLM's `/health` or `/v1/models` endpoint with exponential backoff until it returns 200. Only then begin scoring. Set a max wait of 5 minutes -- if health check never passes, teardown and report error.
+**What goes wrong:** The deterministic pre-scorer assigns weights to L4 fields (e.g., financial_rating=HIGH gets +3, ai_suitability=HIGH gets +2). These weights are hardcoded. When running on a different client export where financial_rating distributions differ, the scorer produces a different quality of filtering. There is no way to tune without code changes.
 
-### Pitfall 12: Mixing Up `guided_json` (Deprecated) and `response_format` (Current)
+**Prevention:** Extract weights into a config object with sensible defaults. Expose via --prescore-weights CLI flag or a config file. At minimum, log the weights used at the start of each run.
 
-**What goes wrong:** Developer uses vLLM's older `extra_body: { guided_json: schema }` API pattern from outdated tutorials. This was deprecated in v0.12.0 in favor of `response_format: { type: "json_schema", json_schema: { name, schema } }`. The old API may silently fail or be removed.
-**Prevention:** Use only the `response_format` parameter for structured output. Pin vLLM version and verify the API contract in integration tests.
+### Pitfall 12: Output Directory Structure Inconsistency
 
-### Pitfall 13: RunPod Volume Storage Costs After Pod Termination
+**What goes wrong:** V1.2 writes to `evaluation-{backend}/evaluation/`. V1.3 output includes new artifacts (deterministic-scores.tsv, prescore-distribution.json) but these get written alongside v1.2 artifacts. Users comparing v1.2 and v1.3 runs cannot easily distinguish which artifacts came from which pipeline version.
 
-**What goes wrong:** Cloud provisioning creates a RunPod pod with a persistent volume for model weights. The pod terminates after the run, but the volume persists at $0.20/GB/month. A 70GB model volume costs $14/month sitting idle.
-**Prevention:** Use RunPod serverless (no persistent volumes) or explicitly delete volumes in the teardown script. If using pod-based deployment, tag volumes for deletion and verify cleanup.
+**Prevention:** Include pipeline version in the output metadata. Add a `pipeline-metadata.json` to the evaluation directory with version, timestamp, top-N, feature weights, and call count. This makes each run self-documenting.
 
-### Pitfall 14: Error Handling Asymmetry Between Backends
+### Pitfall 13: Forgetting to Update progress.ts for Two-Phase Progress
 
-**What goes wrong:** Ollama returns errors as HTTP 500 with a JSON body `{ error: "message" }`. vLLM returns errors as HTTP 400/422 with OpenAI-format `{ error: { message, type, code } }`. The unified `ChatFn` adapter handles one format but not the other, causing unhandled exceptions.
-**Prevention:** The vLLM adapter must normalize all error responses into the existing `ChatResult` format (`{ success: false, error: string }`). Test with intentional bad inputs (malformed prompt, invalid schema, oversized context) on both backends.
+**What goes wrong:** The current `createProgressTracker` reports progress as "X of Y scored" with a single counter. V1.3 has two distinct phases: deterministic pre-scoring (fast, 826 items in seconds) and LLM scoring (slow, N items in minutes). Using a single progress tracker makes it look like the pipeline is 99% done after the deterministic phase, then stalls for 30 minutes on the LLM phase.
 
-### Pitfall 15: Assuming Cloud Model Matches Local Model
+**Prevention:** Create a two-phase progress tracker: Phase 1 reports "Pre-scoring: X/826" (expected: seconds). Phase 2 reports "LLM scoring: X/N" (expected: minutes per item). Log the phase transition clearly.
 
-**What goes wrong:** Local Ollama runs `qwen3:30b` (Ollama's quantized variant). vLLM runs `Qwen/Qwen2.5-32B-Instruct` (HuggingFace full precision or different quantization). These are different model versions with different behaviors, but the pipeline treats them as interchangeable.
-**Prevention:** Document exactly which model ID each backend uses. Include model name in the evaluation output metadata so results are traceable. Accept that cloud and local results will differ -- the goal is "comparable quality," not "identical output."
+### Pitfall 14: Composite Score Formula Assuming 3-Lens Input
+
+**What goes wrong:** `computeComposite()` in `scoring/composite.ts` takes `technicalTotal`, `adoptionTotal`, `valueTotal` as separate arguments and applies the 0.30/0.45/0.25 weights. If the consolidated LLM prompt produces a different output structure (e.g., all 9 sub-dimensions in a flat object instead of grouped by lens), the composite computation needs to regroup them. Developers forget to update `computeComposite()` and either pass wrong values or create a duplicate composite function.
+
+**Prevention:** Keep the existing `computeComposite()` interface. The consolidated prompt should still return scores grouped by lens (technical, adoption, value). The prompt output schema should mirror the existing lens grouping even if it is a single call. This preserves all downstream consumers (composite, reports, TSV formatters).
 
 ---
 
@@ -114,27 +196,42 @@ Mistakes that cause rewrites, data corruption, or significant cost overruns.
 
 | Phase Topic | Likely Pitfall | Mitigation |
 |-------------|---------------|------------|
-| vLLM Client Adapter | Schema incompatibility between Ollama format and vLLM response_format (Pitfall 3) | Build schema compatibility test suite first, run against both backends before any pipeline work |
-| vLLM Client Adapter | ChatFn interface too narrow (Pitfall 6) | Extend interface with options bag before implementing adapter |
-| Concurrent Pipeline Runner | Checkpoint corruption from parallel writes (Pitfall 1) | Implement mutex-gated checkpoint writes; use append-only format |
-| Concurrent Pipeline Runner | Context tracker race conditions (Pitfall 10) | Worker-local result accumulation, post-merge into tracker |
-| Concurrent Pipeline Runner | Semaphore starvation (Pitfall 5) | Per-request timeout with AbortController, circuit breaker pattern |
-| Cloud GPU Provisioning | Orphaned instance cost overrun (Pitfall 2) | Instance-level TTL at provision time, multi-layer shutdown handlers |
-| Cloud GPU Provisioning | Health check before scoring (Pitfall 11) | Poll /health endpoint before starting pipeline |
-| Integration Testing | Backend behavioral divergence (Pitfall 4) | Golden test suite of 10 opportunities, tolerance band of 0.05 mean absolute difference |
-| Integration Testing | Error format asymmetry (Pitfall 14) | Test with intentional failures on both backends |
+| Type/Schema Design | L3 metadata orphaning (Pitfall 7), checkpoint format incompatibility (Pitfall 5) | Define new ScoringResult type that preserves L3/L2/L1 fields. Plan checkpoint migration. |
+| Deterministic Pre-Scoring | Feature selection bias (Pitfall 6), calibration drift (Pitfall 1) | Build calibration test suite alongside scorer. Validate feature discrimination on Ford data. |
+| Top-N CLI Filter | Threshold sensitivity (Pitfall 2), cluster splitting | Implement cluster-aware cutoff, not hard rank cutoff. Sensitivity test with N-2, N, N+2. |
+| Consolidated LLM Prompt | Quality degradation (Pitfall 3), test suite breakage (Pitfall 10) | Prototype and A/B test against 3-call pipeline before committing. Write new tests first. |
+| Simulation Adapter | Adapter breakage (Pitfall 4) | Redesign adapter contract alongside scoring redesign. Integration test with scored L4 input. |
+| Checkpoint Migration | Resume breakage (Pitfall 5) | Implement migration FIRST. Test with real v1.2 checkpoint fixture. |
+| Pipeline Integration | Triage/deterministic overlap (Pitfall 8), LLM call regression (Pitfall 9) | Resolve triage role in architecture. Set and enforce LLM call budget. |
+| Progress/Reporting | Two-phase progress (Pitfall 13), output structure (Pitfall 12) | Two-phase progress tracker. Pipeline metadata in output directory. |
+
+---
+
+## Risk Matrix
+
+| Pitfall | Likelihood | Impact | Phase to Address | Risk Level |
+|---------|-----------|--------|-----------------|------------|
+| Score calibration drift (#1) | HIGH | HIGH | Deterministic scoring | CRITICAL |
+| Top-N threshold sensitivity (#2) | HIGH | MEDIUM | CLI filter | HIGH |
+| Consolidated prompt quality loss (#3) | MEDIUM | HIGH | LLM prompt design | HIGH |
+| Simulation adapter breakage (#4) | HIGH | HIGH | Simulation adapter | CRITICAL |
+| Checkpoint format migration (#5) | MEDIUM | HIGH | First phase | HIGH |
+| Feature selection bias (#6) | HIGH | MEDIUM | Deterministic scoring | MEDIUM |
+| L3 metadata orphaning (#7) | MEDIUM | MEDIUM | Type design | MEDIUM |
+| Triage/deterministic overlap (#8) | LOW | MEDIUM | Architecture | MEDIUM |
+| LLM call count regression (#9) | MEDIUM | MEDIUM | Integration testing | MEDIUM |
+| Test suite breakage (#10) | HIGH | MEDIUM | Every phase | MEDIUM |
 
 ---
 
 ## Sources
 
-- [vLLM Structured Outputs Documentation](https://docs.vllm.ai/en/latest/features/structured_outputs/) - Current API for response_format, guided decoding backends
-- [vLLM Issue #15236: Major issues with guided generation](https://github.com/vllm-project/vllm/issues/15236) - xgrammar schema compatibility bugs, version-specific failures
-- [vLLM Issue #14151: Structured output requests can hang the server](https://github.com/vllm-project/vllm/issues/14151) - Server hang risk with guided decoding
-- [Ollama vs vLLM Comparison 2026](https://particula.tech/blog/ollama-vs-vllm-comparison) - Structured output capability differences, API divergence
-- [Ollama Structured Output Issues](https://www.glukhov.org/post/2025/10/ollama-gpt-oss-structured-output-issues/) - Ollama-specific format enforcement limitations
-- [RunPod Cloud GPU Mistakes to Avoid](https://www.runpod.io/articles/guides/cloud-gpu-mistakes-to-avoid) - Forgotten instances, cost overruns, auto-shutdown patterns
-- [RunPod Reduce Cloud GPU Expenses](https://www.runpod.io/articles/guides/reduce-cloud-gpu-expenses-without-sacrificing-performance) - Budget control, instance lifecycle management
-- [Vercel async-sema](https://github.com/vercel/async-sema) - TypeScript semaphore implementation for bounded concurrency
-- [vLLM OpenAI-Compatible Server](https://docs.vllm.ai/en/stable/serving/openai_compatible_server/) - API parameter differences from OpenAI standard
-- Existing codebase: `src/infra/checkpoint.ts`, `src/pipeline/pipeline-runner.ts` - Current sequential architecture that must be adapted
+- Existing codebase analysis: `src/scoring/scoring-pipeline.ts`, `src/scoring/lens-scorers.ts`, `src/scoring/composite.ts`, `src/scoring/prompts/technical.ts`, `src/scoring/prompts/adoption.ts`, `src/scoring/prompts/value.ts`
+- Existing codebase analysis: `src/pipeline/pipeline-runner.ts`, `src/pipeline/scoring-to-simulation.ts`, `src/pipeline/extract-skills.ts`
+- Existing codebase analysis: `src/infra/checkpoint.ts` (checkpoint schema, resume logic, atomic write pattern)
+- Existing codebase analysis: `src/simulation/simulation-pipeline.ts`, `src/types/simulation.ts` (SimulationInput contract)
+- Existing codebase analysis: `src/types/hierarchy.ts` (L4Activity, SkillWithContext, L3Opportunity field inventory)
+- Existing codebase analysis: `src/types/scoring.ts` (ScoringResult, WEIGHTS, MAX_SCORES, PROMOTION_THRESHOLD)
+- Project context: `.planning/PROJECT.md` (v1.3 target features, Ford 826 L4 candidate count, pipeline flow)
+- LLM prompt engineering: Positional bias in long prompts is well-documented in transformer attention literature; consolidated prompts with >9 output fields consistently show degradation in later-positioned fields
+- Score calibration: Rank correlation (Spearman rho) between heuristic and model-based scores is a standard validation technique for two-stage ranking systems
