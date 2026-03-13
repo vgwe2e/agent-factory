@@ -10,14 +10,14 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 ### Deterministic Pre-Scoring
 
 - [ ] **DSCORE-01**: Score all L4 activities from structured fields only (no LLM), completing in <100ms for 826 candidates
-- [ ] **DSCORE-02**: Compute financial signal dimension from financial_rating (HIGH/MEDIUM/LOW) and max_value
-- [ ] **DSCORE-03**: Compute AI suitability dimension from ai_suitability field (HIGH/MEDIUM/LOW/NOT_APPLICABLE/null)
-- [ ] **DSCORE-04**: Compute decision density dimension from decision_exists, actions count, and constraints count
-- [ ] **DSCORE-05**: Compute impact order dimension from impact_order (FIRST/SECOND)
-- [ ] **DSCORE-06**: Compute rating confidence dimension from rating_confidence (HIGH/MEDIUM/LOW)
-- [ ] **DSCORE-07**: Compute archetype completeness dimension from archetype presence and execution field richness
-- [ ] **DSCORE-08**: Produce weighted composite (0-1 normalized) from all dimensions with sensible default weights
-- [ ] **DSCORE-09**: Integrate existing red flags (DEAD_ZONE, NO_STAKES, CONFIDENCE_GAP) as near-zero scores or hard elimination
+- [x] **DSCORE-02**: Compute financial signal dimension from financial_rating (HIGH/MEDIUM/LOW) and max_value
+- [x] **DSCORE-03**: Compute AI suitability dimension from ai_suitability field (HIGH/MEDIUM/LOW/NOT_APPLICABLE/null)
+- [x] **DSCORE-04**: Compute decision density dimension from decision_exists, actions count, and constraints count
+- [x] **DSCORE-05**: Compute impact order dimension from impact_order (FIRST/SECOND)
+- [x] **DSCORE-06**: Compute rating confidence dimension from rating_confidence (HIGH/MEDIUM/LOW)
+- [x] **DSCORE-07**: Compute archetype completeness dimension from archetype presence and execution field richness
+- [x] **DSCORE-08**: Produce weighted composite (0-1 normalized) from all dimensions with sensible default weights
+- [x] **DSCORE-09**: Integrate existing red flags (DEAD_ZONE, NO_STAKES, CONFIDENCE_GAP) as near-zero scores or hard elimination
 
 ### Top-N Filtering
 
@@ -90,14 +90,14 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | DSCORE-01 | Phase 21 | Pending |
-| DSCORE-02 | Phase 21 | Pending |
-| DSCORE-03 | Phase 21 | Pending |
-| DSCORE-04 | Phase 21 | Pending |
-| DSCORE-05 | Phase 21 | Pending |
-| DSCORE-06 | Phase 21 | Pending |
-| DSCORE-07 | Phase 21 | Pending |
-| DSCORE-08 | Phase 21 | Pending |
-| DSCORE-09 | Phase 21 | Pending |
+| DSCORE-02 | Phase 21 | Complete |
+| DSCORE-03 | Phase 21 | Complete |
+| DSCORE-04 | Phase 21 | Complete |
+| DSCORE-05 | Phase 21 | Complete |
+| DSCORE-06 | Phase 21 | Complete |
+| DSCORE-07 | Phase 21 | Complete |
+| DSCORE-08 | Phase 21 | Complete |
+| DSCORE-09 | Phase 21 | Complete |
 | FILTER-01 | Phase 21 | Pending |
 | FILTER-02 | Phase 21 | Pending |
 | FILTER-03 | Phase 21 | Pending |

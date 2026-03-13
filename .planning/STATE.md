@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: L4 Two-Pass Scoring Funnel
-status: planning
-stopped_at: Phase 23 context gathered
-last_updated: "2026-03-13T23:35:09.522Z"
+status: executing
+stopped_at: Completed 21-01-PLAN.md
+last_updated: "2026-03-13T23:35:20.604Z"
 last_activity: 2026-03-13 — Roadmap created for v1.3 milestone
 progress:
   total_phases: 4
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 ## Current Position
 
 Phase: 21 (first of 4 in v1.3) — Types + Deterministic Foundation
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-03-13 — Roadmap created for v1.3 milestone
+Plan: 01 of 3 complete
+Status: Executing
+Last activity: 2026-03-13 — Completed 21-01 types + deterministic scorers
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███░░░░░░░] 33%
 
 ## Performance Metrics
 
@@ -38,7 +38,7 @@ Progress: [░░░░░░░░░░] 0%
 - v1.0 plans completed: 31
 - v1.1 plans completed: 7 (26min)
 - v1.2 plans completed: 8 (~23min total)
-- v1.3 plans completed: 0
+- v1.3 plans completed: 1 (4min)
 
 ## Accumulated Context
 
@@ -49,6 +49,11 @@ All decisions logged in PROJECT.md Key Decisions table (27 decisions).
 - L4 as scoring unit over L3 (pending)
 - Two-pass deterministic + LLM funnel (pending)
 - LLM for platform fit + sanity check (pending)
+
+21-01 decisions:
+- scoreImpactOrder: FIRST=1.0, SECOND=0.25
+- scoreRatingConfidence: HIGH=1.0, MEDIUM=0.6, LOW=0.2
+- scoreArchetypeCompleteness: 7 fields per skill averaged, null execution = 5 unpopulated
 
 ### Pending Todos
 
@@ -62,6 +67,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-13T23:35:09.517Z
-Stopped at: Phase 23 context gathered
-Resume file: .planning/phases/23-pipeline-integration/23-CONTEXT.md
+Last session: 2026-03-13T23:34:38Z
+Stopped at: Completed 21-01-PLAN.md
+Resume file: .planning/phases/21-types-deterministic-foundation/21-02-PLAN.md
