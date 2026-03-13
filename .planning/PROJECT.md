@@ -43,7 +43,16 @@ Produce actionable, adoption-realistic implementation specs for Aera skills — 
 
 ### Active
 
-(No active milestone — use `/gsd:new-milestone` to define next)
+## Current Milestone: v1.3 L4 Two-Pass Scoring Funnel
+
+**Goal:** Replace brute-force LLM scoring of L3 opportunities with a two-pass funnel that scores L4 activities deterministically, then applies focused LLM assessment only to configurable top-N survivors.
+
+**Target features:**
+- Shift scoring unit from L3 opportunities to L4 activities (826 candidates)
+- Deterministic pre-scoring from L4 structured fields (milliseconds, no LLM)
+- LLM platform fit + sanity check for top-N survivors only (configurable --top-n)
+- Simulation pipeline updated to accept L4 activities directly
+- L3 names retained as metadata labels for report grouping only
 
 ### Future
 
@@ -70,9 +79,10 @@ Produce actionable, adoption-realistic implementation specs for Aera skills — 
 Shipped v1.2 with cloud pipeline hardening. ~220K LOC TypeScript, 482 tests, 20 phases across 3 milestones.
 
 Tech stack: TypeScript (ESM strict), Zod, Commander, Pino, js-yaml, Ollama REST API, vLLM OpenAI-compatible API, RunPod GraphQL API, dotenv.
-Pipeline: CLI → Zod ingestion → 8B triage → 32B scoring → simulation → final reports → git commit.
+Pipeline (v1.2): CLI → Zod ingestion → 8B triage → 32B scoring (3 LLM calls per L3) → simulation → final reports → git commit.
+Pipeline (v1.3 target): CLI → Zod ingestion → deterministic L4 pre-score → LLM top-N only (1 call per survivor) → simulation → reports.
 Cloud path: CLI → RunPod provision → vLLM health poll → concurrent scoring (semaphore-bounded) → cost tracking → auto-teardown.
-Ford hierarchy export (2,016 L4s, 362 L3s) used as reference dataset.
+Ford hierarchy export (2,016 L4s, 826 L4 scoring candidates) used as reference dataset.
 Hardware: Apple Silicon 36GB for local; RunPod H100 ($5.58/hr) for cloud.
 
 Known tech debt: 19 items across v1.0 (9), v1.1 (3), and v1.2 (7 informational). See `.planning/MILESTONES.md` for inventory.
@@ -115,5 +125,9 @@ Known tech debt: 19 items across v1.0 (9), v1.1 (3), and v1.2 (7 informational).
 | Eliminate runpodctl fallback | Direct GraphQL API more reliable than CLI wrapper | ✓ Good — simpler code, --vllm-url as manual escape |
 | CACHE-02 via RunPod infrastructure | Network volumes auto-cache at /runpod-volume/ | ✓ Good — zero application code needed |
 
+| L4 as scoring unit over L3 | L4 has richer structured fields; L3 is synthetic rollup that masks granularity | — Pending |
+| Two-pass deterministic + LLM funnel | 826 x 3 LLM calls unsustainable; L4 fields enable algorithmic scoring | — Pending |
+| LLM for platform fit + sanity check | Platform fit requires domain reasoning code can't do; sanity check catches deterministic errors | — Pending |
+
 ---
-*Last updated: 2026-03-12 after v1.2 milestone*
+*Last updated: 2026-03-13 after v1.3 milestone start*
