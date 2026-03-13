@@ -45,7 +45,7 @@ export async function parseExport(filePath: string): Promise<ParseResult> {
     };
   }
 
-  // 3. Validate with Zod schema
+  // 3. Validate with Zod schema (v3 envelope)
   const result = hierarchyExportSchema.safeParse(parsed);
 
   if (!result.success) {
@@ -59,5 +59,6 @@ export async function parseExport(filePath: string): Promise<ParseResult> {
     };
   }
 
-  return { success: true, data: result.data as HierarchyExport };
+  // Unwrap the project data from the v3 envelope
+  return { success: true, data: result.data.project as HierarchyExport };
 }

@@ -16,7 +16,7 @@ import { writeFinalReports } from "./output/write-final-reports.js";
 import type { ScoringResult } from "./types/scoring.js";
 import type { SimulationPipelineResult } from "./simulation/simulation-pipeline.js";
 
-const INPUT = process.argv[2] || "../.planning/ford_hierarchy_v2_export.json";
+const INPUT = process.argv[2] || "../.planning/ford_hierarchy_v3_export.json";
 const OUTPUT_DIR = process.argv[3] || "./evaluation";
 
 async function main() {

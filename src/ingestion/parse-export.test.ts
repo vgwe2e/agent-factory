@@ -20,42 +20,59 @@ async function writeTempFile(content: string): Promise<string> {
   return filePath;
 }
 
-// Minimal valid hierarchy export for unit tests
+// Minimal valid v3 envelope for unit tests
 const MINIMAL_VALID_EXPORT = {
-  meta: {
-    project_name: "test_project",
-    version_date: "2026-01-01T00:00:00",
-    created_date: "2026-01-01T00:00:00",
+  export_meta: {
+    exported_at: "2026-01-01T00:00:00",
     exported_by: null,
-    description: "Test export",
+    export_version: "1.0",
+    schema_version: "aera-di-portfolio-v1",
+    analysis_type: "discovery",
+    requires_validation: true,
   },
-  company_context: {
-    industry: "Technology",
-    company_name: "Test Corp",
-    annual_revenue: 1000000,
-    cogs: null,
-    sga: null,
-    ebitda: null,
-    working_capital: null,
-    inventory_value: null,
-    annual_hires: null,
-    employee_count: 500,
-    geographic_scope: "Global",
-    notes: "",
-    business_exclusions: "",
+  disclaimer: {
+    type: "Discovery Analysis",
+    message: "Test disclaimer",
     enterprise_applications: ["SAP S/4HANA"],
-    detected_applications: [],
-    pptx_template: null,
-    industry_specifics: null,
-    raw_context: "",
-    enriched_context: {},
-    enrichment_applied_at: "",
-    existing_systems: [],
-    hard_exclusions: [],
-    filtered_skills: [],
+    overlap_notice: "Test overlap notice",
   },
-  hierarchy: [],
-  l3_opportunities: [],
+  project: {
+    meta: {
+      project_name: "test_project",
+      version_date: "2026-01-01T00:00:00",
+      created_date: "2026-01-01T00:00:00",
+      exported_by: null,
+      description: "Test export",
+    },
+    company_context: {
+      industry: "Technology",
+      company_name: "Test Corp",
+      annual_revenue: 1000000,
+      cogs: null,
+      sga: null,
+      ebitda: null,
+      working_capital: null,
+      inventory_value: null,
+      annual_hires: null,
+      employee_count: 500,
+      geographic_scope: "Global",
+      notes: "",
+      business_exclusions: "",
+      enterprise_applications: ["SAP S/4HANA"],
+      detected_applications: [],
+      pptx_template: null,
+      industry_specifics: null,
+      raw_context: "",
+      enriched_context: {},
+      enrichment_applied_at: "",
+      existing_systems: [],
+      hard_exclusions: [],
+      filtered_skills: [],
+    },
+    hierarchy: [],
+    l3_opportunities: [],
+  },
+  summary: {},
 };
 
 describe("parseExport", () => {
@@ -99,10 +116,10 @@ describe("parseExport", () => {
     }
   });
 
-  it("parses ford_hierarchy_v2_export.json with 362 L3 opportunities and 2016 L4 activities", async () => {
+  it("parses ford_hierarchy_v3_export.json with 362 L3 opportunities and 2016 L4 activities", async () => {
     const fordPath = path.resolve(
       import.meta.dirname,
-      "../../ford_hierarchy_v2_export.json",
+      "../../.planning/ford_hierarchy_v3_export.json",
     );
     const result = await parseExport(fordPath);
     assert.equal(result.success, true);
@@ -112,10 +129,10 @@ describe("parseExport", () => {
     }
   });
 
-  it("extracts correct company context from Ford export", async () => {
+  it("extracts correct company context from Ford v3 export", async () => {
     const fordPath = path.resolve(
       import.meta.dirname,
-      "../../ford_hierarchy_v2_export.json",
+      "../../.planning/ford_hierarchy_v3_export.json",
     );
     const result = await parseExport(fordPath);
     assert.equal(result.success, true);

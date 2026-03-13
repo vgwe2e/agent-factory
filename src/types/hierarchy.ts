@@ -1,9 +1,10 @@
 /**
- * TypeScript types for the Aera hierarchy JSON export.
+ * TypeScript types for the Aera hierarchy JSON export (v3 envelope format).
  *
- * These types describe the full structure of a hierarchy export file
- * (e.g., ford_hierarchy_v2_export.json). Zod schemas in schemas/hierarchy.ts
- * validate at runtime and produce these types via z.infer.
+ * The v3 export wraps project data in an envelope with export_meta, disclaimer,
+ * project, and summary. HierarchyExport represents the inner project data that
+ * downstream consumers work with. Zod schemas in schemas/hierarchy.ts validate
+ * the full envelope at runtime; parseExport unwraps the project data.
  */
 
 // -- Enums --

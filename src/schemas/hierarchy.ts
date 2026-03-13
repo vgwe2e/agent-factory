@@ -109,7 +109,8 @@ export const l3OpportunitySchema = z.object({
   rationale: z.string(),
 });
 
-export const hierarchyExportSchema = z
+/** Inner project data (what downstream consumers use). */
+export const projectDataSchema = z
   .object({
     meta: metaSchema,
     company_context: companyContextSchema,
@@ -118,10 +119,35 @@ export const hierarchyExportSchema = z
   })
   .passthrough();
 
+export const exportMetaSchema = z.object({
+  exported_at: z.string(),
+  exported_by: z.string().nullable(),
+  export_version: z.string(),
+  schema_version: z.string(),
+  analysis_type: z.string(),
+  requires_validation: z.boolean(),
+});
+
+export const disclaimerSchema = z.object({
+  type: z.string(),
+  message: z.string(),
+  enterprise_applications: z.array(z.string()),
+  overlap_notice: z.string(),
+});
+
+/** Top-level v3 export envelope. */
+export const hierarchyExportSchema = z.object({
+  export_meta: exportMetaSchema,
+  disclaimer: disclaimerSchema,
+  project: projectDataSchema,
+  summary: z.record(z.unknown()),
+});
+
 // -- Inferred types (alternative to importing from types/hierarchy.ts) --
 
 export type MetaSchema = z.infer<typeof metaSchema>;
 export type CompanyContextSchema = z.infer<typeof companyContextSchema>;
 export type L4ActivitySchema = z.infer<typeof l4ActivitySchema>;
 export type L3OpportunitySchema = z.infer<typeof l3OpportunitySchema>;
+export type ProjectDataSchema = z.infer<typeof projectDataSchema>;
 export type HierarchyExportSchema = z.infer<typeof hierarchyExportSchema>;
