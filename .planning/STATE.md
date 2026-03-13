@@ -4,7 +4,7 @@ milestone: v1.3
 milestone_name: L4 Two-Pass Scoring Funnel
 status: executing
 stopped_at: Completed 21-02-PLAN.md
-last_updated: "2026-03-13T23:40:39.608Z"
+last_updated: "2026-03-13T23:43:24.256Z"
 last_activity: 2026-03-13 — Completed 21-03 pre-score TSV + CLI --top-n
 progress:
   total_phases: 4

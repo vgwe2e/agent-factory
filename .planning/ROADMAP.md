@@ -123,7 +123,7 @@ Plans:
 | 1-11 | v1.0 | 31/31 | Complete | 2026-03-11 |
 | 12-14 | v1.1 | 7/7 | Complete | 2026-03-12 |
 | 15-20 | v1.2 | 8/8 | Complete | 2026-03-12 |
-| 21. Types + Deterministic Foundation | 3/3 | Complete   | 2026-03-13 | - |
+| 21. Types + Deterministic Foundation | 3/3 | Complete    | 2026-03-13 | - |
 | 22. Consolidated LLM Scorer | v1.3 | 0/TBD | Not started | - |
 | 23. Pipeline Integration | v1.3 | 0/TBD | Not started | - |
 | 24. Validation + Report Compatibility | v1.3 | 0/TBD | Not started | - |
