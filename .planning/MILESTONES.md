@@ -1,5 +1,37 @@
 # Milestones
 
+## v1.2 Cloud Pipeline Hardening (Shipped: 2026-03-12)
+
+**Phases:** 15-20 (8 plans, 15 tasks)
+**Timeline:** 3 days (2026-03-10 → 2026-03-12)
+**Stats:** 19 files changed, +2,181/-277 lines, 482 tests total
+**Git range:** `feat(15-01)` → `docs(phase-20)` (56 commits)
+**Audit:** passed — 18/18 requirements, 7 tech debt items (0 blockers, all informational)
+
+**Key accomplishments:**
+
+1. Checkpoint-aware report generation with archived score loading and deduplication on resume
+2. Simulation configuration via `--skip-sim` and `--sim-timeout` CLI flags with per-opportunity error isolation
+3. Full CLI lifecycle automation with `--retry`, `--teardown`, and structured exit codes (0/1/2)
+4. RunPod provisioning hardened: GraphQL dockerArgs, `/v1/models` validation, 15min timeout, auto-teardown
+5. Backend-aware output namespacing (`evaluation-ollama/`, `evaluation-vllm/`) preventing clobber
+6. Network volume model caching via `--network-volume` flag for persistent model weights
+
+### Known Tech Debt
+
+| Phase | Item | Severity |
+|-------|------|----------|
+| 16 | Pre-existing TS2322 in format-adoption-risk.test.ts and vllm-client.test.ts | Low |
+| 17 | Human verification pending: full cloud lifecycle E2E with real RunPod | Low |
+| 18 | PROV-04 reinterpreted: runpodctl eliminated, replaced with --vllm-url guidance | Info |
+| 18 | Pre-existing: 28 dist/ test failures (compiled artifacts from prior phases) | Low |
+| 20 | Human verification pending: live network volume attachment speed-up | Low |
+| 20 | CACHE-02 satisfied by RunPod infrastructure behavior, not application code | Info |
+
+**Archives:** `milestones/v1.2-ROADMAP.md`, `milestones/v1.2-REQUIREMENTS.md`, `milestones/v1.2-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.1 Cloud-Accelerated Scoring (Shipped: 2026-03-12)
 
 **Phases:** 12-14 (7 plans, 14 tasks)

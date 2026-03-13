@@ -2,6 +2,50 @@
 
 *A living document updated after each milestone. Lessons feed forward into future planning.*
 
+## Milestone: v1.2 — Cloud Pipeline Hardening
+
+**Shipped:** 2026-03-12
+**Phases:** 6 | **Plans:** 8 | **Sessions:** ~3
+
+### What Was Built
+- Checkpoint-aware report generation with archived score loading and dedup on resume
+- Simulation configuration via `--skip-sim` and `--sim-timeout` CLI flags with per-opportunity error isolation
+- Full CLI lifecycle automation: `--retry`, `--teardown`, structured exit codes (0/1/2)
+- RunPod provisioning hardened: GraphQL dockerArgs, `/v1/models` validation, 15min timeout, auto-teardown on failure
+- Backend-aware output namespacing (`evaluation-ollama/`, `evaluation-vllm/`)
+- Network volume model caching via `--network-volume` CLI flag
+
+### What Worked
+- **TDD at every plan**: 8 plans, all TDD — caught interface mismatches before wiring (e.g., SimulationPipelineOptions shape)
+- **Parallel-capable phases**: Phases 15, 16, 18, 19 independent — could have parallelized execution
+- **Fine-grained planning continued**: Average ~3min per plan, 23min total for 8 plans
+- **Audit before archive**: Caught Nyquist gaps and documented tech debt before closing milestone
+- **Requirement reinterpretation**: PROV-04 runpodctl elimination was a better solution than fixing the flag
+
+### What Was Inefficient
+- **dist/ test failures**: 28 pre-existing compiled artifact test failures carried forward — not blocking but noisy
+- **Nyquist validation partial**: Only 1/6 phases fully Nyquist-compliant; process step still inconsistently applied
+- **Human verification deferred**: 3 items require live RunPod testing that hasn't been scheduled
+
+### Patterns Established
+- Pure helper-before-Commander pattern: `resolveOutputDir` exported for testability before Commander setup
+- Extracted testable helper pattern: `runWithRetries` with isMain guard for safe test imports
+- Conditional GraphQL mutation fields: omit vs include (never empty string) for optional parameters
+- Auto-teardown-on-failure wrapper around entire provision() body
+
+### Key Lessons
+1. **Eliminate complexity rather than fix it**: Removing runpodctl entirely was better than fixing its flags — simpler code, fewer failure modes
+2. **Infrastructure behavior satisfies requirements**: CACHE-02 (model caching) was satisfied by RunPod platform behavior, not application code — know when *not* to code
+3. **Nyquist needs automation**: Manual validation step is inconsistently applied — should be enforced by tooling
+4. **isMain guard pattern**: Essential for testing Commander-based CLIs — allows safe test imports without triggering .parse()
+
+### Cost Observations
+- Model mix: Quality profile (opus for execution)
+- Sessions: ~3 sessions in 1 day
+- Notable: 8 plans in ~23 minutes total — fastest plans yet (1min for 19-01)
+
+---
+
 ## Milestone: v1.1 — Cloud-Accelerated Scoring
 
 **Shipped:** 2026-03-12
@@ -101,6 +145,7 @@
 |-----------|----------|--------|-------|---------------|------------|
 | v1.0 | ~10 | 11 | 31 | ~3min | Established TDD + DI + fine-grained planning pattern |
 | v1.1 | ~3 | 3 | 7 | ~3.5min | Added research phase; ChatFn abstraction enabled painless backend addition |
+| v1.2 | ~3 | 6 | 8 | ~3min | Elimination over repair (runpodctl removed); infrastructure-as-requirement pattern |
 
 ### Cumulative Quality
 
@@ -108,10 +153,12 @@
 |-----------|-------|----------|-----------------|
 | v1.0 | 412 | — | 9 (2 medium, 7 low) |
 | v1.1 | 552 | — | 12 (2 medium, 10 low) |
+| v1.2 | 482 | — | 19 (2 medium, 17 low/info) |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. Wire integration early — gap closure phases are avoidable overhead (v1.0 Phases 10-11, v1.1 Plan 14-03)
-2. Milestone audits catch real bugs, not just process issues (both milestones)
-3. ChatFn/DI abstraction investment pays compounding returns (v1.1 vLLM adapter was zero-change to scoring)
-4. Research before planning catches API surface mismatches (v1.1 RunPod SDK, vLLM xgrammar)
+2. Milestone audits catch real bugs, not just process issues (all 3 milestones)
+3. ChatFn/DI abstraction investment pays compounding returns (v1.1 vLLM adapter, v1.2 testable CLI helpers)
+4. Research before planning catches API surface mismatches (v1.1 RunPod SDK, v1.2 dockerArgs vs env vars)
+5. Eliminate complexity rather than fix it — removing runpodctl was better than patching its flags (v1.2)
