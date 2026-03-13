@@ -9,7 +9,7 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 
 ### Deterministic Pre-Scoring
 
-- [ ] **DSCORE-01**: Score all L4 activities from structured fields only (no LLM), completing in <100ms for 826 candidates
+- [x] **DSCORE-01**: Score all L4 activities from structured fields only (no LLM), completing in <100ms for 826 candidates
 - [x] **DSCORE-02**: Compute financial signal dimension from financial_rating (HIGH/MEDIUM/LOW) and max_value
 - [x] **DSCORE-03**: Compute AI suitability dimension from ai_suitability field (HIGH/MEDIUM/LOW/NOT_APPLICABLE/null)
 - [x] **DSCORE-04**: Compute decision density dimension from decision_exists, actions count, and constraints count
@@ -22,10 +22,10 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 ### Top-N Filtering
 
 - [x] **FILTER-01**: Add `--top-n` CLI flag (integer, configurable, default 50) controlling how many survivors pass to LLM scoring
-- [ ] **FILTER-02**: Rank all pre-scored candidates by composite descending, ties broken by max_value descending
+- [x] **FILTER-02**: Rank all pre-scored candidates by composite descending, ties broken by max_value descending
 - [x] **FILTER-03**: Write pre-score TSV artifact to output directory showing full ranking, scores, and survived Y/N
-- [ ] **FILTER-04**: Report filter statistics in pipeline output (total candidates, survivors, eliminated, cutoff score)
-- [ ] **FILTER-05**: Use cluster-aware cutoff — include all L4s tied at the boundary score
+- [x] **FILTER-04**: Report filter statistics in pipeline output (total candidates, survivors, eliminated, cutoff score)
+- [x] **FILTER-05**: Use cluster-aware cutoff — include all L4s tied at the boundary score
 
 ### Consolidated LLM Scoring
 
@@ -89,7 +89,7 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DSCORE-01 | Phase 21 | Pending |
+| DSCORE-01 | Phase 21 | Complete |
 | DSCORE-02 | Phase 21 | Complete |
 | DSCORE-03 | Phase 21 | Complete |
 | DSCORE-04 | Phase 21 | Complete |
@@ -99,10 +99,10 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 | DSCORE-08 | Phase 21 | Complete |
 | DSCORE-09 | Phase 21 | Complete |
 | FILTER-01 | Phase 21 | Complete |
-| FILTER-02 | Phase 21 | Pending |
+| FILTER-02 | Phase 21 | Complete |
 | FILTER-03 | Phase 21 | Complete |
-| FILTER-04 | Phase 21 | Pending |
-| FILTER-05 | Phase 21 | Pending |
+| FILTER-04 | Phase 21 | Complete |
+| FILTER-05 | Phase 21 | Complete |
 | LLM-01 | Phase 22 | Pending |
 | LLM-02 | Phase 22 | Pending |
 | LLM-03 | Phase 22 | Pending |

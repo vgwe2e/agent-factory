@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: L4 Two-Pass Scoring Funnel
 status: executing
-stopped_at: Completed 21-03-PLAN.md
-last_updated: "2026-03-13T23:39:55.446Z"
+stopped_at: Completed 21-02-PLAN.md
+last_updated: "2026-03-13T23:40:39.608Z"
 last_activity: 2026-03-13 — Completed 21-03 pre-score TSV + CLI --top-n
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
   completed_plans: 3
   percent: 67
@@ -55,6 +55,11 @@ All decisions logged in PROJECT.md Key Decisions table (27 decisions).
 - scoreRatingConfidence: HIGH=1.0, MEDIUM=0.6, LOW=0.2
 - scoreArchetypeCompleteness: 7 fields per skill averaged, null execution = 5 unpopulated
 
+21-02 decisions:
+- Tie boundary uses 4-decimal rounding for float-safe comparison
+- Cap overflow at floor(topN * 1.1) -- 10% breathing room for cluster-aware ties
+- Eliminated candidates separated before ranking, never compete for survivor slots
+
 21-03 decisions:
 - Eliminated L4s appear in TSV at bottom for audit visibility
 - --top-n parsed/validated only, pipeline wiring deferred to Phase 23
@@ -71,6 +76,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-13T23:39:55.443Z
-Stopped at: Completed 21-03-PLAN.md
+Last session: 2026-03-13T23:40:39.604Z
+Stopped at: Completed 21-02-PLAN.md
 Resume file: None

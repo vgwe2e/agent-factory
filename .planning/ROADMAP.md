@@ -57,7 +57,7 @@ Full details: `milestones/v1.2-ROADMAP.md`
 
 **Milestone Goal:** Replace brute-force LLM scoring of L3 opportunities with a two-pass funnel that scores L4 activities deterministically, then applies focused LLM assessment only to configurable top-N survivors. Reduces LLM calls from ~2,478 to ~50.
 
-- [ ] **Phase 21: Types + Deterministic Foundation** - Pure-function scoring of all 826 L4 candidates from structured fields, plus top-N filtering with CLI control
+- [x] **Phase 21: Types + Deterministic Foundation** - Pure-function scoring of all 826 L4 candidates from structured fields, plus top-N filtering with CLI control (completed 2026-03-13)
 - [ ] **Phase 22: Consolidated LLM Scorer** - Single LLM call per survivor covering platform fit assessment and deterministic sanity check
 - [ ] **Phase 23: Pipeline Integration** - Wire two-pass flow into pipeline-runner with scoring-mode switch and L4-level simulation adapter
 - [ ] **Phase 24: Validation + Report Compatibility** - Calibration testing, full Ford run comparison, and report formatter verification
@@ -74,7 +74,7 @@ Full details: `milestones/v1.2-ROADMAP.md`
   3. A pre-score TSV artifact appears in the output directory showing every candidate's rank, dimension scores, composite score, and survived status
   4. Pipeline output reports filter statistics: total candidates scored, survivors passed, candidates eliminated, and cutoff score
   5. Existing red flags (DEAD_ZONE, NO_STAKES, CONFIDENCE_GAP) result in near-zero deterministic scores or hard elimination, not separate triage logic
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [ ] 21-01-PLAN.md -- Types + dimensions + composite + red flags
 - [ ] 21-02-PLAN.md -- Top-N filter + pre-scorer orchestrator
@@ -123,7 +123,7 @@ Plans:
 | 1-11 | v1.0 | 31/31 | Complete | 2026-03-11 |
 | 12-14 | v1.1 | 7/7 | Complete | 2026-03-12 |
 | 15-20 | v1.2 | 8/8 | Complete | 2026-03-12 |
-| 21. Types + Deterministic Foundation | 2/3 | In Progress|  | - |
+| 21. Types + Deterministic Foundation | 3/3 | Complete   | 2026-03-13 | - |
 | 22. Consolidated LLM Scorer | v1.3 | 0/TBD | Not started | - |
 | 23. Pipeline Integration | v1.3 | 0/TBD | Not started | - |
 | 24. Validation + Report Compatibility | v1.3 | 0/TBD | Not started | - |
