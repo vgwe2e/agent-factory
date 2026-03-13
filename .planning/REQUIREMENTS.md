@@ -21,9 +21,9 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 
 ### Top-N Filtering
 
-- [ ] **FILTER-01**: Add `--top-n` CLI flag (integer, configurable, default 50) controlling how many survivors pass to LLM scoring
+- [x] **FILTER-01**: Add `--top-n` CLI flag (integer, configurable, default 50) controlling how many survivors pass to LLM scoring
 - [ ] **FILTER-02**: Rank all pre-scored candidates by composite descending, ties broken by max_value descending
-- [ ] **FILTER-03**: Write pre-score TSV artifact to output directory showing full ranking, scores, and survived Y/N
+- [x] **FILTER-03**: Write pre-score TSV artifact to output directory showing full ranking, scores, and survived Y/N
 - [ ] **FILTER-04**: Report filter statistics in pipeline output (total candidates, survivors, eliminated, cutoff score)
 - [ ] **FILTER-05**: Use cluster-aware cutoff — include all L4s tied at the boundary score
 
@@ -98,9 +98,9 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 | DSCORE-07 | Phase 21 | Complete |
 | DSCORE-08 | Phase 21 | Complete |
 | DSCORE-09 | Phase 21 | Complete |
-| FILTER-01 | Phase 21 | Pending |
+| FILTER-01 | Phase 21 | Complete |
 | FILTER-02 | Phase 21 | Pending |
-| FILTER-03 | Phase 21 | Pending |
+| FILTER-03 | Phase 21 | Complete |
 | FILTER-04 | Phase 21 | Pending |
 | FILTER-05 | Phase 21 | Pending |
 | LLM-01 | Phase 22 | Pending |

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: L4 Two-Pass Scoring Funnel
 status: executing
-stopped_at: Phase 24 context gathered
-last_updated: "2026-03-13T23:39:04.492Z"
-last_activity: 2026-03-13 — Completed 21-01 types + deterministic scorers
+stopped_at: Completed 21-03-PLAN.md
+last_updated: "2026-03-13T23:39:55.446Z"
+last_activity: 2026-03-13 — Completed 21-03 pre-score TSV + CLI --top-n
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
-  percent: 33
+  completed_plans: 3
+  percent: 67
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 ## Current Position
 
 Phase: 21 (first of 4 in v1.3) — Types + Deterministic Foundation
-Plan: 01 of 3 complete
+Plan: 03 of 3 complete
 Status: Executing
-Last activity: 2026-03-13 — Completed 21-01 types + deterministic scorers
+Last activity: 2026-03-13 — Completed 21-03 pre-score TSV + CLI --top-n
 
-Progress: [███░░░░░░░] 33%
+Progress: [███████░░░] 67%
 
 ## Performance Metrics
 
@@ -38,7 +38,7 @@ Progress: [███░░░░░░░] 33%
 - v1.0 plans completed: 31
 - v1.1 plans completed: 7 (26min)
 - v1.2 plans completed: 8 (~23min total)
-- v1.3 plans completed: 1 (4min)
+- v1.3 plans completed: 3 (8min)
 
 ## Accumulated Context
 
@@ -55,6 +55,10 @@ All decisions logged in PROJECT.md Key Decisions table (27 decisions).
 - scoreRatingConfidence: HIGH=1.0, MEDIUM=0.6, LOW=0.2
 - scoreArchetypeCompleteness: 7 fields per skill averaged, null execution = 5 unpopulated
 
+21-03 decisions:
+- Eliminated L4s appear in TSV at bottom for audit visibility
+- --top-n parsed/validated only, pipeline wiring deferred to Phase 23
+
 ### Pending Todos
 
 None.
@@ -67,6 +71,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-13T23:39:04.488Z
-Stopped at: Phase 24 context gathered
-Resume file: .planning/phases/24-validation-report-compatibility/24-CONTEXT.md
+Last session: 2026-03-13T23:39:55.443Z
+Stopped at: Completed 21-03-PLAN.md
+Resume file: None
