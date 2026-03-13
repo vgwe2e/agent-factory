@@ -1208,7 +1208,7 @@ describe("pipeline-runner", () => {
     const simFn = async (
       inputs: SimulationInput[],
       outputDir: string,
-      _ollamaUrl?: string,
+      _llmTarget?: unknown,
       _deps?: unknown,
       options?: { timeoutMs?: number },
     ): Promise<SimulationPipelineResult> => {
@@ -1233,6 +1233,47 @@ describe("pipeline-runner", () => {
 
     assert.equal(capturedOptions.length, 1, "simulation was called once");
     assert.deepStrictEqual(capturedOptions[0], { timeoutMs: 60000 }, "timeoutMs threaded through");
+  });
+
+  it("simulationLlmTarget is passed through to runSimulationPipeline", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const capturedTargets: unknown[] = [];
+
+    const simFn = async (
+      _inputs: SimulationInput[],
+      _outputDir: string,
+      llmTarget?: unknown,
+    ): Promise<SimulationPipelineResult> => {
+      capturedTargets.push(llmTarget);
+      return { results: [], totalSimulated: 0, totalFailed: 0, totalConfirmed: 0, totalInferred: 0 };
+    };
+
+    const simulationLlmTarget = {
+      backend: "vllm" as const,
+      baseUrl: "https://pod.proxy.runpod.net/v1",
+      model: "Qwen/Qwen2.5-32B-Instruct",
+      apiKey: "vllm-test-key",
+    };
+
+    await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        simulationLlmTarget,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.equal(capturedTargets.length, 1, "simulation target was passed once");
+    assert.deepStrictEqual(capturedTargets[0], simulationLlmTarget);
   });
 
   it("simErrorCount on PipelineResult reflects simulation failures", async () => {
@@ -1342,5 +1383,48 @@ describe("pipeline-runner", () => {
     assert.ok(tsvContent.includes("Opp-A"), "Opp-A in TSV");
     assert.ok(tsvContent.includes("Opp-B"), "Opp-B in TSV");
     assert.ok(tsvContent.includes("Opp-C"), "Opp-C in TSV");
+  });
+
+  it("checkpoint error entries are retried and do not resume stale archived scores", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    const existingCheckpoint: Checkpoint = {
+      version: 1,
+      inputFile: "__fixture__",
+      startedAt: new Date().toISOString(),
+      entries: [
+        { l3Name: "Opp-A", completedAt: new Date().toISOString(), status: "error" },
+      ],
+    };
+    saveCheckpoint(tmpDir, existingCheckpoint);
+
+    const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.30);
+    const pipelineDir = path.join(tmpDir, ".pipeline");
+    fs.mkdirSync(pipelineDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(pipelineDir, "checkpoint-1000.json"),
+      JSON.stringify({ "Opp-A": archivedOppA }, null, 2),
+      "utf-8",
+    );
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.equal(result.resumedCount, 0, "error entries should not count as resumed");
+    assert.equal(result.scoredCount, 3, "Opp-A should be retried in the current session");
   });
 });

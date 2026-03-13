@@ -138,6 +138,28 @@ export function validateComponentMap(
   return results;
 }
 
+/**
+ * Override component confidence flags in-place based on knowledge validation.
+ */
+export function enforceKnowledgeConfidence(
+  map: ComponentMap,
+  knowledgeIndex: Map<string, string>,
+): void {
+  const sections: Array<{ name: string; confidence: string }[]> = [
+    map.streams,
+    map.cortex,
+    map.process_builder,
+    map.agent_teams,
+    map.ui,
+  ];
+
+  for (const entries of sections) {
+    for (const entry of entries) {
+      entry.confidence = validateComponentRef(entry.name, knowledgeIndex);
+    }
+  }
+}
+
 /** Find the first substring match in the knowledge index. */
 function findSubstringMatch(
   lower: string,

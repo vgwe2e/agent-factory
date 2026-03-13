@@ -12,16 +12,21 @@ import type { ComponentMap } from "../../types/simulation.js";
 import type { ValidationResult } from "../validators/knowledge-validator.js";
 import { buildComponentMapPrompt } from "../prompts/component-map.js";
 import { parseAndValidateYaml, ComponentMapSchema } from "../schemas.js";
-import { validateComponentMap, validateComponentRef } from "../validators/knowledge-validator.js";
-import { getAllPBNodes, getWorkflowPatterns } from "../../knowledge/process-builder.js";
+import {
+  enforceKnowledgeConfidence,
+  validateComponentMap,
+} from "../validators/knowledge-validator.js";
+import { getAllPBNodes } from "../../knowledge/process-builder.js";
 import { getAllComponents } from "../../knowledge/components.js";
 import { getIntegrationPatterns } from "../../knowledge/orchestration.js";
 import { buildKnowledgeContext } from "../../scoring/knowledge-context.js";
+import {
+  generateSimulationText,
+  type SimulationLlmTarget,
+} from "../llm-client.js";
 
 // -- Constants --
 
-const OLLAMA_CHAT_API = "http://localhost:11434/api/chat";
-const MODEL = "qwen3:30b";
 const TEMPERATURE = 0.3;
 const MAX_ATTEMPTS = 3;
 const TIMEOUT_MS = 180_000;
@@ -31,12 +36,6 @@ const TIMEOUT_MS = 180_000;
 type ComponentMapResult =
   | { success: true; data: { componentMap: ComponentMap; validation: ValidationResult[]; attempts: number } }
   | { success: false; error: string };
-
-interface OllamaChatResponse {
-  message: { role: string; content: string };
-  done: boolean;
-  total_duration?: number;
-}
 
 // -- Generator --
 
@@ -51,13 +50,14 @@ interface OllamaChatResponse {
  *
  * @param input - Simulation context
  * @param knowledgeIndex - Pre-built knowledge base index from buildKnowledgeIndex()
- * @param ollamaUrl - Override Ollama API URL (for testing)
+ * @param llmTarget - Override simulation backend target (legacy string or backend config)
  * @returns Result with ComponentMap, validation results, and attempt count
  */
 export async function generateComponentMap(
   input: SimulationInput,
   knowledgeIndex: Map<string, string>,
-  ollamaUrl: string = OLLAMA_CHAT_API,
+  llmTarget?: SimulationLlmTarget,
+  signal?: AbortSignal,
 ): Promise<ComponentMapResult> {
   const pbNodeNames = getAllPBNodes().map((n) => n.name);
   const uiComponentNames = getAllComponents().map((c) => c.name);
@@ -69,26 +69,22 @@ export async function generateComponentMap(
   const errors: string[] = [];
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    throwIfAborted(signal);
+
     try {
-      const response = await fetch(ollamaUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: MODEL,
-          messages: conversationMessages,
-          stream: false,
-          options: { temperature: TEMPERATURE },
-        }),
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+      const response = await generateSimulationText(conversationMessages, llmTarget, {
+        temperature: TEMPERATURE,
+        timeoutMs: TIMEOUT_MS,
+        signal,
       });
 
-      if (!response.ok) {
-        errors.push(`Attempt ${attempt}: Ollama HTTP ${response.status}`);
+      if (!response.success) {
+        throwIfAborted(signal);
+        errors.push(`Attempt ${attempt}: ${response.error}`);
         continue;
       }
 
-      const data = (await response.json()) as OllamaChatResponse;
-      const rawContent = data.message.content;
+      const rawContent = response.content;
 
       // Parse YAML and validate with Zod schema
       const parseResult = await parseAndValidateYaml(rawContent, ComponentMapSchema);
@@ -114,6 +110,9 @@ export async function generateComponentMap(
         data: { componentMap, validation, attempts: attempt },
       };
     } catch (err) {
+      if (signal?.aborted) {
+        throw abortError(signal);
+      }
       const message = err instanceof Error ? err.message : String(err);
       errors.push(`Attempt ${attempt}: ${message}`);
     }
@@ -125,25 +124,14 @@ export async function generateComponentMap(
   };
 }
 
-/**
- * Override confidence flags in a ComponentMap based on knowledge base validation.
- * Mutates the map in place -- sets confirmed for known components, inferred for unknown.
- */
-function enforceKnowledgeConfidence(
-  map: ComponentMap,
-  knowledgeIndex: Map<string, string>,
-): void {
-  const sections: Array<{ name: string; confidence: string }[]> = [
-    map.streams,
-    map.cortex,
-    map.process_builder,
-    map.agent_teams,
-    map.ui,
-  ];
-
-  for (const entries of sections) {
-    for (const entry of entries) {
-      entry.confidence = validateComponentRef(entry.name, knowledgeIndex);
-    }
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw abortError(signal);
   }
+}
+
+function abortError(signal: AbortSignal): Error {
+  return signal.reason instanceof Error
+    ? signal.reason
+    : new Error(String(signal.reason ?? "Operation aborted"));
 }

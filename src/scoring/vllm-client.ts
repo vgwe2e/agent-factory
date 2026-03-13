@@ -31,6 +31,11 @@ interface VllmChatResponse {
   }>;
 }
 
+function normalizeBaseUrl(baseUrl: string): string {
+  const trimmed = baseUrl.replace(/\/+$/, "");
+  return trimmed.endsWith("/v1") ? trimmed.slice(0, -3) : trimmed;
+}
+
 // -- Public API --
 
 /**
@@ -41,7 +46,9 @@ interface VllmChatResponse {
  * @returns ChatFn-compatible async function
  */
 export function createVllmChatFn(baseUrl: string, model: string, apiKey?: string): ChatFn {
-  const endpoint = `${baseUrl}/v1/chat/completions`;
+  // Accept either a raw vLLM server URL (`http://host:8000`) or an OpenAI base
+  // (`.../openai/v1`) such as RunPod's serverless endpoint shape.
+  const endpoint = `${normalizeBaseUrl(baseUrl)}/v1/chat/completions`;
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
 

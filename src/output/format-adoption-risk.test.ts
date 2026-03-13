@@ -65,7 +65,7 @@ describe("formatAdoptionRisk", () => {
         l1Name: "Supply Chain",
         l2Name: "Logistics",
         redFlags: [{ type: "ORPHAN", l4Count: 1 }],
-        action: "flag",
+        action: "demote",
         l4Count: 1,
       }),
     ];

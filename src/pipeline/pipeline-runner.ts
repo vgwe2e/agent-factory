@@ -43,6 +43,7 @@ import { writeEvaluation } from "../output/write-evaluation.js";
 import { loadArchivedScores } from "./load-archived-scores.js";
 import { runSimulationPipeline as defaultRunSimulationPipeline } from "../simulation/simulation-pipeline.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
+import type { SimulationLlmTarget } from "../simulation/llm-client.js";
 import { toSimulationInputs } from "./scoring-to-simulation.js";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -88,6 +89,8 @@ export interface PipelineOptions {
   skipSim?: boolean;
   /** Per-opportunity simulation timeout in milliseconds. */
   simTimeoutMs?: number;
+  /** Simulation backend target. Defaults to local Ollama when omitted. */
+  simulationLlmTarget?: SimulationLlmTarget;
 }
 
 export interface PipelineResult {
@@ -451,7 +454,7 @@ export async function runPipeline(
       simResult = await runSim(
         simInputs,
         simDir,
-        undefined,
+        options.simulationLlmTarget,
         undefined,
         options.simTimeoutMs ? { timeoutMs: options.simTimeoutMs } : undefined,
       );

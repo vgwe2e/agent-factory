@@ -11,11 +11,13 @@ import { buildDecisionFlowPrompt } from "../prompts/decision-flow.js";
 import { extractMermaidBlock } from "../utils.js";
 import { validateMermaidFlowchart } from "../validators/mermaid-validator.js";
 import { getAllPBNodes, getWorkflowPatterns } from "../../knowledge/process-builder.js";
+import {
+  generateSimulationText,
+  type SimulationLlmTarget,
+} from "../llm-client.js";
 
 // -- Constants --
 
-const OLLAMA_CHAT_API = "http://localhost:11434/api/chat";
-const MODEL = "qwen3:30b";
 const TEMPERATURE = 0.3;
 const MAX_ATTEMPTS = 3;
 const TIMEOUT_MS = 180_000; // 3 minutes for complex diagram generation
@@ -26,12 +28,6 @@ type DecisionFlowResult =
   | { success: true; data: { mermaid: string; attempts: number } }
   | { success: false; error: string };
 
-interface OllamaChatResponse {
-  message: { role: string; content: string };
-  done: boolean;
-  total_duration?: number;
-}
-
 // -- Generator --
 
 /**
@@ -40,12 +36,13 @@ interface OllamaChatResponse {
  * Flow: build prompt -> call Ollama -> extract Mermaid -> validate -> retry on failure.
  *
  * @param input - Simulation context
- * @param ollamaUrl - Override Ollama API URL (for testing)
+ * @param llmTarget - Override simulation backend target (legacy string or backend config)
  * @returns Result with Mermaid string and attempt count, or error
  */
 export async function generateDecisionFlow(
   input: SimulationInput,
-  ollamaUrl: string = OLLAMA_CHAT_API,
+  llmTarget?: SimulationLlmTarget,
+  signal?: AbortSignal,
 ): Promise<DecisionFlowResult> {
   const pbNodeNames = getAllPBNodes().map((n) => n.name);
   const workflowPatternNames = getWorkflowPatterns().map((p) => p.name);
@@ -55,26 +52,22 @@ export async function generateDecisionFlow(
   const errors: string[] = [];
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    throwIfAborted(signal);
+
     try {
-      const response = await fetch(ollamaUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: MODEL,
-          messages: conversationMessages,
-          stream: false,
-          options: { temperature: TEMPERATURE },
-        }),
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+      const response = await generateSimulationText(conversationMessages, llmTarget, {
+        temperature: TEMPERATURE,
+        timeoutMs: TIMEOUT_MS,
+        signal,
       });
 
-      if (!response.ok) {
-        errors.push(`Attempt ${attempt}: Ollama HTTP ${response.status}`);
+      if (!response.success) {
+        throwIfAborted(signal);
+        errors.push(`Attempt ${attempt}: ${response.error}`);
         continue;
       }
 
-      const data = (await response.json()) as OllamaChatResponse;
-      const rawContent = data.message.content;
+      const rawContent = response.content;
       const mermaid = extractMermaidBlock(rawContent);
       const validation = validateMermaidFlowchart(mermaid);
 
@@ -92,6 +85,9 @@ export async function generateDecisionFlow(
         },
       );
     } catch (err) {
+      if (signal?.aborted) {
+        throw abortError(signal);
+      }
       const message = err instanceof Error ? err.message : String(err);
       errors.push(`Attempt ${attempt}: ${message}`);
     }
@@ -101,4 +97,16 @@ export async function generateDecisionFlow(
     success: false,
     error: `Failed after ${MAX_ATTEMPTS} attempts. Errors: ${errors.join("; ")}`,
   };
+}
+
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw abortError(signal);
+  }
+}
+
+function abortError(signal: AbortSignal): Error {
+  return signal.reason instanceof Error
+    ? signal.reason
+    : new Error(String(signal.reason ?? "Operation aborted"));
 }

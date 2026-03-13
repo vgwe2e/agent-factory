@@ -10,9 +10,11 @@ import { IntegrationSurfaceSchema, parseAndValidateYaml } from "../schemas.js";
 import { buildIntegrationSurfacePrompt } from "../prompts/integration-surface.js";
 import type { SimulationInput } from "../../types/simulation.js";
 import type { IntegrationSurface } from "../../types/simulation.js";
+import {
+  generateSimulationText,
+  type SimulationLlmTarget,
+} from "../llm-client.js";
 
-const DEFAULT_OLLAMA_URL = "http://localhost:11434";
-const MODEL = "qwen3:30b";
 const TEMPERATURE = 0.3;
 const MAX_ATTEMPTS = 3;
 const TIMEOUT_MS = 120_000;
@@ -29,12 +31,15 @@ type IntegrationSurfaceResult =
  */
 export async function generateIntegrationSurface(
   input: SimulationInput,
-  ollamaUrl: string = DEFAULT_OLLAMA_URL,
+  llmTarget?: SimulationLlmTarget,
+  signal?: AbortSignal,
 ): Promise<IntegrationSurfaceResult> {
   const baseMessages = buildIntegrationSurfacePrompt(input);
   const errors: string[] = [];
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    throwIfAborted(signal);
+
     const messages = attempt === 1
       ? baseMessages
       : [
@@ -46,25 +51,19 @@ export async function generateIntegrationSurface(
         ];
 
     try {
-      const response = await fetch(`${ollamaUrl}/api/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: MODEL,
-          messages,
-          stream: false,
-          options: { temperature: TEMPERATURE },
-        }),
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+      const response = await generateSimulationText(messages, llmTarget, {
+        temperature: TEMPERATURE,
+        timeoutMs: TIMEOUT_MS,
+        signal,
       });
 
-      if (!response.ok) {
-        errors.push(`Ollama HTTP ${response.status}: ${response.statusText}`);
+      if (!response.success) {
+        throwIfAborted(signal);
+        errors.push(response.error);
         continue;
       }
 
-      const data = (await response.json()) as { message: { content: string } };
-      const raw = data.message.content;
+      const raw = response.content;
 
       const validated = await parseAndValidateYaml(raw, IntegrationSurfaceSchema);
       if (validated.success) {
@@ -76,6 +75,9 @@ export async function generateIntegrationSurface(
 
       errors.push(validated.error);
     } catch (err) {
+      if (signal?.aborted) {
+        throw abortError(signal);
+      }
       const message = err instanceof Error ? err.message : String(err);
       errors.push(message);
     }
@@ -85,4 +87,16 @@ export async function generateIntegrationSurface(
     success: false,
     error: `Integration surface generation failed after ${MAX_ATTEMPTS} attempts. Errors: ${errors.join("; ")}`,
   };
+}
+
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw abortError(signal);
+  }
+}
+
+function abortError(signal: AbortSignal): Error {
+  return signal.reason instanceof Error
+    ? signal.reason
+    : new Error(String(signal.reason ?? "Operation aborted"));
 }

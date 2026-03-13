@@ -235,14 +235,16 @@ program
       console.log();
     }
 
-    // Create backend (validates schemas for vLLM, auto-provisions cloud if needed)
+    // Create backend (validates schemas for vLLM, auto-provisions a RunPod pod if needed)
     let backendConfig: BackendConfig;
     try {
       backendConfig = await createBackend(backend, {
         vllmUrl: opts.vllmUrl,
         vllmModel: undefined,
+        vllmApiKey: process.env.VLLM_API_KEY,
         runpodApiKey: process.env.RUNPOD_API_KEY,
         networkVolumeId: opts.networkVolume,
+        hfToken: process.env.HF_TOKEN,
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -270,9 +272,9 @@ program
 
     console.log("=== Pipeline ===");
     if (backend === "vllm" && !opts.vllmUrl) {
-      console.log(`Backend:     vllm (RunPod cloud)`);
-      if (backendConfig.endpointId) {
-        console.log(`Endpoint:    ${backendConfig.endpointId}`);
+      console.log(`Backend:     vllm (RunPod pod)`);
+      if (backendConfig.podId) {
+        console.log(`Pod:         ${backendConfig.podId}`);
       }
     } else if (backend === "vllm") {
       console.log(`Backend:     vllm (user-managed)`);
@@ -290,7 +292,11 @@ program
       console.log(`Retries:     ${maxRetries} (concurrency 1)`);
     }
     if (opts.teardown) {
-      console.log(`Teardown:    enabled`);
+      if (backendConfig.cleanup) {
+        console.log(`Teardown:    enabled`);
+      } else {
+        console.log(`Teardown:    requested, but user-managed vLLM URLs are not auto-terminated`);
+      }
     }
     if (opts.networkVolume) {
       console.log(`Volume:      ${opts.networkVolume}`);
@@ -302,6 +308,7 @@ program
       logLevel: opts.logLevel,
       chatFn: backendConfig.chatFn,
       backend,
+      simulationLlmTarget: backendConfig.simulationConfig,
       concurrency,
       maxTier,
       skipSim: opts.skipSim ?? false,

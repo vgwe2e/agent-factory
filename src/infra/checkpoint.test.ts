@@ -48,7 +48,7 @@ describe('checkpoint', () => {
     assert.equal(loaded!.inputFile, '/path/to/ford_hierarchy.json');
   });
 
-  it('getCompletedNames returns Set of all completed L3 names from entries', () => {
+  it('getCompletedNames excludes errored entries from the completed Set', () => {
     const checkpoint: Checkpoint = {
       version: 1,
       inputFile: '/some/path.json',
@@ -61,7 +61,7 @@ describe('checkpoint', () => {
     };
 
     const names = getCompletedNames(checkpoint);
-    assert.deepEqual(names, new Set(['Alpha', 'Beta', 'Gamma']));
+    assert.deepEqual(names, new Set(['Alpha', 'Gamma']));
   });
 
   it('getCompletedNames returns empty Set when checkpoint is null', () => {

@@ -65,7 +65,11 @@ export function saveCheckpoint(outputDir: string, checkpoint: Checkpoint): void 
 
 export function getCompletedNames(checkpoint: Checkpoint | null): Set<string> {
   if (!checkpoint) return new Set();
-  return new Set(checkpoint.entries.map((e) => e.l3Name));
+  return new Set(
+    checkpoint.entries
+      .filter((e) => e.status !== 'error')
+      .map((e) => e.l3Name),
+  );
 }
 
 /**

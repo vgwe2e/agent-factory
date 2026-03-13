@@ -29,11 +29,12 @@ export async function withTimeout<T>(
 ): Promise<T> {
   const controller = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeoutError = new TimeoutError(timeoutMs);
 
   const timeoutPromise = new Promise<never>((_resolve, reject) => {
     timer = setTimeout(() => {
-      controller.abort();
-      reject(new TimeoutError(timeoutMs));
+      controller.abort(timeoutError);
+      reject(timeoutError);
     }, timeoutMs);
   });
 

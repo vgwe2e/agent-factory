@@ -13,7 +13,8 @@ import type { ChatResult } from "./ollama-client.js";
 interface FetchCall {
   url: string;
   body: Record<string, unknown>;
-  signal?: AbortSignal;
+  headers: HeadersInit | undefined;
+  signal?: AbortSignal | null;
 }
 
 describe("createVllmChatFn", () => {
@@ -50,7 +51,7 @@ describe("createVllmChatFn", () => {
       const body = init?.body
         ? (JSON.parse(init.body as string) as Record<string, unknown>)
         : {};
-      fetchCalls.push({ url, body, signal: init?.signal });
+      fetchCalls.push({ url, body, headers: init?.headers, signal: init?.signal });
       return new Response(JSON.stringify(responseBody), { status, statusText });
     }) as typeof globalThis.fetch;
   }
@@ -105,6 +106,21 @@ describe("createVllmChatFn", () => {
     assert.equal(fetchCalls[0].url, "http://gpu-server:8000/v1/chat/completions");
   });
 
+  it("normalizes OpenAI-compatible base URLs that already end with /v1", async () => {
+    mockFetch();
+    const chatFn = createVllmChatFn(
+      "https://api.runpod.ai/v2/ep-test/openai/v1",
+      "Qwen/Qwen2.5-32B-Instruct",
+    );
+
+    await chatFn(
+      [{ role: "user", content: "test" }],
+      { type: "object" },
+    );
+
+    assert.equal(fetchCalls[0].url, "https://api.runpod.ai/v2/ep-test/openai/v1/chat/completions");
+  });
+
   it("includes model, messages, temperature, and response_format in body", async () => {
     mockFetch();
     const chatFn = createVllmChatFn("http://localhost:8000", "my-model");
@@ -126,6 +142,19 @@ describe("createVllmChatFn", () => {
     const rf = body.response_format as Record<string, unknown>;
     assert.equal(rf.type, "json_schema");
     assert.ok("json_schema" in rf);
+  });
+
+  it("adds Authorization header when apiKey is provided", async () => {
+    mockFetch();
+    const chatFn = createVllmChatFn("http://localhost:8000", "my-model", "runpod-key");
+
+    await chatFn(
+      [{ role: "user", content: "score this" }],
+      { type: "object" },
+    );
+
+    const headers = new Headers(fetchCalls[0].headers);
+    assert.equal(headers.get("Authorization"), "Bearer runpod-key");
   });
 
   it("applies translateToResponseFormat to the format parameter", async () => {

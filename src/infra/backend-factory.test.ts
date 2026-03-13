@@ -1,32 +1,67 @@
 /**
  * Tests for backend factory module.
  *
- * Tests createBackend with both ollama and vllm backends.
- * Uses real imports for sync paths, mocks cloud-provider for async cloud paths.
+ * Covers local/user-managed vLLM usage and auto-provisioned RunPod pod usage.
  */
 
-import { describe, it, mock } from "node:test";
+import { afterEach, beforeEach, describe, it } from "node:test";
 import assert from "node:assert/strict";
 
 import { createBackend } from "./backend-factory.js";
 import { ollamaChat } from "../scoring/ollama-client.js";
 
+const RUNPOD_REST_BASE = "https://rest.runpod.io/v1";
+const DEFAULT_MODEL = "Qwen/Qwen2.5-32B-Instruct";
+const POD_ID = "pod-test-123";
+const POD_BASE_URL = `https://${POD_ID}-8000.proxy.runpod.net/v1`;
+
+type MockFetchFn = (
+  url: string | URL | Request,
+  init?: RequestInit,
+) => Promise<Response>;
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
 describe("backend-factory", () => {
+  let originalFetch: typeof globalThis.fetch;
+
+  beforeEach(() => {
+    originalFetch = globalThis.fetch;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
   it("createBackend('ollama') returns ollamaChat as chatFn with backend 'ollama'", async () => {
     const config = await createBackend("ollama");
 
     assert.equal(config.backend, "ollama");
     assert.equal(config.chatFn, ollamaChat, "chatFn should be the ollamaChat function");
+    assert.deepStrictEqual(config.simulationConfig, {
+      backend: "ollama",
+      baseUrl: "http://localhost:11434",
+      model: "qwen3:30b",
+    });
   });
 
   it("createBackend('vllm') returns backend 'vllm' when url provided", async () => {
-    // Real validateScoringSchemas should pass (Plan 01 confirmed all schemas valid)
     const config = await createBackend("vllm", { vllmUrl: "http://gpu:8000" });
 
     assert.equal(config.backend, "vllm");
     assert.equal(typeof config.chatFn, "function", "chatFn is a function");
-    // chatFn should NOT be ollamaChat
     assert.notEqual(config.chatFn, ollamaChat, "chatFn should not be ollamaChat");
+    assert.deepStrictEqual(config.simulationConfig, {
+      backend: "vllm",
+      baseUrl: "http://gpu:8000",
+      model: DEFAULT_MODEL,
+      apiKey: undefined,
+    });
   });
 
   it("createBackend('vllm') uses default model (Qwen/Qwen2.5-32B-Instruct)", async () => {
@@ -48,6 +83,58 @@ describe("backend-factory", () => {
     const config = await createBackend("vllm", { vllmUrl: "http://gpu:8000" });
     assert.equal(config.cleanup, undefined, "no cleanup for user-managed vLLM");
     assert.equal(config.costTracker, undefined, "no costTracker for user-managed vLLM");
+    assert.equal(config.podId, undefined, "no pod ID for user-managed vLLM");
+  });
+
+  it("createBackend('vllm') with user-managed URL does not forward RUNPOD auth by default", async () => {
+    let capturedAuthHeader = "";
+
+    const mockFetch: MockFetchFn = async (_url, init) => {
+      capturedAuthHeader = new Headers(init?.headers).get("Authorization") ?? "";
+      return jsonResponse({
+        choices: [{ message: { content: "{\"score\": 5}" } }],
+      });
+    };
+
+    globalThis.fetch = mockFetch as typeof globalThis.fetch;
+    const config = await createBackend("vllm", {
+      vllmUrl: "http://gpu:8000",
+      runpodApiKey: "runpod-control-plane-key",
+    });
+
+    const result = await config.chatFn(
+      [{ role: "user", content: "test" }],
+      { type: "object", properties: {} },
+    );
+
+    assert.equal(result.success, true);
+    assert.equal(capturedAuthHeader, "", "RUNPOD_API_KEY should not be forwarded to a user-managed pod");
+  });
+
+  it("createBackend('vllm') with user-managed URL forwards VLLM_API_KEY when provided", async () => {
+    let capturedAuthHeader = "";
+
+    const mockFetch: MockFetchFn = async (_url, init) => {
+      capturedAuthHeader = new Headers(init?.headers).get("Authorization") ?? "";
+      return jsonResponse({
+        choices: [{ message: { content: "{\"score\": 5}" } }],
+      });
+    };
+
+    globalThis.fetch = mockFetch as typeof globalThis.fetch;
+    const config = await createBackend("vllm", {
+      vllmUrl: "http://gpu:8000",
+      vllmApiKey: "pod-vllm-key",
+      runpodApiKey: "runpod-control-plane-key",
+    });
+
+    const result = await config.chatFn(
+      [{ role: "user", content: "test" }],
+      { type: "object", properties: {} },
+    );
+
+    assert.equal(result.success, true);
+    assert.equal(capturedAuthHeader, "Bearer pod-vllm-key");
   });
 
   it("createBackend('vllm') throws when neither vllmUrl nor runpodApiKey provided", async () => {
@@ -86,144 +173,139 @@ describe("backend-factory", () => {
     );
   });
 
-  // -- Cloud provisioning tests (mock cloud-provider) --
+  it("createBackend('vllm') with runpodApiKey provisions a dedicated pod with explicit image and start command", async () => {
+    let createBody: Record<string, unknown> | undefined;
+    let modelsAuthHeader = "";
+    const cleanupCalls: string[] = [];
 
-  it("createBackend('vllm') with runpodApiKey and networkVolumeId passes volume ID to cloud provider", async () => {
-    // Mock fetch to intercept the GraphQL mutation and check networkVolumeId
-    const originalFetch = globalThis.fetch;
-    let capturedGraphqlBody = "";
-
-    const mockFetch = async (url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+    const mockFetch: MockFetchFn = async (url, init) => {
       const u = String(url);
-      const body = typeof init?.body === "string" ? init.body : "";
+      const method = init?.method ?? "GET";
 
-      if (u.includes("graphql")) {
-        if (!body.includes("deleteEndpoint")) {
-          capturedGraphqlBody = body;
-        }
-        if (body.includes("deleteEndpoint")) {
-          return new Response(JSON.stringify({ data: { deleteEndpoint: null } }), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-        return new Response(JSON.stringify({
-          data: { saveEndpoint: { id: "ep-vol-test", name: "test" } },
-        }), { status: 200, headers: { "Content-Type": "application/json" } });
+      if (u === `${RUNPOD_REST_BASE}/pods` && method === "POST") {
+        createBody = JSON.parse(String(init?.body ?? "{}")) as Record<string, unknown>;
+        return jsonResponse({ id: POD_ID });
       }
 
-      if (u.includes("/health")) {
-        return new Response(JSON.stringify({
-          workers: { ready: 1 },
-        }), { status: 200, headers: { "Content-Type": "application/json" } });
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}` && method === "GET") {
+        return jsonResponse({ id: POD_ID, uptimeSeconds: 12 });
       }
 
-      if (u.includes("/v1/models") || u.includes("/openai/v1/models")) {
-        return new Response(JSON.stringify({
-          data: [{ id: "Qwen/Qwen2.5-32B-Instruct" }],
-        }), { status: 200, headers: { "Content-Type": "application/json" } });
+      if (u === `${POD_BASE_URL}/models`) {
+        modelsAuthHeader = new Headers(init?.headers).get("Authorization") ?? "";
+        return jsonResponse({ data: [{ id: DEFAULT_MODEL }] });
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}/stop` && method === "POST") {
+        cleanupCalls.push("stop");
+        return jsonResponse({});
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}` && method === "DELETE") {
+        cleanupCalls.push("delete");
+        return jsonResponse({});
       }
 
       return new Response("Not found", { status: 404 });
     };
 
     globalThis.fetch = mockFetch as typeof globalThis.fetch;
-    try {
-      const config = await createBackend("vllm", {
-        runpodApiKey: "test-key",
-        networkVolumeId: "vol_test123",
-      });
+    const config = await createBackend("vllm", {
+      runpodApiKey: "test-key",
+      networkVolumeId: "vol_test123",
+      hfToken: "hf_secret_token",
+    });
 
-      assert.equal(config.backend, "vllm");
-      assert.ok(
-        capturedGraphqlBody.includes("vol_test123"),
-        `Expected GraphQL body to contain 'vol_test123', got: ${capturedGraphqlBody.slice(0, 300)}`,
-      );
-      assert.ok(
-        capturedGraphqlBody.includes("networkVolumeId"),
-        `Expected GraphQL body to contain 'networkVolumeId', got: ${capturedGraphqlBody.slice(0, 300)}`,
-      );
+    assert.equal(config.backend, "vllm");
+    assert.equal(config.podId, POD_ID);
+    assert.ok(config.cleanup, "cleanup should be available for auto-provisioned pods");
+    assert.ok(config.costTracker, "cost tracker should be available for auto-provisioned pods");
+    assert.ok(createBody, "pod create body should be captured");
 
-      // Cleanup
-      if (config.cleanup) await config.cleanup();
-    } finally {
-      globalThis.fetch = originalFetch;
-    }
-  });
+    const env = createBody?.env as Record<string, string>;
+    const dockerStartCmd = createBody?.dockerStartCmd as string[];
+    const vllmApiKey = env.VLLM_API_KEY;
 
-  it("createBackend('vllm') with runpodApiKey but no networkVolumeId omits volume from mutation", async () => {
-    const originalFetch = globalThis.fetch;
-    let capturedGraphqlBody = "";
-
-    const mockFetch = async (url: string | URL | Request, init?: RequestInit): Promise<Response> => {
-      const u = String(url);
-      const body = typeof init?.body === "string" ? init.body : "";
-
-      if (u.includes("graphql")) {
-        if (!body.includes("deleteEndpoint")) {
-          capturedGraphqlBody = body;
-        }
-        if (body.includes("deleteEndpoint")) {
-          return new Response(JSON.stringify({ data: { deleteEndpoint: null } }), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-        return new Response(JSON.stringify({
-          data: { saveEndpoint: { id: "ep-no-vol", name: "test" } },
-        }), { status: 200, headers: { "Content-Type": "application/json" } });
-      }
-
-      if (u.includes("/health")) {
-        return new Response(JSON.stringify({
-          workers: { ready: 1 },
-        }), { status: 200, headers: { "Content-Type": "application/json" } });
-      }
-
-      if (u.includes("/v1/models") || u.includes("/openai/v1/models")) {
-        return new Response(JSON.stringify({
-          data: [{ id: "Qwen/Qwen2.5-32B-Instruct" }],
-        }), { status: 200, headers: { "Content-Type": "application/json" } });
-      }
-
-      return new Response("Not found", { status: 404 });
-    };
-
-    globalThis.fetch = mockFetch as typeof globalThis.fetch;
-    try {
-      const config = await createBackend("vllm", {
-        runpodApiKey: "test-key",
-      });
-
-      assert.equal(config.backend, "vllm");
-      assert.ok(
-        !capturedGraphqlBody.includes("networkVolumeId"),
-        `Expected GraphQL body NOT to contain 'networkVolumeId', got: ${capturedGraphqlBody.slice(0, 300)}`,
-      );
-
-      if (config.cleanup) await config.cleanup();
-    } finally {
-      globalThis.fetch = originalFetch;
-    }
-  });
-
-  it("createBackend('vllm') with runpodApiKey provisions cloud endpoint", async () => {
-    // We test indirectly: if runpodApiKey is given without vllmUrl,
-    // createBackend calls createCloudProvider().provision().
-    // This will fail because the API key is fake, but the error should
-    // come from the cloud provider (fetch to RunPod), not from "missing vllmUrl".
-    // This verifies the cloud provisioning path is wired correctly.
-    await assert.rejects(
-      () => createBackend("vllm", { runpodApiKey: "fake-key-for-test" }),
-      (err: Error) => {
-        // The error should NOT be "Either --vllm-url or RUNPOD_API_KEY"
-        // It should be a cloud provider error (network/API error)
-        assert.ok(
-          !err.message.includes("Either --vllm-url or RUNPOD_API_KEY"),
-          `Should not be the "missing options" error. Got: ${err.message}`,
-        );
-        return true;
-      },
+    assert.equal(createBody?.imageName, "vllm/vllm-openai:latest");
+    assert.equal(createBody?.templateId, undefined, "default provisioning should avoid template baked defaults");
+    assert.deepStrictEqual(createBody?.gpuTypeIds, ["NVIDIA H100 NVL"]);
+    assert.equal(createBody?.networkVolumeId, "vol_test123");
+    assert.equal(env.HF_TOKEN, "hf_secret_token");
+    assert.equal(env.HF_HOME, "/workspace/hf_home");
+    assert.match(vllmApiKey, /^vllm-/);
+    assert.deepStrictEqual(config.simulationConfig, {
+      backend: "vllm",
+      baseUrl: POD_BASE_URL,
+      model: DEFAULT_MODEL,
+      apiKey: vllmApiKey,
+    });
+    assert.deepStrictEqual(
+      dockerStartCmd.slice(0, 8),
+      ["--model", DEFAULT_MODEL, "--max-model-len", "16384", "--dtype", "auto", "--api-key", vllmApiKey],
     );
+    assert.equal(modelsAuthHeader, `Bearer ${vllmApiKey}`);
+
+    await config.cleanup?.();
+    assert.deepStrictEqual(cleanupCalls, ["stop", "delete"]);
+  });
+
+  it("createBackend('vllm') auto-provision path uses the pod URL and pod-scoped vLLM auth for chat", async () => {
+    let generatedVllmApiKey = "";
+    let capturedChatUrl = "";
+    let capturedChatAuth = "";
+
+    const mockFetch: MockFetchFn = async (url, init) => {
+      const u = String(url);
+      const method = init?.method ?? "GET";
+
+      if (u === `${RUNPOD_REST_BASE}/pods` && method === "POST") {
+        const body = JSON.parse(String(init?.body ?? "{}")) as { env?: Record<string, string> };
+        generatedVllmApiKey = body.env?.VLLM_API_KEY ?? "";
+        return jsonResponse({ id: POD_ID });
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}` && method === "GET") {
+        return jsonResponse({ id: POD_ID, uptimeSeconds: 8 });
+      }
+
+      if (u === `${POD_BASE_URL}/models`) {
+        return jsonResponse({ data: [{ id: DEFAULT_MODEL }] });
+      }
+
+      if (u === `${POD_BASE_URL}/chat/completions`) {
+        capturedChatUrl = u;
+        capturedChatAuth = new Headers(init?.headers).get("Authorization") ?? "";
+        return jsonResponse({
+          choices: [{ message: { content: "{\"score\": 5}" } }],
+        });
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}/stop` && method === "POST") {
+        return jsonResponse({});
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}` && method === "DELETE") {
+        return jsonResponse({});
+      }
+
+      return new Response("Not found", { status: 404 });
+    };
+
+    globalThis.fetch = mockFetch as typeof globalThis.fetch;
+    const config = await createBackend("vllm", {
+      runpodApiKey: "runpod-control-plane-key",
+    });
+
+    const result = await config.chatFn(
+      [{ role: "user", content: "test" }],
+      { type: "object", properties: {} },
+    );
+
+    assert.equal(result.success, true);
+    assert.equal(capturedChatUrl, `${POD_BASE_URL}/chat/completions`);
+    assert.equal(capturedChatAuth, `Bearer ${generatedVllmApiKey}`);
+    assert.notEqual(capturedChatAuth, "Bearer runpod-control-plane-key");
+
+    await config.cleanup?.();
   });
 });

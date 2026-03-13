@@ -13,6 +13,7 @@ import path from "node:path";
 import os from "node:os";
 import yaml from "js-yaml";
 import type { SimulationInput, ComponentMap, MockTest, IntegrationSurface } from "../types/simulation.js";
+import type { SimulationLlmTarget } from "./llm-client.js";
 import type { ValidationResult } from "./validators/knowledge-validator.js";
 import { TimeoutError } from "../infra/timeout.js";
 
@@ -90,22 +91,22 @@ const MOCK_MERMAID = `graph TD
 
 // -- Mocked generator modules --
 
-const mockDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+const mockDecisionFlow = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => ({
   success: true as const,
   data: { mermaid: MOCK_MERMAID, attempts: 1 },
 } as { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string }));
 
-const mockComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _url?: string) => ({
+const mockComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _llmTarget?: SimulationLlmTarget) => ({
   success: true as const,
   data: { componentMap: MOCK_COMPONENT_MAP, validation: MOCK_VALIDATION, attempts: 1 },
 } as { success: true; data: { componentMap: ComponentMap; validation: ValidationResult[]; attempts: number } } | { success: false; error: string }));
 
-const mockMockTest = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+const mockMockTest = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => ({
   success: true as const,
   data: { mockTest: MOCK_MOCK_TEST, attempts: 1 },
 } as { success: true; data: { mockTest: MockTest; attempts: number } } | { success: false; error: string }));
 
-const mockIntegrationSurface = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+const mockIntegrationSurface = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => ({
   success: true as const,
   data: { integrationSurface: MOCK_INTEGRATION_SURFACE, attempts: 1 },
 } as { success: true; data: { integrationSurface: IntegrationSurface; attempts: number } } | { success: false; error: string }));
@@ -143,7 +144,7 @@ describe("runSimulationPipeline", () => {
 
   it("processes inputs sorted by composite descending", async () => {
     const callOrder: string[] = [];
-    mockDecisionFlow.mock.mockImplementation(async (input: SimulationInput, _url?: string) => {
+    mockDecisionFlow.mock.mockImplementation(async (input: SimulationInput, _llmTarget?: SimulationLlmTarget) => {
       callOrder.push(input.opportunity.l3_name);
       return { success: true as const, data: { mermaid: MOCK_MERMAID, attempts: 1 } } as
         { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string };
@@ -195,7 +196,7 @@ describe("runSimulationPipeline", () => {
   });
 
   it("handles partial generator failure gracefully", async () => {
-    mockDecisionFlow.mock.mockImplementation(async (_input: SimulationInput, _url?: string) => ({
+    mockDecisionFlow.mock.mockImplementation(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => ({
       success: false as const,
       error: "LLM timeout",
     } as { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string }));
@@ -261,6 +262,32 @@ describe("runSimulationPipeline", () => {
     // componentMap called twice (once per opp), each with the knowledge index
     assert.equal(mockComponentMap.mock.callCount(), 2);
   });
+
+  it("reuses complete existing scenario artifacts instead of regenerating them", async () => {
+    const { runSimulationPipeline } = await loadPipelineWithMocks();
+    const input = makeSimulationInput({ name: "Reuse Existing", composite: 0.81 });
+    const oppDir = path.join(tmpDir, "reuse-existing");
+
+    fs.mkdirSync(oppDir, { recursive: true });
+    fs.writeFileSync(path.join(oppDir, "decision-flow.mmd"), MOCK_MERMAID, "utf-8");
+    fs.writeFileSync(path.join(oppDir, "component-map.yaml"), yaml.dump(MOCK_COMPONENT_MAP), "utf-8");
+    fs.writeFileSync(path.join(oppDir, "mock-test.yaml"), yaml.dump(MOCK_MOCK_TEST), "utf-8");
+    fs.writeFileSync(
+      path.join(oppDir, "integration-surface.yaml"),
+      yaml.dump(MOCK_INTEGRATION_SURFACE),
+      "utf-8",
+    );
+
+    const result = await runSimulationPipeline([input], tmpDir);
+
+    assert.equal(result.totalSimulated, 1);
+    assert.equal(result.totalFailed, 0);
+    assert.equal(result.results[0].l3Name, "Reuse Existing");
+    assert.equal(mockDecisionFlow.mock.callCount(), 0);
+    assert.equal(mockComponentMap.mock.callCount(), 0);
+    assert.equal(mockMockTest.mock.callCount(), 0);
+    assert.equal(mockIntegrationSurface.mock.callCount(), 0);
+  });
 });
 
 describe("per-opportunity error isolation", () => {
@@ -276,12 +303,12 @@ describe("per-opportunity error isolation", () => {
 
   it("when generator 2 throws for opp 1, opp 2 still runs all 4 generators", async () => {
     let cmCallCount = 0;
-    const localDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+    const localDecisionFlow = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => ({
       success: true as const,
       data: { mermaid: MOCK_MERMAID, attempts: 1 },
     } as { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string }));
 
-    const localComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _url?: string) => {
+    const localComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _llmTarget?: SimulationLlmTarget) => {
       cmCallCount++;
       if (cmCallCount === 1) throw new Error("Unexpected crash in generator 2");
       return {
@@ -290,12 +317,12 @@ describe("per-opportunity error isolation", () => {
       } as { success: true; data: { componentMap: ComponentMap; validation: ValidationResult[]; attempts: number } } | { success: false; error: string };
     });
 
-    const localMockTest = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+    const localMockTest = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => ({
       success: true as const,
       data: { mockTest: MOCK_MOCK_TEST, attempts: 1 },
     } as { success: true; data: { mockTest: MockTest; attempts: number } } | { success: false; error: string }));
 
-    const localIntSurface = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+    const localIntSurface = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => ({
       success: true as const,
       data: { integrationSurface: MOCK_INTEGRATION_SURFACE, attempts: 1 },
     } as { success: true; data: { integrationSurface: IntegrationSurface; attempts: number } } | { success: false; error: string }));
@@ -325,16 +352,16 @@ describe("per-opportunity error isolation", () => {
   });
 
   it("when all 4 generators fail for one opp, totalFailed increments and result has default artifacts", async () => {
-    const throwingDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => {
+    const throwingDecisionFlow = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => {
       throw new Error("Generator crash");
     });
-    const throwingComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _url?: string) => {
+    const throwingComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _llmTarget?: SimulationLlmTarget) => {
       throw new Error("Generator crash");
     });
-    const throwingMockTest = mock.fn(async (_input: SimulationInput, _url?: string) => {
+    const throwingMockTest = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => {
       throw new Error("Generator crash");
     });
-    const throwingIntSurface = mock.fn(async (_input: SimulationInput, _url?: string) => {
+    const throwingIntSurface = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => {
       throw new Error("Generator crash");
     });
 
@@ -359,7 +386,7 @@ describe("per-opportunity error isolation", () => {
   it("when timeoutMs is set and generators exceed it, TimeoutError is caught and remaining opps continue", async () => {
     // First opp hangs forever, second opp succeeds
     let oppIndex = 0;
-    const slowDecisionFlow = mock.fn(async (input: SimulationInput, _url?: string) => {
+    const slowDecisionFlow = mock.fn(async (input: SimulationInput, _llmTarget?: SimulationLlmTarget) => {
       oppIndex++;
       if (oppIndex === 1) {
         // Simulate a hang by waiting longer than timeout
@@ -394,7 +421,7 @@ describe("per-opportunity error isolation", () => {
 
   it("when timeoutMs is NOT set, generators run without timeout wrapping", async () => {
     // Use a generator that takes 100ms -- should succeed without timeout
-    const delayedDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => {
+    const delayedDecisionFlow = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => {
       await new Promise(resolve => setTimeout(resolve, 100));
       return {
         success: true as const,
@@ -419,12 +446,12 @@ describe("per-opportunity error isolation", () => {
 
   it("when timeout fires after generator 1, result includes default artifacts for remaining", async () => {
     // Decision flow succeeds fast, then component map hangs
-    const fastDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => ({
+    const fastDecisionFlow = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => ({
       success: true as const,
       data: { mermaid: MOCK_MERMAID, attempts: 1 },
     } as { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string }));
 
-    const hangingComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _url?: string) => {
+    const hangingComponentMap = mock.fn(async (_input: SimulationInput, _ki: Map<string, string>, _llmTarget?: SimulationLlmTarget) => {
       await new Promise(resolve => setTimeout(resolve, 5000));
       return {
         success: true as const,
@@ -450,8 +477,50 @@ describe("per-opportunity error isolation", () => {
     assert.deepEqual(result.results[0].artifacts.componentMap.streams, []);
   });
 
+  it("timeout aborts in-flight generator work so no late duplicate result is appended", async () => {
+    const abortAwareDecisionFlow = mock.fn(async (
+      _input: SimulationInput,
+      _llmTarget?: SimulationLlmTarget,
+      signal?: AbortSignal,
+    ) => {
+      await new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(resolve, 200);
+        signal?.addEventListener(
+          "abort",
+          () => {
+            clearTimeout(timer);
+            reject(signal.reason instanceof Error ? signal.reason : new Error("aborted"));
+          },
+          { once: true },
+        );
+      });
+
+      return {
+        success: true as const,
+        data: { mermaid: MOCK_MERMAID, attempts: 1 },
+      } as { success: true; data: { mermaid: string; attempts: number } } | { success: false; error: string };
+    });
+
+    const pipeline = await import("./simulation-pipeline.js");
+    const inputs = [makeSimulationInput({ name: "Abort A", composite: 0.80 })];
+
+    const result = await pipeline.runSimulationPipeline(inputs, tmpDir, undefined, {
+      generateDecisionFlow: abortAwareDecisionFlow,
+      generateComponentMap: mockComponentMap,
+      generateMockTest: mockMockTest,
+      generateIntegrationSurface: mockIntegrationSurface,
+      buildKnowledgeIndex: mockBuildKnowledgeIndex,
+    }, { timeoutMs: 50 });
+
+    assert.equal(result.totalFailed, 1);
+    assert.equal(result.results.length, 1);
+
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    assert.equal(result.results.length, 1, "timed-out work must not append a late duplicate result");
+  });
+
   it("error count is returned so callers can track simulation failures", async () => {
-    const throwingDecisionFlow = mock.fn(async (_input: SimulationInput, _url?: string) => {
+    const throwingDecisionFlow = mock.fn(async (_input: SimulationInput, _llmTarget?: SimulationLlmTarget) => {
       throw new Error("Unexpected error");
     });
 

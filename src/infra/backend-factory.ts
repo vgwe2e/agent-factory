@@ -6,16 +6,17 @@
  * the client to catch incompatibilities early (VLLM-04).
  *
  * When backend is "vllm" and no vllmUrl is provided but a RunPod API key
- * is available, auto-provisions a cloud H100 endpoint via RunPod GraphQL.
+ * is available, auto-provisions a dedicated RunPod vLLM pod.
  */
 
 import type { ChatResult } from "../scoring/ollama-client.js";
 import { ollamaChat } from "../scoring/ollama-client.js";
 import { createVllmChatFn } from "../scoring/vllm-client.js";
 import { validateScoringSchemas } from "../scoring/schema-translator.js";
-import { createCloudProvider } from "./cloud-provider.js";
 import { createCostTracker } from "./cost-tracker.js";
 import type { CostTracker } from "./cost-tracker.js";
+import { createPodProvider } from "./pod-provider.js";
+import type { SimulationLlmConfig } from "../simulation/llm-client.js";
 
 // -- Types --
 
@@ -29,8 +30,10 @@ type ChatFn = (
 export interface VllmBackendOptions {
   vllmUrl?: string;           // If omitted and runpodApiKey set, auto-provision
   vllmModel?: string;
+  vllmApiKey?: string;        // Auth for a user-managed vLLM/OpenAI server
   runpodApiKey?: string;      // From RUNPOD_API_KEY env var
   networkVolumeId?: string;   // RunPod network volume for model weight caching
+  hfToken?: string;           // Optional Hugging Face token for gated/private models
 }
 
 export interface BackendConfig {
@@ -38,12 +41,15 @@ export interface BackendConfig {
   backend: Backend;
   cleanup?: () => Promise<void>;  // teardown for cloud resources
   costTracker?: CostTracker;      // GPU cost tracking (cloud only)
-  endpointId?: string;            // RunPod endpoint ID (cloud only)
+  podId?: string;                 // RunPod pod ID (cloud only)
+  simulationConfig: SimulationLlmConfig;
 }
 
 // -- Constants --
 
 const DEFAULT_VLLM_MODEL = "Qwen/Qwen2.5-32B-Instruct";
+const DEFAULT_OLLAMA_MODEL = "qwen3:30b";
+const DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434";
 
 // -- Public API --
 
@@ -61,7 +67,15 @@ export async function createBackend(
 ): Promise<BackendConfig> {
   switch (backend) {
     case "ollama":
-      return { chatFn: ollamaChat, backend: "ollama" };
+      return {
+        chatFn: ollamaChat,
+        backend: "ollama",
+        simulationConfig: {
+          backend: "ollama",
+          baseUrl: DEFAULT_OLLAMA_BASE_URL,
+          model: DEFAULT_OLLAMA_MODEL,
+        },
+      };
 
     case "vllm": {
       // Pre-flight schema validation (VLLM-04)
@@ -77,31 +91,54 @@ export async function createBackend(
 
       // Path 1: User-managed vLLM instance
       if (options?.vllmUrl) {
-        const chatFn = createVllmChatFn(options.vllmUrl, model, options?.runpodApiKey);
-        return { chatFn, backend: "vllm" };
+        const chatFn = createVllmChatFn(options.vllmUrl, model, options?.vllmApiKey);
+        return {
+          chatFn,
+          backend: "vllm",
+          simulationConfig: {
+            backend: "vllm",
+            baseUrl: options.vllmUrl,
+            model,
+            apiKey: options.vllmApiKey,
+          },
+        };
       }
 
-      // Path 2: Auto-provision via RunPod
+      // Path 2: Auto-provision a dedicated RunPod pod
       if (options?.runpodApiKey) {
-        const provider = createCloudProvider({
+        const provider = createPodProvider({
           apiKey: options.runpodApiKey,
+          model,
           networkVolumeId: options.networkVolumeId,
+          hfToken: options.hfToken,
         });
-        const endpoint = await provider.provision();
-        console.log(`RunPod endpoint: ${endpoint.endpointId}`);
+        const pod = await provider.provision();
+        console.log(`RunPod pod: ${pod.podId}`);
 
         const costTracker = createCostTracker();
 
         const cleanup = async () => {
           try {
-            await provider.teardown(endpoint);
+            await provider.teardown(pod);
           } catch {
             // Swallow errors -- teardown is best-effort
           }
         };
 
-        const chatFn = createVllmChatFn(endpoint.baseUrl, model);
-        return { chatFn, backend: "vllm", cleanup, costTracker, endpointId: endpoint.endpointId };
+        const chatFn = createVllmChatFn(pod.baseUrl, model, pod.vllmApiKey);
+        return {
+          chatFn,
+          backend: "vllm",
+          cleanup,
+          costTracker,
+          podId: pod.podId,
+          simulationConfig: {
+            backend: "vllm",
+            baseUrl: pod.baseUrl,
+            model,
+            apiKey: pod.vllmApiKey,
+          },
+        };
       }
 
       // Path 3: Neither provided
