@@ -136,11 +136,16 @@ program
   )
   .option("--skip-sim", "Skip simulation phase (scoring only)")
   .option("--sim-timeout <ms>", "Per-opportunity simulation timeout in milliseconds")
+  .option(
+    "--top-n <n>",
+    "Number of top-scoring L4 candidates to pass to LLM scoring (default: 50)",
+    "50",
+  )
   .option("--retry <n>", "Retry errored opportunities up to N times at concurrency 1", "0")
   .option("--teardown", "Tear down cloud resources after pipeline completes")
   .option("--runpod-gpu <type>", "RunPod GPU type override for auto-provisioned pods")
   .option("--network-volume <id>", "RunPod network volume ID for model weight caching")
-  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; retry: string; teardown?: boolean; runpodGpu?: string; networkVolume?: string }) => {
+  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; topN: string; retry: string; teardown?: boolean; runpodGpu?: string; networkVolume?: string }) => {
     console.log(`${BOLD}Aera Skill Feasibility Engine v1.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
@@ -225,6 +230,13 @@ program
       process.exit(1);
     }
 
+    // Validate top-n
+    const topN = parseInt(opts.topN ?? "50", 10);
+    if (isNaN(topN) || topN < 1) {
+      console.error(`${RED}Error: --top-n must be a positive integer${RESET}`);
+      process.exit(1);
+    }
+
     // Validate vLLM backend requirements
     const backend = opts.backend as Backend;
     if (backend === "vllm" && !opts.vllmUrl && !process.env.RUNPOD_API_KEY) {
@@ -289,6 +301,7 @@ program
       console.log(`Backend:     ollama (local)`);
     }
     console.log(`Concurrency: ${concurrency}`);
+    console.log(`Top-N:       ${topN}`);
     if (maxTier < 3) {
       console.log(`Max tier:    ${maxTier} (skipping tier ${maxTier + 1}+)`);
     }
