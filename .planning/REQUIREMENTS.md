@@ -38,10 +38,10 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 
 ### Pipeline Integration
 
-- [ ] **PIPE-01**: Updated pipeline-runner supports two-pass flow: deterministic pre-score → top-N filter → LLM scoring → simulation
+- [x] **PIPE-01**: Updated pipeline-runner supports two-pass flow: deterministic pre-score → top-N filter → LLM scoring → simulation
 - [x] **PIPE-02**: `--scoring-mode two-pass|three-lens` CLI flag for A/B comparison with v1.2 behavior
-- [ ] **PIPE-03**: Synthesize deterministic signals into existing LensScore shape so all report formatters work unchanged
-- [ ] **PIPE-04**: L3 names retained as metadata labels for report grouping (not as scoring unit)
+- [x] **PIPE-03**: Synthesize deterministic signals into existing LensScore shape so all report formatters work unchanged
+- [x] **PIPE-04**: L3 names retained as metadata labels for report grouping (not as scoring unit)
 - [x] **PIPE-05**: Checkpoint system supports L4-level scoring with backward-compatible resume from v1.2 checkpoints
 
 ### Simulation Adapter
@@ -109,10 +109,10 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 | LLM-04 | Phase 22 | Complete |
 | LLM-05 | Phase 22 | Complete |
 | LLM-06 | Phase 22 | Complete |
-| PIPE-01 | Phase 23 | Pending |
+| PIPE-01 | Phase 23 | Complete |
 | PIPE-02 | Phase 23 | Complete |
-| PIPE-03 | Phase 23 | Pending |
-| PIPE-04 | Phase 23 | Pending |
+| PIPE-03 | Phase 23 | Complete |
+| PIPE-04 | Phase 23 | Complete |
 | PIPE-05 | Phase 23 | Complete |
 | SIM-01 | Phase 23 | Complete |
 | SIM-02 | Phase 23 | Complete |
