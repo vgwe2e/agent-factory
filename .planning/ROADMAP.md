@@ -118,7 +118,11 @@ Plans:
   2. The deterministic scorer produces more than 200 distinct score values across 826 L4 candidates, confirming sufficient discrimination to avoid excessive ties
   3. A full Ford 826-candidate run completes successfully with both `--scoring-mode two-pass` and `--scoring-mode three-lens`, producing side-by-side output directories for manual comparison
   4. All existing report formatters (TSV, summary, adoption risk, dead zones, meta-reflection, tier-1 report) produce correct output from v1.3 ScoringResult without modification
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 24-01-PLAN.md -- Spearman utility + calibration test + discrimination test
+- [ ] 24-02-PLAN.md -- Formatter structural parity tests against v1.2 baseline
+- [ ] 24-03-PLAN.md -- Full Ford two-pass run and side-by-side verification
 
 ## Progress
 
@@ -132,6 +136,6 @@ Plans:
 | 21. Types + Deterministic Foundation | v1.3 | 3/3 | Complete | 2026-03-13 |
 | 22. Consolidated LLM Scorer | v1.3 | Complete    | 2026-03-14 | 2026-03-14 |
 | 23. Pipeline Integration | 1/2 | In Progress|  | - |
-| 24. Validation + Report Compatibility | v1.3 | 0/TBD | Not started | - |
+| 24. Validation + Report Compatibility | v1.3 | 0/3 | Not started | - |
 
-**Total:** 24 phases, 53+ plans, 3 milestones shipped, 1 in progress
+**Total:** 24 phases, 56 plans, 3 milestones shipped, 1 in progress
