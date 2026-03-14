@@ -141,11 +141,16 @@ program
     "Number of top-scoring L4 candidates to pass to LLM scoring (default: 50)",
     "50",
   )
+  .addOption(
+    new Option("--scoring-mode <mode>", "Scoring pipeline mode")
+      .choices(["two-pass", "three-lens"])
+      .default("two-pass"),
+  )
   .option("--retry <n>", "Retry errored opportunities up to N times at concurrency 1", "0")
   .option("--teardown", "Tear down cloud resources after pipeline completes")
   .option("--runpod-gpu <type>", "RunPod GPU type override for auto-provisioned pods")
   .option("--network-volume <id>", "RunPod network volume ID for model weight caching")
-  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; topN: string; retry: string; teardown?: boolean; runpodGpu?: string; networkVolume?: string }) => {
+  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; topN: string; scoringMode: string; retry: string; teardown?: boolean; runpodGpu?: string; networkVolume?: string }) => {
     console.log(`${BOLD}Aera Skill Feasibility Engine v1.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
@@ -237,6 +242,11 @@ program
       process.exit(1);
     }
 
+    // Warn about --top-n in three-lens mode
+    if (opts.scoringMode === "three-lens" && opts.topN !== "50") {
+      console.log(`${RED}Warning: --top-n is ignored in three-lens mode${RESET}`);
+    }
+
     // Validate vLLM backend requirements
     const backend = opts.backend as Backend;
     if (backend === "vllm" && !opts.vllmUrl && !process.env.RUNPOD_API_KEY) {
@@ -300,6 +310,7 @@ program
     } else {
       console.log(`Backend:     ollama (local)`);
     }
+    console.log(`Scoring mode: ${opts.scoringMode}`);
     console.log(`Concurrency: ${concurrency}`);
     console.log(`Top-N:       ${topN}`);
     if (maxTier < 3) {
@@ -336,6 +347,8 @@ program
       skipSim: opts.skipSim ?? false,
       simTimeoutMs,
       costTracker: backendConfig.costTracker,
+      scoringMode: opts.scoringMode as "two-pass" | "three-lens",
+      topN: opts.scoringMode === "two-pass" ? topN : undefined,
     };
 
     // Start cost tracking BEFORE retry loop so total GPU time spans all attempts
@@ -380,10 +393,22 @@ program
     const durationSec = (pipelineResult.totalDurationMs / 1000).toFixed(1);
     console.log();
     console.log("=== Pipeline Complete ===");
+    console.log(`Scoring mode: ${pipelineResult.scoringMode ?? opts.scoringMode}`);
     console.log(`Triaged:   ${pipelineResult.triageCount} opportunities`);
     console.log(`Skipped:   ${pipelineResult.skippedCount}`);
     console.log(`Scored:    ${pipelineResult.scoredCount}`);
     console.log(`Promoted:  ${pipelineResult.promotedCount} to simulation`);
+    if (pipelineResult.scoringMode === "two-pass") {
+      if (pipelineResult.preScoredCount != null) {
+        console.log(`Pre-scored: ${pipelineResult.preScoredCount} L4 candidates`);
+      }
+      if (pipelineResult.survivorCount != null) {
+        console.log(`Survivors:  ${pipelineResult.survivorCount}`);
+      }
+      if (pipelineResult.cutoffScore != null) {
+        console.log(`Cutoff:    ${pipelineResult.cutoffScore.toFixed(4)}`);
+      }
+    }
     console.log(`Simulated: ${opts.skipSim ? "skipped" : pipelineResult.simulatedCount}`);
     if (pipelineResult.simErrorCount > 0) {
       console.log(`Sim errors: ${pipelineResult.simErrorCount}`);

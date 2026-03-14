@@ -92,6 +92,10 @@ export interface PipelineOptions {
   simTimeoutMs?: number;
   /** Simulation backend target. Defaults to local Ollama when omitted. */
   simulationLlmTarget?: SimulationLlmTarget;
+  /** Scoring pipeline mode. Default: "two-pass". */
+  scoringMode?: "two-pass" | "three-lens";
+  /** Number of top-scoring L4 candidates for two-pass LLM scoring. Default: 50. */
+  topN?: number;
 }
 
 export interface PipelineResult {
@@ -108,6 +112,14 @@ export interface PipelineResult {
   avgPerOppMs: number;
   errors: string[];
   costSummary?: CostSummary;
+  /** Scoring mode used for this run. */
+  scoringMode?: "two-pass" | "three-lens";
+  /** Two-pass specific: total L4s pre-scored. */
+  preScoredCount?: number;
+  /** Two-pass specific: survivors after top-N filter. */
+  survivorCount?: number;
+  /** Two-pass specific: cutoff composite score. */
+  cutoffScore?: number;
 }
 
 // -- Defaults --
@@ -565,6 +577,7 @@ export async function runPipeline(
     avgPerOppMs: scoredCount > 0 ? Math.round(totalDurationMs / scoredCount) : 0,
     errors,
     costSummary,
+    scoringMode: options.scoringMode ?? "three-lens",
   };
 
   logger.info(

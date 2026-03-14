@@ -17,6 +17,7 @@ function makePipelineResult(overrides: Partial<PipelineResult> = {}): PipelineRe
     concurrency: 4,
     avgPerOppMs: 500,
     errors: [],
+    scoringMode: "two-pass",
     ...overrides,
   };
 }
@@ -177,6 +178,60 @@ describe("runWithRetries", () => {
       assert.equal(pipelineFn.mock.callCount(), 3, "pipeline should be called 3 times (initial + 2 retries)");
       assert.equal(clearFn.mock.callCount(), 2, "clearCheckpointErrors should be called before each retry");
       assert.equal(result.exitCode, 0);
+    });
+
+    it("passes scoringMode through in PipelineResult from pipelineFn", async () => {
+      const pipelineFn = mock.fn(async () => makePipelineResult({ scoringMode: "two-pass" }));
+
+      const result = await runWithRetries({
+        pipelineFn,
+        clearCheckpointErrorsFn: mock.fn(() => 0),
+        cleanupFn: mock.fn(async () => {}),
+        teardown: false,
+        maxRetries: 0,
+        outputDir: "./test-output",
+      });
+
+      assert.equal(result.exitCode, 0);
+      assert.equal(result.lastResult?.scoringMode, "two-pass");
+    });
+
+    it("PipelineResult supports two-pass specific fields", async () => {
+      const pipelineFn = mock.fn(async () => makePipelineResult({
+        scoringMode: "two-pass",
+        preScoredCount: 200,
+        survivorCount: 50,
+        cutoffScore: 0.4567,
+      }));
+
+      const result = await runWithRetries({
+        pipelineFn,
+        clearCheckpointErrorsFn: mock.fn(() => 0),
+        cleanupFn: mock.fn(async () => {}),
+        teardown: false,
+        maxRetries: 0,
+        outputDir: "./test-output",
+      });
+
+      assert.equal(result.lastResult?.preScoredCount, 200);
+      assert.equal(result.lastResult?.survivorCount, 50);
+      assert.equal(result.lastResult?.cutoffScore, 0.4567);
+      assert.equal(result.lastResult?.scoringMode, "two-pass");
+    });
+
+    it("PipelineResult.scoringMode is undefined when not set (three-lens default)", async () => {
+      const pipelineFn = mock.fn(async () => makePipelineResult({ scoringMode: undefined }));
+
+      const result = await runWithRetries({
+        pipelineFn,
+        clearCheckpointErrorsFn: mock.fn(() => 0),
+        cleanupFn: mock.fn(async () => {}),
+        teardown: false,
+        maxRetries: 0,
+        outputDir: "./test-output",
+      });
+
+      assert.equal(result.lastResult?.scoringMode, undefined);
     });
 
     it("stops retrying early when errorCount reaches 0", async () => {
