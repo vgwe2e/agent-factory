@@ -53,7 +53,7 @@ Full details: `milestones/v1.2-ROADMAP.md`
 
 </details>
 
-### 🚧 v1.3 L4 Two-Pass Scoring Funnel (In Progress)
+### v1.3 L4 Two-Pass Scoring Funnel (In Progress)
 
 **Milestone Goal:** Replace brute-force LLM scoring of L3 opportunities with a two-pass funnel that scores L4 activities deterministically, then applies focused LLM assessment only to configurable top-N survivors. Reduces LLM calls from ~2,478 to ~50.
 
@@ -76,9 +76,9 @@ Full details: `milestones/v1.2-ROADMAP.md`
   5. Existing red flags (DEAD_ZONE, NO_STAKES, CONFIDENCE_GAP) result in near-zero deterministic scores or hard elimination, not separate triage logic
 **Plans:** 3/3 plans complete
 Plans:
-- [ ] 21-01-PLAN.md -- Types + dimensions + composite + red flags
-- [ ] 21-02-PLAN.md -- Top-N filter + pre-scorer orchestrator
-- [ ] 21-03-PLAN.md -- Pre-score TSV formatter + CLI --top-n flag
+- [x] 21-01-PLAN.md -- Types + dimensions + composite + red flags
+- [x] 21-02-PLAN.md -- Top-N filter + pre-scorer orchestrator
+- [x] 21-03-PLAN.md -- Pre-score TSV formatter + CLI --top-n flag
 
 ### Phase 22: Consolidated LLM Scorer
 **Goal**: Each top-N survivor receives exactly one LLM call that assesses platform fit with Aera component citations and sanity-checks the deterministic pre-score
@@ -89,7 +89,10 @@ Plans:
   2. The LLM prompt includes the full deterministic score breakdown so the model can perform targeted sanity checking of individual dimensions
   3. A final composite score blends pre-score and LLM output, feeding into the existing 0.60 promotion threshold gate for simulation eligibility
   4. Validation failures trigger scoreWithRetry, consistent with v1.2 retry behavior
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 22-01-PLAN.md -- Schema + types + consolidated prompt builder
+- [ ] 22-02-PLAN.md -- Consolidated scorer function + composite blending
 
 ### Phase 23: Pipeline Integration
 **Goal**: The full two-pass pipeline runs end-to-end from CLI invocation through deterministic scoring, LLM assessment, simulation, and reports -- with a feature flag preserving v1.2 behavior for comparison
@@ -123,9 +126,9 @@ Plans:
 | 1-11 | v1.0 | 31/31 | Complete | 2026-03-11 |
 | 12-14 | v1.1 | 7/7 | Complete | 2026-03-12 |
 | 15-20 | v1.2 | 8/8 | Complete | 2026-03-12 |
-| 21. Types + Deterministic Foundation | 3/3 | Complete    | 2026-03-13 | - |
-| 22. Consolidated LLM Scorer | v1.3 | 0/TBD | Not started | - |
+| 21. Types + Deterministic Foundation | v1.3 | 3/3 | Complete | 2026-03-13 |
+| 22. Consolidated LLM Scorer | v1.3 | 0/2 | Not started | - |
 | 23. Pipeline Integration | v1.3 | 0/TBD | Not started | - |
 | 24. Validation + Report Compatibility | v1.3 | 0/TBD | Not started | - |
 
-**Total:** 24 phases, 49+ plans, 3 milestones shipped, 1 in progress
+**Total:** 24 phases, 51+ plans, 3 milestones shipped, 1 in progress
