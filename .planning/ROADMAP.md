@@ -89,7 +89,7 @@ Plans:
   2. The LLM prompt includes the full deterministic score breakdown so the model can perform targeted sanity checking of individual dimensions
   3. A final composite score blends pre-score and LLM output, feeding into the existing 0.60 promotion threshold gate for simulation eligibility
   4. Validation failures trigger scoreWithRetry, consistent with v1.2 retry behavior
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
 - [ ] 22-01-PLAN.md -- Schema + types + consolidated prompt builder
 - [ ] 22-02-PLAN.md -- Consolidated scorer function + composite blending
@@ -127,7 +127,7 @@ Plans:
 | 12-14 | v1.1 | 7/7 | Complete | 2026-03-12 |
 | 15-20 | v1.2 | 8/8 | Complete | 2026-03-12 |
 | 21. Types + Deterministic Foundation | v1.3 | 3/3 | Complete | 2026-03-13 |
-| 22. Consolidated LLM Scorer | v1.3 | 0/2 | Not started | - |
+| 22. Consolidated LLM Scorer | 1/2 | In Progress|  | - |
 | 23. Pipeline Integration | v1.3 | 0/TBD | Not started | - |
 | 24. Validation + Report Compatibility | v1.3 | 0/TBD | Not started | - |
 

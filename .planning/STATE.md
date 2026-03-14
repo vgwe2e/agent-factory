@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: L4 Two-Pass Scoring Funnel
 status: executing
-stopped_at: Completed 21-02-PLAN.md
-last_updated: "2026-03-13T23:43:24.256Z"
-last_activity: 2026-03-13 — Completed 21-03 pre-score TSV + CLI --top-n
+stopped_at: Completed 22-01-PLAN.md
+last_updated: "2026-03-14T00:45:06Z"
+last_activity: 2026-03-14 — Completed 22-01 consolidated scorer contracts
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 67
+  total_plans: 4
+  completed_plans: 4
+  percent: 75
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-13)
 
 **Core value:** Produce actionable, adoption-realistic implementation specs for Aera skills -- not just technically feasible ones, but ones real users will actually adopt.
-**Current focus:** Phase 21 - Types + Deterministic Foundation
+**Current focus:** Phase 22 - Consolidated LLM Scorer
 
 ## Current Position
 
-Phase: 21 (first of 4 in v1.3) — Types + Deterministic Foundation
-Plan: 03 of 3 complete
+Phase: 22 (second of 4 in v1.3) — Consolidated LLM Scorer
+Plan: 01 of 3 complete
 Status: Executing
-Last activity: 2026-03-13 — Completed 21-03 pre-score TSV + CLI --top-n
+Last activity: 2026-03-14 — Completed 22-01 consolidated scorer contracts
 
-Progress: [███████░░░] 67%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
@@ -38,7 +38,7 @@ Progress: [███████░░░] 67%
 - v1.0 plans completed: 31
 - v1.1 plans completed: 7 (26min)
 - v1.2 plans completed: 8 (~23min total)
-- v1.3 plans completed: 3 (8min)
+- v1.3 plans completed: 4 (12min)
 
 ## Accumulated Context
 
@@ -64,6 +64,12 @@ All decisions logged in PROJECT.md Key Decisions table (27 decisions).
 - Eliminated L4s appear in TSV at bottom for audit visibility
 - --top-n parsed/validated only, pipeline wiring deferred to Phase 23
 
+22-01 decisions:
+- ConsolidatedLensSchema reuses SubDimensionShape for platform_fit (consistency with existing lens schemas)
+- flagged_dimensions optional array (omitted when AGREE)
+- ScoringResult v1.3 fields all optional for backward compatibility
+- Prompt includes dimension descriptions alongside scores for LLM context
+
 ### Pending Todos
 
 None.
@@ -76,6 +82,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-13T23:40:39.604Z
-Stopped at: Completed 21-02-PLAN.md
+Last session: 2026-03-14T00:45:06Z
+Stopped at: Completed 22-01-PLAN.md
 Resume file: None

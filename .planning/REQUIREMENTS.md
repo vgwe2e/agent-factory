@@ -30,10 +30,10 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 ### Consolidated LLM Scoring
 
 - [ ] **LLM-01**: Single consolidated LLM call per survivor covering platform fit assessment + deterministic sanity check
-- [ ] **LLM-02**: Platform fit scored 0-3 with specific Aera component citations (from bundled knowledge base)
-- [ ] **LLM-03**: Sanity check evaluates deterministic pre-score (AGREE/DISAGREE/PARTIAL) with justification
+- [x] **LLM-02**: Platform fit scored 0-3 with specific Aera component citations (from bundled knowledge base)
+- [x] **LLM-03**: Sanity check evaluates deterministic pre-score (AGREE/DISAGREE/PARTIAL) with justification
 - [ ] **LLM-04**: Structured JSON output validated by Zod schema, with scoreWithRetry for validation failures
-- [ ] **LLM-05**: LLM prompt includes deterministic score breakdown for targeted sanity checking
+- [x] **LLM-05**: LLM prompt includes deterministic score breakdown for targeted sanity checking
 - [ ] **LLM-06**: Final composite blends pre-score + LLM output, feeding into existing PROMOTION_THRESHOLD (0.60) gate
 
 ### Pipeline Integration
@@ -104,10 +104,10 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 | FILTER-04 | Phase 21 | Complete |
 | FILTER-05 | Phase 21 | Complete |
 | LLM-01 | Phase 22 | Pending |
-| LLM-02 | Phase 22 | Pending |
-| LLM-03 | Phase 22 | Pending |
+| LLM-02 | Phase 22 | Complete |
+| LLM-03 | Phase 22 | Complete |
 | LLM-04 | Phase 22 | Pending |
-| LLM-05 | Phase 22 | Pending |
+| LLM-05 | Phase 22 | Complete |
 | LLM-06 | Phase 22 | Pending |
 | PIPE-01 | Phase 23 | Pending |
 | PIPE-02 | Phase 23 | Pending |
