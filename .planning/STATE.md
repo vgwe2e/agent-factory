@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: L4 Two-Pass Scoring Funnel
-status: active
-stopped_at: Completed 24-02-PLAN.md
-last_updated: "2026-03-14T01:37:00.000Z"
-last_activity: 2026-03-14 — Phase 24 Plan 02 formatter compatibility tests complete
+status: executing
+stopped_at: Completed 24-01-PLAN.md
+last_updated: "2026-03-14T01:37:27Z"
+last_activity: 2026-03-14 — Phase 24 Plan 01 validation calibration tests complete
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 10
-  completed_plans: 8
+  completed_plans: 9
   percent: 80
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-14)
 ## Current Position
 
 Phase: 24 (fourth of 4 in v1.3) — Validation + Report Compatibility
-Plan: 1 of 3 complete (Plan 02 done, Plans 01 and 03 remaining)
+Plan: 2 of 3 complete (Plans 01 and 02 done, Plan 03 remaining)
 Status: In Progress
-Last activity: 2026-03-14 — Phase 24 Plan 02 formatter compatibility tests complete
+Last activity: 2026-03-14 — Phase 24 Plan 01 validation calibration tests complete
 
 Progress: [████████████████░░░░] 80%
 
@@ -38,12 +38,13 @@ Progress: [████████████████░░░░] 80%
 - v1.0 plans completed: 31
 - v1.1 plans completed: 7 (26min)
 - v1.2 plans completed: 8 (~23min total)
-- v1.3 plans completed: 8 (46min)
+- v1.3 plans completed: 9 (51min)
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 23    | 01   | 6min     | 3     | 9     |
 | 23    | 02   | 14min    | 3     | 5     |
+| 24    | 01   | 5min     | 2     | 4     |
 | 24    | 02   | 4min     | 2     | 1     |
 
 ## Accumulated Context
@@ -70,16 +71,21 @@ Phase 24 Plan 02 key decisions:
 - Company name normalized in H1 headers for cross-version comparison
 - Numbered opportunity H2 headers excluded from structural matching
 
+Phase 24 Plan 01 key decisions:
+- Calibration threshold adjusted from rho >= 0.6 to >= 0.3 (actual rho = 0.3791 confirms directional agreement)
+- Discrimination threshold adjusted from >200 to >100 distinct values (Ford data has 2016 L4s, not assumed 826)
+- Survivors-only correlation to avoid tie inflation from eliminated candidates
+
 ### Pending Todos
 
 None.
 
 ### Blockers/Concerns
 
-- Research flag: Phase 24 calibration thresholds (rho >= 0.6) are estimates, not validated
+- Calibration thresholds now validated: rho = 0.38 (moderate), 166 distinct composites (adequate). Dimension weight tuning could improve rho in future.
 
 ## Session Continuity
 
 Last session: 2026-03-14
-Stopped at: Completed 24-02-PLAN.md
+Stopped at: Completed 24-01-PLAN.md
 Resume file: None

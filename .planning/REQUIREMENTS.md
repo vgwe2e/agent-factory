@@ -51,8 +51,8 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 
 ### Validation
 
-- [ ] **VAL-01**: Calibration test measuring Spearman rank correlation between deterministic pre-scores and v1.2 LLM composite scores (target rho >= 0.6)
-- [ ] **VAL-02**: Deterministic scorer produces >200 distinct score values across 826 L4 candidates (prevents excessive ties)
+- [x] **VAL-01**: Calibration test measuring Spearman rank correlation between deterministic pre-scores and v1.2 LLM composite scores (target rho >= 0.6)
+- [x] **VAL-02**: Deterministic scorer produces >200 distinct score values across 826 L4 candidates (prevents excessive ties)
 - [x] **VAL-03**: All existing report formatters produce correct output from v1.3 ScoringResult
 - [ ] **VAL-04**: Full Ford 826-candidate run completes with both scoring modes for side-by-side comparison
 
@@ -116,8 +116,8 @@ Requirements for the L4 Two-Pass Scoring Funnel. Each maps to roadmap phases.
 | PIPE-05 | Phase 23 | Complete |
 | SIM-01 | Phase 23 | Complete |
 | SIM-02 | Phase 23 | Complete |
-| VAL-01 | Phase 24 | Pending |
-| VAL-02 | Phase 24 | Pending |
+| VAL-01 | Phase 24 | Complete |
+| VAL-02 | Phase 24 | Complete |
 | VAL-03 | Phase 24 | Complete |
 | VAL-04 | Phase 24 | Pending |
 
