@@ -91,8 +91,8 @@ Plans:
   4. Validation failures trigger scoreWithRetry, consistent with v1.2 retry behavior
 **Plans:** 2/2 plans complete
 Plans:
-- [ ] 22-01-PLAN.md -- Schema + types + consolidated prompt builder
-- [ ] 22-02-PLAN.md -- Consolidated scorer function + composite blending
+- [x] 22-01-PLAN.md -- Schema + types + consolidated prompt builder
+- [x] 22-02-PLAN.md -- Consolidated scorer function + composite blending
 
 ### Phase 23: Pipeline Integration
 **Goal**: The full two-pass pipeline runs end-to-end from CLI invocation through deterministic scoring, LLM assessment, simulation, and reports -- with a feature flag preserving v1.2 behavior for comparison
@@ -104,7 +104,10 @@ Plans:
   3. L3 opportunity names appear as metadata labels for report grouping but are not used as scoring units
   4. The checkpoint system supports L4-level scoring entries and can resume a v1.3 run without corrupting or losing v1.2 checkpoint data
   5. The simulation pipeline accepts L4 activities directly via an updated scoring-to-simulation adapter
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 23-01-PLAN.md -- Checkpoint V2 + SimulationInput extension + L4 adapter + CLI scoring-mode flag
+- [ ] 23-02-PLAN.md -- Pipeline-runner two-pass wiring + simulation L4 support + report annotations
 
 ### Phase 24: Validation + Report Compatibility
 **Goal**: The two-pass funnel is verified to produce rankings that meaningfully correlate with v1.2 LLM rankings, and all output artifacts are confirmed correct on real Ford data
@@ -127,8 +130,8 @@ Plans:
 | 12-14 | v1.1 | 7/7 | Complete | 2026-03-12 |
 | 15-20 | v1.2 | 8/8 | Complete | 2026-03-12 |
 | 21. Types + Deterministic Foundation | v1.3 | 3/3 | Complete | 2026-03-13 |
-| 22. Consolidated LLM Scorer | 2/2 | Complete   | 2026-03-14 | - |
-| 23. Pipeline Integration | v1.3 | 0/TBD | Not started | - |
+| 22. Consolidated LLM Scorer | v1.3 | 2/2 | Complete | 2026-03-14 |
+| 23. Pipeline Integration | v1.3 | 0/2 | Not started | - |
 | 24. Validation + Report Compatibility | v1.3 | 0/TBD | Not started | - |
 
-**Total:** 24 phases, 51+ plans, 3 milestones shipped, 1 in progress
+**Total:** 24 phases, 53+ plans, 3 milestones shipped, 1 in progress
