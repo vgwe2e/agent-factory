@@ -104,7 +104,7 @@ Plans:
   3. L3 opportunity names appear as metadata labels for report grouping but are not used as scoring units
   4. The checkpoint system supports L4-level scoring entries and can resume a v1.3 run without corrupting or losing v1.2 checkpoint data
   5. The simulation pipeline accepts L4 activities directly via an updated scoring-to-simulation adapter
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
 - [ ] 23-01-PLAN.md -- Checkpoint V2 + SimulationInput extension + L4 adapter + CLI scoring-mode flag
 - [ ] 23-02-PLAN.md -- Pipeline-runner two-pass wiring + simulation L4 support + report annotations
@@ -131,7 +131,7 @@ Plans:
 | 15-20 | v1.2 | 8/8 | Complete | 2026-03-12 |
 | 21. Types + Deterministic Foundation | v1.3 | 3/3 | Complete | 2026-03-13 |
 | 22. Consolidated LLM Scorer | v1.3 | Complete    | 2026-03-14 | 2026-03-14 |
-| 23. Pipeline Integration | v1.3 | 0/2 | Not started | - |
+| 23. Pipeline Integration | 1/2 | In Progress|  | - |
 | 24. Validation + Report Compatibility | v1.3 | 0/TBD | Not started | - |
 
 **Total:** 24 phases, 53+ plans, 3 milestones shipped, 1 in progress
