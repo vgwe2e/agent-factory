@@ -32,6 +32,9 @@ export const PROMOTION_THRESHOLD = 0.60;
 
 export type ConfidenceLevel = "HIGH" | "MEDIUM" | "LOW";
 
+/** v1.3: Sanity check verdict from consolidated LLM scorer. */
+export type SanityVerdict = "AGREE" | "DISAGREE" | "PARTIAL";
+
 export type LensName = "technical" | "adoption" | "value";
 
 export interface SubDimensionScore {
@@ -79,6 +82,12 @@ export interface ScoringResult {
   overallConfidence: ConfidenceLevel;
   promotedToSimulation: boolean;
   scoringDurationMs: number;
+  /** v1.3: Sanity check verdict from consolidated LLM scorer. Absent in v1.2 results. */
+  sanityVerdict?: SanityVerdict;
+  /** v1.3: Sanity check justification text. Absent in v1.2 results. */
+  sanityJustification?: string;
+  /** v1.3: Deterministic pre-score composite (0-1). Absent in v1.2 results. */
+  preScore?: number;
 }
 
 // -- Deterministic Pre-Scoring Types (v1.3) --

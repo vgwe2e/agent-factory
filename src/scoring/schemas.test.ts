@@ -12,9 +12,11 @@ import {
   TechnicalLensSchema,
   AdoptionLensSchema,
   ValueLensSchema,
+  ConsolidatedLensSchema,
   technicalJsonSchema,
   adoptionJsonSchema,
   valueJsonSchema,
+  consolidatedJsonSchema,
 } from "./schemas.js";
 
 // -- Fixtures: valid LLM-like output --
@@ -209,5 +211,107 @@ describe("JSON Schema conversion", () => {
     assert.ok(required !== undefined);
     assert.ok(required.includes("value_density"));
     assert.ok(required.includes("simulation_viability"));
+  });
+});
+
+// -- Consolidated Lens Schema Tests (v1.3) --
+
+const validConsolidated = {
+  platform_fit: { score: 2, reason: "Maps to Cortex Auto Forecast + STREAMS." },
+  sanity_verdict: "AGREE" as const,
+  sanity_justification: "Pre-scores align with observed data quality.",
+  confidence: "MEDIUM" as const,
+};
+
+describe("ConsolidatedLensSchema", () => {
+  it("should parse valid consolidated output", () => {
+    const result = ConsolidatedLensSchema.parse(validConsolidated);
+    assert.equal(result.platform_fit.score, 2);
+    assert.equal(result.sanity_verdict, "AGREE");
+    assert.equal(typeof result.sanity_justification, "string");
+    assert.equal(result.confidence, "MEDIUM");
+    assert.equal(result.flagged_dimensions, undefined);
+  });
+
+  it("should parse with optional flagged_dimensions", () => {
+    const withFlags = {
+      ...validConsolidated,
+      flagged_dimensions: ["financial_signal", "ai_suitability"],
+    };
+    const result = ConsolidatedLensSchema.parse(withFlags);
+    assert.deepEqual(result.flagged_dimensions, ["financial_signal", "ai_suitability"]);
+  });
+
+  it("should accept all sanity verdict values", () => {
+    for (const verdict of ["AGREE", "DISAGREE", "PARTIAL"] as const) {
+      const input = { ...validConsolidated, sanity_verdict: verdict };
+      const result = ConsolidatedLensSchema.parse(input);
+      assert.equal(result.sanity_verdict, verdict);
+    }
+  });
+
+  it("should accept all confidence levels", () => {
+    for (const level of ["HIGH", "MEDIUM", "LOW"] as const) {
+      const input = { ...validConsolidated, confidence: level };
+      const result = ConsolidatedLensSchema.parse(input);
+      assert.equal(result.confidence, level);
+    }
+  });
+
+  it("should reject invalid sanity verdict", () => {
+    const bad = { ...validConsolidated, sanity_verdict: "MAYBE" };
+    assert.throws(() => ConsolidatedLensSchema.parse(bad));
+  });
+
+  it("should reject missing sanity_justification", () => {
+    const { sanity_justification: _, ...noJustification } = validConsolidated;
+    assert.throws(() => ConsolidatedLensSchema.parse(noJustification));
+  });
+
+  it("should reject platform_fit score out of range", () => {
+    const bad = {
+      ...validConsolidated,
+      platform_fit: { score: 4, reason: "too high" },
+    };
+    assert.throws(() => ConsolidatedLensSchema.parse(bad));
+  });
+
+  it("should reject non-integer platform_fit score", () => {
+    const bad = {
+      ...validConsolidated,
+      platform_fit: { score: 1.5, reason: "fractional" },
+    };
+    assert.throws(() => ConsolidatedLensSchema.parse(bad));
+  });
+
+  it("should strip extra fields", () => {
+    const withExtra = { ...validConsolidated, bonus: "extra" };
+    const result = ConsolidatedLensSchema.parse(withExtra);
+    assert.equal("bonus" in result, false);
+  });
+});
+
+describe("Consolidated JSON Schema conversion", () => {
+  it("should produce valid consolidated JSON schema", () => {
+    const schema = consolidatedJsonSchema as Record<string, unknown>;
+    assert.equal(schema.type, "object");
+    const props = schema.properties as Record<string, unknown> | undefined;
+    assert.ok(props !== undefined);
+    assert.ok("platform_fit" in props);
+    assert.ok("sanity_verdict" in props);
+    assert.ok("sanity_justification" in props);
+    assert.ok("confidence" in props);
+  });
+
+  it("should have required fields in consolidated schema", () => {
+    const schema = consolidatedJsonSchema as Record<string, unknown>;
+    const required = schema.required as string[] | undefined;
+    assert.ok(required !== undefined);
+    assert.ok(required.includes("platform_fit"));
+    assert.ok(required.includes("sanity_verdict"));
+    assert.ok(required.includes("sanity_justification"));
+    assert.ok(required.includes("confidence"));
+    // flagged_dimensions is optional, should NOT be in required
+    assert.ok(!required.includes("flagged_dimensions"));
   });
 });

@@ -39,11 +39,21 @@ export const ValueLensSchema = z.object({
   simulation_viability: SubDimensionShape,
 });
 
+/** Consolidated LLM Scorer: platform fit + sanity check (v1.3) */
+export const ConsolidatedLensSchema = z.object({
+  platform_fit: SubDimensionShape,
+  sanity_verdict: z.enum(["AGREE", "DISAGREE", "PARTIAL"]),
+  sanity_justification: z.string(),
+  flagged_dimensions: z.array(z.string()).optional(),
+  confidence: z.enum(["HIGH", "MEDIUM", "LOW"]),
+});
+
 // -- Inferred types --
 
 export type TechnicalLensOutput = z.infer<typeof TechnicalLensSchema>;
 export type AdoptionLensOutput = z.infer<typeof AdoptionLensSchema>;
 export type ValueLensOutput = z.infer<typeof ValueLensSchema>;
+export type ConsolidatedLensOutput = z.infer<typeof ConsolidatedLensSchema>;
 
 // -- JSON Schema conversions for Ollama format parameter --
 // Note: type assertions needed due to Zod 3.25.x / zod-to-json-schema type mismatch
@@ -51,3 +61,4 @@ export type ValueLensOutput = z.infer<typeof ValueLensSchema>;
 export const technicalJsonSchema = zodToJsonSchema(TechnicalLensSchema as never) as Record<string, unknown>;
 export const adoptionJsonSchema = zodToJsonSchema(AdoptionLensSchema as never) as Record<string, unknown>;
 export const valueJsonSchema = zodToJsonSchema(ValueLensSchema as never) as Record<string, unknown>;
+export const consolidatedJsonSchema = zodToJsonSchema(ConsolidatedLensSchema as never) as Record<string, unknown>;
