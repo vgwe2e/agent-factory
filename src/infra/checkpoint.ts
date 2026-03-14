@@ -20,7 +20,29 @@ export const CheckpointSchema = z.object({
 export type Checkpoint = z.infer<typeof CheckpointSchema>;
 export type CheckpointEntry = z.infer<typeof CheckpointEntrySchema>;
 
+// ---------------------------------------------------------------------------
+// Checkpoint V2 schema (two-pass mode: keyed by L4 ID)
+// ---------------------------------------------------------------------------
+
+export const CheckpointV2EntrySchema = z.object({
+  l4Id: z.string(),
+  completedAt: z.string(),
+  status: z.enum(['scored', 'error']),
+});
+
+export const CheckpointV2Schema = z.object({
+  version: z.literal(2),
+  scoringMode: z.literal('two-pass'),
+  inputFile: z.string(),
+  startedAt: z.string(),
+  entries: z.array(CheckpointV2EntrySchema),
+});
+
+export type CheckpointV2 = z.infer<typeof CheckpointV2Schema>;
+export type CheckpointV2Entry = z.infer<typeof CheckpointV2EntrySchema>;
+
 export const CHECKPOINT_FILENAME = '.checkpoint.json';
+const V12_BACKUP_FILENAME = '.checkpoint.v12.bak';
 const BACKUP_SUFFIX = '.bak';
 const TMP_SUFFIX = '.tmp';
 
@@ -90,6 +112,173 @@ export function clearCheckpointErrors(outputDir: string): number {
     saveCheckpoint(outputDir, checkpoint);
   }
   return cleared;
+}
+
+// ---------------------------------------------------------------------------
+// Mode-aware checkpoint loading (V1 for three-lens, V2 for two-pass)
+// ---------------------------------------------------------------------------
+
+export interface CheckpointForModeResult {
+  checkpoint: Checkpoint | CheckpointV2 | null;
+  backedUp: boolean;
+}
+
+/**
+ * Load a checkpoint from disk with mode awareness.
+ *
+ * When switching from three-lens (V1) to two-pass (V2), the old checkpoint
+ * is backed up to `.checkpoint.v12.bak` so it can be restored later.
+ * Mode-incompatible checkpoints are discarded (start fresh).
+ */
+export function loadCheckpointForMode(
+  outputDir: string,
+  scoringMode: 'two-pass' | 'three-lens',
+): CheckpointForModeResult {
+  const filePath = checkpointPath(outputDir);
+  if (!existsSync(filePath)) {
+    return { checkpoint: null, backedUp: false };
+  }
+
+  let raw: unknown;
+  try {
+    raw = JSON.parse(readFileSync(filePath, 'utf-8'));
+  } catch {
+    return { checkpoint: null, backedUp: false };
+  }
+
+  // Try V2 first
+  const v2Result = CheckpointV2Schema.safeParse(raw);
+  if (v2Result.success) {
+    if (scoringMode === 'two-pass') {
+      return { checkpoint: v2Result.data, backedUp: false };
+    }
+    // three-lens mode with V2 on disk: incompatible, start fresh
+    return { checkpoint: null, backedUp: false };
+  }
+
+  // Try V1
+  const v1Result = CheckpointSchema.safeParse(raw);
+  if (v1Result.success) {
+    if (scoringMode === 'three-lens') {
+      return { checkpoint: v1Result.data, backedUp: false };
+    }
+    // two-pass mode with V1 on disk: back up and start fresh
+    try {
+      copyFileSync(filePath, join(outputDir, V12_BACKUP_FILENAME));
+    } catch {
+      // Non-fatal: backup is best-effort
+    }
+    return { checkpoint: null, backedUp: true };
+  }
+
+  // Neither V1 nor V2 -- corrupt/unknown, start fresh
+  return { checkpoint: null, backedUp: false };
+}
+
+/**
+ * Get completed L4 IDs from a V2 checkpoint (excludes error entries).
+ */
+export function getCompletedL4Ids(checkpoint: CheckpointV2 | null): Set<string> {
+  if (!checkpoint) return new Set();
+  return new Set(
+    checkpoint.entries
+      .filter((e) => e.status !== 'error')
+      .map((e) => e.l4Id),
+  );
+}
+
+/**
+ * Create a durable checkpoint writer for V2 (two-pass) checkpoints.
+ * Same atomic write pattern as V1 writer, but accepts CheckpointV2Entry objects.
+ */
+export function createCheckpointV2Writer(
+  outputDir: string,
+  checkpoint: CheckpointV2,
+): CheckpointWriter {
+  const resolvedDir = resolve(outputDir);
+
+  function atomicWrite(): void {
+    try {
+      mkdirSync(resolvedDir, { recursive: true });
+      const target = checkpointPath(resolvedDir);
+      const tmp = target + TMP_SUFFIX;
+      const bak = target + BACKUP_SUFFIX;
+
+      if (existsSync(target)) {
+        try {
+          copyFileSync(target, bak);
+        } catch {
+          // Non-fatal: backup is best-effort
+        }
+      }
+
+      writeFileSync(tmp, JSON.stringify(checkpoint, null, 2), 'utf-8');
+      renameSync(tmp, target);
+    } catch {
+      try {
+        mkdirSync(resolvedDir, { recursive: true });
+        writeFileSync(
+          checkpointPath(resolvedDir),
+          JSON.stringify(checkpoint, null, 2),
+          'utf-8',
+        );
+      } catch {
+        console.error('[checkpoint] CRITICAL: Failed to persist V2 checkpoint to disk');
+      }
+    }
+  }
+
+  function enqueue(entry: CheckpointV2Entry): void {
+    checkpoint.entries.push(entry);
+    atomicWrite();
+  }
+
+  function flush(): void {
+    atomicWrite();
+  }
+
+  function installSignalHandlers(): () => void {
+    const handler = (signal: string) => {
+      console.error(`[checkpoint] Received ${signal}, flushing V2 checkpoint...`);
+      flush();
+      process.removeListener('SIGINT', sigintHandler);
+      process.removeListener('SIGTERM', sigtermHandler);
+      process.kill(process.pid, signal);
+    };
+
+    const sigintHandler = () => handler('SIGINT');
+    const sigtermHandler = () => handler('SIGTERM');
+
+    const uncaughtHandler = (err: Error) => {
+      console.error(`[checkpoint] Uncaught exception, flushing V2 checkpoint: ${err.message}`);
+      flush();
+    };
+    const unhandledHandler = (_reason: unknown) => {
+      console.error('[checkpoint] Unhandled rejection, flushing V2 checkpoint');
+      flush();
+    };
+
+    process.on('SIGINT', sigintHandler);
+    process.on('SIGTERM', sigtermHandler);
+    process.on('uncaughtException', uncaughtHandler);
+    process.on('unhandledRejection', unhandledHandler);
+
+    return () => {
+      process.removeListener('SIGINT', sigintHandler);
+      process.removeListener('SIGTERM', sigtermHandler);
+      process.removeListener('uncaughtException', uncaughtHandler);
+      process.removeListener('unhandledRejection', unhandledHandler);
+    };
+  }
+
+  // Cast enqueue to accept CheckpointEntry for interface compat -- callers
+  // use CheckpointV2Entry in practice, but the interface type is shared.
+  return {
+    enqueue: enqueue as unknown as (entry: CheckpointEntry) => void,
+    flush,
+    checkpoint: checkpoint as unknown as Checkpoint,
+    installSignalHandlers,
+  };
 }
 
 // ---------------------------------------------------------------------------

@@ -11,8 +11,12 @@ import {
   createCheckpointWriter,
   clearCheckpointErrors,
   CHECKPOINT_FILENAME,
+  CheckpointV2Schema,
+  loadCheckpointForMode,
+  getCompletedL4Ids,
+  createCheckpointV2Writer,
 } from './checkpoint.js';
-import type { Checkpoint, CheckpointEntry } from './checkpoint.js';
+import type { Checkpoint, CheckpointEntry, CheckpointV2, CheckpointV2Entry } from './checkpoint.js';
 
 describe('checkpoint', () => {
   let tempDir: string;
@@ -402,5 +406,195 @@ describe('clearCheckpointErrors', () => {
     assert.equal(loaded!.entries.length, 1);
     assert.equal(loaded!.entries[0].l3Name, 'Alpha');
     assert.equal(loaded!.entries[0].status, 'scored');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Checkpoint V2 tests
+// ---------------------------------------------------------------------------
+
+describe('CheckpointV2Schema', () => {
+  it('validates a correct V2 checkpoint', () => {
+    const valid = {
+      version: 2,
+      scoringMode: 'two-pass',
+      inputFile: '/path/to/export.json',
+      startedAt: '2026-03-14T00:00:00Z',
+      entries: [
+        { l4Id: 'l4-001', completedAt: '2026-03-14T00:01:00Z', status: 'scored' },
+      ],
+    };
+    const result = CheckpointV2Schema.safeParse(valid);
+    assert.ok(result.success, 'valid V2 checkpoint should parse');
+  });
+
+  it('rejects V2 checkpoint with missing l4Id', () => {
+    const invalid = {
+      version: 2,
+      scoringMode: 'two-pass',
+      inputFile: '/path/to/export.json',
+      startedAt: '2026-03-14T00:00:00Z',
+      entries: [
+        { completedAt: '2026-03-14T00:01:00Z', status: 'scored' },
+      ],
+    };
+    const result = CheckpointV2Schema.safeParse(invalid);
+    assert.ok(!result.success, 'missing l4Id should fail');
+  });
+
+  it('rejects checkpoint with wrong version', () => {
+    const invalid = {
+      version: 1,
+      scoringMode: 'two-pass',
+      inputFile: '/path/to/export.json',
+      startedAt: '2026-03-14T00:00:00Z',
+      entries: [],
+    };
+    const result = CheckpointV2Schema.safeParse(invalid);
+    assert.ok(!result.success, 'version 1 should not parse as V2');
+  });
+});
+
+describe('loadCheckpointForMode', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = mkdtempSync(join(tmpdir(), 'checkpoint-mode-test-'));
+  });
+
+  afterEach(() => {
+    rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  function writeV1(dir: string): void {
+    const cp: Checkpoint = {
+      version: 1,
+      inputFile: '/test/input.json',
+      startedAt: '2026-03-14T00:00:00Z',
+      entries: [
+        { l3Name: 'Opp-A', completedAt: '2026-03-14T00:01:00Z', status: 'scored' },
+      ],
+    };
+    writeFileSync(join(dir, CHECKPOINT_FILENAME), JSON.stringify(cp, null, 2));
+  }
+
+  function writeV2(dir: string): void {
+    const cp = {
+      version: 2,
+      scoringMode: 'two-pass',
+      inputFile: '/test/input.json',
+      startedAt: '2026-03-14T00:00:00Z',
+      entries: [
+        { l4Id: 'l4-001', completedAt: '2026-03-14T00:01:00Z', status: 'scored' },
+      ],
+    };
+    writeFileSync(join(dir, CHECKPOINT_FILENAME), JSON.stringify(cp, null, 2));
+  }
+
+  it('returns null with backedUp=false when no checkpoint exists', () => {
+    const result = loadCheckpointForMode(tempDir, 'two-pass');
+    assert.equal(result.checkpoint, null);
+    assert.equal(result.backedUp, false);
+  });
+
+  it('backs up V1 as .checkpoint.v12.bak when mode is two-pass', () => {
+    writeV1(tempDir);
+    const result = loadCheckpointForMode(tempDir, 'two-pass');
+    assert.equal(result.checkpoint, null);
+    assert.equal(result.backedUp, true);
+    assert.ok(existsSync(join(tempDir, '.checkpoint.v12.bak')), 'backup file should exist');
+  });
+
+  it('returns V2 checkpoint when mode is two-pass and V2 on disk', () => {
+    writeV2(tempDir);
+    const result = loadCheckpointForMode(tempDir, 'two-pass');
+    assert.ok(result.checkpoint, 'should return V2 checkpoint');
+    assert.equal((result.checkpoint as CheckpointV2).version, 2);
+    assert.equal(result.backedUp, false);
+  });
+
+  it('returns V1 checkpoint when mode is three-lens and V1 on disk', () => {
+    writeV1(tempDir);
+    const result = loadCheckpointForMode(tempDir, 'three-lens');
+    assert.ok(result.checkpoint, 'should return V1 checkpoint');
+    assert.equal((result.checkpoint as Checkpoint).version, 1);
+    assert.equal(result.backedUp, false);
+  });
+
+  it('returns null when mode is three-lens and V2 on disk (incompatible)', () => {
+    writeV2(tempDir);
+    const result = loadCheckpointForMode(tempDir, 'three-lens');
+    assert.equal(result.checkpoint, null);
+    assert.equal(result.backedUp, false);
+  });
+});
+
+describe('getCompletedL4Ids', () => {
+  it('returns set of l4Ids excluding errors', () => {
+    const cp: CheckpointV2 = {
+      version: 2,
+      scoringMode: 'two-pass',
+      inputFile: '/test/input.json',
+      startedAt: '2026-03-14T00:00:00Z',
+      entries: [
+        { l4Id: 'l4-001', completedAt: '2026-03-14T00:01:00Z', status: 'scored' },
+        { l4Id: 'l4-002', completedAt: '2026-03-14T00:02:00Z', status: 'error' },
+        { l4Id: 'l4-003', completedAt: '2026-03-14T00:03:00Z', status: 'scored' },
+      ],
+    };
+    const ids = getCompletedL4Ids(cp);
+    assert.deepEqual(ids, new Set(['l4-001', 'l4-003']));
+  });
+
+  it('returns empty set when checkpoint is null', () => {
+    const ids = getCompletedL4Ids(null);
+    assert.deepEqual(ids, new Set());
+  });
+});
+
+describe('createCheckpointV2Writer', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = mkdtempSync(join(tmpdir(), 'checkpoint-v2-writer-test-'));
+  });
+
+  afterEach(() => {
+    rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  function makeV2Checkpoint(): CheckpointV2 {
+    return {
+      version: 2,
+      scoringMode: 'two-pass',
+      inputFile: '/test/input.json',
+      startedAt: '2026-03-14T00:00:00Z',
+      entries: [],
+    };
+  }
+
+  it('enqueue adds V2 entry and persists to disk', () => {
+    const cp = makeV2Checkpoint();
+    const writer = createCheckpointV2Writer(tempDir, cp);
+    writer.enqueue({ l4Id: 'l4-001', completedAt: '2026-03-14T00:01:00Z', status: 'scored' });
+
+    assert.equal(writer.checkpoint.entries.length, 1);
+
+    // Verify on disk
+    const raw = JSON.parse(readFileSync(join(tempDir, CHECKPOINT_FILENAME), 'utf-8'));
+    assert.equal(raw.version, 2);
+    assert.equal(raw.entries.length, 1);
+    assert.equal(raw.entries[0].l4Id, 'l4-001');
+  });
+
+  it('flush writes checkpoint to disk', () => {
+    const cp = makeV2Checkpoint();
+    const writer = createCheckpointV2Writer(tempDir, cp);
+    writer.enqueue({ l4Id: 'l4-001', completedAt: '2026-03-14T00:01:00Z', status: 'scored' });
+    writer.flush();
+
+    const raw = JSON.parse(readFileSync(join(tempDir, CHECKPOINT_FILENAME), 'utf-8'));
+    assert.equal(raw.version, 2);
+    assert.equal(raw.entries.length, 1);
   });
 });
