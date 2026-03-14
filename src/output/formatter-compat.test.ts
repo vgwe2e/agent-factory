@@ -473,6 +473,37 @@ describe("VAL-03: Markdown formatter structural parity", () => {
     assertSectionsMatch(actual, baseline, ["Scoring Mode"]);
   });
 
+  it("formatMetaReflection: table columns match v1.2 baseline", () => {
+    fixtureCounter = 410;
+    const scored = [makeV13ScoringResult(), makeV13ScoringResult()];
+    const triaged = [
+      makeV13TriageResult({
+        redFlags: [{ type: "CONFIDENCE_GAP", lowConfidencePct: 0.6 }],
+      }),
+      makeV13TriageResult(),
+    ];
+    const simResults = makeMinimalSimResult();
+
+    const actual = formatMetaReflection(triaged, scored, simResults, FIXED_DATE);
+    const baseline = readFileSync(path.join(BASELINE_DIR, "meta-reflection.md"), "utf-8");
+
+    const actualTables = extractTableHeaders(actual);
+    const baselineTables = extractTableHeaders(baseline);
+
+    for (let t = 0; t < baselineTables.length; t++) {
+      assert.ok(
+        t < actualTables.length,
+        `Missing table ${t + 1} in meta-reflection. Baseline has ${baselineTables.length} tables, actual has ${actualTables.length}`,
+      );
+      for (const col of baselineTables[t]) {
+        assert.ok(
+          actualTables[t].includes(col),
+          `Meta-reflection table ${t + 1} missing column "${col}". Actual: ${JSON.stringify(actualTables[t])}`,
+        );
+      }
+    }
+  });
+
   it("formatTier1Report: section headers match v1.2 baseline", () => {
     fixtureCounter = 500;
     const l3Name = "Test L3 Opportunity 501";
@@ -486,6 +517,26 @@ describe("VAL-03: Markdown formatter structural parity", () => {
     const baseline = readFileSync(path.join(BASELINE_DIR, "tier1-report.md"), "utf-8");
 
     assertSectionsMatch(actual, baseline, ["Scoring Mode"]);
+  });
+
+  it("formatTier1Report: per-opportunity sub-sections present", () => {
+    fixtureCounter = 510;
+    const l3Name = "Test L3 Opportunity 511";
+    const scored = [makeV13ScoringResult({ l3Name, composite: 0.90 })];
+    const tier1Names = new Set([l3Name]);
+
+    const actual = formatTier1Report(scored, tier1Names, "Ford", FIXED_DATE);
+
+    // Each tier1 opportunity must have Technical Feasibility, Adoption Realism,
+    // Value & Efficiency, and Assessment sub-sections
+    const allSections = extractSections(actual);
+    const h3Sections = allSections.filter(s => /^### /.test(s)).map(s => s.replace(/^### /, "").replace(/ \(.*\)$/, ""));
+    for (const required of ["Technical Feasibility", "Adoption Realism", "Value & Efficiency", "Assessment"]) {
+      assert.ok(
+        h3Sections.some(s => s.startsWith(required)),
+        `Tier1 report missing sub-section: "${required}". Found: ${JSON.stringify(h3Sections)}`,
+      );
+    }
   });
 
   it("formatAdoptionRisk: section headers match v1.2 baseline", () => {
@@ -506,5 +557,33 @@ describe("VAL-03: Markdown formatter structural parity", () => {
     const baseline = readFileSync(path.join(BASELINE_DIR, "adoption-risk.md"), "utf-8");
 
     assertSectionsMatch(actual, baseline, ["Scoring Mode"]);
+  });
+
+  it("formatAdoptionRisk: table columns match v1.2 baseline", () => {
+    fixtureCounter = 620;
+    const triaged = [
+      makeV13TriageResult({
+        redFlags: [{ type: "DEAD_ZONE", decisionDensity: 0 }],
+        action: "skip",
+      }),
+    ];
+
+    const actual = formatAdoptionRisk(triaged, FIXED_DATE);
+    const baseline = readFileSync(path.join(BASELINE_DIR, "adoption-risk.md"), "utf-8");
+
+    const actualTables = extractTableHeaders(actual);
+    const baselineTables = extractTableHeaders(baseline);
+
+    // At least one table should be present in both
+    assert.ok(baselineTables.length > 0, "Baseline adoption-risk.md has no tables");
+    assert.ok(actualTables.length > 0, "Actual adoption-risk output has no tables");
+
+    // First table columns should match
+    for (const col of baselineTables[0]) {
+      assert.ok(
+        actualTables[0].includes(col),
+        `Adoption-risk table missing column "${col}". Actual: ${JSON.stringify(actualTables[0])}`,
+      );
+    }
   });
 });
