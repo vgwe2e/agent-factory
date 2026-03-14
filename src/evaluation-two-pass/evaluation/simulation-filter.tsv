@@ -1,0 +1,56 @@
+skill_id	skill_name	l4_name	verdict	groundedness_score	integration_confidence_score	ambiguity_risk_score	implementation_readiness_score	reasons
+1513a6-298c69	Deterministic BOM Requirements Optimization	Component Requirements Calculation	ADVANCE	100	90	15	95	Scenario is grounded, integration-aware, and implementation-ready.
+40b06a-3d6742	Optimize Capacity-Constrained Production	Bottleneck Identification & Resolution	ADVANCE	100	87	20	93	Scenario is grounded, integration-aware, and implementation-ready.
+6aedc4-b22a7f	Container Movement Scheduling	Container Movement Scheduling & Optimization	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+d6f202-068baf	Automated Dealer Order Allocation	Dealer Order Allocation & Prioritization	ADVANCE	100	87	20	93	Scenario is grounded, integration-aware, and implementation-ready.
+95b037-ba8660	Empty Container Return Loop Optimization	Empty Container Return Loop Management	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+286e66-7024f1	Dynamic Labor Load Balancing	Labor Availability & Shift Planning	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+0edcd0-f407c9	Long-Range Production Synchronization	Long-Range Production Plan Development	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+65af97-1cb717	Waste-Resilient Vehicle Portfolio Demand	Long-Term 5-Year+ Vehicle Portfolio Demand Projection	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+5a701b-2db888	Dynamic Labor & Equipment Allocation	Manpower & Equipment Resource Allocation	ADVANCE	100	87	20	93	Scenario is grounded, integration-aware, and implementation-ready.
+13cc2f-6d7744	New Model Launch Volume Orchestration	New Model Launch Volume Planning	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+bf0e98-6449e1	Obsolete & Excess Inventory Rebalancing	Obsolete & Excess Inventory Disposition	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+79ff4d-c8b1fb	AGENTIC Parts Shortage Mitigation	Parts Shortage Risk Assessment	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+62e2cc-e667ea	Just-in-Sequence Line Delivery	Production Line Kit Building & Sequencing	ADVANCE	100	87	20	93	Scenario is grounded, integration-aware, and implementation-ready.
+476457-7cb428	Production Schedule Resilience Optimization	Production Schedule Adjustment & Impact Analysis	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+6d8d86-637c4c	Production Stop-Start Optimization	Production Stop/Start Decision Making	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+a8e2cf-b85bd6	Real-Time Production Constraint Resilience	Real-Time Production Constraint Monitoring	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+311fb6-e91639	S&OP Cycle Automation	Sales & Operations Planning (S&OP) Cycle Management	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+ddcf2c-8e813d	Autonomous MRP Supplier Release	Supplier Release Generation & Transmission	ADVANCE	100	87	20	93	Scenario is grounded, integration-aware, and implementation-ready.
+b00030-ff5738	Real-Time Demand Forecasting Optimization	Time Series Forecasting Model Development	ADVANCE	100	87	20	93	Scenario is grounded, integration-aware, and implementation-ready.
+22ed5a-7dd3ef	Config Mix Demand Forecasting	Vehicle Configuration Mix Planning	ADVANCE	100	85	22	93	Scenario is grounded, integration-aware, and implementation-ready.
+32b709-3e8f8a	Regional Demand Positioning Optimization	Competitor Sales & Production Monitoring	ADVANCE	100	83	25	92	Scenario is grounded, integration-aware, and implementation-ready.
+b4d954-4e6af1	Engine Block Machining Optimization	Engine Block Machining Operations	ADVANCE	100	84	24	92	Scenario is grounded, integration-aware, and implementation-ready.
+34ea50-3580e4	Global Sales Forecast Consolidation	Global Sales Forecast Aggregation	ADVANCE	100	84	24	92	Scenario is grounded, integration-aware, and implementation-ready.
+fb0e47-bd55dd	Automated Contingent Capacity Allocation	Launch Logistics Capacity Contingency Planning	ADVANCE	100	83	25	92	Scenario is grounded, integration-aware, and implementation-ready.
+fd7e19-e35382	Automated Carrier Onboarding & Routing	New Carrier Onboarding & System Integration	ADVANCE	100	84	24	92	Scenario is grounded, integration-aware, and implementation-ready.
+5d50c6-32706c	New Vehicle Ramp-Up Optimization	New Vehicle Launch Ramp-Up Planning	ADVANCE	100	84	24	92	Scenario is grounded, integration-aware, and implementation-ready.
+2f7c53-f28e1d	Constraint-Aware Pilot Build Optimization	Pilot Build Schedule Management	ADVANCE	100	84	24	92	Scenario is grounded, integration-aware, and implementation-ready.
+4510cd-60334a	Plant Capacity Modeling & Optimization	Plant & Line Capacity Modeling	ADVANCE	83	100	8	92	Scenario is grounded, integration-aware, and implementation-ready.
+48492e-9e97f6	Automated Shop Floor Data Rebalancing	Shop Floor Data Collection & Analysis	ADVANCE	100	84	24	92	Scenario is grounded, integration-aware, and implementation-ready.
+aed845-b66aaa	Automated Seasonal Logistics Capacity Balancing	Seasonal Logistics Capacity Adjustment	ADVANCE	80	100	10	91	Scenario is grounded, integration-aware, and implementation-ready.
+3f4f21-0f49fb	Changeover Optimization & Coordination	Changeover Planning & Coordination	ADVANCE	83	87	28	86	Scenario is grounded, integration-aware, and implementation-ready.
+1b38c2-9a8e75	Just-In-Sequence Delivery Orchestration	Just-in-Sequence (JIS) Part Delivery Execution	ADVANCE	86	84	31	86	Scenario is grounded, integration-aware, and implementation-ready.
+ae6392-a4dff0	Autonomous Production Progress Orchestration	Production Progress Tracking & Reporting	ADVANCE	83	87	28	86	Scenario is grounded, integration-aware, and implementation-ready.
+c35ec9-a1a4dd	Automated BOM Reliability Optimization	Daily Production Schedule Release	ADVANCE	83	85	31	85	Scenario is grounded, integration-aware, and implementation-ready.
+8b9331-7254d7	Automated Non-Conforming Segregation	Non-Conforming Material Segregation & Reporting	ADVANCE	83	85	31	85	Scenario is grounded, integration-aware, and implementation-ready.
+69e538-10baba	Raw Material Storage Optimization	Raw Material & Component Storage Optimization	ADVANCE	83	85	31	85	Scenario is grounded, integration-aware, and implementation-ready.
+d6c2ab-862586	Autonomous Supplier Quality Decision	Supplier Quality Monitoring (for Blanks/Coils)	ADVANCE	83	85	31	85	Scenario is grounded, integration-aware, and implementation-ready.
+78dc79-b2c80b	Long-Range Production Alignment	Weekly Build Schedule Finalization	ADVANCE	83	85	31	85	Scenario is grounded, integration-aware, and implementation-ready.
+d3f282-ba13d3	Automated BIW Closure Load Balancing	Closure Panel Mounting & Gapping	ADVANCE	80	85	32	84	Scenario is grounded, integration-aware, and implementation-ready.
+e69f6b-d1aa7c	Waste-Driven Consumable Replenishment Optimization	Consumable & Wear Part Replenishment Forecasting	ADVANCE	83	83	33	84	Scenario is grounded, integration-aware, and implementation-ready.
+e90f0c-37c5be	Dealer Demand Signal Orchestration	Dealer Network Demand Feedback Collection	ADVANCE	83	84	32	84	Scenario is grounded, integration-aware, and implementation-ready.
+9f40fb-a20a87	Constraint-Aware Ramp-Up Material Optimization	Launch Volume Ramp-Up Planning	ADVANCE	83	84	32	84	Scenario is grounded, integration-aware, and implementation-ready.
+084434-ecd37f	ML-Driven Forecast Error Reduction	Machine Learning Model Deployment for Prediction	ADVANCE	83	84	32	84	Scenario is grounded, integration-aware, and implementation-ready.
+1c00c5-0d928c	Optimized Module-Line Cycle Time	Module Production Line Cycle Time Optimization	ADVANCE	83	84	32	84	Scenario is grounded, integration-aware, and implementation-ready.
+6735ac-fc143c	Demand Drivers Analysis & Actioning	Regression Analysis for Demand Drivers	ADVANCE	80	87	30	84	Scenario is grounded, integration-aware, and implementation-ready.
+9cc360-cbeb26	Dynamic Production Sequencing	Production Sequence Optimization	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+9247c6-d25f8c	Automated Budget-Throughput Alignment	Budget & Forecasting S&OP Alignment	ADVANCE	71	87	34	80	Scenario is grounded, integration-aware, and implementation-ready.
+dfef84-22b011	EOL Material Substitution Optimization	End-of-Life (EOL) Production Planning	ADVANCE	67	87	37	79	Scenario is grounded, integration-aware, and implementation-ready.
+e1378e-cc4608	Buffer Inventory Strategy Optimizer	Buffer & Inventory Strategy for Constraint Management	ADVANCE	67	85	39	78	Scenario is grounded, integration-aware, and implementation-ready.
+d8fbd5-19d56e	Critical Component Shortage Orchestration	Critical Component Shortage Escalation	ADVANCE	67	85	39	78	Scenario is grounded, integration-aware, and implementation-ready.
+9a525a-cf1480	Schedule Recovery & Contingency Actions	Schedule Recovery Planning	ADVANCE	67	85	39	78	Scenario is grounded, integration-aware, and implementation-ready.
+ac0032-3eb0bf	Stamping Capacity Utilization Optimization	Daily Stamping Production Schedule Generation	REVIEW	86	87	47	79	Decision flow failed Mermaid validation.
+f2b379-3e41d2	Select Optimal Supplier for PPAP Readiness	Control Plan, FMEA, & Process Flow Development & Review	REVIEW	67	84	41	77	Scenario is plausible but still needs design review before commitment.
+3308bc-ee57eb	Waste-Resilient Ford Pro Parts Allocation	Ford Pro Uptime & Service Contract Demand Modeling	REVIEW	67	84	41	77	Scenario is plausible but still needs design review before commitment.
+01d486-8ee417	Automated Kitting & Line Feeding	Kitting & Line Feeding for Battery Production	REVIEW	67	84	41	77	Scenario is plausible but still needs design review before commitment.

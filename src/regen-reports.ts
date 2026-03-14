@@ -25,6 +25,20 @@ import { validateMermaidFlowchart } from "./simulation/validators/mermaid-valida
 const INPUT = process.argv[2] || "../.planning/ford_hierarchy_v3_export.json";
 const OUTPUT_DIR = process.argv[3] || "./evaluation";
 
+async function detectScoringMode(
+  outputDir: string,
+  scoredResults: ScoringResult[],
+): Promise<"two-pass" | "three-lens"> {
+  try {
+    await fs.stat(path.join(outputDir, "evaluation", "pre-scores.tsv"));
+    return "two-pass";
+  } catch {
+    return scoredResults.some((result) => typeof result.preScore === "number")
+      ? "two-pass"
+      : "three-lens";
+  }
+}
+
 async function loadScoringOverrides(
   outputDir: string,
 ): Promise<Map<string, {
@@ -85,6 +99,8 @@ async function main() {
   const scoredResults = [...allScored.values()];
   console.log(`Loaded ${scoredResults.length} scored results from ${files.length} checkpoint files`);
 
+  const scoringMode = await detectScoringMode(OUTPUT_DIR, scoredResults);
+
   const scoringOverrides = await loadScoringOverrides(OUTPUT_DIR);
   if (scoringOverrides.size > 0) {
     for (const sr of scoredResults) {
@@ -126,10 +142,13 @@ async function main() {
   }
 
   // 3. Load existing simulation results from disk
-  // Build slug→l3Name lookup from scored results so we can reverse the slug
-  const slugToL3 = new Map<string, string>();
-  for (const sr of scoredResults) {
-    slugToL3.set(slugify(sr.l3Name), sr.l3Name);
+  // Support both three-lens slugs (L3) and two-pass slugs (L4 name + id suffix).
+  const slugToSubject = new Map<string, string>();
+  for (const opportunity of l3_opportunities) {
+    slugToSubject.set(slugify(opportunity.l3_name), opportunity.l3_name);
+  }
+  for (const l4 of parseResult.data.hierarchy) {
+    slugToSubject.set(`${slugify(l4.name)}-${l4.id.slice(-6)}`, l4.name);
   }
 
   const simDir = path.join(OUTPUT_DIR, "evaluation", "simulations");
@@ -149,7 +168,7 @@ async function main() {
       const dirPath = path.join(simDir, dir);
       const stat = await fs.stat(dirPath);
       if (stat.isDirectory()) {
-        const l3Name = slugToL3.get(dir) ?? dir;
+        const l3Name = slugToSubject.get(dir) ?? dir;
         // Load artifacts from disk so writeFinalReports can round-trip them
         const readFile = async (name: string) => {
           try { return await fs.readFile(path.join(dirPath, name), "utf-8"); }
@@ -205,6 +224,8 @@ async function main() {
     scoredResults,
     triageResults,
     company_context.company_name,
+    undefined,
+    scoringMode,
   );
 
   if (evalResult.success) {
@@ -220,6 +241,9 @@ async function main() {
     triageResults,
     simResults,
     company_context.company_name,
+    undefined,
+    undefined,
+    scoringMode,
   );
 
   if (finalResult.success) {

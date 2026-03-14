@@ -354,7 +354,7 @@ describe("VAL-03: TSV formatter structural parity", () => {
 
   it("formatSimulationFilterTsv: valid TSV structure", () => {
     const simResults = makeMinimalSimResult();
-    const tsv = formatSimulationFilterTsv(simResults);
+    const tsv = formatSimulationFilterTsv([], simResults);
     assertConsistentColumnCount(tsv);
     assertColumnsPresent(tsv, ["verdict", "l3_name"]);
   });

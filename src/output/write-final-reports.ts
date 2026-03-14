@@ -47,9 +47,9 @@ export async function writeFinalReports(
     const summaryMd = modeHeader + formatSummary(scored, triaged, simResults, companyName, date, simSkipped);
     const deadZonesMd = modeHeader + formatDeadZones(triaged, scored, date);
     const metaReflectionMd = modeHeader + formatMetaReflection(triaged, scored, simResults, date, simSkipped);
-    const simulationFilterTsv = formatSimulationFilterTsv(simResults);
-    const implementationShortlistTsv = formatImplementationShortlistTsv(scored, simResults, ["ADVANCE"]);
-    const manualReviewQueueTsv = formatImplementationShortlistTsv(scored, simResults, ["REVIEW", "HOLD"]);
+    const simulationFilterTsv = formatSimulationFilterTsv(scored, simResults, scoringMode);
+    const implementationShortlistTsv = formatImplementationShortlistTsv(scored, simResults, ["ADVANCE"], scoringMode);
+    const manualReviewQueueTsv = formatImplementationShortlistTsv(scored, simResults, ["REVIEW", "HOLD"], scoringMode);
 
     // Define markdown output files
     const mdFiles: { name: string; content: string }[] = [

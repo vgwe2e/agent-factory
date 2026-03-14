@@ -224,6 +224,23 @@ describe("writeFinalReports", () => {
     assert.ok(content.length > 0);
   });
 
+  it("writes skill_name and l4_name headers for two-pass TSV reports", async () => {
+    const dir = await makeTmpDir();
+    const triaged = [makeTriage()];
+    const scored = [makeScoring({ l3Name: "Parent L3", skillId: "skill-two-pass", skillName: "Two-Pass Opportunity", l4Name: "Two-Pass Subject", preScore: 0.66 })];
+    const simResults = makeSimPipelineResult([makeSimResult({ l3Name: "Two-Pass Subject" })]);
+
+    await writeFinalReports(dir, scored, triaged, simResults, "TestCorp", DATE, false, "two-pass");
+
+    const simulationFilter = await fs.readFile(path.join(dir, "evaluation", "simulation-filter.tsv"), "utf-8");
+    const shortlist = await fs.readFile(path.join(dir, "evaluation", "implementation-shortlist.tsv"), "utf-8");
+    const reviewQueue = await fs.readFile(path.join(dir, "evaluation", "manual-review-queue.tsv"), "utf-8");
+
+    assert.deepEqual(simulationFilter.split("\n")[0].split("\t").slice(0, 3), ["skill_id", "skill_name", "l4_name"]);
+    assert.deepEqual(shortlist.split("\n")[0].split("\t").slice(0, 3), ["skill_id", "skill_name", "l4_name"]);
+    assert.deepEqual(reviewQueue.split("\n")[0].split("\t").slice(0, 3), ["skill_id", "skill_name", "l4_name"]);
+  });
+
   it("creates simulations/ directory with per-slug subdirectories", async () => {
     const dir = await makeTmpDir();
     const simResult1 = makeSimResult({ l3Name: "Opp Alpha", slug: "opp-alpha" });
