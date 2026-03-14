@@ -2,7 +2,7 @@
 phase: 23
 slug: pipeline-integration
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-03-13
 ---
@@ -38,15 +38,28 @@ created: 2026-03-13
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 23-01-01 | 01 | 1 | PIPE-02 | unit | `npx tsx --test cli.test.ts` | ✅ | ⬜ pending |
-| 23-01-02 | 01 | 1 | PIPE-01 | unit | `npx tsx --test pipeline/pipeline-runner.test.ts` | ✅ | ⬜ pending |
-| 23-02-01 | 02 | 1 | PIPE-03 | unit | `npx tsx --test scoring/lens-scorers.test.ts` | ✅ | ⬜ pending |
-| 23-02-02 | 02 | 1 | PIPE-04 | unit | `npx tsx --test output/format-summary.test.ts` | ✅ | ⬜ pending |
-| 23-03-01 | 03 | 2 | PIPE-05 | unit | `npx tsx --test infra/checkpoint.test.ts` | ✅ | ⬜ pending |
-| 23-03-02 | 03 | 2 | SIM-01 | unit | `npx tsx --test simulation/simulation-pipeline.test.ts` | ✅ | ⬜ pending |
-| 23-03-03 | 03 | 2 | SIM-02 | unit | `npx tsx --test pipeline/scoring-to-simulation.test.ts` | ✅ | ⬜ pending |
+| 23-01-01 | 01 | 1 | PIPE-05 | unit | `npx tsx --test infra/checkpoint.test.ts` | yes | pending |
+| 23-01-02 | 01 | 1 | SIM-01, SIM-02 | unit | `npx tsx --test pipeline/scoring-to-simulation.test.ts` | yes | pending |
+| 23-01-03 | 01 | 1 | PIPE-02 | unit | `npx tsx --test cli.test.ts` | yes | pending |
+| 23-02-01 | 02 | 2 | PIPE-01 | unit | `npx tsx --test pipeline/pipeline-runner.test.ts` | yes | pending |
+| 23-02-02 | 02 | 2 | PIPE-01, PIPE-03 | integration | `npx tsx --test pipeline/pipeline-runner.test.ts` | yes | pending |
+| 23-02-03 | 02 | 2 | PIPE-04 | unit | `npm test` | yes | pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+*Status: pending / green / red / flaky*
+
+---
+
+## Requirement Coverage
+
+| Requirement | Task(s) | Coverage Type |
+|-------------|---------|---------------|
+| PIPE-01 | 23-02-01, 23-02-02 | Two-pass pipeline integration + integration test |
+| PIPE-02 | 23-01-03 | CLI --scoring-mode flag with three-lens option |
+| PIPE-03 | 23-02-02 | Formatter verification test: ScoringResult -> formatScoresTsv with non-zero composite/lens |
+| PIPE-04 | 23-02-03 | Scoring-mode header annotation in reports |
+| PIPE-05 | 23-01-01 | Checkpoint V2 schema + mode-aware loading |
+| SIM-01 | 23-01-02 | SimulationInput L4 extension + toL4SimulationInputs |
+| SIM-02 | 23-01-02, 23-02-03 | L4-aware simulation slug/name derivation |
 
 ---
 
@@ -67,11 +80,11 @@ created: 2026-03-13
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 10s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 10s
+- [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
