@@ -121,7 +121,7 @@ export async function runSimulationPipeline(
 
   for (let i = 0; i < sorted.length; i++) {
     const input = sorted[i];
-    const l3Name = input.opportunity.l3_name;
+    const l3Name = input.l4Activity?.name ?? input.opportunity?.l3_name ?? "unknown";
     const slug = slugify(l3Name);
     const oppDir = path.join(outputDir, slug);
     const defaultArtifacts = createDefaultArtifacts();

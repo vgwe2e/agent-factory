@@ -14,7 +14,10 @@ import type { L3Opportunity, L4Activity, CompanyContext, LeadArchetype } from ".
 // -- Input types --
 
 export interface SimulationInput {
-  opportunity: L3Opportunity;
+  /** L3 opportunity (required in three-lens mode, optional metadata in two-pass). */
+  opportunity?: L3Opportunity;
+  /** Primary L4 subject for two-pass simulation. Absent in three-lens mode. */
+  l4Activity?: L4Activity;
   l4s: L4Activity[];
   companyContext: CompanyContext;
   archetype: LeadArchetype;

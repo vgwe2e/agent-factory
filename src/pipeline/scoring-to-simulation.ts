@@ -65,3 +65,44 @@ export function toSimulationInputs(
 
   return inputs;
 }
+
+/**
+ * Convert promoted scoring results into per-L4 simulation inputs (two-pass mode).
+ *
+ * In two-pass mode, each promoted ScoringResult maps 1:1 to an L4 activity.
+ * The L4 is the primary simulation subject; the parent L3 is optional metadata.
+ *
+ * @param promoted - ScoringResult[] from the two-pass scoring pipeline
+ * @param l4Map - Map of l4Name -> L4Activity (individual, not grouped)
+ * @param l3Map - Map of l3_name -> L3Opportunity
+ * @param companyContext - Company context from the hierarchy export
+ * @returns SimulationInput[] ready for runSimulationPipeline
+ */
+export function toL4SimulationInputs(
+  promoted: ScoringResult[],
+  l4Map: Map<string, L4Activity>,
+  l3Map: Map<string, L3Opportunity>,
+  companyContext: CompanyContext,
+): SimulationInput[] {
+  const inputs: SimulationInput[] = [];
+
+  for (const sr of promoted) {
+    const l4 = l4Map.get(sr.l4Name);
+    if (!l4) continue; // skip if L4 not found
+
+    const opp = l3Map.get(sr.l3Name);
+    const mapping = getRouteForArchetype(sr.archetype);
+
+    inputs.push({
+      l4Activity: l4,
+      opportunity: opp,
+      l4s: [l4],
+      companyContext,
+      archetype: sr.archetype,
+      archetypeRoute: mapping.primary_route,
+      composite: sr.composite,
+    });
+  }
+
+  return inputs;
+}

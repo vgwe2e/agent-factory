@@ -9,7 +9,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { toSimulationInputs } from "./scoring-to-simulation.js";
+import { toSimulationInputs, toL4SimulationInputs } from "./scoring-to-simulation.js";
 import { getRouteForArchetype } from "../knowledge/orchestration.js";
 import type { ScoringResult } from "../types/scoring.js";
 import type { L3Opportunity, L4Activity, CompanyContext } from "../types/hierarchy.js";
@@ -162,5 +162,81 @@ describe("toSimulationInputs", () => {
     // Verify the archetypeRoute matches what getRouteForArchetype returns
     const expected = getRouteForArchetype("DETERMINISTIC").primary_route;
     assert.equal(result[0].archetypeRoute, expected);
+  });
+});
+
+describe("toL4SimulationInputs", () => {
+  it("produces SimulationInput with l4Activity populated", () => {
+    const l4 = makeL4("Opp-A", "Act-1");
+    const opp = makeL3("Opp-A");
+    const sr = makeScoringResult("Opp-A", {
+      l4Name: "Act-1",
+      archetype: "DETERMINISTIC",
+      composite: 0.75,
+    });
+
+    const l4Map = new Map([["Act-1", l4]]);
+    const l3Map = new Map([["Opp-A", opp]]);
+
+    const result = toL4SimulationInputs([sr], l4Map, l3Map, COMPANY_CONTEXT);
+
+    assert.equal(result.length, 1);
+    assert.ok(result[0].l4Activity, "l4Activity should be populated");
+    assert.equal(result[0].l4Activity!.name, "Act-1");
+    assert.equal(result[0].composite, 0.75);
+    assert.equal(result[0].archetype, "DETERMINISTIC");
+  });
+
+  it("sets opportunity from l3Map when available", () => {
+    const l4 = makeL4("Opp-A", "Act-1");
+    const opp = makeL3("Opp-A");
+    const sr = makeScoringResult("Opp-A", { l4Name: "Act-1" });
+
+    const l4Map = new Map([["Act-1", l4]]);
+    const l3Map = new Map([["Opp-A", opp]]);
+
+    const result = toL4SimulationInputs([sr], l4Map, l3Map, COMPANY_CONTEXT);
+
+    assert.ok(result[0].opportunity, "opportunity should be set from l3Map");
+    assert.equal(result[0].opportunity!.l3_name, "Opp-A");
+  });
+
+  it("skips entries where L4 is not found in l4Map", () => {
+    const opp = makeL3("Opp-A");
+    const sr = makeScoringResult("Opp-A", { l4Name: "Missing-L4" });
+
+    const l4Map = new Map<string, L4Activity>();
+    const l3Map = new Map([["Opp-A", opp]]);
+
+    const result = toL4SimulationInputs([sr], l4Map, l3Map, COMPANY_CONTEXT);
+
+    assert.equal(result.length, 0, "should skip when L4 not found");
+  });
+
+  it("handles missing L3 gracefully (opportunity is undefined)", () => {
+    const l4 = makeL4("Opp-Missing", "Act-1");
+    const sr = makeScoringResult("Opp-Missing", { l4Name: "Act-1" });
+
+    const l4Map = new Map([["Act-1", l4]]);
+    const l3Map = new Map<string, L3Opportunity>();
+
+    const result = toL4SimulationInputs([sr], l4Map, l3Map, COMPANY_CONTEXT);
+
+    assert.equal(result.length, 1, "should still produce input without L3");
+    assert.equal(result[0].opportunity, undefined, "opportunity should be undefined");
+    assert.ok(result[0].l4Activity, "l4Activity should still be set");
+  });
+
+  it("sets l4s array to single L4", () => {
+    const l4 = makeL4("Opp-A", "Act-1");
+    const sr = makeScoringResult("Opp-A", { l4Name: "Act-1" });
+
+    const l4Map = new Map([["Act-1", l4]]);
+    const l3Map = new Map<string, L3Opportunity>();
+
+    const result = toL4SimulationInputs([sr], l4Map, l3Map, COMPANY_CONTEXT);
+
+    assert.equal(result[0].l4s.length, 1);
+    assert.equal(result[0].l4s[0].name, "Act-1");
   });
 });
