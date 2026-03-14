@@ -10,6 +10,7 @@ import assert from "node:assert/strict";
 import {
   computeTwoPassComposite,
   scaleTo03,
+  scoreConsolidated,
   DISAGREE_PENALTY,
   PARTIAL_PENALTY,
   PRE_SCORE_WEIGHT,
@@ -21,8 +22,92 @@ import {
 import { PROMOTION_THRESHOLD } from "../types/scoring.js";
 import type { ConsolidatedLensOutput } from "./schemas.js";
 import type { PreScoreResult } from "../types/scoring.js";
+import type { ChatResult } from "./ollama-client.js";
+import type { SkillWithContext } from "../types/hierarchy.js";
 
 // -- Helpers --
+
+function makeSkill(overrides: Partial<SkillWithContext> = {}): SkillWithContext {
+  return {
+    id: "SK-001",
+    name: "Test Skill",
+    description: "A test skill for scoring",
+    archetype: "DETERMINISTIC",
+    max_value: 100000,
+    slider_percent: null,
+    overlap_group: null,
+    value_metric: null,
+    decision_made: null,
+    aera_skill_pattern: "Forecast",
+    is_actual: false,
+    source: null,
+    loe: "MEDIUM",
+    savings_type: null,
+    actions: [],
+    constraints: [],
+    execution: {
+      target_systems: ["SAP"],
+      write_back_actions: [],
+      execution_trigger: "Daily",
+      execution_frequency: "Daily",
+      autonomy_level: "SUPERVISED",
+      approval_required: false,
+      approval_threshold: null,
+      rollback_strategy: null,
+    },
+    problem_statement: {
+      current_state: "Manual process",
+      quantified_pain: "$500K",
+      root_cause: "Lack of automation",
+      falsifiability_check: "Measurable",
+      outcome: "Automated workflow",
+    },
+    differentiation: null,
+    generated_at: null,
+    prompt_version: null,
+    is_cross_functional: null,
+    cross_functional_scope: null,
+    operational_flow: [],
+    walkthrough_decision: null,
+    walkthrough_actions: [],
+    walkthrough_narrative: null,
+    l4Name: "Test Activity",
+    l4Id: "L4-001",
+    l3Name: "Test Category",
+    l2Name: "Test Domain",
+    l1Name: "Test Area",
+    financialRating: "HIGH",
+    aiSuitability: "HIGH",
+    impactOrder: "FIRST",
+    ratingConfidence: "HIGH",
+    decisionExists: true,
+    decisionArticulation: "Test decision",
+    ...overrides,
+  } as SkillWithContext;
+}
+
+function makeMockChatFn(response: ConsolidatedLensOutput): (messages: Array<{ role: string; content: string }>, format: Record<string, unknown>) => Promise<ChatResult> {
+  return async () => ({
+    success: true as const,
+    content: JSON.stringify(response),
+    durationMs: 100,
+  });
+}
+
+const VALID_LLM_RESPONSE: ConsolidatedLensOutput = {
+  platform_fit: { score: 2, reason: "Maps to Cortex Auto Forecast and STREAMS" },
+  sanity_verdict: "AGREE",
+  sanity_justification: "All dimension scores are reasonable given the skill data",
+  confidence: "HIGH",
+};
+
+const DISAGREE_LLM_RESPONSE: ConsolidatedLensOutput = {
+  platform_fit: { score: 1, reason: "Weak fit to Aera components" },
+  sanity_verdict: "DISAGREE",
+  sanity_justification: "financial_signal and archetype_completeness are overweighted",
+  flagged_dimensions: ["financial_signal", "archetype_completeness"],
+  confidence: "MEDIUM",
+};
 
 function makePreScore(overrides: Partial<PreScoreResult> = {}): PreScoreResult {
   return {
@@ -246,5 +331,155 @@ describe("buildValueLensFromDeterministic", () => {
     // Total: 3 + 2 = 5
     assert.equal(lens.total, 5);
     assert.ok(Math.abs(lens.normalized - 5 / 6) < 0.001);
+  });
+});
+
+// -- scoreConsolidated --
+
+describe("scoreConsolidated", () => {
+  it("returns correct lenses and composite with AGREE verdict", async () => {
+    const skill = makeSkill();
+    const preScore = makePreScore();
+    const chatFn = makeMockChatFn(VALID_LLM_RESPONSE);
+
+    const result = await scoreConsolidated(skill, "test knowledge", preScore, chatFn);
+
+    assert.equal(result.success, true);
+    if (!result.success) return;
+
+    // Technical lens from LLM: platform_fit score 2, maxPossible 3
+    assert.equal(result.lenses.technical.subDimensions.length, 1);
+    assert.equal(result.lenses.technical.subDimensions[0].name, "platform_fit");
+    assert.equal(result.lenses.technical.subDimensions[0].score, 2);
+    assert.equal(result.lenses.technical.maxPossible, 3);
+
+    // Adoption lens from deterministic: 4 sub-dims, maxPossible 12
+    assert.equal(result.lenses.adoption.subDimensions.length, 4);
+    assert.equal(result.lenses.adoption.maxPossible, 12);
+
+    // Value lens from deterministic: 2 sub-dims, maxPossible 6
+    assert.equal(result.lenses.value.subDimensions.length, 2);
+    assert.equal(result.lenses.value.maxPossible, 6);
+
+    // Composite: preScore 0.7 * 0.5 + (2/3) * 0.5 = 0.35 + 0.333 = 0.683, AGREE no penalty
+    assert.ok(result.composite > 0.60);
+    assert.equal(result.promotedToSimulation, true);
+  });
+
+  it("applies DISAGREE penalty correctly", async () => {
+    const skill = makeSkill();
+    const preScore = makePreScore();
+    const chatFn = makeMockChatFn(DISAGREE_LLM_RESPONSE);
+
+    const result = await scoreConsolidated(skill, "test knowledge", preScore, chatFn);
+
+    assert.equal(result.success, true);
+    if (!result.success) return;
+
+    // Composite: preScore 0.7 * 0.5 + (1/3) * 0.5 = 0.35 + 0.167 = 0.517 - 0.15 = 0.367
+    assert.ok(result.composite < 0.60);
+    assert.equal(result.promotedToSimulation, false);
+    assert.equal(result.sanityVerdict, "DISAGREE");
+  });
+
+  it("records scoringDurationMs > 0", async () => {
+    const skill = makeSkill();
+    const preScore = makePreScore();
+    const chatFn = makeMockChatFn(VALID_LLM_RESPONSE);
+
+    const result = await scoreConsolidated(skill, "test knowledge", preScore, chatFn);
+
+    assert.equal(result.success, true);
+    if (!result.success) return;
+
+    assert.ok(result.scoringDurationMs >= 0);
+  });
+
+  it("returns error when chatFn always fails", async () => {
+    const skill = makeSkill();
+    const preScore = makePreScore();
+    const failChatFn = async () => ({
+      success: false as const,
+      error: "LLM unavailable",
+    });
+
+    const result = await scoreConsolidated(skill, "test knowledge", preScore, failChatFn);
+
+    assert.equal(result.success, false);
+    if (result.success) return;
+    assert.ok(result.error.includes("Failed after"));
+  });
+
+  it("populates sanityVerdict, sanityJustification, and preScore fields", async () => {
+    const skill = makeSkill();
+    const preScore = makePreScore({ composite: 0.85 });
+    const chatFn = makeMockChatFn(VALID_LLM_RESPONSE);
+
+    const result = await scoreConsolidated(skill, "test knowledge", preScore, chatFn);
+
+    assert.equal(result.success, true);
+    if (!result.success) return;
+
+    assert.equal(result.sanityVerdict, "AGREE");
+    assert.equal(result.sanityJustification, "All dimension scores are reasonable given the skill data");
+    assert.equal(result.preScore, 0.85);
+  });
+
+  it("technical LensScore has exactly 1 sub-dimension with maxPossible=3", async () => {
+    const skill = makeSkill();
+    const preScore = makePreScore();
+    const chatFn = makeMockChatFn(VALID_LLM_RESPONSE);
+
+    const result = await scoreConsolidated(skill, "test knowledge", preScore, chatFn);
+
+    assert.equal(result.success, true);
+    if (!result.success) return;
+
+    assert.equal(result.lenses.technical.subDimensions.length, 1);
+    assert.equal(result.lenses.technical.maxPossible, 3);
+    assert.equal(result.lenses.technical.lens, "technical");
+  });
+
+  it("adoption LensScore has exactly 4 sub-dimensions with maxPossible=12", async () => {
+    const skill = makeSkill();
+    const preScore = makePreScore();
+    const chatFn = makeMockChatFn(VALID_LLM_RESPONSE);
+
+    const result = await scoreConsolidated(skill, "test knowledge", preScore, chatFn);
+
+    assert.equal(result.success, true);
+    if (!result.success) return;
+
+    assert.equal(result.lenses.adoption.subDimensions.length, 4);
+    assert.equal(result.lenses.adoption.maxPossible, 12);
+    assert.equal(result.lenses.adoption.lens, "adoption");
+  });
+
+  it("value LensScore has exactly 2 sub-dimensions with maxPossible=6", async () => {
+    const skill = makeSkill();
+    const preScore = makePreScore();
+    const chatFn = makeMockChatFn(VALID_LLM_RESPONSE);
+
+    const result = await scoreConsolidated(skill, "test knowledge", preScore, chatFn);
+
+    assert.equal(result.success, true);
+    if (!result.success) return;
+
+    assert.equal(result.lenses.value.subDimensions.length, 2);
+    assert.equal(result.lenses.value.maxPossible, 6);
+    assert.equal(result.lenses.value.lens, "value");
+  });
+
+  it("overallConfidence comes from LLM output", async () => {
+    const skill = makeSkill();
+    const preScore = makePreScore();
+    const chatFn = makeMockChatFn(DISAGREE_LLM_RESPONSE);
+
+    const result = await scoreConsolidated(skill, "test knowledge", preScore, chatFn);
+
+    assert.equal(result.success, true);
+    if (!result.success) return;
+
+    assert.equal(result.overallConfidence, "MEDIUM");
   });
 });
