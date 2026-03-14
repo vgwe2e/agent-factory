@@ -58,7 +58,7 @@ Full details: `milestones/v1.2-ROADMAP.md`
 **Milestone Goal:** Replace brute-force LLM scoring of L3 opportunities with a two-pass funnel that scores L4 activities deterministically, then applies focused LLM assessment only to configurable top-N survivors. Reduces LLM calls from ~2,478 to ~50.
 
 - [x] **Phase 21: Types + Deterministic Foundation** - Pure-function scoring of all 826 L4 candidates from structured fields, plus top-N filtering with CLI control (completed 2026-03-13)
-- [ ] **Phase 22: Consolidated LLM Scorer** - Single LLM call per survivor covering platform fit assessment and deterministic sanity check
+- [x] **Phase 22: Consolidated LLM Scorer** - Single LLM call per survivor covering platform fit assessment and deterministic sanity check (completed 2026-03-14)
 - [ ] **Phase 23: Pipeline Integration** - Wire two-pass flow into pipeline-runner with scoring-mode switch and L4-level simulation adapter
 - [ ] **Phase 24: Validation + Report Compatibility** - Calibration testing, full Ford run comparison, and report formatter verification
 
@@ -89,7 +89,7 @@ Plans:
   2. The LLM prompt includes the full deterministic score breakdown so the model can perform targeted sanity checking of individual dimensions
   3. A final composite score blends pre-score and LLM output, feeding into the existing 0.60 promotion threshold gate for simulation eligibility
   4. Validation failures trigger scoreWithRetry, consistent with v1.2 retry behavior
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 22-01-PLAN.md -- Schema + types + consolidated prompt builder
 - [ ] 22-02-PLAN.md -- Consolidated scorer function + composite blending
@@ -127,7 +127,7 @@ Plans:
 | 12-14 | v1.1 | 7/7 | Complete | 2026-03-12 |
 | 15-20 | v1.2 | 8/8 | Complete | 2026-03-12 |
 | 21. Types + Deterministic Foundation | v1.3 | 3/3 | Complete | 2026-03-13 |
-| 22. Consolidated LLM Scorer | 1/2 | In Progress|  | - |
+| 22. Consolidated LLM Scorer | 2/2 | Complete   | 2026-03-14 | - |
 | 23. Pipeline Integration | v1.3 | 0/TBD | Not started | - |
 | 24. Validation + Report Compatibility | v1.3 | 0/TBD | Not started | - |
 

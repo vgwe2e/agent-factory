@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: L4 Two-Pass Scoring Funnel
 status: executing
-stopped_at: Completed 22-01-PLAN.md
-last_updated: "2026-03-14T00:45:06Z"
-last_activity: 2026-03-14 — Completed 22-01 consolidated scorer contracts
+stopped_at: Completed 22-02-PLAN.md
+last_updated: "2026-03-14T00:50:23Z"
+last_activity: 2026-03-14 — Completed 22-02 consolidated scorer function
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 4
-  completed_plans: 4
-  percent: 75
+  completed_plans: 5
+  percent: 80
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 ## Current Position
 
 Phase: 22 (second of 4 in v1.3) — Consolidated LLM Scorer
-Plan: 01 of 3 complete
+Plan: 02 of 3 complete
 Status: Executing
-Last activity: 2026-03-14 — Completed 22-01 consolidated scorer contracts
+Last activity: 2026-03-14 — Completed 22-02 consolidated scorer function
 
-Progress: [████████░░] 75%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -38,7 +38,7 @@ Progress: [████████░░] 75%
 - v1.0 plans completed: 31
 - v1.1 plans completed: 7 (26min)
 - v1.2 plans completed: 8 (~23min total)
-- v1.3 plans completed: 4 (12min)
+- v1.3 plans completed: 5 (15min)
 
 ## Accumulated Context
 
@@ -70,6 +70,12 @@ All decisions logged in PROJECT.md Key Decisions table (27 decisions).
 - ScoringResult v1.3 fields all optional for backward compatibility
 - Prompt includes dimension descriptions alongside scores for LLM context
 
+22-02 decisions:
+- LensScore builders exported for direct unit testing (plan suggested internal-only)
+- Platform fit normalized as score/3 for composite blending
+- Adoption lens: 4 deterministic dims (financial_signal, decision_density, impact_order, rating_confidence)
+- Value lens: value_density from financial_signal, simulation_viability from archetype_completeness
+
 ### Pending Todos
 
 None.
@@ -82,6 +88,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-14T00:45:06Z
-Stopped at: Completed 22-01-PLAN.md
+Last session: 2026-03-14T00:50:23Z
+Stopped at: Completed 22-02-PLAN.md
 Resume file: None
