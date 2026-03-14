@@ -33,9 +33,9 @@ import { ollamaChat } from "../scoring/ollama-client.js";
 import { buildKnowledgeContext } from "../scoring/knowledge-context.js";
 import { groupL4sByL3 } from "../triage/red-flags.js";
 import { extractScoringSkills } from "./extract-skills.js";
-import { loadCheckpoint, getCompletedNames, createCheckpointWriter } from "../infra/checkpoint.js";
+import { loadCheckpoint, getCompletedNames, createCheckpointWriter, loadCheckpointForMode, getCompletedL4Ids, createCheckpointV2Writer } from "../infra/checkpoint.js";
 import { checkOllama, warmUpModel, isOllamaHealthy } from "../infra/ollama.js";
-import type { Checkpoint } from "../infra/checkpoint.js";
+import type { Checkpoint, CheckpointV2 } from "../infra/checkpoint.js";
 import { Semaphore } from "../infra/semaphore.js";
 import { withTimeout, TimeoutError } from "../infra/timeout.js";
 import { callWithResilience } from "../infra/retry-policy.js";
@@ -47,7 +47,12 @@ import { loadArchivedScores } from "./load-archived-scores.js";
 import { runSimulationPipeline as defaultRunSimulationPipeline } from "../simulation/simulation-pipeline.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
 import type { SimulationLlmTarget } from "../simulation/llm-client.js";
-import { toSimulationInputs } from "./scoring-to-simulation.js";
+import { toSimulationInputs, toL4SimulationInputs } from "./scoring-to-simulation.js";
+import { preScoreAll } from "../scoring/deterministic/pre-scorer.js";
+import { scoreConsolidated } from "../scoring/consolidated-scorer.js";
+import type { FilterResult, FilterStats, PreScoreResult } from "../types/scoring.js";
+import { formatPreScoreTsv } from "../output/format-pre-score-tsv.js";
+import type { L4Activity } from "../types/hierarchy.js";
 import fs from "node:fs/promises";
 import path from "node:path";
 
@@ -281,6 +286,226 @@ async function runThreeLensScoring(
   return { scored, errors, scoredCount, promotedCount };
 }
 
+/**
+ * Two-pass scoring loop (v1.3 code path).
+ *
+ * Flow: deterministic pre-score all L4s -> top-N filter -> LLM score survivors
+ * with consolidated single-call scorer -> build ScoringResult from results.
+ *
+ * Uses the same semaphore/timeout/retry infrastructure as three-lens.
+ */
+async function runTwoPassScoring(
+  hierarchy: L4Activity[],
+  allSkills: SkillWithContext[],
+  completed: Set<string>,
+  checkpoint: CheckpointV2,
+  data: HierarchyExport,
+  knowledgeContext: string,
+  options: PipelineOptions,
+  logger: Logger,
+  ctx: EvaluationContext,
+): Promise<{ scored: ScoringResult[]; errors: string[]; scoredCount: number; promotedCount: number; filterResult: FilterResult }> {
+  const scored: ScoringResult[] = [];
+  const errors: string[] = [];
+  let scoredCount = 0;
+  let promotedCount = 0;
+
+  // Step 1: Deterministic pre-score all L4s
+  const topN = options.topN ?? 50;
+  logger.info({ l4Count: hierarchy.length, topN }, "Pre-scoring all L4 activities (deterministic)");
+  const filterResult = preScoreAll(hierarchy, topN);
+  logger.info(
+    {
+      totalCandidates: filterResult.stats.totalCandidates,
+      survivors: filterResult.stats.actualSurvivors,
+      eliminated: filterResult.stats.eliminated,
+      cutoffScore: filterResult.stats.cutoffScore,
+    },
+    "Pre-scoring complete",
+  );
+
+  // Step 2: Write pre-score TSV (two-pass only)
+  const evalDir = path.join(options.outputDir, "evaluation");
+  try {
+    await fs.mkdir(evalDir, { recursive: true });
+    const allPreScores = [...filterResult.survivors, ...filterResult.eliminated];
+    const tsvContent = formatPreScoreTsv(allPreScores);
+    await fs.writeFile(path.join(evalDir, "pre-scores.tsv"), tsvContent, "utf-8");
+    logger.info("Pre-score TSV written");
+  } catch (err) {
+    logger.warn({ error: err instanceof Error ? err.message : String(err) }, "Failed to write pre-score TSV (non-fatal)");
+  }
+
+  // Step 3: Get survivors for LLM scoring
+  const survivors = filterResult.survivors;
+  if (survivors.length === 0) {
+    logger.info("No survivors from pre-scoring filter");
+    return { scored, errors, scoredCount, promotedCount, filterResult };
+  }
+
+  // Step 4: Build skill lookup by L4 name for consolidated scorer
+  const skillByL4 = new Map<string, SkillWithContext>();
+  for (const skill of allSkills) {
+    // First skill per L4 wins (consolidated scorer only needs one skill per L4)
+    if (!skillByL4.has(skill.l4Name)) {
+      skillByL4.set(skill.l4Name, skill);
+    }
+  }
+
+  // Step 5: Score each survivor via semaphore
+  const concurrency = options.concurrency ?? 1;
+  const requestTimeoutMs = options.requestTimeoutMs ?? 1_500_000;
+  const semaphore = new Semaphore(concurrency);
+  const writer = createCheckpointV2Writer(options.outputDir, checkpoint);
+  const cleanupSignalHandlers = writer.installSignalHandlers();
+  const progress = createProgressTracker(survivors.length, logger);
+  const progressInterval = setInterval(() => progress.report(), 5000);
+
+  try {
+    const tasks = survivors.map((preScore) => semaphore.run(async () => {
+      const l4Id = preScore.l4Id;
+      const l4Name = preScore.l4Name;
+
+      // Skip already-completed L4s (resume support)
+      if (completed.has(l4Id)) {
+        logger.info({ l4Id, l4Name }, "Skipping (already completed in previous run)");
+        return;
+      }
+
+      const childLog = logger.child({ l4Id, l4Name, composite: preScore.composite.toFixed(4) });
+      childLog.info("Scoring survivor (consolidated)");
+      progress.start(l4Name);
+
+      // Find a skill for the consolidated scorer
+      let skill = skillByL4.get(l4Name);
+      if (!skill) {
+        // Try to create a minimal SkillWithContext from the L4 activity data
+        const l4 = data.hierarchy.find(h => h.id === l4Id);
+        if (!l4 || l4.skills.length === 0) {
+          // L4 has no skills -- cannot be LLM-scored. Skip silently.
+          childLog.info("Skipping (no skills under this L4)");
+          progress.complete(l4Name);
+          return;
+        }
+        // Use extractScoringSkills pattern for the first skill
+        const rawSkill = l4.skills[0];
+        skill = {
+          ...rawSkill,
+          execution: rawSkill.execution ?? { target_systems: [], write_back_actions: [], execution_trigger: null, execution_frequency: null, autonomy_level: null, approval_required: null, approval_threshold: null, rollback_strategy: null },
+          problem_statement: rawSkill.problem_statement ?? { current_state: "", quantified_pain: "", root_cause: "", falsifiability_check: "", outcome: "" },
+          l4Name: l4.name,
+          l4Id: l4.id,
+          l3Name: l4.l3,
+          l2Name: l4.l2,
+          l1Name: l4.l1,
+          financialRating: l4.financial_rating,
+          aiSuitability: l4.ai_suitability,
+          impactOrder: l4.impact_order,
+          ratingConfidence: l4.rating_confidence,
+          decisionExists: l4.decision_exists,
+          decisionArticulation: l4.decision_articulation,
+        };
+      }
+
+      const chatFn = options.chatFn;
+      if (!chatFn) {
+        const msg = `No chatFn available for two-pass scoring of ${l4Name}`;
+        addError(ctx, l4Id, "scoring", msg);
+        errors.push(msg);
+        progress.error(l4Name);
+        return;
+      }
+
+      try {
+        // scoreConsolidated handles retry internally via scoreWithRetry.
+        // We wrap in withTimeout for stuck-request protection.
+        const result = await withTimeout(
+          (_signal) => scoreConsolidated(skill!, knowledgeContext, preScore, chatFn),
+          requestTimeoutMs,
+        );
+
+        if (result.success) {
+          // Build ScoringResult from ConsolidatedScorerResult
+          const sr: ScoringResult = {
+            skillId: skill!.id,
+            skillName: skill!.name,
+            l4Name: preScore.l4Name,
+            l3Name: preScore.l3Name,
+            l2Name: preScore.l2Name,
+            l1Name: preScore.l1Name,
+            archetype: skill!.archetype as import("../types/hierarchy.js").LeadArchetype,
+            lenses: result.lenses,
+            composite: result.composite,
+            overallConfidence: result.overallConfidence,
+            promotedToSimulation: result.promotedToSimulation,
+            scoringDurationMs: result.scoringDurationMs,
+            sanityVerdict: result.sanityVerdict,
+            sanityJustification: result.sanityJustification,
+            preScore: result.preScore,
+          };
+
+          addResult(ctx, sr);
+          scored.push(sr);
+          scoredCount++;
+          if (sr.promotedToSimulation) promotedCount++;
+          childLog.info(
+            { composite: sr.composite.toFixed(2), promoted: sr.promotedToSimulation },
+            "Scored (consolidated)",
+          );
+          progress.complete(l4Name);
+
+          // V2 checkpoint entry
+          writer.enqueue({
+            l4Id,
+            completedAt: new Date().toISOString(),
+            status: "scored",
+          } as never);
+        } else {
+          addError(ctx, l4Id, "scoring", result.error);
+          errors.push(result.error);
+          childLog.warn({ error: result.error }, "Scoring failed");
+          progress.error(l4Name);
+
+          writer.enqueue({
+            l4Id,
+            completedAt: new Date().toISOString(),
+            status: "error",
+          } as never);
+        }
+      } catch (err) {
+        if (err instanceof TimeoutError) {
+          const msg = `Scoring timed out after ${err.timeoutMs}ms for ${l4Name}`;
+          addError(ctx, l4Id, "scoring", msg);
+          errors.push(msg);
+          childLog.warn({ timeoutMs: err.timeoutMs }, "Scoring timed out");
+        } else {
+          const msg = err instanceof Error ? err.message : String(err);
+          addError(ctx, l4Id, "scoring", msg);
+          errors.push(msg);
+          childLog.warn({ error: msg }, "Scoring failed unexpectedly");
+        }
+        progress.error(l4Name);
+
+        writer.enqueue({
+          l4Id,
+          completedAt: new Date().toISOString(),
+          status: "error",
+        } as never);
+      }
+    }));
+
+    await Promise.allSettled(tasks);
+  } finally {
+    clearInterval(progressInterval);
+    cleanupSignalHandlers();
+  }
+
+  writer.flush();
+  progress.report();
+
+  return { scored, errors, scoredCount, promotedCount, filterResult };
+}
+
 // -- Public API --
 
 /**
@@ -468,26 +693,58 @@ export async function runPipeline(
   // 9. Score each skill via the appropriate scoring path
   const scoringMode = options.scoringMode ?? "three-lens";
   const concurrency = options.concurrency ?? 1;
+  let filterStats: FilterStats | undefined;
 
-  // Three-lens scoring (v1.2 code path)
-  const threeLensResult = await runThreeLensScoring(
-    processable,
-    allSkills,
-    skillMap,
-    completed,
-    checkpoint,
-    data,
-    knowledgeContext,
-    options,
-    logger,
-    ctx,
-    isRealOllama,
-    triageModel,
-  );
-  allScoredResults.push(...threeLensResult.scored);
-  errors.push(...threeLensResult.errors);
-  scoredCount += threeLensResult.scoredCount;
-  promotedCount += threeLensResult.promotedCount;
+  if (scoringMode === "two-pass") {
+    // Two-pass: pre-score -> filter -> consolidated LLM scoring
+    const { checkpoint: ckpt, backedUp } = loadCheckpointForMode(options.outputDir, "two-pass");
+    if (backedUp) logger.info("Backed up v1.2 checkpoint as .checkpoint.v12.bak");
+    const twoPassCheckpoint: CheckpointV2 = (ckpt as CheckpointV2) ?? {
+      version: 2 as const,
+      scoringMode: "two-pass" as const,
+      inputFile: resolvedInput,
+      startedAt: new Date().toISOString(),
+      entries: [],
+    };
+    const completedL4s = getCompletedL4Ids((ckpt as CheckpointV2) ?? null);
+
+    const twoPassResult = await runTwoPassScoring(
+      data.hierarchy,
+      allSkills,
+      completedL4s,
+      twoPassCheckpoint,
+      data,
+      knowledgeContext,
+      options,
+      logger,
+      ctx,
+    );
+    allScoredResults.push(...twoPassResult.scored);
+    errors.push(...twoPassResult.errors);
+    scoredCount += twoPassResult.scoredCount;
+    promotedCount += twoPassResult.promotedCount;
+    filterStats = twoPassResult.filterResult.stats;
+  } else {
+    // Three-lens scoring (v1.2 code path)
+    const threeLensResult = await runThreeLensScoring(
+      processable,
+      allSkills,
+      skillMap,
+      completed,
+      checkpoint,
+      data,
+      knowledgeContext,
+      options,
+      logger,
+      ctx,
+      isRealOllama,
+      triageModel,
+    );
+    allScoredResults.push(...threeLensResult.scored);
+    errors.push(...threeLensResult.errors);
+    scoredCount += threeLensResult.scoredCount;
+    promotedCount += threeLensResult.promotedCount;
+  }
 
   // Archive all results in a single batch after concurrent scoring completes
   if (ctx.results.size > 0) {
@@ -522,7 +779,17 @@ export async function runPipeline(
 
   // 10b. Run simulation pipeline for promoted opportunities
   const promoted = finalScoredResults.filter((sr) => sr.promotedToSimulation);
-  const simInputs = toSimulationInputs(promoted, l3Map, l4Map, data.company_context);
+  let simInputs;
+  if (scoringMode === "two-pass") {
+    // Build per-L4 name lookup for toL4SimulationInputs
+    const l4ByName = new Map<string, L4Activity>();
+    for (const l4 of data.hierarchy) {
+      l4ByName.set(l4.name, l4);
+    }
+    simInputs = toL4SimulationInputs(promoted, l4ByName, l3Map, data.company_context);
+  } else {
+    simInputs = toSimulationInputs(promoted, l3Map, l4Map, data.company_context);
+  }
   const simDir = path.join(options.outputDir, "evaluation", "simulations");
 
   let simResult: SimulationPipelineResult;
@@ -630,6 +897,12 @@ export async function runPipeline(
     errors,
     costSummary,
     scoringMode,
+    // Two-pass specific stats
+    ...(filterStats && {
+      preScoredCount: filterStats.totalCandidates,
+      survivorCount: filterStats.actualSurvivors,
+      cutoffScore: filterStats.cutoffScore,
+    }),
   };
 
   logger.info(

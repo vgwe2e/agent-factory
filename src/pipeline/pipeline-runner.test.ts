@@ -15,6 +15,8 @@ import os from "node:os";
 import { runPipeline } from "./pipeline-runner.js";
 import type { PipelineOptions, PipelineResult } from "./pipeline-runner.js";
 import * as pipelineRunnerModule from "./pipeline-runner.js";
+import { formatScoresTsv } from "../output/format-scores-tsv.js";
+import type { LensScore } from "../types/scoring.js";
 import { createLogger } from "../infra/logger.js";
 import type { HierarchyExport, L3Opportunity, L4Activity, Skill } from "../types/hierarchy.js";
 import type { ChatResult } from "../scoring/ollama-client.js";
@@ -1493,6 +1495,134 @@ describe("pipeline-runner", () => {
   it("runThreeLensScoring is not exported (internal helper only)", () => {
     const exports = Object.keys(pipelineRunnerModule);
     assert.ok(!exports.includes("runThreeLensScoring"), "runThreeLensScoring should not be exported");
+  });
+
+  // -- Task 2: Two-pass scoring path tests --
+
+  it("two-pass pipeline executes full funnel: pre-score -> filter -> LLM score -> reports", async () => {
+    const fixture = makeFixtureExport();
+
+    // chatFn that returns valid consolidated scorer JSON
+    const consolidatedChatFn = async (
+      _messages: Array<{ role: string; content: string }>,
+      _format: Record<string, unknown>,
+    ): Promise<ChatResult> => ({
+      success: true as const,
+      content: JSON.stringify({
+        platform_fit: { score: 2, reason: "Good platform fit" },
+        sanity_verdict: "AGREE",
+        sanity_justification: "Deterministic scores align with platform assessment",
+        confidence: "MEDIUM",
+      }),
+      durationMs: 50,
+    });
+
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn: consolidatedChatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        scoringMode: "two-pass",
+        topN: 50,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    // Verify two-pass specific fields populated
+    assert.equal(result.scoringMode, "two-pass", "scoringMode is two-pass");
+    assert.ok(typeof result.preScoredCount === "number", "preScoredCount populated");
+    assert.ok(result.preScoredCount! > 0, "preScoredCount > 0");
+    assert.ok(typeof result.survivorCount === "number", "survivorCount populated");
+    assert.ok(typeof result.cutoffScore === "number", "cutoffScore populated");
+    assert.ok(result.scoredCount > 0, "at least one LLM-scored result");
+    assert.equal(result.errorCount, 0, "no errors");
+
+    // Verify pre-score TSV was written
+    const preScoreTsvPath = path.join(tmpDir, "evaluation", "pre-scores.tsv");
+    assert.ok(fs.existsSync(preScoreTsvPath), "pre-scores.tsv written in two-pass mode");
+  });
+
+  it("PIPE-03: synthesized LensScore from two-pass produces valid TSV with non-zero values", () => {
+    // Simulate what the two-pass path builds: a ScoringResult with LensScore objects
+    // generated from ConsolidatedScorerResult (technical from LLM, adoption+value from deterministic)
+    const mockScoringResult: ScoringResult = {
+      skillId: "test-skill-1",
+      skillName: "Test Skill",
+      l4Name: "Test Activity",
+      l3Name: "Test Opportunity",
+      l2Name: "L2",
+      l1Name: "L1",
+      archetype: "DETERMINISTIC",
+      lenses: {
+        technical: {
+          lens: "technical",
+          subDimensions: [
+            { name: "platform_fit", score: 2, reason: "Good fit" },
+          ],
+          total: 2,
+          maxPossible: 3,
+          normalized: 2 / 3,
+          confidence: "MEDIUM",
+        },
+        adoption: {
+          lens: "adoption",
+          subDimensions: [
+            { name: "financial_signal", score: 2, reason: "Deterministic: 0.75" },
+            { name: "decision_density", score: 1, reason: "Deterministic: 0.40" },
+            { name: "impact_order", score: 2, reason: "Deterministic: 0.60" },
+            { name: "rating_confidence", score: 2, reason: "Deterministic: 0.80" },
+          ],
+          total: 7,
+          maxPossible: 12,
+          normalized: 7 / 12,
+          confidence: "HIGH",
+        },
+        value: {
+          lens: "value",
+          subDimensions: [
+            { name: "value_density", score: 2, reason: "Deterministic: 0.75" },
+            { name: "simulation_viability", score: 1, reason: "Deterministic: 0.40" },
+          ],
+          total: 3,
+          maxPossible: 6,
+          normalized: 3 / 6,
+          confidence: "HIGH",
+        },
+      },
+      composite: 0.65,
+      overallConfidence: "MEDIUM",
+      promotedToSimulation: true,
+      scoringDurationMs: 100,
+      sanityVerdict: "AGREE",
+      sanityJustification: "Scores align",
+      preScore: 0.72,
+    };
+
+    const tsv = formatScoresTsv([mockScoringResult]);
+
+    // Verify TSV has non-zero composite
+    const lines = tsv.split("\n");
+    assert.ok(lines.length >= 2, "TSV has header + data rows");
+    const dataLine = lines[1];
+    const cols = dataLine.split("\t");
+    // composite is the 20th column (0-indexed: 19)
+    const compositeStr = cols[19];
+    assert.ok(parseFloat(compositeStr) > 0, `Composite ${compositeStr} should be > 0`);
+
+    // Verify at least one lens total is > 0
+    // tech_total is col index 10, adoption_total is 15, value_total is 18
+    const techTotal = parseInt(cols[10], 10);
+    const adoptTotal = parseInt(cols[15], 10);
+    const valTotal = parseInt(cols[18], 10);
+    assert.ok(techTotal > 0 || adoptTotal > 0 || valTotal > 0, "At least one lens total > 0");
   });
 
   it("three-lens scoring path works identically after refactor (behavior-preserving)", async () => {
