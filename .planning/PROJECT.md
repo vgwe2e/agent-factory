@@ -127,7 +127,9 @@ Known tech debt: 19 items across v1.0 (9), v1.1 (3), and v1.2 (7 informational).
 
 | L4 as scoring unit over L3 | L4 has richer structured fields; L3 is synthetic rollup that masks granularity | — Pending |
 | Two-pass deterministic + LLM funnel | 826 x 3 LLM calls unsustainable; L4 fields enable algorithmic scoring | — Pending |
-| LLM for platform fit + sanity check | Platform fit requires domain reasoning code can't do; sanity check catches deterministic errors | — Pending |
+| LLM for platform fit + sanity check | Platform fit requires domain reasoning code can't do; sanity check catches deterministic errors | ✓ Good — single consolidated call with 4-layer prompt |
+| Sanity penalty approach (DISAGREE -0.15, PARTIAL -0.075) | Adjusts composite proportionally to LLM confidence in deterministic scores | ✓ Good — smooth degradation vs binary gate |
+| 50/50 pre-score + LLM blend | Equal weight avoids either signal dominating | — Pending validation in Phase 24 |
 
 ---
-*Last updated: 2026-03-13 after v1.3 milestone start*
+*Last updated: 2026-03-14 after Phase 22*
