@@ -121,26 +121,28 @@ export async function runSimulationPipeline(
 
   for (let i = 0; i < sorted.length; i++) {
     const input = sorted[i];
-    const l3Name = input.l4Activity?.name ?? input.opportunity?.l3_name ?? "unknown";
-    const slug = slugify(l3Name);
+    const subjectName = input.l4Activity?.name ?? input.opportunity?.l3_name ?? "unknown";
+    const slug = input.l4Activity
+      ? slugify(input.l4Activity.name) + "-" + input.l4Activity.id.slice(-6)
+      : slugify(subjectName);
     const oppDir = path.join(outputDir, slug);
     const defaultArtifacts = createDefaultArtifacts();
 
     const existingResult = await loadExistingSimulationResult(
       oppDir,
-      l3Name,
+      subjectName,
       slug,
       knowledgeIndex,
     );
     if (existingResult) {
-      console.log(`Reusing ${i + 1}/${sorted.length}: ${l3Name}`);
+      console.log(`Reusing ${i + 1}/${sorted.length}: ${subjectName}`);
       totalConfirmed += existingResult.validationSummary.confirmedCount;
       totalInferred += existingResult.validationSummary.inferredCount;
       results.push(existingResult);
       continue;
     }
 
-    console.log(`Simulating ${i + 1}/${sorted.length}: ${l3Name}`);
+    console.log(`Simulating ${i + 1}/${sorted.length}: ${subjectName}`);
 
     // Create output directory
     fs.mkdirSync(oppDir, { recursive: true });
@@ -184,7 +186,7 @@ export async function runSimulationPipeline(
         totalInferred += inferred;
 
         results.push({
-          l3Name,
+          l3Name: subjectName,
           slug,
           scenarioSpec,
           assessment,
@@ -211,14 +213,14 @@ export async function runSimulationPipeline(
     } catch (err: unknown) {
       // Per-opportunity error isolation: log and continue to next opportunity
       if (err instanceof TimeoutError) {
-        console.error(`  Simulation timed out for ${l3Name} after ${(err as TimeoutError).timeoutMs}ms`);
+        console.error(`  Simulation timed out for ${subjectName} after ${(err as TimeoutError).timeoutMs}ms`);
       } else {
         const message = err instanceof Error ? err.message : String(err);
-        console.error(`  Simulation failed for ${l3Name}: ${message}`);
+        console.error(`  Simulation failed for ${subjectName}: ${message}`);
       }
       totalFailed++;
       results.push({
-        l3Name,
+        l3Name: subjectName,
         slug,
         scenarioSpec: undefined,
         assessment: {

@@ -33,16 +33,20 @@ export async function writeFinalReports(
   companyName: string,
   date?: string,
   simSkipped?: boolean,
+  scoringMode?: "two-pass" | "three-lens",
 ): Promise<WriteResult> {
   try {
     const evalDir = path.join(outputDir, "evaluation");
     const simDir = path.join(evalDir, "simulations");
     await fs.mkdir(simDir, { recursive: true });
 
+    // Scoring mode header annotation
+    const modeHeader = scoringMode ? `Scoring Mode: ${scoringMode}\n\n` : "";
+
     // Generate content from formatters
-    const summaryMd = formatSummary(scored, triaged, simResults, companyName, date, simSkipped);
-    const deadZonesMd = formatDeadZones(triaged, scored, date);
-    const metaReflectionMd = formatMetaReflection(triaged, scored, simResults, date, simSkipped);
+    const summaryMd = modeHeader + formatSummary(scored, triaged, simResults, companyName, date, simSkipped);
+    const deadZonesMd = modeHeader + formatDeadZones(triaged, scored, date);
+    const metaReflectionMd = modeHeader + formatMetaReflection(triaged, scored, simResults, date, simSkipped);
     const simulationFilterTsv = formatSimulationFilterTsv(simResults);
     const implementationShortlistTsv = formatImplementationShortlistTsv(scored, simResults, ["ADVANCE"]);
     const manualReviewQueueTsv = formatImplementationShortlistTsv(scored, simResults, ["REVIEW", "HOLD"]);

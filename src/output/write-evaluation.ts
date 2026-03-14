@@ -27,10 +27,14 @@ export async function writeEvaluation(
   triagedOpportunities: TriageResult[],
   companyName: string,
   date?: string,
+  scoringMode?: "two-pass" | "three-lens",
 ): Promise<WriteResult> {
   try {
     const evalDir = path.join(outputDir, "evaluation");
     await fs.mkdir(evalDir, { recursive: true });
+
+    // Scoring mode header annotation
+    const modeHeader = scoringMode ? `Scoring Mode: ${scoringMode}\n\n` : "";
 
     // Derive tier 1 names from triage data
     const tier1Names = new Set(
@@ -42,8 +46,8 @@ export async function writeEvaluation(
     // Generate content from formatters
     const triageTsv = formatTriageTsv(triagedOpportunities);
     const scoresTsv = formatScoresTsv(scoredOpportunities);
-    const adoptionRisk = formatAdoptionRisk(triagedOpportunities, date);
-    const tier1Report = formatTier1Report(scoredOpportunities, tier1Names, companyName, date);
+    const adoptionRisk = modeHeader + formatAdoptionRisk(triagedOpportunities, date);
+    const tier1Report = modeHeader + formatTier1Report(scoredOpportunities, tier1Names, companyName, date);
 
     // Define output files
     const files: { name: string; content: string }[] = [

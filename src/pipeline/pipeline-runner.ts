@@ -770,6 +770,8 @@ export async function runPipeline(
     finalScoredResults,
     triageResults,
     companyName,
+    undefined,
+    scoringMode,
   );
   if (evalResult.success) {
     logger.info({ files: evalResult.files.length }, "Evaluation files written");
@@ -849,6 +851,7 @@ export async function runPipeline(
     companyName,
     undefined,
     options.skipSim,
+    scoringMode,
   );
   if (reportResult.success) {
     logger.info({ files: reportResult.files.length }, "Final reports written");
