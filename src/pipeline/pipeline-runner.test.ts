@@ -14,6 +14,7 @@ import os from "node:os";
 
 import { runPipeline } from "./pipeline-runner.js";
 import type { PipelineOptions, PipelineResult } from "./pipeline-runner.js";
+import * as pipelineRunnerModule from "./pipeline-runner.js";
 import { createLogger } from "../infra/logger.js";
 import type { HierarchyExport, L3Opportunity, L4Activity, Skill } from "../types/hierarchy.js";
 import type { ChatResult } from "../scoring/ollama-client.js";
@@ -1485,5 +1486,38 @@ describe("pipeline-runner", () => {
 
     assert.equal(result.resumedCount, 0, "error entries should not count as resumed");
     assert.equal(result.scoredCount, 3, "Opp-A should be retried in the current session");
+  });
+
+  // -- Task 1: Refactor verification --
+
+  it("runThreeLensScoring is not exported (internal helper only)", () => {
+    const exports = Object.keys(pipelineRunnerModule);
+    assert.ok(!exports.includes("runThreeLensScoring"), "runThreeLensScoring should not be exported");
+  });
+
+  it("three-lens scoring path works identically after refactor (behavior-preserving)", async () => {
+    const fixture = makeFixtureExport();
+    const chatFn = makeChatFn();
+    const { fn: fetchFn } = makeFetchFn();
+    const { fn: simFn } = makeMockSimulationPipeline();
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        chatFn,
+        fetchFn,
+        runSimulationPipelineFn: simFn,
+        gitCommit: false,
+        scoringMode: "three-lens",
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.equal(result.scoredCount, 3, "3 scored in three-lens mode");
+    assert.equal(result.errorCount, 0, "no errors");
+    assert.equal(result.scoringMode, "three-lens", "scoringMode reported correctly");
   });
 });

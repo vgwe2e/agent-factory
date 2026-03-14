@@ -20,6 +20,8 @@ import { parseExport } from "../ingestion/parse-export.js";
 import { triageOpportunities } from "../triage/triage-pipeline.js";
 import { scoreOneSkill } from "../scoring/scoring-pipeline.js";
 import { ModelManager } from "../infra/model-manager.js";
+import type { EvaluationContext } from "./context-tracker.js";
+import type { TriageResult } from "../types/triage.js";
 import {
   createContext,
   addResult,
@@ -128,6 +130,156 @@ const DEFAULT_ARCHIVE_THRESHOLD = 25;
 const DEFAULT_TRIAGE_MODEL = "qwen3:8b";
 const DEFAULT_SCORING_MODEL = "qwen3:30b";
 const MODEL_TIMEOUT_MS = 120_000;
+
+// -- Internal scoring helpers --
+
+/**
+ * Three-lens scoring loop (v1.2 code path).
+ *
+ * Extracted verbatim from runPipeline for clean branching between
+ * three-lens and two-pass scoring modes. Contains the exact existing
+ * code with no behavioral changes.
+ */
+async function runThreeLensScoring(
+  processable: TriageResult[],
+  allSkills: SkillWithContext[],
+  skillMap: Map<string, SkillWithContext>,
+  completed: Set<string>,
+  checkpoint: Checkpoint,
+  data: HierarchyExport,
+  knowledgeContext: string,
+  options: PipelineOptions,
+  logger: Logger,
+  ctx: EvaluationContext,
+  isRealOllama: boolean,
+  triageModel: string,
+): Promise<{ scored: ScoringResult[]; errors: string[]; scoredCount: number; promotedCount: number }> {
+  const scored: ScoringResult[] = [];
+  const errors: string[] = [];
+  let scoredCount = 0;
+  let promotedCount = 0;
+
+  const concurrency = options.concurrency ?? 1;
+  const requestTimeoutMs = options.requestTimeoutMs ?? 1_500_000;
+  const semaphore = new Semaphore(concurrency);
+  const writer = createCheckpointWriter(options.outputDir, checkpoint);
+  const cleanupSignalHandlers = writer.installSignalHandlers();
+  const progress = createProgressTracker(processable.length, logger);
+  const progressInterval = setInterval(() => progress.report(), 5000);
+
+  try {
+    const tasks = processable.map((triage) => semaphore.run(async () => {
+      const skillId = triage.skillId;
+      const skillName = triage.skillName ?? triage.l3Name;
+      const skill = skillId ? skillMap.get(skillId) : undefined;
+      if (!skill) {
+        const msg = `Skill not found: ${skillName} (${skillId})`;
+        addError(ctx, skillId ?? triage.l3Name, "scoring", msg);
+        errors.push(msg);
+        logger.warn({ skillId, skillName }, msg);
+        return;
+      }
+
+      const childLog = logger.child({ skillId, skillName, tier: triage.tier });
+
+      // Skip already-completed skills (resume support)
+      if (completed.has(skillId ?? triage.l3Name)) {
+        childLog.info("Skipping (already completed in previous run)");
+        return;
+      }
+
+      childLog.info("Scoring skill");
+      progress.start(skillName);
+
+      // Use 8B model for Tier 3 (faster, acceptable quality for low-priority skills)
+      const tierChatFn = options.chatFn ?? (triage.tier >= 3
+        ? (msgs: Array<{ role: string; content: string }>, fmt: Record<string, unknown>) => ollamaChat(msgs, fmt, triageModel)
+        : undefined);
+
+      try {
+        // Use callWithResilience wrapped in withTimeout for stuck request protection
+        const resilient = await withTimeout(
+          (_signal) => callWithResilience({
+            primaryCall: async () => {
+              const r = await scoreOneSkill(skill, data.company_context, knowledgeContext, tierChatFn);
+              if ("error" in r) throw new Error(r.error);
+              return JSON.stringify(r);
+            },
+            schema: z.any(),
+            label: skillName,
+            maxRetries: 1,
+          }),
+          requestTimeoutMs,
+        );
+
+        if (resilient.result.success) {
+          const sr = resilient.result.data as unknown as ScoringResult;
+          addResult(ctx, sr);
+          scored.push(sr);
+          scoredCount++;
+          if (sr.promotedToSimulation) promotedCount++;
+          childLog.info(
+            { composite: sr.composite.toFixed(2), promoted: sr.promotedToSimulation, resolvedVia: resilient.resolvedVia },
+            "Scored",
+          );
+          progress.complete(skillName);
+        } else {
+          addError(ctx, skillId ?? triage.l3Name, "scoring", resilient.skipReason ?? resilient.result.error);
+          errors.push(resilient.skipReason ?? resilient.result.error);
+          childLog.warn({ error: resilient.skipReason, resolvedVia: "skipped" }, "Scoring skipped");
+          progress.error(skillName);
+        }
+
+        // Enqueue checkpoint entry (atomic writer handles debounced disk writes)
+        writer.enqueue({
+          skillId: skillId,
+          completedAt: new Date().toISOString(),
+          status: resilient.result.success ? "scored" : "error",
+        });
+      } catch (err) {
+        // Handle timeout specifically
+        if (err instanceof TimeoutError) {
+          const msg = `Scoring timed out after ${err.timeoutMs}ms for ${skillName}`;
+          addError(ctx, skillId ?? triage.l3Name, "scoring", msg);
+          errors.push(msg);
+          childLog.warn({ timeoutMs: err.timeoutMs }, "Scoring timed out");
+
+          // Mid-run health check: is Ollama still alive, or did it crash?
+          if (isRealOllama) {
+            const healthy = await isOllamaHealthy(5000);
+            if (!healthy) {
+              childLog.error("Ollama is unresponsive after timeout — it may have crashed. Aborting pipeline.");
+              throw new Error("Ollama became unresponsive during scoring. Check `ollama serve` and system memory.");
+            }
+          }
+        } else {
+          const msg = err instanceof Error ? err.message : String(err);
+          addError(ctx, skillId ?? triage.l3Name, "scoring", msg);
+          errors.push(msg);
+          childLog.warn({ error: msg }, "Scoring failed unexpectedly");
+        }
+        progress.error(skillName);
+
+        writer.enqueue({
+          skillId: skillId,
+          completedAt: new Date().toISOString(),
+          status: "error",
+        });
+      }
+    }));
+
+    await Promise.allSettled(tasks);
+  } finally {
+    clearInterval(progressInterval);
+    cleanupSignalHandlers();
+  }
+
+  // Flush checkpoint and log final progress
+  writer.flush();
+  progress.report();
+
+  return { scored, errors, scoredCount, promotedCount };
+}
 
 // -- Public API --
 
@@ -313,129 +465,29 @@ export async function runPipeline(
   // 8. Sort processable by tier (1 first)
   processable.sort((a, b) => a.tier - b.tier);
 
-  // 9. Score each skill (concurrently via semaphore)
-  //
-  // Thread-safety note: addResult/addError mutate EvaluationContext (Set, Map, Array).
-  // In Node.js single-threaded event loop, these mutations are safe even with concurrent
-  // promises because each mutation runs to completion within its microtask. No mutex needed.
+  // 9. Score each skill via the appropriate scoring path
+  const scoringMode = options.scoringMode ?? "three-lens";
   const concurrency = options.concurrency ?? 1;
-  const requestTimeoutMs = options.requestTimeoutMs ?? 1_500_000; // 25 min — matches SCORING_TIMEOUT_MS
-  const semaphore = new Semaphore(concurrency);
-  const writer = createCheckpointWriter(options.outputDir, checkpoint);
-  const cleanupSignalHandlers = writer.installSignalHandlers();
-  const progress = createProgressTracker(processable.length, logger);
-  const progressInterval = setInterval(() => progress.report(), 5000);
 
-  try {
-    const tasks = processable.map((triage) => semaphore.run(async () => {
-      const skillId = triage.skillId;
-      const skillName = triage.skillName ?? triage.l3Name;
-      const skill = skillId ? skillMap.get(skillId) : undefined;
-      if (!skill) {
-        const msg = `Skill not found: ${skillName} (${skillId})`;
-        addError(ctx, skillId ?? triage.l3Name, "scoring", msg);
-        errors.push(msg);
-        logger.warn({ skillId, skillName }, msg);
-        return;
-      }
-
-      const childLog = logger.child({ skillId, skillName, tier: triage.tier });
-
-      // Skip already-completed skills (resume support)
-      if (completed.has(skillId ?? triage.l3Name)) {
-        childLog.info("Skipping (already completed in previous run)");
-        return;
-      }
-
-      childLog.info("Scoring skill");
-      progress.start(skillName);
-
-      // Use 8B model for Tier 3 (faster, acceptable quality for low-priority skills)
-      const tierChatFn = options.chatFn ?? (triage.tier >= 3
-        ? (msgs: Array<{ role: string; content: string }>, fmt: Record<string, unknown>) => ollamaChat(msgs, fmt, triageModel)
-        : undefined);
-
-      try {
-        // Use callWithResilience wrapped in withTimeout for stuck request protection
-        const resilient = await withTimeout(
-          (_signal) => callWithResilience({
-            primaryCall: async () => {
-              const r = await scoreOneSkill(skill, data.company_context, knowledgeContext, tierChatFn);
-              if ("error" in r) throw new Error(r.error);
-              return JSON.stringify(r);
-            },
-            schema: z.any(),  // We validate via scoreOneSkill internally; this is a pass-through wrapper
-            label: skillName,
-            maxRetries: 1,  // scoreOneSkill already has internal retries via scoreWithRetry
-          }),
-          requestTimeoutMs,
-        );
-
-        if (resilient.result.success) {
-          const sr = resilient.result.data as unknown as ScoringResult;
-          addResult(ctx, sr);
-          allScoredResults.push(sr);
-          scoredCount++;
-          if (sr.promotedToSimulation) promotedCount++;
-          childLog.info(
-            { composite: sr.composite.toFixed(2), promoted: sr.promotedToSimulation, resolvedVia: resilient.resolvedVia },
-            "Scored",
-          );
-          progress.complete(skillName);
-        } else {
-          addError(ctx, skillId ?? triage.l3Name, "scoring", resilient.skipReason ?? resilient.result.error);
-          errors.push(resilient.skipReason ?? resilient.result.error);
-          childLog.warn({ error: resilient.skipReason, resolvedVia: "skipped" }, "Scoring skipped");
-          progress.error(skillName);
-        }
-
-        // Enqueue checkpoint entry (atomic writer handles debounced disk writes)
-        writer.enqueue({
-          skillId: skillId,
-          completedAt: new Date().toISOString(),
-          status: resilient.result.success ? "scored" : "error",
-        });
-      } catch (err) {
-        // Handle timeout specifically
-        if (err instanceof TimeoutError) {
-          const msg = `Scoring timed out after ${err.timeoutMs}ms for ${skillName}`;
-          addError(ctx, skillId ?? triage.l3Name, "scoring", msg);
-          errors.push(msg);
-          childLog.warn({ timeoutMs: err.timeoutMs }, "Scoring timed out");
-
-          // Mid-run health check: is Ollama still alive, or did it crash?
-          if (isRealOllama) {
-            const healthy = await isOllamaHealthy(5000);
-            if (!healthy) {
-              childLog.error("Ollama is unresponsive after timeout — it may have crashed. Aborting pipeline.");
-              throw new Error("Ollama became unresponsive during scoring. Check `ollama serve` and system memory.");
-            }
-          }
-        } else {
-          const msg = err instanceof Error ? err.message : String(err);
-          addError(ctx, skillId ?? triage.l3Name, "scoring", msg);
-          errors.push(msg);
-          childLog.warn({ error: msg }, "Scoring failed unexpectedly");
-        }
-        progress.error(skillName);
-
-        writer.enqueue({
-          skillId: skillId,
-          completedAt: new Date().toISOString(),
-          status: "error",
-        });
-      }
-    }));
-
-    await Promise.allSettled(tasks);
-  } finally {
-    clearInterval(progressInterval);
-    cleanupSignalHandlers();
-  }
-
-  // Flush checkpoint and log final progress
-  writer.flush();
-  progress.report();
+  // Three-lens scoring (v1.2 code path)
+  const threeLensResult = await runThreeLensScoring(
+    processable,
+    allSkills,
+    skillMap,
+    completed,
+    checkpoint,
+    data,
+    knowledgeContext,
+    options,
+    logger,
+    ctx,
+    isRealOllama,
+    triageModel,
+  );
+  allScoredResults.push(...threeLensResult.scored);
+  errors.push(...threeLensResult.errors);
+  scoredCount += threeLensResult.scoredCount;
+  promotedCount += threeLensResult.promotedCount;
 
   // Archive all results in a single batch after concurrent scoring completes
   if (ctx.results.size > 0) {
@@ -577,7 +629,7 @@ export async function runPipeline(
     avgPerOppMs: scoredCount > 0 ? Math.round(totalDurationMs / scoredCount) : 0,
     errors,
     costSummary,
-    scoringMode: options.scoringMode ?? "three-lens",
+    scoringMode,
   };
 
   logger.info(
