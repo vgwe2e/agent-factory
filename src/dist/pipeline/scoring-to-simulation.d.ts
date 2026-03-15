@@ -9,12 +9,9 @@
  * skill-level results back to the L3-level SimulationInput format
  * expected by the simulation pipeline.
  */
-
 import type { ScoringResult } from "../types/scoring.js";
 import type { SimulationInput } from "../types/simulation.js";
 import type { L3Opportunity, L4Activity, CompanyContext } from "../types/hierarchy.js";
-import { getRouteForArchetype } from "../knowledge/orchestration.js";
-
 /**
  * Convert promoted scoring results into simulation pipeline inputs.
  *
@@ -29,43 +26,7 @@ import { getRouteForArchetype } from "../knowledge/orchestration.js";
  * @param companyContext - Company context from the hierarchy export
  * @returns SimulationInput[] ready for runSimulationPipeline
  */
-export function toSimulationInputs(
-  promoted: ScoringResult[],
-  l3Map: Map<string, L3Opportunity>,
-  l4Map: Map<string, L4Activity[]>,
-  companyContext: CompanyContext,
-): SimulationInput[] {
-  // Group promoted skills by L3, keeping the highest-composite skill per L3
-  const bestByL3 = new Map<string, ScoringResult>();
-  for (const sr of promoted) {
-    const existing = bestByL3.get(sr.l3Name);
-    if (!existing || sr.composite > existing.composite) {
-      bestByL3.set(sr.l3Name, sr);
-    }
-  }
-
-  const inputs: SimulationInput[] = [];
-
-  for (const [l3Name, sr] of bestByL3) {
-    const opp = l3Map.get(l3Name);
-
-    const l4s = l4Map.get(l3Name) ?? [];
-    if (l4s.length === 0) continue;
-    const mapping = getRouteForArchetype(sr.archetype);
-
-    inputs.push({
-      opportunity: opp,
-      l4s,
-      companyContext,
-      archetype: sr.archetype,
-      archetypeRoute: mapping.primary_route,
-      composite: sr.composite,
-    });
-  }
-
-  return inputs;
-}
-
+export declare function toSimulationInputs(promoted: ScoringResult[], l3Map: Map<string, L3Opportunity>, l4Map: Map<string, L4Activity[]>, companyContext: CompanyContext): SimulationInput[];
 /**
  * Convert promoted scoring results into per-L4 simulation inputs (two-pass mode).
  *
@@ -78,31 +39,4 @@ export function toSimulationInputs(
  * @param companyContext - Company context from the hierarchy export
  * @returns SimulationInput[] ready for runSimulationPipeline
  */
-export function toL4SimulationInputs(
-  promoted: ScoringResult[],
-  l4Map: Map<string, L4Activity>,
-  l3Map: Map<string, L3Opportunity>,
-  companyContext: CompanyContext,
-): SimulationInput[] {
-  const inputs: SimulationInput[] = [];
-
-  for (const sr of promoted) {
-    const l4 = l4Map.get(sr.l4Name);
-    if (!l4) continue; // skip if L4 not found
-
-    const opp = l3Map.get(sr.l3Name);
-    const mapping = getRouteForArchetype(sr.archetype);
-
-    inputs.push({
-      l4Activity: l4,
-      opportunity: opp,
-      l4s: [l4],
-      companyContext,
-      archetype: sr.archetype,
-      archetypeRoute: mapping.primary_route,
-      composite: sr.composite,
-    });
-  }
-
-  return inputs;
-}
+export declare function toL4SimulationInputs(promoted: ScoringResult[], l4Map: Map<string, L4Activity>, l3Map: Map<string, L3Opportunity>, companyContext: CompanyContext): SimulationInput[];

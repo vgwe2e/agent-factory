@@ -136,18 +136,24 @@ describe("toSimulationInputs", () => {
     assert.equal(result[0].composite, 0.67);
   });
 
-  it("skips entries where l3Name is not found in l3Map", () => {
+  it("keeps entries when l4s exist even if l3Name is not found in l3Map", () => {
     const opp = makeL3("Opp-A");
     const sr1 = makeScoringResult("Opp-A");
     const sr2 = makeScoringResult("Opp-Missing");
 
     const l3Map = new Map([["Opp-A", opp]]);
-    const l4Map = new Map<string, L4Activity[]>([["Opp-A", [makeL4("Opp-A", "Act-1")]]]);
+    const l4Map = new Map<string, L4Activity[]>([
+      ["Opp-A", [makeL4("Opp-A", "Act-1")]],
+      ["Opp-Missing", [makeL4("Opp-Missing", "Act-2")]],
+    ]);
 
     const result = toSimulationInputs([sr1, sr2], l3Map, l4Map, COMPANY_CONTEXT);
 
-    assert.equal(result.length, 1, "only valid entry returned");
+    assert.equal(result.length, 2, "entries with L4 context should be retained");
+    assert.ok(result[0]?.opportunity, "opportunity should be present");
     assert.equal(result[0].opportunity.l3_name, "Opp-A");
+    assert.equal(result[1].opportunity, undefined);
+    assert.equal(result[1].l4s[0].name, "Act-2");
   });
 
   it("correctly maps archetypeRoute via getRouteForArchetype", () => {
@@ -155,7 +161,7 @@ describe("toSimulationInputs", () => {
     const sr = makeScoringResult("Opp-A", { archetype: "DETERMINISTIC" });
 
     const l3Map = new Map([["Opp-A", opp]]);
-    const l4Map = new Map<string, L4Activity[]>();
+    const l4Map = new Map<string, L4Activity[]>([["Opp-A", [makeL4("Opp-A", "Act-1")]]]);
 
     const result = toSimulationInputs([sr], l3Map, l4Map, COMPANY_CONTEXT);
 

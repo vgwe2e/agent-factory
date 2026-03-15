@@ -14,7 +14,7 @@ import type { HierarchyExport, SkillWithContext } from "../types/hierarchy.js";
 import type { TriageResult, Tier, RedFlag } from "../types/triage.js";
 import { detectSkillRedFlags, resolveAction } from "./red-flags.js";
 import { assignSkillTier } from "./tier-engine.js";
-import { extractScoringSkills } from "../pipeline/extract-skills.js";
+import { buildScoringHierarchy, extractScoringSkills } from "../pipeline/extract-skills.js";
 
 /**
  * Runs the full triage pipeline on a hierarchy export at SKILL level.
@@ -26,7 +26,7 @@ import { extractScoringSkills } from "../pipeline/extract-skills.js";
  * 4. Sort by tier ascending, then value descending (nulls last)
  */
 export function triageOpportunities(data: HierarchyExport): TriageResult[] {
-  const skills = extractScoringSkills(data.hierarchy);
+  const skills = extractScoringSkills(buildScoringHierarchy(data));
   const results: TriageResult[] = [];
 
   for (const skill of skills) {
@@ -75,6 +75,7 @@ function buildSkillTriageResult(
     l3Name: skill.l3Name,
     l2Name: skill.l2Name,
     l1Name: skill.l1Name,
+    l4Name: skill.l4Name,
     skillId: skill.id,
     skillName: skill.name,
     tier,
