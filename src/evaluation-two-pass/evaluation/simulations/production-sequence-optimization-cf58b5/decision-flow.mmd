@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled weekly planning cadence or material/constraint change event (delta from SAP S/4HANA) that impacts production windows, capacity, or dealer allocations.]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Ingest master and transactional data for the planning horizon from SAP S/4HANA.]
+  N1 --> N2[Stream: STREAMS + Subject Areas - Transform and consolidate inputs into planning subject areas and validation checks.]
+  N2 --> N3{PB: Process (Process Builder) - Remote Functions (optimization solver) - Orchestrate deterministic optimization to produce conflict-free MPS and build sequences.}
+  N3 -->|Primary| N4[PB: Remote Functions (SAP writeback) - Persist optimized schedules and sequences back to SAP S/4HANA and update planning Subject Areas.]
+  N4 --> N5[PB: CWB Lifecycle + UI Screens - Surface recommendations and exceptions for planner review and approval.]
+  N5 --> Z1[Outcome: Conflict-free production schedules and build sequences written to SAP S/4HANA; measurable COGS reduction, fewer changeovers, improved line utilization, higher on-time delivery rates, and reduced manual rework during weekly planning cycles.]
+  N3 -->|Solver returns infeasible solution du...| B1[Process Builder triggers a rules branch to relax non-critical constraints (per policy) or create exception CWB items for planner intervention.]
+  B1 --> O1[Outcome: Either a feasible alternative schedule is produced with policy-guided relaxations or exceptions are routed to planners for manual resolution.]
+  O1 --> End[End]
+  N3 -->|Optimization run exceeds SLA or times...| B2[Fallback to a deterministic heuristic sequence (fast approximation) via Remote Functions and surface a 'best-effort' schedule while alerting planners.]
+  B2 --> O2[Outcome: Planners receive a timely, suboptimal schedule to avoid planning delays and can request a re-run or manual adjustments.]
+  O2 --> End[End]
+  N3 -->|Planner rejects or overrides optimize...| B3[Capture override reason, re-run targeted localized optimization (subsequence) via Process Builder + Remote Functions, and write accepted changes back to SAP S/4HANA.]
+  B3 --> O3[Outcome: System preserves audit trail, implements planner adjustments, and updates downstream systems while learning policy exceptions for future runs.]
+  O3 --> End[End]
+  Z1 --> End[End]

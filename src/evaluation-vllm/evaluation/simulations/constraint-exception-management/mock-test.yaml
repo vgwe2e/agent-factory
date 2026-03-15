@@ -1,0 +1,41 @@
+decision: >-
+  Should the production line start or stop based on current constraints,
+  downtime risks, and demand signals, balancing cost of idling against missed
+  throughput.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Detection of production constraints, supply disruptions, quality holds, or
+    other critical issues.
+  parameters:
+    objective: >-
+      Autonomous detection, simulation, and resolution of production constraints
+      and exceptions to reduce COGS while maintaining OTIF and availability.
+    key_inputs:
+      - Production Constraints
+      - Supply Disruptions
+      - Quality Holds
+      - Demand Signals
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Coordinate stop/start decisions, disruption responses, recovery scheduling,
+    and quality hold adjustments to minimize COGS and maintain OTIF.
+  outcome: >-
+    Reduced COGS, minimized downtime, and maintained OTIF and availability
+    through optimized line sequencing and rapid recovery.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - AutoML
+    - CWB Lifecycle
+    - Process Builder
+    - Dashboard
+rationale: >-
+  Leverage agentic AI to autonomously manage production constraints and
+  exceptions, improving efficiency and reducing costs.

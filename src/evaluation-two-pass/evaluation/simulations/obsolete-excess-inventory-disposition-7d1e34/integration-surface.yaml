@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Warehouse Management System (WMS)
+    status: tbd
+  - name: Material Handling Schedule / MHE Roster
+    status: tbd
+aera_ingestion:
+  - stream_name: inventory-ledger-on-hand-lot-location
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: cycle-count-and-physical-audit-results
+    stream_type: Report Data
+    source: WMS or operator uploads
+  - stream_name: aging-and-sales-velocity-sku-level
+    stream_type: STREAMS
+    source: Subject Areas / STREAMS derived from ERP and demand history
+  - stream_name: material-handling-capacity-and-shift-window
+    stream_type: Event Stream
+    source: MHE schedule / operations system
+  - stream_name: forecast-demand-signal
+    stream_type: Data View
+    source: Cortex Auto Forecast or Subject Area forecast
+processing:
+  - component: Process (Process Builder) + Rules + Data View
+    type: process_builder
+    function: >-
+      Score candidates, respect safety stock/forecast, and create prioritized
+      disposition and slotting plans
+  - component: Remote Functions + CWB Lifecycle (Action Item)
+    type: process_builder
+    function: >-
+      Write transfer/disposition orders to SAP S/4HANA and route high-impact
+      recommendations to planners for approval
+ui_surface:
+  - component: UI Screen (dashboard) + Notification
+    screen: Primary
+    purpose: >-
+      Display executed changes, pending approvals, and KPIs (obsolete inventory,
+      slot utilization, handling moves)

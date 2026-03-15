@@ -1,0 +1,42 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate BOM, launch volumes, capacity, supplier readiness into
+      canonical tables
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+  - name: STREAMS -> Subject Areas
+    purpose: Create curated dataset for deterministic optimizer and reporting
+    confidence: confirmed
+    type: STREAMS -> Subject Areas
+cortex:
+  - name: Remote Functions (optimizer)
+    purpose: Generate feasible, cost-aware ramp plans and alternative scenarios
+    confidence: inferred
+    capability: Generate feasible, cost-aware ramp plans and alternative scenarios
+process_builder:
+  - name: Process Builder + CWB Lifecycle + UI Screen
+    purpose: Enable human-in-the-loop approval and capture exceptions/overrides
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (ERP writeback)
+    purpose: Operationalize plan across ERP and supplier systems
+    confidence: inferred
+    node_type: act
+  - name: Notification + UI Screen (dashboard)
+    purpose: >-
+      Provide transparency and trigger exception workflows when performance
+      deviates
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously plan and coordinate end-to-end npi production
+      activities (pre-production, ramp-up, supplier readiness, pilot builds,
+      end-of-life) to minimize cogs, accelerate time-to-market, improve otif and
+      optimize working capital during vehicle launch cycles. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

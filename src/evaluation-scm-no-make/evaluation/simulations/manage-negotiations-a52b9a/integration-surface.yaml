@@ -1,0 +1,70 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS)
+    type: TMS
+    status: identified
+aera_ingestion:
+  - stream_name: spot-demand-signals
+    stream_type: batch
+    source: Kinaxis RapidResponse
+  - stream_name: real-time-supplier-market-offers
+    stream_type: stream
+    source: DDM/Crawlers (external market APIs)
+  - stream_name: contract-terms-and-nrcs
+    stream_type: batch
+    source: S4 (contract master) / legal repository
+  - stream_name: inventory-positions-and-fg-safety
+    stream_type: batch
+    source: Blue Yonder WMS / Kinaxis
+  - stream_name: pricing-benchmarks-and-historical-spot
+    stream_type: batch
+    source: SAS / Advanced Statistical Forecasting in SAS
+  - stream_name: supplier-risk-profiles
+    stream_type: batch
+    source: S4 / Procurement master data
+processing:
+  - component: Cortex (RCA Service + AutoML) + Remote Functions
+    type: cortex
+    function: >-
+      Score supplier market offers vs contract terms, forecast price impact, and
+      compute cost/risk tradeoffs
+  - component: CWB Lifecycle + UI Screen
+    type: process_builder
+    function: >-
+      Human-in-the-loop approval for high-risk or override cases and to capture
+      final negotiation terms
+  - component: Process Builder (Notification) + Dashboard
+    type: process_builder
+    function: >-
+      Inform procurement, finance, and logistics; surface cost savings, supplier
+      selections, and execution metrics
+  - component: Process Builder (IF, Rules) + Agent Team (agentic_ai)
+    type: agent_teams
+    function: >-
+      Agent proposes aggregated auction or targeted buys and shortlists
+      suppliers using rules and agent reasoning
+  - component: Process Builder (Action Item, Remote Functions) + Agent Team
+    type: agent_teams
+    function: >-
+      Trigger automated RFP/bid flows to suppliers, collect responses, and write
+      approved POs back to S4
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end spot buy orchestration to minimize cogs and
+      protect ebitda by combining touchless demand signals, real-time supplier
+      markets, and contract terms to dynamically select suppliers, negotiate
+      terms, and execute purchases with minimal manual intervention. and approve
+      the recommended action.

@@ -1,0 +1,42 @@
+decision: >-
+  Jointly optimize throughput, scrap reduction, energy efficiency, and
+  maintenance timing across stamping operations and upstream quality/coherence.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Daily batch process initiated by SAP S/4HANA data refresh.
+  parameters:
+    objective: >-
+      Optimize stamping operations by integrating OEE tracking, KPI monitoring,
+      quality yield analysis, energy consumption tracking, predictive
+      maintenance, and cost of quality analysis into an autonomous performance
+      management loop.
+    key_inputs:
+      - Stamping Press OEE Data
+      - Production KPI Data
+      - Quality Yield and Scrap Data
+      - Energy Consumption Data
+      - Maintenance and Quality Deviation Data
+      - Cost of Quality Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Generate actionable insights and recommendations for maintenance, capacity
+    planning, and quality improvements.
+  outcome: >-
+    Reduced COGS and SG&A, improved working capital, and increased EBITDA
+    through synchronized, constraint-aware decisions.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast, RCA Service
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  By leveraging advanced analytics and autonomous decision-making, the solution
+  will enable Ford to make data-driven decisions that improve operational
+  efficiency and financial performance.

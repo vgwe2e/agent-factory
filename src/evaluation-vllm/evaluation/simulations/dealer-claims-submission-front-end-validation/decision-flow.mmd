@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Dealer submits a warranty claim.]
+  A --> N1[Stream: DDM/Crawler - Retrieve dealer-submitted warranty claim data.]
+  N1 --> N2[Stream: STREAMS - Perform initial automated system checks for completeness.]
+  N2 --> N3{PB: Process Builder - Enforce documentation requirements.}
+  N3 -->|Primary| N4{PB: Process Builder - Process pre-authorization requests.}
+  N4 --> N5[PB: Notification - Notify dealer of claim status.]
+  N5 --> Z1[Outcome: Reduced manual handling, accelerated claim processing, improved OTIF metrics, and standardized front-end compliance.]
+  N3 -->|Incomplete documentation detected.| B1[Reject claim and request additional documentation.]
+  B1 --> O1[Outcome: Claim is returned to dealer for additional information.]
+  O1 --> End[End]
+  N3 -->|High-cost repair requires pre-authori...| B2[Escalate claim for further review.]
+  B2 --> O2[Outcome: Claim is escalated for detailed review and potential approval.]
+  O2 --> End[End]
+  N3 -->|Claim meets all criteria.| B3[Approve claim and proceed with processing.]
+  B3 --> O3[Outcome: Claim is approved and processed for payment.]
+  O3 --> End[End]
+  Z1 --> End[End]

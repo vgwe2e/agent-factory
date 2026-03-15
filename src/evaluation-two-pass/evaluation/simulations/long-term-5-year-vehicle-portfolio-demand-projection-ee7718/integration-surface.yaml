@@ -1,0 +1,59 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Macro Scenario Provider (e.g., economic data vendor)
+    type: External Data
+    status: tbd
+  - name: Engineering / Capacity Planning
+    type: PLM/Capacity Planning
+    status: tbd
+  - name: Dealer Orders / Order Backlog System
+    type: Order Management
+    status: tbd
+aera_ingestion:
+  - stream_name: historical-sales-production-backlog-shipment-records
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: macroeconomic-scenario-sets-gdp-unemployment-fuel-energy-prices
+    stream_type: DDM/Crawlers
+    source: Macro Scenario Provider (external)
+  - stream_name: technology-adoption-curves-shift-assumptions-ev-uptake-autonomy
+    stream_type: Subject Areas
+    source: Strategy / Market Research
+  - stream_name: manufacturing-capacity-planned-capex-ramp-schedules
+    stream_type: DDM/Crawlers
+    source: Engineering / Capacity Planning
+  - stream_name: market-share-and-competitive-dynamics
+    stream_type: Event Stream
+    source: Market Intelligence / External
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Provide baseline multi-year forecasts and alternative trajectories under
+      macro/tech scenarios
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Write approved plan and CAPEX alignment actions to systems of record for
+      downstream execution
+  - component: UI Screens / Notification (CWB Lifecycle)
+    type: process_builder
+    function: >-
+      Capture sign-offs, record overrides, and notify supply chain, finance, and
+      product teams
+  - component: Process Builder (Process + Agentic AI + CWB Lifecycle)
+    type: agent_teams
+    function: >-
+      Run deterministic scenario ensembles, invoke Remote Functions for
+      capacity/CAPEX math, and produce an approval-ready recommendation
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review produce an autonomous, deterministic multi-year (5+ year) vehicle
+      portfolio demand and scenario engine that jointly optimizes demand
+      projections, macroeconomic scenarios, technology shift impacts, and
+      capacity constraints to align production and capex with strategic product
+      shifts. and approve the recommended action.

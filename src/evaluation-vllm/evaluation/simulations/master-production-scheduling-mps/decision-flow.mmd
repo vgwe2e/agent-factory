@@ -1,0 +1,20 @@
+flowchart TD
+  A[Trigger: Weekly and monthly planning cycles, demand forecasts, supplier readiness updates, and capacity constraints.]
+  A --> N1[Stream: DDM/Crawlers - Collect and validate input data]
+  N1 --> N2[Stream: STREAMS - Analyze production constraints and supplier readiness]
+  N2 --> N3{PB: Process Builder - Generate weekly build schedule}
+  N3 -->|Primary| N4{PB: Process Builder - Develop long-range production plan}
+  N4 --> N5{PB: Process Builder - Allocate production slots to dealers}
+  N5 --> N6{PB: Process Builder - Optimize production sequence}
+  N6 --> N7[PB: Remote Functions - Distribute MPS data]
+  N7 --> Z1[Outcome: Reduced COGS, improved line efficiency, and higher on-time delivery rates.]
+  N3 -->|Insufficient supplier readiness| B1[Delay production schedule]
+  B1 --> O1[Outcome: Adjust weekly build schedule]
+  O1 --> End[End]
+  N3 -->|Exceeding capacity constraints| B2[Reallocate production slots]
+  B2 --> O2[Outcome: Optimize long-range plan]
+  O2 --> End[End]
+  N3 -->|High demand variability| B3[Review and adjust production sequence]
+  B3 --> O3[Outcome: Enhance line efficiency]
+  O3 --> End[End]
+  Z1 --> End[End]

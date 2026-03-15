@@ -1,0 +1,41 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Aggregate and validate all upstream signals into a subject area for
+      orchestration
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: 'Process Builder: Rules + Remote Functions'
+    purpose: >-
+      Apply deterministic business rules and run cost calculations to rank PO
+      adjustment candidates
+    confidence: confirmed
+    capability: >-
+      Apply deterministic business rules and run cost calculations to rank PO
+      adjustment candidates
+process_builder:
+  - name: 'Process Builder: IF (decision) + Remote Functions'
+    purpose: >-
+      Apply decision logic to pick the optimal supplier/PO action per
+      opportunity
+    confidence: confirmed
+    node_type: decide
+  - name: 'Remote Functions (ERP writeback to S4) + Process Builder: Transaction'
+    purpose: Create/update/cancel PO call-offs in S4 and capture audit trail
+    confidence: confirmed
+    node_type: act
+  - name: 'Process Builder: Notification'
+    purpose: >-
+      Alert procurement, suppliers (via integrations), and logistics teams about
+      executed changes
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: UI Screen (dashboard)
+    purpose: >-
+      Provide stakeholders a dashboard view of results, metrics, and recent
+      changes
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,64 @@
+decision: >-
+  Dynamically adjust safety stock parameters and SKU sequencing across planning
+  and fulfillment domains in response to weekly demand pattern shifts and
+  network constraints, updating forecast inputs, safety stock settings, and
+  pushing sequencing/rebalancing updates to planning and execution systems.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Weekly pipeline run or detection of statistically significant demand pattern
+    shift from Cortex Auto Forecast; or network constraint event from Kinaxis.
+  parameters:
+    objective: >-
+      Automatically coordinate safety stock levels and SKU sequencing across
+      PLAN and FULFILL domains on a weekly cadence to align inventory with
+      shifting demand patterns and network constraints.
+    key_inputs:
+      - Historical sales & shipments
+      - Advanced statistical forecasts & demand signals
+      - Current inventory on-hand & in-transit
+      - >-
+        Network constraints & capacity (lead times, node limits, shipment
+        capacity)
+      - Existing safety stock parameters and policy thresholds
+    source_systems:
+      - SAP S/4HANA (S4)
+      - SAS (Advanced Statistical Forecasting)
+      - Kinaxis RapidResponse
+      - Kinaxis (Rebalancing / FG Safety Stock Modeling)
+      - Blue Yonder WMS
+      - Uber Freight (TMS / 3PL)
+expected_output:
+  action: >-
+    Orchestrate an automated Process Builder workflow that ingests sales,
+    forecast, inventory, lead-time and network constraint data (DDM/Crawlers +
+    STREAMS), runs Cortex Auto Forecast and Safety Stock Service to compute
+    updated safety stock and sequencing recommendations, applies deterministic
+    business rules, uses Remote Functions to write approved parameter updates to
+    SAP S/4HANA and Kinaxis, and notifies planners/CWB for exceptions or
+    high-impact changes.
+  outcome: >-
+    Weekly aligned safety stock and sequencing across PLAN and FULFILL: improved
+    service levels, reduced excess working capital from misallocated stock,
+    faster response to demand volatility, and operationalized updates in S4,
+    Kinaxis, and WMS/TMS with human-in-the-loop for high-risk changes.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex Auto Forecast
+    - Safety Stock Service
+    - Process Builder + Remote Functions
+    - CWB Lifecycle + UI Screens (dashboard/notification)
+    - Dashboard
+rationale: >-
+  Quarterly, siloed safety stock positioning leads to misallocation as demand
+  patterns shift. Automating a weekly cross-domain process combining forecast
+  signal detection, ML-driven safety stock optimization, and deterministic
+  writebacks reduces manual lag, aligns inventory to current demand and network
+  constraints, and preserves revenue while lowering inventory carrying cost.
+  Process Builder orchestrates predictable deterministic flows while Cortex Auto
+  Forecast and Safety Stock Service provide the demand and inventory
+  optimization signals; Remote Functions ensure safe, auditable writebacks.

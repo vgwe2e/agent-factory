@@ -1,0 +1,25 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect initial market interest data.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Determine initial market interest and adjust demand plan.
+    confidence: confirmed
+    capability: Determine initial market interest and adjust demand plan.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Enable human-in-the-loop review and approval.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review coordinated npi demand forecasting across pre-launch, pilot,
+      ramp-up, and feature/trim segmentation to enable autonomous adjustments to
+      production, supplier replenishment, and capacity planning. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

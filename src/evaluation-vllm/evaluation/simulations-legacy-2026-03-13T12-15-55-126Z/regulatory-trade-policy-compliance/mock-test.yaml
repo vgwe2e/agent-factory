@@ -1,0 +1,31 @@
+decision: >-
+  Assess and adjust sourcing strategies in light of regulation changes to
+  minimize COGS impact while maintaining compliance
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    working_capital: null
+    inventory_value: 14951000000
+  trigger: New EU import tariff on steel components effective Q3 2024
+  parameters:
+    product_category: steel_components
+    region: EU
+    new_tariff_rate: 0.15
+expected_output:
+  action: >-
+    Switch sourcing for steel components from EU-based supplier to Canadian
+    supplier (free trade agreement) for 30% volume
+  outcome: >-
+    COGS reduced by $4.2M annually while maintaining 100% compliance with EU
+    import regulations
+  affected_components:
+    - sourcing_strategy
+    - supplier_mix
+rationale: >-
+  System detected new EU tariff, calculated projected COGS impact of $14M
+  annually for steel components, executed sourcing adjustment to leverage
+  Canada-EU FTA, resulting in $4.2M COGS reduction (30% of projected impact)
+  without compliance violations, aligning with financial context where COGS
+  represents 86.2% of revenue.

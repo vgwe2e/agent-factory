@@ -1,0 +1,83 @@
+objective: >-
+  Reduce COGS, improve on-time delivery, and lower working capital by optimizing
+  production schedules and monitoring execution across multi-plant automotive
+  production.
+trigger: >-
+  Daily production schedule generation and continuous production progress
+  monitoring.
+decision: >-
+  Release the final daily production schedule to operations, track production
+  progress and trigger corrective actions for deviations, analyze deviations to
+  determine root causes and corrective actions, plan and schedule rework/repair
+  activities, optimize changeover plans to minimize production costs.
+expected_action: >-
+  Finalize and release daily production schedule, continuously monitor
+  production progress and report deviations, analyze deviations and implement
+  corrective actions, schedule rework/repair activities efficiently, optimize
+  changeover plans for minimal production costs.
+expected_outcome: >-
+  Improved on-time delivery, reduced COGS, and optimized working capital through
+  efficient production scheduling and monitoring.
+rationale: >-
+  Unify daily schedule release, progress tracking, adherence analytics, rework
+  planning, and changeover optimization to ensure real-time visibility and
+  autonomous exception handling.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Daily Production Schedule
+    source: SAP S/4HANA
+    purpose: To finalize and release the daily production schedule.
+  - name: Production Progress Data
+    source: SAP S/4HANA
+    purpose: To track and report production progress.
+  - name: Deviation Reports
+    source: SAP S/4HANA
+    purpose: To analyze deviations and determine root causes.
+  - name: Rework/Repair Requirements
+    source: SAP S/4HANA
+    purpose: To plan and schedule rework/repair activities.
+  - name: Changeover Plans
+    source: SAP S/4HANA
+    purpose: To optimize changeover plans for minimal production costs.
+happy_path:
+  - step: Generate daily production schedule
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest daily production schedule data from SAP S/4HANA.
+  - step: Finalize and release schedule
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure alignment with capacity
+  - step: Monitor production progress
+    stage: analyze
+    component: STREAMS
+    purpose: Continuously track production progress against the schedule.
+  - step: Report deviations
+    stage: act
+    component: Notification
+    purpose: Trigger corrective actions for deviations.
+  - step: Analyze deviations
+    stage: analyze
+    component: RCA Service
+    purpose: Determine root causes and corrective actions.
+  - step: Plan rework/repair activities
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Schedule rework/repair activities efficiently.
+  - step: Optimize changeover plans
+    stage: decide
+    component: AutoML
+    purpose: Minimize production costs while meeting demand and constraints.
+branches:
+  - condition: High deviation from schedule
+    response: Escalate to plant manager
+    outcome: Manual intervention to resolve critical issues.
+  - condition: Insufficient materials
+    response: Trigger material replenishment
+    outcome: Ensure availability of required materials.
+  - condition: Unexpected equipment downtime
+    response: Adjust schedule and notify maintenance team
+    outcome: Minimize impact on production.

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Initiate logistics technology and digitalization strategy program.]
+  A --> N1[Stream: DDM/Crawlers - Ingest inventory and order data from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze data using Cortex Auto Forecast for demand forecasting.]
+  N2 --> N3[Cortex: Safety Stock Service - Optimize safety stock levels using Safety Stock Service.]
+  N3 --> N4{PB: Process Builder - Plan logistics operations using Process Builder.}
+  N4 -->|Primary| N5[Agent: Agentic AI - Monitor and adjust plans based on real-time data.]
+  N5 --> Z1[Outcome: Enhanced network efficiency, reduced COGS, and increased revenue through optimized logistics operations.]
+  N4 -->|High inventory variance detected.| B1[Trigger safety stock recalibration process.]
+  B1 --> O1[Outcome: Adjusted safety stock levels to match actual demand.]
+  O1 --> End[End]
+  N4 -->|Carrier performance below threshold.| B2[Re-evaluate carrier selection using AI/ML.]
+  B2 --> O2[Outcome: Improved carrier selection for better performance.]
+  O2 --> End[End]
+  N4 -->|Unexpected demand spike.| B3[Dynamically reroute orders using Agentic AI.]
+  B3 --> O3[Outcome: Optimized order fulfillment despite demand fluctuations.]
+  O3 --> End[End]
+  Z1 --> End[End]

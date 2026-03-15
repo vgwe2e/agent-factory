@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Periodic review of procurement processes and system performance.]
+  A --> N1[Stream: DDM/Crawlers - Collect and validate procurement data from SAP S/4HANA]
+  N1 --> N2[Cortex: Cortex Monitoring - Analyze procurement cycle times and COGS using Cortex Monitoring]
+  N2 --> N3{PB: Process Builder - Decide on automation and enhancement initiatives using Process Builder}
+  N3 -->|Primary| N4[PB: Remote Functions - Implement automation and enhancements using Remote Functions]
+  N4 --> N5[PB: UI Screens - Monitor and review the impact of changes on procurement performance]
+  N5 --> Z1[Outcome: Reduced procurement cycle times, improved COGS, increased EBITDA, and optimized working capital.]
+  N3 -->|High supplier risk detected| B1[Escalate to human review for supplier evaluation]
+  B1 --> O1[Outcome: Manual review and potential supplier adjustments]
+  O1 --> End[End]
+  N3 -->|Low ROI from new technology implement...| B2[Postpone or cancel new technology implementation]
+  B2 --> O2[Outcome: Continue with existing systems until better options arise]
+  O2 --> End[End]
+  N3 -->|Data integration issues with ERP| B3[Troubleshoot and resolve data mapping and orchestration issues]
+  B3 --> O3[Outcome: Seamless data flow and reliable downstream decisions]
+  O3 --> End[End]
+  Z1 --> End[End]

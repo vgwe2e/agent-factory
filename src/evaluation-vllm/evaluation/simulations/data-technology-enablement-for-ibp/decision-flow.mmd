@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Periodic review of IBP data governance and system configuration.]
+  A --> N1[Stream: DDM/Crawlers - Extract master data from SAP S/4HANA]
+  N1 --> N2[Stream: STREAMS - Transform and cleanse data using STREAMS]
+  N2 --> N3{PB: Remote Functions - Configure IBP system parameters}
+  N3 -->|Primary| N4[PB: Process Builder - Integrate data across systems using Process Builder]
+  N4 --> N5[PB: Data Quality & Validation - Monitor and validate data quality]
+  N5 --> Z1[Outcome: Improved data quality and reduced COGS through enhanced planning fidelity and near real-time IBP scenario analysis.]
+  N3 -->|Data quality issues detected| B1[Trigger data correction workflow]
+  B1 --> O1[Outcome: Corrected data is re-integrated into IBP.]
+  O1 --> End[End]
+  N3 -->|IBP system configuration changes requ...| B2[Update IBP configuration parameters]
+  B2 --> O2[Outcome: Optimized IBP system settings for improved planning performance.]
+  O2 --> End[End]
+  N3 -->|Data integration failures occur| B3[Implement fault handling procedures]
+  B3 --> O3[Outcome: Seamless data flow restored.]
+  O3 --> End[End]
+  Z1 --> End[End]

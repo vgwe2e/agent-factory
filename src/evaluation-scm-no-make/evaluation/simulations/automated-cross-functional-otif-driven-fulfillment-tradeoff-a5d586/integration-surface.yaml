@@ -1,0 +1,67 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: >-
+      Kinaxis RapidResponse (APS / shortage propagation / rebalancing / order
+      expediting)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS / 3PL (transportation & 3PL execution)
+    type: TMS / 3PL
+    status: identified
+aera_ingestion:
+  - stream_name: sales-orders-on-hand-inventory
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA)
+  - stream_name: advanced-statistical-forecasts
+    stream_type: STREAMS
+    source: SAS (Advanced Statistical Forecasting)
+  - stream_name: shortage-signals-rebalancing-options
+    stream_type: STREAMS
+    source: Kinaxis RapidResponse
+  - stream_name: customer-level-sla-otif-targets
+    stream_type: Event Stream
+    source: S4 (contracts) / Subject Areas
+  - stream_name: cost-to-serve-transportation-cost-matrix
+    stream_type: Event Stream
+    source: S4 / Uber Freight TMS / Finance Subject Areas
+  - stream_name: fulfillment-capacity-wms-constraints
+    stream_type: STREAMS
+    source: Blue Yonder WMS
+  - stream_name: network-topology-lead-times
+    stream_type: STREAMS
+    source: Kinaxis / S4
+processing:
+  - component: Cortex Auto Forecast + Remote Functions
+    type: cortex
+    function: >-
+      Produce demand signal consensus and run cost-to-serve + OTIF simulation
+      models.
+  - component: Process Builder (Rules + IF) + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Apply business rules and surface recommendations for auto-apply or human
+      review.
+  - component: Remote Functions
+    type: process_builder
+    function: Perform ERP/TMS/WMS writebacks and trigger downstream execution workflows.
+  - component: Process Builder (Notification) + Subject Areas (dashboard)
+    type: process_builder
+    function: >-
+      Communicate outcomes, collect overrides, and provide performance
+      traceability.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automatically coordinate demand planning, network optimization,
+      replenishment targets, and consensus forecasting to balance otif targets
+      with cost-to-serve across customers and locations. and approve the
+      recommended action.

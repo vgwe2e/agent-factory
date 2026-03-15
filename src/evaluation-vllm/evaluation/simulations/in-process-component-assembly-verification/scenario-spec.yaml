@@ -1,0 +1,73 @@
+objective: >-
+  To autonomously decide and execute inspection actions, prioritize critical
+  checks, and route exceptions with predefined remediation for in-process
+  component and assembly verification.
+trigger: Start of production cycle or completion of a key build point.
+decision: >-
+  Whether to pass a material/component through dimensional verification,
+  schedule functional testing, determine torque audit frequency, inspect
+  material and finish quality, and perform sealing and leakage tests.
+expected_action: >-
+  Execute inspection actions, prioritize critical checks, and route exceptions
+  with predefined remediation.
+expected_outcome: >-
+  Reduced COGS impacts from rework and scrap, improved OTIF, and increased line
+  throughput.
+rationale: >-
+  Automating and optimizing in-process verification steps reduces rework,
+  improves quality, and enhances overall production efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Component Dimensions
+    source: SAP S/4HANA
+    purpose: Verify critical dimensions of components and assemblies.
+  - name: Functional Test Results
+    source: SAP S/4HANA
+    purpose: Ensure reliability of sub-assemblies.
+  - name: Torque Audit Data
+    source: SAP S/4HANA
+    purpose: Maintain joint integrity of critical fasteners.
+  - name: Material & Finish Quality Data
+    source: SAP S/4HANA
+    purpose: Inspect surface finishes and material quality.
+  - name: Sealing & Leakage Test Results
+    source: SAP S/4HANA
+    purpose: Prevent leaks in body-in-white and final assemblies.
+happy_path:
+  - step: Retrieve component dimensions from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Collect initial data for dimensional inspection.
+  - step: Analyze dimensional data using STREAMS.
+    stage: analyze
+    component: STREAMS
+    purpose: Validate critical dimensions against specifications.
+  - step: Schedule functional testing based on STREAMS analysis.
+    stage: decide
+    component: Process Builder
+    purpose: Optimize test time and line utilization.
+  - step: Perform torque audits and verify fastener integrity.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure joint integrity and minimize rework.
+  - step: Inspect material and finish quality.
+    stage: act
+    component: Remote Functions
+    purpose: Detect deviations and trigger corrective actions.
+  - step: Allocate resources for sealing and leakage tests.
+    stage: act
+    component: Remote Functions
+    purpose: Minimize risk of leaks while preserving throughput.
+branches:
+  - condition: Dimensional inspection fails.
+    response: Trigger CWB Lifecycle for manual review and corrective action.
+    outcome: Manual intervention to address dimensional issues.
+  - condition: Functional testing identifies reliability issues.
+    response: Schedule additional tests and notify relevant teams.
+    outcome: Enhanced reliability through targeted testing.
+  - condition: Torque audit detects joint integrity issues.
+    response: Increase audit frequency and notify maintenance team.
+    outcome: Improved joint integrity and reduced rework.

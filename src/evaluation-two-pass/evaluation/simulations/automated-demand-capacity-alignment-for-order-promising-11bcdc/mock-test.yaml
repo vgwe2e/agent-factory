@@ -1,0 +1,53 @@
+decision: >-
+  Dynamically determine ATP commitment (accept, partial-commit with revised
+  promise date, or reject) by reconciling demand forecast, inventory
+  availability, and fulfillment capacity against S&OP and finance targets.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New or updated confirmed order/demand forecast, inventory snapshot, or
+    capacity plan (scheduled or event-driven ingest).
+  parameters:
+    objective: >-
+      Automatically align demand signals, inventory availability, and
+      fulfillment capacity to produce accurate ATP commitments that support S&OP
+      capacity and COGS targets while preserving service levels.
+    key_inputs:
+      - Confirmed orders / sales orders
+      - Demand forecasts (regional, NPI, promotions)
+      - On-hand inventory and allocations
+      - Fulfillment capacity & line/plant schedules
+      - S&OP capacity and COGS targets
+      - Promotions / launch schedules
+    source_systems:
+      - SAP S/4HANA
+      - Aera Subject Areas
+      - Cortex Auto Forecast
+expected_output:
+  action: >-
+    Process Builder orchestrates data ingestion (STREAMS/DDM), runs forecasting
+    and capacity checks (Cortex Auto Forecast + rules), generates ATP
+    recommendation via CWB Lifecycle, and writes ATP commitments or exceptions
+    back to SAP S/4HANA using Remote Functions; exceptions are surfaced to
+    planners via UI Screens/notifications.
+  outcome: >-
+    Higher ATP accuracy and fewer over-promises, improved revenue realization
+    and gross margin alignment to COGS targets, predictable fulfillment
+    sequencing, and fewer manual exception escalations.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast
+    - Process Builder (IF, Rules) + CWB Lifecycle
+    - Remote Functions
+    - UI Screens + Notification
+    - Dashboard
+rationale: >-
+  Deterministic, process-driven orchestration aligns cross-domain inputs
+  (demand, inventory, capacity, finance) in a repeatable workflow using Aera
+  Process Builder, STREAMS for integration, Cortex forecasting for demand
+  signals, and Remote Functions/CWB for automated ERP writebacks and
+  human-in-the-loop exception handling.

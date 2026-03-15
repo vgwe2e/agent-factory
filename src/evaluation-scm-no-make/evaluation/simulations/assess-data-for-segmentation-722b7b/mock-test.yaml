@@ -1,0 +1,64 @@
+decision: >-
+  Select segmentation profile thresholds and attribute weights to classify
+  SKU-location pairs into demand blocs; decide allocation volumes per bloc
+  balancing revenue priority, service targets, and capacity constraints (L4
+  Decision: segmentation profile thresholds and attribute criteria).
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled re-segmentation cadence (e.g., weekly) or detection of significant
+    demand-pattern shift from monitoring (Cortex/streamed alerts).
+  parameters:
+    objective: >-
+      Create deterministic SKU-Location demand segments (ABC/XYZ-style blocs)
+      and execute autonomous, revenue-driven allocation of production and
+      inventory at the segment level with touchless execution and rapid rollback
+      capability.
+    key_inputs:
+      - Sales history / shipments (SKU x location x time)
+      - SKU master / product attributes
+      - Location master / DC attributes (capacity, service tier)
+      - Inventory on-hand and available-to-promise
+      - Segmentation rule set (thresholds, attribute weights)
+      - Capacity / production constraints
+      - Safety stock and replenishment policy outputs
+      - Transport capacity and SLA inputs
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Kinaxis RapidResponse
+      - Kinaxis (FG Safety Stock Modeling / Rebalancing / Order Expediting)
+      - SAS (Advanced Statistical Forecasting)
+      - Blue Yonder WMS
+      - Uber Freight (TMS / 3PL integrations)
+expected_output:
+  action: >-
+    Process Builder orchestrates: ingest master & transaction data via
+    STREAMS/DDM, apply deterministic segmentation rules, compute segment-level
+    allocation using Rules + Remote Functions, write allocation orders/changes
+    to S4 and Kinaxis, propagate picks/ship updates to WMS/TMS; surface results
+    to operations dashboard and enable one-click rollback via transactional
+    control.
+  outcome: >-
+    Precise SKU-location demand blocs driving optimized, touchless allocations
+    that prioritize revenue and service while respecting capacity; downstream
+    ERP/planning/WMS/TMS updated automatically; exceptions routed for review;
+    rapid rollback available to revert allocations if needed.
+  affected_components:
+    - STREAMS (DDM/Crawlers)
+    - Process Builder (Rules node)
+    - Process Builder (IF + Remote Functions)
+    - >-
+      Remote Functions (ERP writeback) -> S4, Kinaxis updates, WMS/TMS
+      notifications
+    - UI Screen (dashboard) + CWB Lifecycle snapshot / Action Item
+rationale: >-
+  Deterministic segmentation (rule-based ABC/XYZ at SKU-location granularity)
+  produces stable, explainable demand blocs that simplify allocation logic and
+  enable scalable, autonomous writebacks. Using Process Builder + STREAMS for
+  orchestration and Remote Functions for ERP/plan writeback ensures robust
+  execution and controlled rollback while integrating enterprise planning and
+  execution systems (S4, Kinaxis, WMS/TMS).

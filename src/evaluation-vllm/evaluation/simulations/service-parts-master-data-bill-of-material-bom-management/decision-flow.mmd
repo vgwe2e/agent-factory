@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Lifecycle events and obsolescence risks for service parts.]
+  A --> N1[Stream: DDM/Crawlers - Ingest lifecycle events and obsolescence risks from SAP S/4HANA.]
+  N1 --> N2[Cortex: Process Builder - Analyze lifecycle events and obsolescence risks to determine part number actions.]
+  N2 --> N3{PB: Process Builder - Adjust BOM structures based on changes detected.}
+  N3 -->|Primary| N4{PB: Process Builder - Validate and update technical attributes and specifications.}
+  N4 --> N5[PB: Process Builder - Conduct data quality audits and remediate issues.]
+  N5 --> N6[PB: Process Builder - Update cross-reference and supersession data.]
+  N6 --> Z1[Outcome: Improved COGS, reduced write-offs, and enhanced working capital efficiency through cleaner part masters.]
+  N3 -->|Data quality audit identifies signifi...| B1[Initiate remediation workflow.]
+  B1 --> O1[Outcome: Resolved discrepancies and improved data quality.]
+  O1 --> End[End]
+  N3 -->|BOM structure changes require manual ...| B2[Route to CWB Lifecycle for approval.]
+  B2 --> O2[Outcome: Approved BOM structure adjustments.]
+  O2 --> End[End]
+  N3 -->|Cross-reference data requires manual ...| B3[Route to CWB Lifecycle for review.]
+  B3 --> O3[Outcome: Updated cross-reference data.]
+  O3 --> End[End]
+  Z1 --> End[End]

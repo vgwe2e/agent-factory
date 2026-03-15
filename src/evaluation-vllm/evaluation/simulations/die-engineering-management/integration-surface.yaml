@@ -1,0 +1,44 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: die-design-submission
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: maintenance-request
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: fabrication-sourcing-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: changeover-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: validation-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: life-cycle-cost-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: AutoML
+    type: cortex
+    function: Classify design options based on manufacturability and cost.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Present recommendations for design approval.
+  - component: Process Builder
+    type: process_builder
+    function: Coordinate supplier selection and schedule alignment.
+  - component: Exception Management
+    type: process_builder
+    function: Schedule and allocate resources for maintenance.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce cogs, improve yield, and accelerate time-to-market for
+      die-related productions by coordinating deterministic and agentic
+      decisions across design approvals, sourcing, maintenance, and changeover.
+      and approve the recommended action.

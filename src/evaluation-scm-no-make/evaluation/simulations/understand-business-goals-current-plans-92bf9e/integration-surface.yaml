@@ -1,0 +1,63 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting Engine
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / Orchestration
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: TMS / 3PL
+    status: identified
+aera_ingestion:
+  - stream_name: business-goals-initiatives-volume-targets-promo-strategy-margin-targets
+    stream_type: Event Stream
+    source: Business Stakeholders (collected via UI Screens / Process Builder inputs)
+  - stream_name: historical-sales-shipment-transactions-sku-x-location
+    stream_type: batch
+    source: S4 (SAP S/4HANA) / Blue Yonder WMS
+  - stream_name: advanced-statistical-forecasts
+    stream_type: batch
+    source: SAS (Advanced Statistical Forecasting)
+  - stream_name: short-term-signals-pos-upticks-promotions-weather-market-data
+    stream_type: delta
+    source: Kinaxis RapidResponse / external market feeds
+  - stream_name: inventory-positions-safety-stock-targets
+    stream_type: batch
+    source: S4 (SAP S/4HANA) / Kinaxis
+  - stream_name: capacity-constraint-data-plant-dc-transport
+    stream_type: Event Stream
+    source: S4 / Kinaxis / Uber Freight
+  - stream_name: promotion-calendar-trade-agreements
+    stream_type: batch
+    source: Business Stakeholders / S4
+  - stream_name: order-allocation-execution-status
+    stream_type: delta
+    source: Kinaxis RapidResponse / Blue Yonder WMS / Uber Freight
+processing:
+  - component: Cortex Auto Forecast + SAS integration (Data Science)
+    type: cortex
+    function: >-
+      Produce touchless baseline forecasts and identify short-term deviations
+      requiring action
+  - component: Process Builder (Rules + CWB Lifecycle)
+    type: process_builder
+    function: >-
+      Select initiatives and approve demand plan balancing revenue, margin, and
+      inventory impact
+  - component: Process Builder + Remote Functions
+    type: process_builder
+    function: >-
+      Write back approved orders/allocations to S4/Kinaxis and trigger
+      transportation actions
+ui_surface:
+  - component: UI Screens + Subject Areas
+    screen: Primary
+    purpose: >-
+      Provide visibility, human-in-the-loop for exceptions, and measure plan vs.
+      execution KPIs

@@ -1,0 +1,34 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: ibp-plan-variants
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: operational-plans
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: profitability-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: capex-requirements
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: scenario-models
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: AutoML
+    type: cortex
+    function: Financial Impact Analysis
+  - component: Remote Functions
+    type: cortex
+    function: CapEx Planning
+  - component: Rules
+    type: process_builder
+    function: Gap Analysis
+ui_surface:
+  - component: UI Screens
+    screen: Primary
+    purpose: Decision Support

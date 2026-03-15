@@ -1,0 +1,55 @@
+decision: >-
+  Determine an optimal, conflict-free multi-echelon MPS and vehicle build
+  sequence that balances line load, minimizes changeovers, respects capacity and
+  due-date constraints, and minimizes total manufacturing cost (COGS).
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled weekly planning cadence or material/constraint change event (delta
+    from SAP S/4HANA) that impacts production windows, capacity, or dealer
+    allocations.
+  parameters:
+    objective: >-
+      Autonomously produce conflict-free, cost-optimized weekly and long-range
+      production master production schedules (MPS) and build sequences across
+      vehicle platforms and components to reduce COGS, improve line efficiency,
+      and increase on-time delivery.
+    key_inputs:
+      - Dealer allocations & demand orders
+      - Long-range capacity plans & work center calendars
+      - BOMs, routings, changeover matrices
+      - Inventory on-hand & inbound receipts
+      - Cost parameters (COGS drivers, labor rates, material costs)
+      - Business constraints & rules (service levels, platform prioritization)
+    source_systems:
+      - SAP S/4HANA
+      - MES / Plant Execution System
+      - Dealer Allocation System / CRM
+expected_output:
+  action: >-
+    Orchestrate end-to-end data ingestion, run deterministic optimization solver
+    to generate MPS and production sequences, validate feasibility against
+    multi-echelon constraints, write optimized schedules back to SAP S/4HANA,
+    and surface recommendations for planner review (with exception handling).
+  outcome: >-
+    Conflict-free production schedules and build sequences written to SAP
+    S/4HANA; measurable COGS reduction, fewer changeovers, improved line
+    utilization, higher on-time delivery rates, and reduced manual rework during
+    weekly planning cycles.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - STREAMS + Subject Areas
+    - Process (Process Builder) -> Remote Functions (optimization solver)
+    - Remote Functions (SAP writeback)
+    - CWB Lifecycle + UI Screens
+    - Dashboard
+rationale: >-
+  A deterministic, process-driven optimization engine coordinates demand,
+  capacity, inventory, and sequence constraints across echelons. Process Builder
+  orchestrates data and solver steps, Remote Functions execute the optimization
+  and SAP writebacks, and CWB/UI screens handle exceptions and planner
+  oversight—delivering repeatable, auditable COGS improvements at scale.

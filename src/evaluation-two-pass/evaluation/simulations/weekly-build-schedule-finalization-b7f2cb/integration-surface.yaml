@@ -1,0 +1,57 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Readiness Portal / EDI
+    status: tbd
+  - name: Factory Execution / Capacity Planner
+    status: tbd
+  - name: Warehouse / Inventory System
+    status: tbd
+aera_ingestion:
+  - stream_name: master-demand-build-orders
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: plant-capacity-shift-templates
+    stream_type: batch
+    source: Factory Execution / Capacity Planner
+  - stream_name: bom-routing-parts-to-vehicle-mapping
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: supplier-readiness-lead-times
+    stream_type: Event Stream
+    source: Supplier Readiness Portal / EDI
+  - stream_name: on-hand-in-transit-inventory
+    stream_type: Event Stream
+    source: Warehouse / Inventory System
+  - stream_name: cost-rates-cogs-drivers-material-changeover-expedite-penalty
+    stream_type: batch
+    source: Finance / SAP S/4HANA
+  - stream_name: sequencing-rules-constraints-quality-tooling-regulatory
+    stream_type: Event Stream
+    source: Planning Rules Repository
+processing:
+  - component: Process Builder -> Rules + Data View
+    type: cortex
+    function: >-
+      Apply sequencing rules, multi-echelon capacity checks, and COGS drivers to
+      produce conflict-free candidate schedules.
+  - component: Process Builder -> Remote Functions -> Transaction
+    type: process_builder
+    function: >-
+      Select final schedule that minimizes COGS while meeting OTIF and lock plan
+      for writeback.
+  - component: Remote Functions (ERP writeback)
+    type: process_builder
+    function: Push schedule to ERP for supplier release and shop-floor execution.
+  - component: Subject Areas -> Dashboard (UI Screens)
+    type: process_builder
+    function: >-
+      Close the loop: measure outcomes and feed variance signals into next
+      weekly cycle.
+ui_surface:
+  - component: UI Screens + CWB Lifecycle (Notification)
+    screen: Primary
+    purpose: >-
+      Provide planners with rationale, cost delta, and action items for
+      overrides or manual adjustments.

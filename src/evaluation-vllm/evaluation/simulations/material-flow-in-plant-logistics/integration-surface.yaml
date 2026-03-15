@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: material-receipt-notification
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: line-side-replenishment-requirements
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: component-inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: inventory-accuracy-targets
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: empty-container-status
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-shortages
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Process Builder
+    type: cortex
+    function: Minimize COGS and avoid line stoppages
+  - component: Action Item
+    type: process_builder
+    function: >-
+      Accept and stage incoming materials, execute line-side replenishment,
+      group components into kits, adjust inventory accuracy targets, route empty
+      containers, identify and escalate material shortages.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate material reception, line-side replenishment, in-plant kit
+      assembly, inventory accuracy, and shortage escalation to reduce cogs and
+      enhance otif and working capital efficiency. and approve the recommended
+      action.

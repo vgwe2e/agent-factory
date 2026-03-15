@@ -1,0 +1,151 @@
+objective: >-
+  Provide integrated N-tier supplier visibility, run digital-twin stress tests,
+  and align continuity actions to protect margins and revenue during input cost
+  and promotional volatility using agentic and deterministic automation.
+trigger: >-
+  Detection of supplier disruption signals, large input cost movement, or
+  upcoming high-impact promotional window from monitoring feeds or scheduled
+  scans.
+decision: >-
+  Which supplier tiers/nodes to actively monitor or intervene on (monitoring
+  coverage vs alert fatigue) and which continuity actions (expedite,
+  dual-source, contract renegotiation, inventory rebalancing) to execute to
+  mitigate risk while controlling working capital and EBITDA impact.
+expected_action: >-
+  Automatically enrich N-tier supplier graph, run scenario stress tests via
+  agentic digital twin, score intervention candidates, and execute prioritized
+  continuity actions (Kinaxis expedite, S4 contract adjustments via Remote
+  Function, create CWB tasks for approvals) orchestrated by Process Builder with
+  Agent Team oversight.
+expected_outcome: >-
+  Targeted interventions on high-impact N-tier nodes reduce expected service
+  disruption, preserve planned revenue and margins, limit emergency expediting
+  costs, and maintain service levels while minimizing working capital and EBITDA
+  erosion.
+rationale: >-
+  Combining deterministic ETL/warehouse data with agentic digital-twin scenario
+  reasoning enables early detection and prescriptive continuity decisions across
+  N-tier suppliers. Process Builder orchestrates reliable integrations and
+  approvals while Agentic AI explores complex multi-node stress scenarios that
+  deterministic rules can't enumerate, delivering prioritized, actionable plans
+  with human-in-the-loop governance.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (general)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+key_inputs:
+  - name: N-tier supplier registry (IDs, relationships, roles)
+    source: DDM/Crawlers + Kinaxis supplier feeds
+    purpose: >-
+      Build and maintain the multi-tier supplier graph for visibility and
+      linkage to nodes
+    preferred_stream_type: DDM/Crawlers
+  - name: >-
+      Supplier attributes and risk indicators (capacity, lead-time, financial,
+      quality scores)
+    source: S4 + Kinaxis + external risk feeds
+    purpose: Assess node vulnerability and capacity to absorb shocks
+    preferred_stream_type: STREAMS
+  - name: Demand forecast & promotional schedule
+    source: SAS Advanced Statistical Forecasting
+    purpose: >-
+      Provide baseline demand for digital twin stress tests and continuity
+      sizing
+    preferred_stream_type: Subject Areas
+  - name: Inventory positions and FG safety stock
+    source: Kinaxis + Blue Yonder WMS
+    purpose: Understand buffer levels and rebalancing opportunities
+    preferred_stream_type: Subject Areas
+  - name: Transport & shipment status
+    source: Uber Freight TMS
+    purpose: Detect logistics disruptions and compute ETA risks
+    preferred_stream_type: STREAMS
+  - name: Contract terms and unit costs
+    source: S4 (Contracts/Procurement)
+    purpose: Evaluate financial impact of sourcing or renegotiation actions
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: >-
+      Ingest N-tier registry and operational signals into the subject area and
+      canonical supplier graph
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Create and update the multi-tier supplier map for downstream analysis
+  - step: >-
+      Normalize and enrich supplier data; compute node-level risk and capacity
+      metrics
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Produce consistent attributes (lead-time, risk score, exposure) for
+      digital twin
+  - step: >-
+      Execute agentic digital-twin stress tests across scenarios (cost spikes,
+      promo surge, transport outage) and rank intervention candidates
+    stage: decide
+    component: Agent Team + Cortex (Agentic AI)
+    purpose: >-
+      Explore multi-node failure modes and surface prioritized continuity
+      actions
+  - step: >-
+      Orchestrate chosen interventions: trigger Kinaxis expedite, queue S4
+      contract adjustments via Remote Functions, and create CWB Lifecycle tasks
+      for approvals
+    stage: act
+    component: Process Builder + Remote Functions + CWB Lifecycle
+    purpose: Implement mitigation while preserving audit trail and approvals
+  - step: >-
+      Surface recommended actions and scenario outcomes to planners and
+      procurement via dashboards and CWB; collect decisions/overrides
+    stage: surface
+    component: UI Screens (dashboard, report) + CWB Lifecycle
+    purpose: Enable human review, accept/override, and document rationale
+  - step: >-
+      Monitor execution outcome and close the loop into subject areas for
+      continuous learning and model refinement
+    stage: review
+    component: Subject Areas + Cortex Monitoring
+    purpose: Track performance, update risk models, and improve future recommendations
+branches:
+  - condition: Low confidence in supplier data or insufficient N-tier linkage
+    response: >-
+      Process Builder routes to data enrichment subprocess (DDM/Crawlers) and
+      flags manual verification via Agent Team; suspend automated high-impact
+      actions
+    outcome: >-
+      Delay or limit automated interventions until data fidelity is restored;
+      create a prioritized data acquisition backlog
+  - condition: High-impact disruption but estimated mitigation cost exceeds threshold
+    response: >-
+      Agent Team generates alternative lower-cost continuity plans; create CWB
+      Lifecycle approvals for executive sign-off and optional contract
+      renegotiation via Remote Functions
+    outcome: >-
+      Avoid uncontrolled spend; escalate for human decision with clear
+      cost/benefit tradeoffs
+  - condition: Multiple simultaneous N-tier failures producing combinatorial scenarios
+    response: >-
+      Agentic pipeline runs prioritized Monte Carlo-style stress matrix; Process
+      Builder restricts actions to highest ROI nodes and surfaces remaining
+      risks for manual planning
+    outcome: >-
+      Focused, resource-constrained interventions preserve most critical service
+      levels while documenting residual risk

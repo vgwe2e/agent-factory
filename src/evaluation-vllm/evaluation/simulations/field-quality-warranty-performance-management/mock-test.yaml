@@ -1,0 +1,42 @@
+decision: >-
+  Identify root-cause patterns in field quality with supplier attribution,
+  select corrective action plans, choose supplier recovery actions, and decide
+  escalation or resolution paths for field actions/recalls.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New field quality data and warranty claims are available in SAP S/4HANA.
+  parameters:
+    objective: >-
+      Reduce COGS related to warranty, shorten resolution cycles, and improve
+      OTIF by autonomously analyzing field quality data, identifying warranty
+      root causes, coordinating supplier recovery actions, and automating
+      critical field communications.
+    key_inputs:
+      - Field Quality Data
+      - Warranty Claims Data
+      - Supplier Financial Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Analyze field quality data, identify root causes, select corrective actions,
+    pursue financial recovery from suppliers, and manage communication and
+    resolution processes.
+  outcome: >-
+    Reduced COGS related to warranty, shortened resolution cycles, improved
+    OTIF, and enhanced supplier relationships.
+  affected_components:
+    - DDM/Crawlers
+    - RCA Service
+    - AutoML
+    - Remote Functions
+    - Process Builder
+    - Dashboard
+rationale: >-
+  This scenario leverages AI/ML to autonomously analyze field quality data,
+  identify root causes, and coordinate supplier recovery actions, thereby
+  reducing COGS and improving overall supply chain efficiency.

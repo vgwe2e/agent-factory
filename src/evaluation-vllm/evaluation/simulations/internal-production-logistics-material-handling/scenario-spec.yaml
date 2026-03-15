@@ -1,0 +1,78 @@
+objective: >-
+  Reduce working capital and COGS while improving OTIF by automating end-to-end
+  material flow decisions across plants, suppliers, and DCs.
+trigger: Daily inventory levels and production schedules.
+decision: >-
+  Optimize material delivery, kitting, inventory management, equipment
+  maintenance, empty container management, and point-of-use replenishment.
+expected_action: >-
+  Automate and sequence material delivery, manage inventory levels, schedule
+  equipment maintenance, allocate empty containers, and set replenishment
+  thresholds.
+expected_outcome: >-
+  Reduced carrying and expediting costs, improved line uptime, and increased
+  on-time delivery to customers and production lines.
+rationale: >-
+  By automating and optimizing material flow decisions, the solution will
+  streamline logistics, reduce waste, and enhance overall operational
+  efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Monitor current inventory to make informed replenishment decisions.
+  - name: Production Schedules
+    source: SAP S/4HANA
+    purpose: Align material delivery with production needs.
+  - name: Equipment Status
+    source: SAP S/4HANA
+    purpose: Schedule maintenance based on equipment usage and condition.
+  - name: Empty Container Availability
+    source: SAP S/4HANA
+    purpose: Allocate empty containers efficiently.
+happy_path:
+  - step: Retrieve current inventory levels and production schedules.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for decision-making.
+  - step: >-
+      Analyze inventory levels and production schedules to determine optimal
+      material delivery sequences.
+    stage: analyze
+    component: STREAMS
+    purpose: Ensure timely material delivery and minimize WIP.
+  - step: >-
+      Generate kitting and sub-assembly sequences based on production
+      requirements.
+    stage: analyze
+    component: STREAMS
+    purpose: Optimize material readiness and minimize WIP.
+  - step: Determine optimal inventory levels and cycle counting frequencies.
+    stage: analyze
+    component: STREAMS
+    purpose: Balance stock accuracy against carrying costs.
+  - step: Schedule maintenance for material handling equipment.
+    stage: decide
+    component: Remote Functions
+    purpose: Maximize throughput while minimizing downtime and maintenance costs.
+  - step: Allocate empty containers based on usage and availability.
+    stage: decide
+    component: Remote Functions
+    purpose: Minimize holding costs and avoid FIFO/space shortages.
+  - step: Set replenishment thresholds and schedules for point-of-use systems.
+    stage: decide
+    component: Remote Functions
+    purpose: Avoid stockouts and optimize working capital.
+branches:
+  - condition: Inventory levels are critically low.
+    response: Trigger emergency replenishment orders.
+    outcome: Prevent stockouts and maintain production continuity.
+  - condition: Equipment requires immediate maintenance.
+    response: Schedule urgent maintenance and adjust production schedules.
+    outcome: Minimize downtime and ensure continuous operation.
+  - condition: Empty containers are insufficient.
+    response: Prioritize container allocation based on criticality.
+    outcome: Maintain efficient logistics and avoid bottlenecks.

@@ -1,0 +1,58 @@
+decision: >-
+  Approve (validate & commit), Pilot (partial commit), or Defer the innovation
+  initiative based on validated value, implementation risk, and working capital
+  impact.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    New or flagged category innovation initiative (submitted by category team,
+    supplier proposal, or analytics signal) enters the innovation pipeline.
+  parameters:
+    objective: >-
+      Automate end-to-end category innovation decisions to evaluate, validate,
+      and operationalize initiatives across demand, inventory and procurement to
+      drive revenue growth, EBITDA uplift, and improved working capital.
+    key_inputs:
+      - >-
+        Innovation initiative dossier (requirements, proposed SKUs, supplier
+        proposals)
+      - Demand forecasts and uplift scenarios
+      - Inventory, on-hand and replenishment constraints
+      - Supplier capacity, lead-times and commercial terms
+      - Financial KPIs (margin, cost, working capital impact)
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS (Advanced Statistical Forecasting)
+      - Kinaxis RapidResponse
+      - Kinaxis (Rebalancing / Order Expediting / FG Safety Stock)
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Freight
+expected_output:
+  action: >-
+    Run cross-domain valuation, run scenario trade-offs, present recommendation
+    in a CWB for approval, and execute approved actions (ERP writebacks,
+    procurement releases, inventory rebalances, supplier engagement).
+  outcome: >-
+    Validated initiatives either committed to execution (POs/production changes)
+    or deferred; measurable uplift in revenue and EBITDA for approved
+    initiatives, optimized working capital and reduced stockouts/overstocks
+    across involved SKUs and suppliers.
+  affected_components:
+    - STREAMS (DDM/Crawlers)
+    - Cortex Auto Forecast + RCA Service
+    - Process Builder -> CWB Lifecycle (Rules + Notification)
+    - 'Process Builder: Action Item + Remote Functions (ERP/TMS/WMS writeback)'
+    - UI Screens (dashboard) + Subject Areas
+    - Dashboard
+rationale: >-
+  Use Process Builder to orchestrate deterministic, multi-step validation and
+  execution workflows; leverage STREAMS/DDM to unify master and transaction
+  data, Cortex Auto Forecast and RCA for scenario analysis, CWB Lifecycle for
+  human-in-the-loop approvals, and Remote Functions for ERP/TMS/WMS
+  writebacks—balancing automation and governance to reduce cycle time and
+  financial risk.

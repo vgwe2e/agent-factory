@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest new product pipeline data.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Evaluate BOM changes and engineering releases.
+    confidence: inferred
+    capability: Evaluate BOM changes and engineering releases.
+  - name: Remote Functions
+    purpose: Determine supply chain readiness.
+    confidence: inferred
+    capability: Determine supply chain readiness.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Minimize working capital and write-down risk.
+    confidence: confirmed
+    node_type: decide
+agent_teams:
+  - name: Agentic AI
+    purpose: Optimize transition strategy.
+    confidence: inferred
+    role: Optimize transition strategy.
+ui:
+  - name: UI Screens
+    purpose: Display recommendations for human review.
+    confidence: confirmed
+    component_type: display

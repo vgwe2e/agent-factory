@@ -1,0 +1,83 @@
+objective: >-
+  Reduce working capital tied to inbound and in-plant inventories while
+  improving COGS through optimized material flow and enhanced line readiness.
+trigger: Receipt of raw material coils and initiation of in-line processing activities.
+decision: >-
+  Decide intake inspection and acceptance criteria for raw material coils,
+  determine coil slitting/blanks production plan, optimize storage levels and
+  location of raw materials/blanks, plan timely delivery of material
+  coils/blanks to presses, classify scrap and determine recycling/disposal path,
+  investigate and resolve quality issues in incoming raw materials.
+expected_action: >-
+  Inspect and accept raw material coils based on predefined criteria, generate
+  production plans for slitting and blanking operations, adjust storage levels
+  and locations to optimize inventory, schedule deliveries to presses with
+  minimal delays, segregate and prepare scrap materials for recycling or
+  disposal, resolve quality issues with supplier remediation actions.
+expected_outcome: Reduced working capital, minimized COGS, and improved line readiness.
+rationale: >-
+  Automating and optimizing material handling and preparation processes will
+  lead to better inventory management, reduced waste, and faster resolution of
+  quality issues, resulting in improved financial performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Raw Material Receipt Data
+    source: SAP S/4HANA
+    purpose: Trigger inspection and acceptance criteria decision.
+  - name: Production Demand Data
+    source: SAP S/4HANA
+    purpose: Determine slitting and blanking production plan.
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Optimize storage levels and locations.
+  - name: Press Line Status
+    source: SAP S/4HANA
+    purpose: Plan timely delivery of materials.
+  - name: Scrap Classification Data
+    source: SAP S/4HANA
+    purpose: Classify scrap and determine recycling/disposal path.
+  - name: Quality Issue Reports
+    source: SAP S/4HANA
+    purpose: Investigate and resolve quality issues.
+happy_path:
+  - step: Receive raw material coils
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect raw material receipt data.
+  - step: Inspect and accept raw material coils
+    stage: analyze
+    component: Remote Functions
+    purpose: Apply acceptance criteria.
+  - step: Generate production plan for slitting and blanking
+    stage: decide
+    component: Process Builder
+    purpose: Minimize waste and changeovers.
+  - step: Optimize storage levels and locations
+    stage: decide
+    component: Process Builder
+    purpose: Minimize working capital.
+  - step: Schedule timely delivery to presses
+    stage: decide
+    component: Process Builder
+    purpose: Avoid delays and expedite as needed.
+  - step: Segregate and prepare scrap materials
+    stage: act
+    component: Remote Functions
+    purpose: Efficient recycling and disposal.
+  - step: Investigate and resolve quality issues
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Supplier remediation and containment.
+branches:
+  - condition: High scrap rate detected
+    response: Increase inspection frequency
+    outcome: Improved scrap classification and reduced waste.
+  - condition: Quality issue identified
+    response: Initiate CWB Lifecycle for resolution
+    outcome: Supplier remediation and containment actions taken.
+  - condition: Inventory levels exceed thresholds
+    response: Adjust storage locations
+    outcome: Optimized inventory levels and reduced working capital.

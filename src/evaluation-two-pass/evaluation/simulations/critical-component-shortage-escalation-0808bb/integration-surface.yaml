@@ -1,0 +1,63 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Portal / EDI
+    status: tbd
+  - name: Transportation / 3PL System
+    status: tbd
+  - name: Ad-hoc uploads (spreadsheets, supplier notes)
+    status: tbd
+aera_ingestion:
+  - stream_name: planned-production-schedule-by-plant-line
+    stream_type: subject_area
+    source: SAP S/4HANA
+  - stream_name: bom-critical-component-requirements
+    stream_type: subject_area
+    source: SAP S/4HANA
+  - stream_name: on-hand-inventory-and-in-transit-receipts
+    stream_type: subject_area
+    source: SAP S/4HANA
+  - stream_name: supplier-capacity-lead-times-delivery-reliability
+    stream_type: Event Stream
+    source: Supplier Portal / EDI
+  - stream_name: plant-capacity-profiles-and-constraints
+    stream_type: subject_area
+    source: SAP S/4HANA
+  - stream_name: logistics-transit-times-and-slot-availability
+    stream_type: Event Stream
+    source: Transportation / 3PL System
+  - stream_name: escalation-cost-policies-business-rules
+    stream_type: Event Stream
+    source: Config / Policy repository
+processing:
+  - component: Cortex RCA Service
+    type: cortex
+    function: >-
+      Prioritize root causes (supplier risk, capacity limits, late receipts) and
+      quantify impact on schedules and OTD
+  - component: Process Builder (Data Science / Remote Functions)
+    type: cortex
+    function: Generate ranked mitigation options with estimated COGS and OTD outcomes
+  - component: Agent Team
+    type: process_builder
+    function: >-
+      Select executable plan respecting escalation policies and approval
+      thresholds
+  - component: Process Builder
+    type: process_builder
+    function: >-
+      Apply accepted mitigations via Remote Functions to SAP S/4HANA and surface
+      exceptions via CWB Lifecycle
+  - component: UI Screen
+    type: process_builder
+    function: Enable review, monitoring, and P&L reconciliation
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously identify multi-plant and supplier-driven bottlenecks,
+      simulate mitigation trade-offs, and execute coordinated procurement,
+      production scheduling, and logistics actions to reduce cogs and improve
+      on-time delivery (otd) across automotive plants. and approve the
+      recommended action.

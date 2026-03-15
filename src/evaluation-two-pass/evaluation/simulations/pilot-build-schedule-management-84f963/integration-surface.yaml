@@ -1,0 +1,54 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Readiness Portal
+    type: portal
+    status: tbd
+  - name: Plant Capacity / MES (integration point)
+    status: tbd
+aera_ingestion:
+  - stream_name: bill-of-materials-npi-bom
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: master-data-part-routing-resource
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: inventory-on-hand-levels
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: resource-capacity-calendars-lines-tools-labor-shifts
+    stream_type: Event Stream
+    source: Plant Capacity / MES (integration point)
+  - stream_name: supplier-readiness-status-qualification-lead-times
+    stream_type: Event Stream
+    source: Supplier Readiness Portal
+  - stream_name: pilot-build-specifications-test-plans
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: launch-demand-milestones
+    stream_type: Event Stream
+    source: Program Plan (SAP or PLM)
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: >-
+      Compute optimal pilot run timing and resource assignments respecting
+      constraints and cost tradeoffs.
+  - component: Process Builder (IF / Rules) + CWB Lifecycle
+    type: process_builder
+    function: Apply guardrails and route exceptions for decisioning or override.
+  - component: Remote Functions + Notification + UI Screen
+    type: process_builder
+    function: >-
+      Execute plan via ERP writeback and inform execution teams; provide
+      visibility for pilot execution.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously plan and coordinate pilot builds and related npi
+      production activities (pre-production, ramp-up, supplier readiness, pilot
+      builds, end-of-life) to minimize time-to-market and cogs while improving
+      otif and working capital during npi cycles. and approve the recommended
+      action.

@@ -1,0 +1,51 @@
+decision: >-
+  Assign and sequence closure panel mounting, gapping, door alignment,
+  welding-line jobs, and quality-release flags to produce a feasible,
+  constraint-compliant production release schedule across BIW platforms.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled daily planning run or production-order change event from SAP
+    S/4HANA
+  parameters:
+    objective: >-
+      Autonomously coordinate BIW closure panel mounting, gapping, welding-line
+      sequencing, and quality-release decisions to minimize changeovers, reduce
+      rework/scrap, and improve line efficiency while preserving on-time
+      delivery and OTIF.
+    key_inputs:
+      - production_orders
+      - material_availability
+      - welding_line_capacities
+      - biw_panel_specifications
+      - quality_history
+    source_systems:
+      - SAP S/4HANA
+      - Manufacturing Execution System (MES)
+      - Quality Management System (QMS)
+expected_output:
+  action: >-
+    Run a constraint-based scheduling optimization that ingests ERP, MES, PLM,
+    and quality signals, generate synchronized sequence and release orders,
+    route exceptions for operator review, and write approved schedules to
+    execution systems.
+  outcome: >-
+    Optimized, synchronized BIW schedule that reduces changeover time and
+    rework, lowers COGS, preserves OTIF targets, and produces exception tickets
+    for high-risk items requiring human review.
+  affected_components:
+    - STREAMS
+    - Remote Functions (constraint solver)
+    - Process Builder - IF + Action Item
+    - Process Builder - Transaction + Remote Functions (SAP writeback)
+    - UI Screen (dashboard + CWB Lifecycle view)
+rationale: >-
+  A deterministic, process-driven optimizer can enforce hard constraints
+  (capacity, changeover costs, tolerance windows) and coordinate scheduling +
+  quality-release decisions centrally. Using Process Builder + Remote Functions
+  for solver execution and SAP writeback provides reliable, auditable automation
+  while enabling operator oversight for infeasible or high-risk cases.

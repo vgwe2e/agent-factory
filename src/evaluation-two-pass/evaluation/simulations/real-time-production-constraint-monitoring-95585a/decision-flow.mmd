@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled detection run (e.g., 30-minute cycle) or event: production line utilization threshold OR supplier shortage/late shipment alert from ERP/EDI.]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Consolidate cross-system data (production, inventory, suppliers, logistics) into the decision subject area]
+  N1 --> N2[Cortex: RCA Service + Cortex Auto Forecast - Detect emergent bottlenecks and rank root causes across plants and SKUs]
+  N2 --> N3{PB: Process Builder (IF, Rules) + Remote Functions (simulation) - Simulate mitigation scenarios and select optimal plan via rules and scorecard}
+  N3 -->|Primary| N4[PB: Remote Functions - SAP S/4HANA (Transaction) - Execute coordinated actions (schedule updates, PO expedites, logistics reroutes) and persist changes]
+  N4 --> N5[PB: UI Screens (dashboard & CWB) + Notification - Surface results, monitor impact, and notify stakeholders for closure or escalation]
+  N5 --> Z1[Outcome: Faster resolution of emergent constraints, improved on-time in-full (OTIF), reduced expedited costs and COGS, measurable throughput gains and P&L improvement versus baseline within defined evaluation window.]
+  N3 -->|Supplier capacity cannot be increased...| B1[Process Builder routes to contingency plan: re-sequence production, prioritize alternate SKUs, or trigger substitution rules; create exception CWB for procurement to source alternatives.]
+  B1 --> O1[Outcome: Production rescheduled to minimize OTIF impact; exception tracked for procurement follow-up; partial mitigation applied.]
+  O1 --> End[End]
+  N3 -->|Simulated mitigation does not meet on...| B2[Hold automated execution and create CWB Lifecycle recommendations for cross-functional approval (S&OP/Plant/Procurement).]
+  B2 --> O2[Outcome: Human decision required; changes executed only after approval to avoid adverse cost/P&L impact.]
+  O2 --> End[End]
+  N3 -->|Automated execution encounters transa...| B3[Rollback Transaction node in Process Builder, create incident notification, and route to operator via Action Item and Agent Team if needed.]
+  B3 --> O3[Outcome: System state remains consistent; operators are alerted to resolve underlying issue and retry execution.]
+  O3 --> End[End]
+  Z1 --> End[End]

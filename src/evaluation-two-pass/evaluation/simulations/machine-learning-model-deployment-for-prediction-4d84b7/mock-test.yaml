@@ -1,0 +1,54 @@
+decision: >-
+  Deploy and maintain ML-based demand prediction models; decide when to retrain
+  or adjust features based on model performance, data quality, and business rule
+  thresholds.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled weekly forecast pipeline and exception-based triggers when
+    forecast error (MAPE) or service KPIs exceed thresholds.
+  parameters:
+    objective: >-
+      Improve material planning and reduce working capital by deploying
+      autonomous ML demand models and integrated forecast optimization across
+      supplier-plant-DC network.
+    key_inputs:
+      - Historical sales & shipments (time-series)
+      - Product & location master data
+      - Inventory levels & in-transit data
+      - Supplier lead times & capacity constraints
+      - Promotions & events calendar
+      - External demand signals (e.g., market index, seasonality indicators)
+    source_systems:
+      - SAP S/4HANA
+      - Enterprise Data Lake / Subject Areas
+      - External Market Signals (3rd-party APIs)
+expected_output:
+  action: >-
+    Orchestrate ingestion, generate forecasts and driver explanations, evaluate
+    model performance, automatically deploy models or schedule retraining, write
+    approved forecasts to SAP S/4HANA, and surface exceptions/recommendations to
+    planners for overrides.
+  outcome: >-
+    Tighter COGS and lower working capital via improved forecast accuracy, fewer
+    stockouts and excesses across multi-echelon network, measurable reduction in
+    inventory days and procurement variance, continuous model performance
+    measurement.
+  affected_components:
+    - STREAMS + DDM/Crawlers
+    - Cortex Auto Forecast + RCA Service
+    - Process Builder (IF, Rules, Data Science)
+    - Remote Functions
+    - Cortex Monitoring + Process Builder Notification
+    - CWB Lifecycle + UI Screens
+rationale: >-
+  Use Aera Process Builder to orchestrate repeatable ETL, modeling, evaluation,
+  and writeback. Cortex Auto Forecast provides robust time-series forecasts with
+  explainability; RCA Service surfaces demand drivers for feature adjustments.
+  Remote Functions enable safe deployment and ERP writeback to SAP S/4HANA. CWB
+  Lifecycle + UI Screens provide human-in-the-loop approval for production
+  changes. Cortex Monitoring ensures ongoing measurement and retrain triggers.

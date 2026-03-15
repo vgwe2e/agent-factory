@@ -1,0 +1,42 @@
+decision: >-
+  Should a customer/dealer-initiated change to an order be accepted, modified,
+  or rejected, and how to re-seat production/delivery constraints accordingly.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Customer or dealer initiates an order change or cancellation request.
+  parameters:
+    objective: >-
+      Automate end-to-end customer order modification and cancellation with
+      validation, impact assessment, communication, and governance to reduce
+      COGS impact, preserve OTIF, and improve cash flow.
+    key_inputs:
+      - Order Change Request
+      - Order Cancellation Request
+      - Production Schedule
+      - Delivery Schedule
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Validate and process order changes, manage order cancellations and issue
+    refunds, communicate impact assessments and decisions to relevant
+    stakeholders.
+  outcome: >-
+    Reduced COGS impact, preserved OTIF, improved cash flow through timely
+    refunds and accurate order fulfillment.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Remote Functions
+    - CWB Lifecycle
+    - Notification
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Automating order modifications and cancellations ensures rapid, cost-aware
+  decision-making, reducing operational costs and improving customer
+  satisfaction.

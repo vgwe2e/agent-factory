@@ -1,0 +1,66 @@
+objective: >-
+  Develop and deploy statistical and ML-based demand forecasting models to
+  improve production planning and inventory decisions, reducing stockouts and
+  excess inventory.
+trigger: Historical sales data availability in SAP S/4HANA.
+decision: >-
+  Develop, refine, and deploy demand forecasting models to improve forecast
+  accuracy and inform production and procurement decisions.
+expected_action: >-
+  Automate the development, deployment, and maintenance of time-series
+  forecasting and ML models, including regression analysis for demand drivers.
+expected_outcome: >-
+  Improved forecast accuracy leading to reduced COGS and working capital,
+  aligned production and procurement with real-time demand signals.
+rationale: >-
+  Tighter alignment of production and procurement with actual demand reduces
+  waste and improves financial performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Historical Sales Data
+    source: SAP S/4HANA
+    purpose: Input for time-series forecasting and regression analysis.
+  - name: Key Influencing Variables
+    source: SAP S/4HANA
+    purpose: Input for regression analysis to quantify demand drivers.
+  - name: Forecast Accuracy Metrics
+    source: Cortex Monitoring
+    purpose: Evaluate model performance and guide corrective actions.
+happy_path:
+  - step: Extract historical sales data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and prepare raw data for analysis.
+  - step: Cleanse and validate historical sales data.
+    stage: analyze
+    component: Data Quality & Validation
+    purpose: Ensure data integrity for reliable forecasting.
+  - step: Develop and refine time-series forecasting models.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict future demand accurately.
+  - step: Perform regression analysis on key influencing variables.
+    stage: analyze
+    component: AutoML
+    purpose: Identify and quantify demand drivers.
+  - step: Deploy ML-based demand prediction models.
+    stage: decide
+    component: Remote Functions
+    purpose: Implement advanced models for dynamic demand prediction.
+  - step: Monitor and measure forecast accuracy.
+    stage: review
+    component: Cortex Monitoring
+    purpose: Evaluate model performance and guide improvements.
+branches:
+  - condition: Forecast accuracy below threshold
+    response: Retrain models with updated data.
+    outcome: Improved forecast accuracy.
+  - condition: Significant changes in demand drivers
+    response: Adjust model features and retrain.
+    outcome: Enhanced model adaptability to new conditions.
+  - condition: Data quality issues detected
+    response: Exclude affected data or cleanse before retraining.
+    outcome: Reliable model predictions based on clean data.

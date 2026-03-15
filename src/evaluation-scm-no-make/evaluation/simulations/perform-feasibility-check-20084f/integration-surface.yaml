@@ -1,0 +1,78 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (Order Expediting / Rebalancing / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS / 3PL Uber Freight
+    type: TMS/3PL
+    status: identified
+aera_ingestion:
+  - stream_name: forecast-demand-sku-x-location-x-horizon
+    stream_type: DDM/Crawlers
+    source: SAS
+  - stream_name: confirmed-sales-orders-and-shipment-commitments
+    stream_type: DDM/Crawlers
+    source: S4 / Kinaxis
+  - stream_name: on-hand-inventory-and-wip-levels
+    stream_type: STREAMS
+    source: Blue Yonder WMS / S4
+  - stream_name: current-production-schedules-machine-line-capacity-and-labor-roster
+    stream_type: DDM/Crawlers
+    source: S4 / Kinaxis RapidResponse
+  - stream_name: open-pos-lead-times-and-supplier-constraints
+    stream_type: DDM/Crawlers
+    source: S4
+  - stream_name: safety-stock-target-inventory-settings
+    stream_type: STREAMS
+    source: Kinaxis (FG Safety Stock)
+  - stream_name: constraint-shortage-alerts-and-propagated-impacts
+    stream_type: Event Stream
+    source: Kinaxis RapidResponse
+  - stream_name: sku-attributes-lead-times-family-grouping-lines-qualified
+    stream_type: Subject Areas
+    source: Subject Areas / S4
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: >-
+      Calculate if current run-rate meets demand, identify bottlenecks, compute
+      candidate actions (OT, shift, subcontract, rebalance)
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Human-in-the-loop approval for resource additions or rebalancing with
+      contextual metrics (COGS impact, service risk)
+  - component: Process Builder
+    type: process_builder
+    function: >-
+      Write approved changes back to S4/Kinaxis and generate work items for
+      operations/procurement
+  - component: Notification / Subject Areas
+    type: process_builder
+    function: >-
+      Ensure planners, ops, and finance are informed and the change is visible
+      in downstream reports
+  - component: UI Screen
+    type: process_builder
+    function: >-
+      Provide planners with decision rationale, scenario comparisons, and
+      execution status
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end production feasibility checks and capacity
+      assurance across skus and plants to optimize run-rate, reduce waste, and
+      protect margins by aligning demand, inventory, and procurement with plant
+      capability. and approve the recommended action.

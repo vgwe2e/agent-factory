@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Daily scheduled run (nightly master schedule) or ad-hoc production change event (new urgent order, line outage, or demand revision).]
+  A --> N1[Stream: STREAMS - Ingest master production, capacity, and historical changeover data]
+  N1 --> N2[Cortex: Remote Functions (solver) invoked by Process Builder - Run deterministic scheduling optimization across platforms]
+  N2 --> N3{PB: CWB Lifecycle (recommendation view) - Present recommended schedule and changeover plan for acceptance}
+  N3 -->|Primary| N4[PB: Process (Process Builder) + Remote Functions (SAP writeback) - Release approved schedule and writeback to ERP/Execution systems]
+  N4 --> N5[PB: Subject Areas + Process (Rules & Notifications) - Monitor execution and surface adherence analytics; trigger automated remediation]
+  N5 --> Z1[Outcome: Synchronized multi-plant schedules with lower total COGS, improved on-time delivery, reduced changeover overhead, and lower working capital through reduced WIP and fewer emergency expedited actions.]
+  N3 -->|Optimizer returns infeasible solution...| B1[Process Builder invokes constraint-relaxation policy to generate ranked alternatives, surface options via CWB for manual approval, or defer low-priority demand.]
+  B1 --> O1[Outcome: A feasible, policy-compliant plan is selected with explicit trade-offs recorded; urgent items flagged for escalation.]
+  O1 --> End[End]
+  N3 -->|During execution, actual changeover t...| B2[Automatic rescheduling subprocess recalculates impacted downstream sequences, issues notifications to plant leads, and creates CWB exception if manual decision required.]
+  B2 --> O2[Outcome: Minimized downstream disruption with either automated recovery actions or prioritized manual intervention.]
+  O2 --> End[End]
+  N3 -->|Cross-plant component or capacity con...| B3[Trigger multi-plant coordination subprocess (Process Builder Subprocess) to reallocate production windows and escalate to supply planner via Action Item.]
+  B3 --> O3[Outcome: Conflict is resolved via reallocation or approved trade-off; global schedule remains aligned with prioritized demand.]
+  O3 --> End[End]
+  Z1 --> End[End]

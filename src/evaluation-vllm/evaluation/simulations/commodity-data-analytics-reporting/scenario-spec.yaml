@@ -1,0 +1,68 @@
+objective: >-
+  Reduce working capital tied to commodities, minimize supply risk exposure, and
+  improve EBITDA by aligning spend with strategic sourcing, supplier risk flags,
+  and market dynamics.
+trigger: Periodic data refresh from SAP S/4HANA and external market data sources.
+decision: >-
+  Optimize commodity procurement spend and supplier performance based on market
+  intelligence and historical spend analysis.
+expected_action: >-
+  Automate monitoring, forecasting, and decision-making for procurement-related
+  activities.
+expected_outcome: >-
+  Reduced working capital, minimized supply risk, and improved EBITDA through
+  optimized procurement decisions.
+rationale: >-
+  Leveraging deterministic and agentic decisioning to provide actionable
+  insights and automate decision-making processes.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Commodity Spend Data
+    source: SAP S/4HANA
+    purpose: Monitor and analyze procurement spend.
+  - name: Supplier Performance Data
+    source: SAP S/4HANA
+    purpose: Evaluate supplier performance and risk.
+  - name: Market Intelligence Data
+    source: External APIs
+    purpose: Provide context for market trends and risks.
+happy_path:
+  - step: Extract commodity spend and supplier performance data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+  - step: Perform predictive analytics to forecast supply risks.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Identify potential supply risks.
+  - step: Generate market intelligence reports.
+    stage: analyze
+    component: Report Data
+    purpose: Provide insights into market trends and risks.
+  - step: Analyze historical spend data to identify cost-saving opportunities.
+    stage: analyze
+    component: AutoML
+    purpose: Recommend strategic sourcing actions.
+  - step: Present AI recommendations for spend optimization and risk mitigation.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Enable human-in-the-loop decision-making.
+  - step: >-
+      Execute approved actions and update SAP S/4HANA with new procurement
+      decisions.
+    stage: act
+    component: Remote Functions
+    purpose: Implement optimized procurement strategies.
+branches:
+  - condition: High supply risk detected
+    response: Trigger predefined mitigation actions.
+    outcome: Mitigate supply risk exposure.
+  - condition: Significant cost-saving opportunity identified
+    response: Recommend strategic sourcing actions.
+    outcome: Reduce procurement costs.
+  - condition: Market intelligence report ready
+    response: Distribute report to key stakeholders.
+    outcome: Influence sourcing and risk strategies.

@@ -1,0 +1,71 @@
+objective: >-
+  Optimize the end-to-end NPI network for Ford by synchronizing capacity
+  validation, pilot build coordination, ramp-up monitoring, and post-launch
+  optimization.
+trigger: New product introduction (NPI) announcement.
+decision: Assess and coordinate supply chain readiness and resource allocation for NPI.
+expected_action: >-
+  Automate the assessment, coordination, validation, monitoring, and
+  optimization of the supply chain for NPI.
+expected_outcome: >-
+  Minimized COGS during launch, protected working capital, and ensured on-time
+  delivery across suppliers, plants, and distributors.
+rationale: >-
+  Leverage Aera's deterministic processes to rapidly and autonomously make
+  decisions that reduce ramp costs and stockouts during product introductions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: NPI Announcement
+    source: SAP S/4HANA
+    purpose: Trigger the NPI process
+  - name: Supply Chain Infrastructure Data
+    source: SAP S/4HANA
+    purpose: Assess the impact of NPI on supply chain infrastructure
+  - name: Pilot Build Data
+    source: SAP S/4HANA
+    purpose: Coordinate pilot builds and align sourcing, capacity, and ramp plans
+  - name: Production and Logistics Capacity Data
+    source: SAP S/4HANA
+    purpose: Validate readiness for NPI ramp-up
+  - name: Ramp-Up Monitoring Data
+    source: SAP S/4HANA
+    purpose: Monitor supply network during ramp-up and trigger corrective actions
+  - name: Post-Launch Optimization Data
+    source: SAP S/4HANA
+    purpose: Plan continuous optimization of the supply chain post-NPI launch
+happy_path:
+  - step: Initiate NPI Supply Chain Impact Assessment
+    stage: ingest
+    component: Process Builder
+    purpose: >-
+      Start the NPI process by assessing the impact on supply chain
+      infrastructure
+  - step: Coordinate Pilot Builds
+    stage: analyze
+    component: Process Builder
+    purpose: Align sourcing, capacity, and ramp plans for pilot programs
+  - step: Validate Production and Logistics Capacities
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure readiness for NPI ramp-up and allocate buffers
+  - step: Monitor Supply Network During Ramp-Up
+    stage: act
+    component: Process Builder
+    purpose: Identify and resolve emerging issues during ramp-up
+  - step: Plan Continuous Optimization Post-Launch
+    stage: review
+    component: Process Builder
+    purpose: Select initiatives to improve cost, service, and working capital
+branches:
+  - condition: Insufficient production capacity detected
+    response: Allocate additional buffers and resources
+    outcome: Ensure on-time delivery and minimized COGS
+  - condition: Ramp-up issues identified
+    response: Trigger corrective actions across suppliers and plants
+    outcome: Resolve issues and maintain ramp-up schedule
+  - condition: Post-launch optimization opportunities found
+    response: Implement selected initiatives for continuous improvement
+    outcome: Enhance cost, service, and working capital performance

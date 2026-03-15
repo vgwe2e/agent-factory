@@ -1,0 +1,56 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: WMS / Warehouse Layout DB
+    type: WMS
+    status: tbd
+  - name: Labor & Equipment Capacity System
+    type: Workforce/Capacity
+    status: tbd
+aera_ingestion:
+  - stream_name: inventory-on-hand-by-location-lot
+    stream_type: delta
+    source: SAP S/4HANA
+  - stream_name: product-master-dimensions-weight-storage-requirements
+    stream_type: batch
+    source: SAP S/4HANA / Subject Areas
+  - stream_name: historical-demand-forecast
+    stream_type: batch
+    source: Subject Areas / Cortex Auto Forecast
+  - stream_name: lead-times-and-supplier-constraints
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: cycle-count-records-accuracy-metrics
+    stream_type: delta
+    source: SAP S/4HANA / WMS
+  - stream_name: warehouse-layout-slot-capacities-travel-distances
+    stream_type: batch
+    source: WMS / Warehouse Layout DB
+  - stream_name: material-handling-capacity-equipment-labor-schedules
+    stream_type: batch
+    source: Labor & Equipment Capacity System
+  - stream_name: obsolescence-age-metrics-days-since-receipt-slow-moving-flags
+    stream_type: delta
+    source: SAP S/4HANA / Subject Areas
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Provide demand input to replenishment and slotting optimization
+  - component: Remote Functions (optimization routine) called from Process Builder
+    type: cortex
+    function: >-
+      Generate move plans, slot assignments, and replenishment targets that
+      respect handling capacity and service levels
+  - component: CWB Lifecycle (via Process Builder Action Item)
+    type: process_builder
+    function: Auto-apply safe recommendations; route exceptions to planners for override
+  - component: Remote Functions (ERP writeback) + Process Builder Transaction
+    type: process_builder
+    function: >-
+      Persist slotting and replenishment changes to SAP S/4HANA and trigger
+      execution tasks
+ui_surface:
+  - component: UI Screens + Notification node
+    screen: Primary
+    purpose: Provide visibility, audit trail, and next-step assignments

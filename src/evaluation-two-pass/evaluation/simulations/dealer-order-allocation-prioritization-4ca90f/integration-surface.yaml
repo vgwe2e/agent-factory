@@ -1,0 +1,71 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer Order Feed
+    type: API/EDI
+    status: tbd
+  - name: Component Supplier Inventory
+    type: EDI/API
+    status: tbd
+  - name: Manufacturing Execution System (MES)
+    status: tbd
+aera_ingestion:
+  - stream_name: dealer-orders-firm-requested
+    stream_type: STREAMS
+    source: Dealer Order Feed
+  - stream_name: fleet-orders-and-commitments
+    stream_type: STREAMS
+    source: Dealer Order Feed
+  - stream_name: current-mps-master-schedule
+    stream_type: Subject Areas
+    source: SAP S/4HANA
+  - stream_name: plant-capacity-by-line-shift-skill
+    stream_type: Subject Areas
+    source: SAP S/4HANA
+  - stream_name: component-availability-bom-lead-times
+    stream_type: Subject Areas
+    source: SAP S/4HANA
+  - stream_name: cost-drivers-labor-rates-material-costs-changeover-penalties
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: line-efficiency-historical-throughput
+    stream_type: STREAMS
+    source: Manufacturing Execution System (MES)
+  - stream_name: delivery-windows-otif-commitments
+    stream_type: Event Stream
+    source: Dealer Order Feed
+processing:
+  - component: Agent Team
+    type: process_builder
+    function: >-
+      Run constraint negotiation, cost optimization, and conflict resolution
+      across echelons
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Enforce allocation policies and enable human overrides for prioritized
+      exceptions
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Writeback MPS, create/adjust production orders, and update allocations in
+      SAP S/4HANA
+  - component: Notification
+    type: process_builder
+    function: Alert impacted teams of committed schedule and highlight exceptions
+  - component: UI Screen
+    type: process_builder
+    function: >-
+      Enable planners to inspect, simulate overrides, and trigger
+      re-optimization
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously generate conflict-free, cost-optimized multi-scroll
+      master production schedules (weekly + long-range) that allocate production
+      slots to dealer and fleet orders while respecting multi-echelon
+      constraints to reduce cogs, improve line efficiency, and increase otif
+      across vehicle platforms and components. and approve the recommended
+      action.

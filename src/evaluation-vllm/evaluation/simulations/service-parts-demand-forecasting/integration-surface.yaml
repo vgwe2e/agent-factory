@@ -1,0 +1,32 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: historical-sales-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: reliability-trends
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: market-trends
+    stream_type: DDM/Crawlers
+    source: External Data Sources
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Predict demand for service parts
+  - component: Remote Functions
+    type: process_builder
+    function: Ensure forecasts reflect current conditions
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Allow for manual overrides and adjustments
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review unify six service-parts demand processes into a single, end-to-end
+      decision engine for precise sku-level forecasts, real-time input
+      adjustments, and lifecycle-driven demand modeling. and approve the
+      recommended action.

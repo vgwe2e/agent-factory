@@ -1,0 +1,31 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Create validated, joined dataset of demand, supply, and supplier readiness
+      for decision logic.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Process Builder - Rules
+    purpose: >-
+      Detect over-commits, likely backorders, high-value orders at risk, and
+      candidate orders for expediting or split shipments.
+    confidence: confirmed
+    capability: >-
+      Detect over-commits, likely backorders, high-value orders at risk, and
+      candidate orders for expediting or split shipments.
+process_builder:
+  - name: Remote Functions
+    purpose: >-
+      Apply deterministic decision logic (cost/margin thresholds, supplier
+      capacity) and produce writeback-ready recommendations.
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: CWB Lifecycle
+    purpose: >-
+      Present recommended promise changes, allow accept/override, and record
+      audit trail for exceptions.
+    confidence: confirmed
+    component_type: display

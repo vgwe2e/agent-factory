@@ -1,0 +1,39 @@
+decision: >-
+  Determine optimal stock positioning, safety stock levels, deployment rules,
+  and obsolescence/excess handling strategies.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Monthly inventory review cycle.
+  parameters:
+    objective: >-
+      Optimize stock positioning, safety stock policies, deployment rules, and
+      obsolescence/excess handling across the automotive supply network.
+    key_inputs:
+      - Inventory Levels
+      - Historical Sales Data
+      - Supply Chain Network Map
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Adjust inventory positions, update safety stock levels, enforce deployment
+    rules, and plan disposition for obsolete/excess inventory.
+  outcome: >-
+    Reduced working capital, minimized COGS related to mis-fulfillment, improved
+    OTIF across plants, suppliers, and distribution centers.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - Safety Stock Service
+    - CWB Lifecycle
+    - Process Builder
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  By integrating stock location, safety stock, deployment governance, and
+  obsolete/excess reduction into a single decision loop, Ford can achieve
+  significant financial and operational improvements.

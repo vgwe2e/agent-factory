@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled nightly run and on-demand run after major inbound receipts or plant/DC transfer confirmations.]
+  A --> N1[Stream: DDM/Crawlers - Ingest authoritative inventory, cycle counts, and handling capacity]
+  N1 --> N2[Stream: STREAMS - Normalize, validate and compute inventory health metrics]
+  N2 --> N3{PB: Process (Process Builder) + Rules + Data View - Apply deterministic business rules and generate disposition & move recommendations}
+  N3 -->|Primary| N4[PB: Remote Functions + CWB Lifecycle (Action Item) - Execute automated actions and escalate exceptions]
+  N4 --> N5[UI: UI Screen (dashboard) + Notification - Surface results and monitor KPIs]
+  N5 --> Z1[Outcome: Automated disposition and slotting moves executed with audit trail and ERP writebacks; measurable reductions in obsolete inventory and working capital, improved slot utilization and reduced handling moves; timely escalation of high-risk decisions to planners.]
+  N3 -->|SKU flagged obsolete/excess and value...| B1[Auto-generate disposal write-off and immediate ERP disposition writeback via Remote Functions; log transaction.]
+  B1 --> O1[Outcome: Low-cost obsolescence processed without manual review, reducing holding cost and minimizing planner workload]
+  O1 --> End[End]
+  N3 -->|SKU flagged obsolete/excess but repla...| B2[Create CWB Lifecycle recommendation and route to inventory planner for review with supporting rationale and alternative disposition options.]
+  B2 --> O2[Outcome: High-impact dispositions are human-reviewed to avoid premature write-offs and capture salvage value]
+  O2 --> End[End]
+  N3 -->|Planned transfer/slotting moves excee...| B3[Process Builder postpones moves, reschedules them into allowable windows, and notifies operations and suppliers; maintain temporary holds in Subject Areas.]
+  B3 --> O3[Outcome: Moves are deferred to feasible windows preserving operations continuity and avoiding MHE overload]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,58 @@
+decision: >-
+  Select the single best-fit HS code for a product based on deterministic
+  mapping rules, product attributes, historical mappings and authoritative
+  tariff references; escalate when mapping is ambiguous or audit risk is
+  elevated.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    New product introduction or update to product attributes (packaging,
+    composition, country of origin) or scheduled reclassification run.
+  parameters:
+    objective: >-
+      Automatically assign the appropriate customs (HS) classification to
+      imported and exported products using deterministic rules, minimize manual
+      review and audit risk, and write validated classifications back to the
+      product master.
+    key_inputs:
+      - Product master (SKU, descriptions, dimensions)
+      - Packaging and composition details (materials, weights)
+      - Country of origin / trade lane
+      - Authoritative tariff lookup table / API
+      - Classification ruleset and mapping table
+      - Historical classification mappings and audit log
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Blue Yonder WMS
+      - SAS
+      - Tariff Reference (external API / government tariff database)
+      - Customs/Compliance Team (CWB)
+expected_output:
+  action: >-
+    Run rule-based classification pipeline: enrich product attributes, apply
+    deterministic classification rules and tariff lookups, write HS code and
+    audit metadata back to S4; create CWB exceptions for ambiguous/high-risk
+    items and notify customs/compliance team.
+  outcome: >-
+    Products in the product master have authoritative HS codes with an auditable
+    decision trail; majority of SKUs classified automatically; ambiguous or
+    high-risk cases routed to customs for human review; S4 updated with accepted
+    classifications.
+  affected_components:
+    - STREAMS (ETL)
+    - Process Builder - Rules node
+    - Remote Functions (tariff API lookup)
+    - Remote Functions (S4 writeback) + Process Builder Transaction
+    - CWB Lifecycle (Action Item) + UI Screen
+    - Process Builder - Notification / UI Screen (report)
+    - Dashboard
+rationale: >-
+  Customs classification is deterministic and rules-driven: product attributes +
+  tariff tables map to HS codes. Use Process Builder for orchestration, STREAMS
+  for ETL/enrichment, Remote Functions for authoritative tariff API and S4
+  writeback, and CWB Lifecycle for exception handling to preserve auditability
+  and human-in-the-loop control.

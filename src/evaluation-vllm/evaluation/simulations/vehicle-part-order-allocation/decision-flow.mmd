@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: New customer or dealer order creation in SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve new customer/dealer orders from SAP S/4HANA.]
+  N1 --> N2[Stream: STREAMS - Analyze available production slots and parts inventory.]
+  N2 --> N3{PB: Process Builder - Allocate orders to production slots using defined rules.}
+  N3 -->|Primary| N4[PB: Process Builder - Reserve and allocate parts inventory for orders.]
+  N4 --> N5{PB: Process Builder - Optimize allocation rules based on current demand and capacity.}
+  N5 --> N6[PB: Process Builder - Expedite and reallocate resources for urgent orders.]
+  N6 --> Z1[Outcome: Reduced COGS, improved OTIF, optimized working capital, and enhanced order capture.]
+  N3 -->|Insufficient parts inventory for an o...| B1[Trigger reallocation of parts from other locations.]
+  B1 --> O1[Outcome: Parts are reallocated to fulfill the order.]
+  O1 --> End[End]
+  N3 -->|No feasible production slots availabl...| B2[Schedule a new production slot or expedite existing slots.]
+  B2 --> O2[Outcome: Order is allocated to a new or expedited slot.]
+  O2 --> End[End]
+  N3 -->|Urgent order requires immediate atten...| B3[Expedite order allocation and resource reallocation.]
+  B3 --> O3[Outcome: Urgent order is prioritized and fulfilled promptly.]
+  O3 --> End[End]
+  Z1 --> End[End]

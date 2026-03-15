@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: service-requests
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: technician-availability
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: equipment-maintenance-needs
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Generate optimized routes for mobile service appointments.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure optimal job assignments to technicians.
+  - component: Safety Stock Service
+    type: process_builder
+    function: Ensure parts availability while controlling vehicle stock levels.
+  - component: Remote Functions
+    type: process_builder
+    function: Minimize COGS while maintaining fleet readiness.
+  - component: Notification
+    type: process_builder
+    function: Minimize churn and revenue impact.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate mobile service appointment routing, technician dispatch,
+      on-site diagnostics, mobile inventory management, equipment maintenance,
+      and outage communications to reduce working capital, improve cogs, and
+      enhance otif. and approve the recommended action.

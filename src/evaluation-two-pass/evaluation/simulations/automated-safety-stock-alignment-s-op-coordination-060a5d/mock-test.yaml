@@ -1,0 +1,56 @@
+decision: >-
+  Dynamically synchronize safety stock levels, inventory positioning, and S&OP
+  horizon alignment across Planning, Inventory, and Finance; apply automated
+  rebalances when within policy thresholds, otherwise open exception CWB for
+  human review and approval.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled daily batch (end-of-day) ingest plus on-demand when significant
+    demand or supply deviations detected.
+  parameters:
+    objective: >-
+      Continuously align demand signals, inventory positioning, and financial
+      impact to dynamically synchronize safety stock levels and S&OP horizons
+      across Planning, Inventory, and Finance, reducing working capital tied to
+      excess inventory while protecting revenue and EBITDA in automotive
+      operations.
+    key_inputs:
+      - Inventory on-hand & location
+      - Demand signals & forecasts
+      - Lead times & transit variability
+      - Financial KPIs (working capital, inventory carrying cost, EBITDA impact)
+      - Inventory & corporate policy constraints
+    source_systems:
+      - SAP S/4HANA
+      - Aera Subject Areas
+expected_output:
+  action: >-
+    Detect safety stock misallocations via analytics, generate recommended
+    node-to-node inventory rebalances and policy updates, write planned
+    adjustments to SAP S/4HANA (transfer orders / safety stock parameters) via
+    Remote Functions, and route exceptions through CWB Lifecycle with
+    notifications to Planning and Finance.
+  outcome: >-
+    Reduction in excess working capital and inventory carrying costs, maintained
+    or improved service levels and revenue protection, synchronized planning
+    horizons between Planning and Finance, and auditable changes with
+    stakeholder approvals for exceptions.
+  affected_components:
+    - DDM/Crawlers -> STREAMS
+    - Cortex Auto Forecast + Safety Stock Service
+    - Process Builder (Rules -> Data View -> IF -> CWB Lifecycle)
+    - Remote Functions (ERP writeback)
+    - UI Screens + Process Builder Notification
+    - Dashboard
+rationale: >-
+  Automating safety stock alignment using deterministic rules plus Aera
+  forecasting and safety-stock optimization reduces manual tuning, uncovers
+  misallocation across nodes, and enables coordinated S&OP trade-offs that
+  protect EBITDA. Use of Process Builder ensures repeatable orchestration;
+  Cortex services provide robust demand and safety-stock calculations; Remote
+  Functions enable safe ERP writebacks and financial reconciliation.

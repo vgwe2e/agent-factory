@@ -1,0 +1,53 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Aera Subject Areas
+    type: Data Warehouse
+    status: tbd
+aera_ingestion:
+  - stream_name: inventory-on-hand-location
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: demand-signals-forecasts
+    stream_type: Event Stream
+    source: Cortex Auto Forecast (derived from SAP orders and historical sales)
+  - stream_name: lead-times-transit-variability
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: financial-kpis-working-capital-inventory-carrying-cost-ebitda-impact
+    stream_type: STREAMS
+    source: SAP S/4HANA finance ledger / Aera Subject Areas
+  - stream_name: inventory-corporate-policy-constraints
+    stream_type: Event Stream
+    source: Planning policy master data (Aera Subject Areas / manual)
+processing:
+  - component: Cortex Auto Forecast + Safety Stock Service
+    type: cortex
+    function: >-
+      Identify misallocations, compute node-level safety stock targets and
+      rebalance candidates
+  - component: Process Builder (Rules -> Data View -> IF -> CWB Lifecycle)
+    type: process_builder
+    function: >-
+      Automatically accept low-risk rebalances; surface exceptions for human
+      approval when policy or financial thresholds exceeded
+  - component: Remote Functions (ERP writeback)
+    type: process_builder
+    function: >-
+      Create transfer orders, update safety stock parameters in SAP S/4HANA and
+      record planned changes
+  - component: UI Screens + Process Builder Notification
+    type: process_builder
+    function: >-
+      Deliver dashboard showing inventory shifts, working capital impact, and
+      open exceptions to Planning, Inventory and Finance
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review continuously align demand signals, inventory positioning, and
+      financial impact to dynamically synchronize safety stock levels and s&op
+      horizons across planning, inventory, and finance, reducing working capital
+      tied to excess inventory while protecting revenue and ebitda in automotive
+      operations. and approve the recommended action.

@@ -1,0 +1,64 @@
+decision: >-
+  Which supplier tiers/nodes to actively monitor or intervene on (monitoring
+  coverage vs alert fatigue) and which continuity actions (expedite,
+  dual-source, contract renegotiation, inventory rebalancing) to execute to
+  mitigate risk while controlling working capital and EBITDA impact.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Detection of supplier disruption signals, large input cost movement, or
+    upcoming high-impact promotional window from monitoring feeds or scheduled
+    scans.
+  parameters:
+    objective: >-
+      Provide integrated N-tier supplier visibility, run digital-twin stress
+      tests, and align continuity actions to protect margins and revenue during
+      input cost and promotional volatility using agentic and deterministic
+      automation.
+    key_inputs:
+      - N-tier supplier registry (IDs, relationships, roles)
+      - >-
+        Supplier attributes and risk indicators (capacity, lead-time, financial,
+        quality scores)
+      - Demand forecast & promotional schedule
+      - Inventory positions and FG safety stock
+      - Transport & shipment status
+      - Contract terms and unit costs
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS (Advanced Statistical Forecasting)
+      - Kinaxis RapidResponse
+      - Kinaxis (general)
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Freight
+expected_output:
+  action: >-
+    Automatically enrich N-tier supplier graph, run scenario stress tests via
+    agentic digital twin, score intervention candidates, and execute prioritized
+    continuity actions (Kinaxis expedite, S4 contract adjustments via Remote
+    Function, create CWB tasks for approvals) orchestrated by Process Builder
+    with Agent Team oversight.
+  outcome: >-
+    Targeted interventions on high-impact N-tier nodes reduce expected service
+    disruption, preserve planned revenue and margins, limit emergency expediting
+    costs, and maintain service levels while minimizing working capital and
+    EBITDA erosion.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Process Builder + Remote Functions + CWB Lifecycle
+    - Subject Areas + Cortex Monitoring
+    - Agent Team + Cortex (Agentic AI)
+    - UI Screens (dashboard, report) + CWB Lifecycle
+rationale: >-
+  Combining deterministic ETL/warehouse data with agentic digital-twin scenario
+  reasoning enables early detection and prescriptive continuity decisions across
+  N-tier suppliers. Process Builder orchestrates reliable integrations and
+  approvals while Agentic AI explores complex multi-node stress scenarios that
+  deterministic rules can't enumerate, delivering prioritized, actionable plans
+  with human-in-the-loop governance.

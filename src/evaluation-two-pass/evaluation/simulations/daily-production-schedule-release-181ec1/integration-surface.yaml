@@ -1,0 +1,47 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    status: tbd
+  - name: PLM / Changeover DB
+    status: tbd
+  - name: Plant SCADA / OT
+    status: tbd
+  - name: Planner Spreadsheets (local)
+    status: tbd
+aera_ingestion:
+  - stream_name: master-production-schedule-planned-orders
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: material-availability-inventory-mrp-results
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: plant-capacity-shift-patterns-machine-calendars
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: work-order-status-actuals-throughput-oee
+    stream_type: Event Stream
+    source: MES
+  - stream_name: changeover-matrix-sequence-dependent-setup-times
+    stream_type: Event Stream
+    source: PLM / Changeover DB
+  - stream_name: historical-run-rates-and-changeover-distributions
+    stream_type: Event Stream
+    source: Subject Areas / DDM
+processing:
+  - component: Process (Process Builder) + Remote Functions (optimizer)
+    type: cortex
+    function: Produce feasible, capacity- and changeover-aware schedules
+  - component: CWB Lifecycle + Process IF (Rules)
+    type: process_builder
+    function: Gate final release and surface exceptions for human-in-the-loop
+  - component: Process Transaction node + Remote Functions
+    type: process_builder
+    function: Execute schedule release into enterprise systems and downstream execution
+ui_surface:
+  - component: UI Screens (dashboard) + Notification (Process Builder)
+    screen: Primary
+    purpose: >-
+      Provide visibility, enable manual adjustments, and close the communication
+      loop

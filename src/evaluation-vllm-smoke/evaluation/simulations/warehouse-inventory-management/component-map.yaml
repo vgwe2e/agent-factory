@@ -1,0 +1,42 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Automated data collection from ERP/WMS systems for inventory levels,
+      material handling equipment status, and other relevant data sources.
+    confidence: inferred
+  - name: Data Quality & Validation
+    purpose: >-
+      Ensure data accuracy and consistency by validating inventory counts,
+      material handling equipment statuses, and other critical data points.
+    confidence: inferred
+cortex:
+  - name: AutoML
+    purpose: >-
+      Develop custom ML models for predicting optimal storage locations,
+      identifying obsolete inventory, and optimizing warehouse slotting.
+    confidence: inferred
+  - name: Safety Stock Service
+    purpose: >-
+      Calculate optimal safety stock levels to balance service requirements and
+      minimize carrying costs.
+    confidence: inferred
+process_builder:
+  - name: Process Builder
+    purpose: >-
+      Design and orchestrate multi-step workflows for raw material storage
+      optimization, inventory cycle counting, obsolete inventory disposition,
+      warehouse slotting, and material handling equipment maintenance.
+    confidence: confirmed
+agent_teams:
+  - name: Agentic AI
+    purpose: >-
+      Implement autonomous agents for real-time decision-making and adaptive
+      reasoning in inventory management and material handling.
+    confidence: inferred
+ui:
+  - name: UI Screens
+    purpose: >-
+      Provide user interaction screens for monitoring inventory levels, viewing
+      warehouse slotting plans, and managing material handling equipment
+      maintenance schedules.
+    confidence: confirmed

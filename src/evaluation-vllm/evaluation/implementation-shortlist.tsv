@@ -1,0 +1,113 @@
+l3_name	l1_name	l2_name	composite	archetype	confidence	verdict	implementation_readiness_score	groundedness_score	integration_confidence_score	ambiguity_risk_score	reasons
+New Product Introduction (NPI) Network Readiness	Plan	Supply Network Design & Planning	0.63	DETERMINISTIC	HIGH	ADVANCE	100	100	100	0	Scenario is grounded, integration-aware, and implementation-ready.
+Stamping Supplier & Outsource Management	Make	Stamping Operations	0.74	AGENTIC	HIGH	ADVANCE	91	80	100	10	Scenario is grounded, integration-aware, and implementation-ready.
+Returnable Packaging Management	Move & Fulfill	Inbound Logistics & Material Flow	0.70	DETERMINISTIC	HIGH	ADVANCE	91	80	100	10	Scenario is grounded, integration-aware, and implementation-ready.
+Supply Planning & Production Scheduling	Plan	Integrated Business Planning (IBP)	0.62	DETERMINISTIC	HIGH	ADVANCE	91	80	100	10	Scenario is grounded, integration-aware, and implementation-ready.
+Supplier Capacity Management	Plan	Capacity Planning & Constraint Management	0.61	DETERMINISTIC	HIGH	ADVANCE	91	80	100	10	Scenario is grounded, integration-aware, and implementation-ready.
+Demand Signal Sensing & Adjustment	Plan	Demand Forecasting & Sensing	0.60	DETERMINISTIC	HIGH	ADVANCE	91	80	100	10	Scenario is grounded, integration-aware, and implementation-ready.
+New Product Introduction (NPI) Production Planning	Plan	Production Planning & Scheduling	0.74	DETERMINISTIC	HIGH	ADVANCE	89	75	100	13	Scenario is grounded, integration-aware, and implementation-ready.
+Vehicle & Part Order Allocation	Move & Fulfill	Order Management & Fulfillment	0.72	DETERMINISTIC	HIGH	ADVANCE	89	75	100	13	Scenario is grounded, integration-aware, and implementation-ready.
+Request for Quote (RFQ) & Bid Management	Procure Source & Buy	Strategic Sourcing & Supplier Selection	0.70	DETERMINISTIC	HIGH	ADVANCE	89	75	100	13	Scenario is grounded, integration-aware, and implementation-ready.
+New Product Introduction (NPI) Demand Forecasting	Plan	Demand Forecasting & Sensing	0.69	DETERMINISTIC	HIGH	ADVANCE	89	75	100	13	Scenario is grounded, integration-aware, and implementation-ready.
+Material Flow & In-Plant Logistics	Make	Trim Chassis & Final Assembly	0.65	DETERMINISTIC	HIGH	ADVANCE	89	75	100	13	Scenario is grounded, integration-aware, and implementation-ready.
+Production Planning & Material Flow Management	Make	Electric Vehicle Battery & Drive Unit Production	0.64	DETERMINISTIC	HIGH	ADVANCE	89	75	100	13	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Master Data & Bill of Material (BOM) Management	Service	Service Parts Planning & Management	0.63	DETERMINISTIC	HIGH	ADVANCE	89	75	100	13	Scenario is grounded, integration-aware, and implementation-ready.
+Line-side Material Delivery	Move & Fulfill	Inbound Logistics & Material Flow	0.81	DETERMINISTIC	HIGH	ADVANCE	87	71	100	14	Scenario is grounded, integration-aware, and implementation-ready.
+Exception & Non-Conformance Management	Make	Trim Chassis & Final Assembly	0.70	DETERMINISTIC	HIGH	ADVANCE	87	71	100	14	Scenario is grounded, integration-aware, and implementation-ready.
+Production Quality Control & Assurance	Make	Production Support Services	0.70	DETERMINISTIC	HIGH	ADVANCE	87	71	100	14	Scenario is grounded, integration-aware, and implementation-ready.
+Parts Supply Chain & Logistics Coordination	Service	Recall & Field Service Action Management	0.68	DETERMINISTIC	HIGH	ADVANCE	87	71	100	14	Scenario is grounded, integration-aware, and implementation-ready.
+OTA Software Deployment & Management	Service	Connected Vehicle Services & OTA Updates	0.67	AGENTIC	HIGH	ADVANCE	87	71	100	14	Scenario is grounded, integration-aware, and implementation-ready.
+PO Performance Analysis & Continuous Improvement	Procure Source & Buy	Purchase Order Management & Execution	0.66	DETERMINISTIC	HIGH	ADVANCE	87	71	100	14	Scenario is grounded, integration-aware, and implementation-ready.
+Logistics Technology & Data Management	Move & Fulfill	Transportation Management & Carrier Operations	0.59	DETERMINISTIC	HIGH	ADVANCE	87	71	100	14	Scenario is grounded, integration-aware, and implementation-ready.
+New Program & Lifecycle S&OP Integration	Plan	Sales & Operations Planning (S&OP)	0.57	DETERMINISTIC	HIGH	ADVANCE	87	71	100	14	Scenario is grounded, integration-aware, and implementation-ready.
+Quality Control & Performance Testing	Make	Powertrain Manufacturing (Engine & Transmission)	0.82	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Constraint Identification & Resolution	Plan	Sales & Operations Planning (S&OP)	0.81	AGENTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Tactical Capacity Planning	Plan	Capacity Planning & Constraint Management	0.80	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Logistics Operations	Move & Fulfill	Transportation Management & Carrier Operations	0.76	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Paint Shop Maintenance & Reliability	Make	Paint Operations	0.74	AGENTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Strategic Demand Planning & Scenario Modeling	Plan	Demand Forecasting & Sensing	0.74	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Constraint & Exception Management	Plan	Production Planning & Scheduling	0.73	AGENTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Commercial Change Management	Procure Source & Buy	Contract & Commercial Management	0.70	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Inbound Logistics Exception Management	Move & Fulfill	Inbound Logistics & Material Flow	0.69	AGENTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Contract Management & Lifecycle	Procure Source & Buy	Strategic Sourcing & Supplier Selection	0.67	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Transportation Strategy & Mode Optimization	Move & Fulfill	Logistics Network Optimization	0.67	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Indirect Spend Analytics & Optimization	Procure Source & Buy	Indirect Procurement	0.66	AGENTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Executive S&OP / IBP Review & Decision Making	Plan	Integrated Business Planning (IBP)	0.63	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Inventory Performance Monitoring & Analytics	Plan	Inventory Planning & Optimization	0.63	AGENTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Invoice & Payment Processing (P2P part)	Procure Source & Buy	Indirect Procurement	0.63	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Manufacturing Quality Process Engineering	Make	Manufacturing Engineering & Process Design	0.63	AGENTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Procurement Technology & Digitalization	Procure Source & Buy	Indirect Procurement	0.63	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Production Planning & Execution Control	Make	Trim Chassis & Final Assembly	0.63	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Process Validation & Simulation	Make	Manufacturing Engineering & Process Design	0.59	DETERMINISTIC	HIGH	ADVANCE	85	67	100	17	Scenario is grounded, integration-aware, and implementation-ready.
+Dealer Claims Submission & Front-End Validation	Service	Warranty Administration & Claims Management	0.63	DETERMINISTIC	HIGH	ADVANCE	83	80	100	30	Decision flow failed Mermaid validation.
+Master Production Scheduling (MPS)	Plan	Production Planning & Scheduling	0.76	DETERMINISTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Drive Unit Component & Sub-Assembly	Make	Electric Vehicle Battery & Drive Unit Production	0.74	DETERMINISTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Transportation Planning & Scheduling	Move & Fulfill	Outbound Vehicle Logistics & Distribution	0.74	DETERMINISTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Goods Receipt, Invoice Verification & Resolution	Procure Source & Buy	Purchase Order Management & Execution	0.72	DETERMINISTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+In-Process Component & Assembly Verification	Make	Quality Control & In-Process Inspection	0.70	DETERMINISTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Order Fulfillment & Picking	Move & Fulfill	Warehouse & Distribution Center Operations	0.69	DETERMINISTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Dealer & Customer Delivery Operations	Move & Fulfill	Outbound Vehicle Logistics & Distribution	0.67	DETERMINISTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Data Analytics & Performance Management	Make	Stamping Operations	0.66	AGENTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Demand Forecasting	Service	Service Parts Planning & Management	0.64	DETERMINISTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Packaging Inventory Management	Move & Fulfill	Packaging & Returnable Container Management	0.63	DETERMINISTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Digital Manufacturing & Automation Process Design	Make	Manufacturing Engineering & Process Design	0.59	DETERMINISTIC	MEDIUM	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Order to Production Scheduling Integration	Move & Fulfill	Order Management & Fulfillment	0.59	DETERMINISTIC	HIGH	ADVANCE	82	60	100	20	Scenario is grounded, integration-aware, and implementation-ready.
+Inventory Positioning & Optimization	Move & Fulfill	Logistics Network Optimization	0.84	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Production Schedule Execution & Monitoring	Plan	Production Planning & Scheduling	0.82	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Strategic Network Design & Optimization	Plan	Supply Network Design & Planning	0.79	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Warranty Performance Monitoring & Analytics	Service	Warranty Administration & Claims Management	0.77	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Finished Powertrain Logistics & Outbound Preparation	Make	Powertrain Manufacturing (Engine & Transmission)	0.74	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Demand & Supply Data Integration	Plan	Inventory Planning & Optimization	0.72	DETERMINISTIC	HIGH	ADVANCE	81	75	100	33	Decision flow failed Mermaid validation.
+Inventory & Working Capital Optimization	Plan	Integrated Business Planning (IBP)	0.71	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Battery Pack Assembly	Make	Electric Vehicle Battery & Drive Unit Production	0.70	DETERMINISTIC	HIGH	ADVANCE	81	75	100	33	Decision flow failed Mermaid validation.
+Continuous Improvement & Data Analytics	Move & Fulfill	Outbound Vehicle Logistics & Distribution	0.67	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Non-Conformance & Rework Management	Make	Body Shop & Welding	0.66	AGENTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Inventory Management	Plan	Inventory Planning & Optimization	0.64	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Commodity Data Analytics & Reporting	Procure Source & Buy	Commodity Management & Market Intelligence	0.63	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Customer Order Modification & Cancellation	Move & Fulfill	Order Management & Fulfillment	0.63	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Logistics Performance Management & Analytics	Move & Fulfill	Logistics Network Optimization	0.63	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Mobile Service Delivery & Dispatch	Service	Ford Pro Fleet Service & Upfit Operations	0.63	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+New Supplier Quality Assessment & Selection	Procure Source & Buy	Supplier Quality Management	0.63	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Launch Risk & Issue Management	Plan	New Product Launch Planning	0.62	AGENTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Purchase Order Creation & Issuance	Procure Source & Buy	Purchase Order Management & Execution	0.62	AGENTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Data & Analytics for Production Performance	Make	Trim Chassis & Final Assembly	0.59	DETERMINISTIC	HIGH	ADVANCE	81	57	100	21	Scenario is grounded, integration-aware, and implementation-ready.
+Inbound Receiving & Putaway	Move & Fulfill	Warehouse & Distribution Center Operations	0.84	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Production Planning & Control	Make	Powertrain Manufacturing (Engine & Transmission)	0.84	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Production Planning & Sequencing Integration	Make	Body Shop & Welding	0.80	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Capacity Planning & Optimization	Plan	Production Planning & Scheduling	0.78	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Data & Technology Management for S&OP	Plan	Sales & Operations Planning (S&OP)	0.78	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Material Handling & Preparation	Make	Stamping Operations	0.77	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Production Planning & Scheduling (Stamping)	Make	Stamping Operations	0.77	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Inventory Strategy & Policy Definition	Plan	Inventory Planning & Optimization	0.76	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Inventory Planning & Replenishment	Move & Fulfill	Service Parts Logistics & Distribution	0.75	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Logistics Capital Planning & Investment	Move & Fulfill	Logistics Network Optimization	0.74	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Pricing Management	Procure Source & Buy	Contract & Commercial Management	0.74	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Supply Base Risk & Resilience Management	Procure Source & Buy	Commodity Management & Market Intelligence	0.73	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Financial Integration & Profitability Analysis	Plan	Sales & Operations Planning (S&OP)	0.72	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Inventory & Distribution	Service	Ford Pro Fleet Service & Upfit Operations	0.72	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Battery Module Assembly	Make	Electric Vehicle Battery & Drive Unit Production	0.70	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Manufacturing Engineering & Process Optimization	Make	Powertrain Manufacturing (Engine & Transmission)	0.70	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Supplier Acknowledgment & Communication	Procure Source & Buy	Purchase Order Management & Execution	0.70	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Supplier Quality & Development	Procure Source & Buy	Supplier Relationship Management	0.70	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Die Engineering & Management	Make	Stamping Operations	0.67	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Indirect Sourcing Strategy & Planning	Procure Source & Buy	Indirect Procurement	0.67	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Internal Production Logistics & Material Handling	Make	Production Support Services	0.67	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Press Operations & Production Execution	Make	Stamping Operations	0.67	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Regulatory & Trade Policy Compliance	Procure Source & Buy	Commodity Management & Market Intelligence	0.66	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Aggregate Supply Planning & Capacity	Plan	Sales & Operations Planning (S&OP)	0.65	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+New Product Introduction (NPI) Capacity Assessment	Plan	Capacity Planning & Constraint Management	0.65	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Supplier Launch Readiness & Support	Procure Source & Buy	Supplier Quality Management	0.65	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Demand Sensing & Forecasting	Plan	Sales & Operations Planning (S&OP)	0.64	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Compliance & Risk Management	Move & Fulfill	Outbound Vehicle Logistics & Distribution	0.63	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Continuous Improvement & Digital Transformation	Plan	Production Planning & Scheduling	0.63	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Labor & Skills Capacity Planning	Plan	Capacity Planning & Constraint Management	0.63	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Predictive Maintenance (PdM) & Condition Monitoring	Make	Plant Maintenance & Reliability	0.63	DETERMINISTIC	MEDIUM	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Requisition-to-Order Processing	Procure Source & Buy	Indirect Procurement	0.63	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Risk Management & Scenario Planning	Plan	Integrated Business Planning (IBP)	0.62	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Supply Planning & Procurement	Service	Service Parts Planning & Management	0.62	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Continuous Process Improvement & Optimization	Make	Manufacturing Engineering & Process Design	0.61	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Supply Chain Risk Management & Resilience	Plan	Supply Network Design & Planning	0.61	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Logistics Technology & Digitalization Strategy	Move & Fulfill	Logistics Network Optimization	0.60	AGENTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Data & Technology Enablement for IBP	Plan	Integrated Business Planning (IBP)	0.58	DETERMINISTIC	HIGH	ADVANCE	78	50	100	25	Scenario is grounded, integration-aware, and implementation-ready.
+Quality Management & Control	Make	Trim Chassis & Final Assembly	0.63	DETERMINISTIC	HIGH	ADVANCE	75	63	100	39	Decision flow failed Mermaid validation.
+Launch Program Strategy & Governance	Plan	New Product Launch Planning	0.67	DETERMINISTIC	HIGH	ADVANCE	74	60	100	40	Decision flow failed Mermaid validation.

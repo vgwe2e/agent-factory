@@ -1,0 +1,57 @@
+streams:
+  - name: Process Builder - Stream (DDM/Crawlers + STREAMS)
+    purpose: >-
+      Pull SAP production, inventory, PO data and supplier/3PL feeds into
+      Subject Areas for a unified view
+    confidence: confirmed
+    type: Process Builder - Stream (DDM/Crawlers + STREAMS)
+cortex:
+  - name: Cortex Auto Forecast + RCA Service (via Process Builder - Data View)
+    purpose: >-
+      Identify bottlenecks (plant-level capacity, supplier shortfall) and
+      quantify demand/service exposure and cost impact
+    confidence: confirmed
+    capability: >-
+      Identify bottlenecks (plant-level capacity, supplier shortfall) and
+      quantify demand/service exposure and cost impact
+process_builder:
+  - name: >-
+      Process Builder - Rules + Remote Functions (scenario simulation & cost
+      calculus)
+    purpose: >-
+      Simulate schedule shifts, PO expedites, and reroutes; score alternatives
+      on COGS, service level, and feasibility constraints
+    confidence: confirmed
+    node_type: decide
+  - name: >-
+      Process Builder - Action Item + Remote Functions (API writeback to SAP
+      S/4HANA)
+    purpose: >-
+      Apply approved schedule changes, update POs, and issue logistics
+      instructions; write auditable changes back to ERP or route to supplier
+      actions
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle (Action Item / UI Screen)
+    purpose: >-
+      Route scenarios exceeding risk/cost thresholds for approval, or capture
+      overrides and rationale for auditability
+    confidence: confirmed
+    node_type: review
+  - name: Process Builder - Notification + UI Screen (dashboard)
+    purpose: >-
+      Communicate executed actions, expected OTD improvements, and P&L impact to
+      planners, procurement, and leadership
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously detect multi-plant capacity and supplier-driven
+      constraints, evaluate mitigation trade-offs across procurement, production
+      scheduling, and logistics, and execute coordinated actions to minimize
+      cogs impact while improving on-time delivery and measurable p&l outcomes.
+      and approve the recommended action.
+    confidence: confirmed
+    component_type: display

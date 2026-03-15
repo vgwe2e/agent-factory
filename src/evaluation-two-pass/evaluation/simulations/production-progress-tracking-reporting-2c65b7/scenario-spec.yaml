@@ -1,0 +1,146 @@
+objective: >-
+  Deliver an adaptive, end-to-end production scheduling engine that auto-detects
+  hourly deviations, re-optimizes line sequences and changeovers, and executes
+  corrective schedules across multi-plant automotive production to reduce COGS,
+  improve on-time delivery, and lower working capital.
+trigger: >-
+  Hourly ingestion of actual production events and schedule reconciliation
+  showing deviation beyond configurable thresholds (e.g., yield loss, throughput
+  gap, or changeover delay).
+decision: >-
+  Determine whether an automated corrective schedule (re-sequencing, changeover
+  re-allocation, or capacity reassign) can be applied autonomously or requires
+  human approval, then produce and release updated work orders to SAP S/4HANA
+  and operations.
+expected_action: >-
+  Detect deviation -> run root-cause and constraint-aware scheduling optimizer
+  -> generate corrective schedule and changeover plan -> write updated releases
+  to SAP S/4HANA (or queue for approval) -> notify operations and update
+  dashboards.
+expected_outcome: >-
+  Faster recovery from disruptions, reduced unplanned changeover time and line
+  idle, improved on-time-in-full (OTIF), lower emergency inventory and WIP, and
+  measurable COGS reduction through higher throughput and less rework.
+rationale: >-
+  Combines deterministic optimization (for sequencing and changeover
+  minimization), hourly deviation detection and root-cause analysis, ERP
+  writeback, and agentic orchestration to enable safe autonomous actions with
+  human oversight for high-risk decisions. Agentic AI (Agent Team + Process
+  Builder + Remote Functions) accelerates cross-plant negotiation and exception
+  resolution while STREAMS and RCA Service ensure data quality and
+  explainability.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Manufacturing Execution System (MES)
+    type: MES
+    status: tbd
+  - name: IIoT / PLC Event Stream
+    type: IIoT
+    status: tbd
+key_inputs:
+  - name: Daily Production Schedule / Work Order Releases
+    source: SAP S/4HANA
+    purpose: Baseline schedule, planned start/finish, routing and changeover sequence.
+    preferred_stream_type: batch
+  - name: Real-time Production Events (cycle counts, stops, rejects)
+    source: MES / IIoT
+    purpose: >-
+      Actuals for progress tracking, deviation detection and throughput
+      calculation.
+    preferred_stream_type: event
+  - name: Changeover & Setup Time Profiles
+    source: MES / Engineering
+    purpose: >-
+      Accurate setup durations by product-family and line for sequencing
+      optimization.
+    preferred_stream_type: batch
+  - name: Line Capacity & Configuration (line speed, shifts, tooling)
+    source: SAP S/4HANA / MES
+    purpose: Capacity constraints and feasible sequencing windows for optimizer.
+    preferred_stream_type: batch
+  - name: Inventory on Hand / Component Availability
+    source: SAP S/4HANA
+    purpose: >-
+      Ensure schedules respect material availability and trigger
+      procurement/reschedule if constrained.
+    preferred_stream_type: delta
+happy_path:
+  - step: >-
+      Ingest hourly schedule, work orders, capacity and event streams into DI
+      foundation.
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Consolidate SAP S/4HANA schedules and MES/IIoT events into subject areas
+      for analysis.
+  - step: >-
+      Detect deviation and perform root-cause analysis against recent events and
+      constraints.
+    stage: analyze
+    component: RCA Service
+    purpose: >-
+      Identify whether deviation is due to machine stoppage, quality, material
+      shortfall, or changeover variance.
+  - step: >-
+      Agentic decisioning invokes deterministic scheduler and constraint checks,
+      producing corrective plan.
+    stage: decide
+    component: Process (Process Builder) + Agent Team + Remote Functions
+    purpose: >-
+      Run optimizer, evaluate multi-plant impacts, and decide autonomous apply
+      vs. human approval.
+  - step: >-
+      Apply the revised schedule and changeover plan to ERP and operations;
+      trigger downstream actions.
+    stage: act
+    component: Remote Functions + Transaction
+    purpose: >-
+      Write updated work order releases to SAP S/4HANA and push work
+      instructions to MES or operators.
+  - step: >-
+      Surface actionable recommendations and exception details to planners and
+      line leaders for review.
+    stage: surface
+    component: UI Screen
+    purpose: >-
+      Provide explainable recommendation, SHAP-like rationale from RCA, and
+      accept/override controls.
+  - step: >-
+      Notify stakeholders of applied changes and monitor recovery performance
+      until back on-track.
+    stage: notify
+    component: Notification + CWB Lifecycle
+    purpose: >-
+      Alert shift leads, track exception lifecycle, and capture overrides for
+      audit and continuous improvement.
+branches:
+  - condition: >-
+      Insufficient or stale MES / IIoT data prevents reliable deviation
+      detection or optimization.
+    response: >-
+      Agent Team requests missing data, falls back to conservative safe schedule
+      (minimize risk), and notifies planners via CWB.
+    outcome: >-
+      Safe fallback schedule enacted; manual intervention queued and data
+      quality work item created.
+  - condition: >-
+      Optimizer recommends schedule that violates hard constraints (safety,
+      tooling, or supplier lead-times).
+    response: >-
+      Route recommendation to CWB Lifecycle for mandatory human approval and
+      provide constraint-violation rationale.
+    outcome: >-
+      Human review either approves adjusted plan with mitigation actions or
+      rejects and triggers alternative plan generation.
+  - condition: >-
+      Multi-line or multi-plant conflict discovered requiring capacity
+      trade-offs or component reallocation.
+    response: >-
+      Spawn multi-agent negotiation (Agent Team Multi-Agent Pipeline) to
+      reallocate capacity, adjust PO timing, and coordinate changeovers across
+      plants.
+    outcome: >-
+      Negotiated, constraint-compliant multi-plant plan produced and committed;
+      supply/procurement notified for any PO changes.

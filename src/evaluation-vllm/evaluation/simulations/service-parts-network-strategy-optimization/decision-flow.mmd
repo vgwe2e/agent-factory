@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Monthly inventory review and quarterly logistics planning cycle.]
+  A --> N1[Stream: DDM/Crawlers - Extract inventory and order data from SAP S/4HANA.]
+  N1 --> N2[Cortex: AutoML - Perform capacity planning and network design analysis.]
+  N2 --> N3[Cortex: AutoML - Optimize transportation modes and lanes.]
+  N3 --> N4{PB: CWB Lifecycle - Present optimized network design and transportation strategy.}
+  N4 -->|Primary| N5[PB: Remote Functions - Implement approved changes in SAP S/4HANA.]
+  N5 --> Z1[Outcome: Reduced working capital, lower COGS, improved OTIF, and enhanced service part network resilience.]
+  N4 -->|Insufficient data for accurate foreca...| B1[Request additional historical data from SAP S/4HANA.]
+  B1 --> O1[Outcome: Delayed implementation until data is available.]
+  O1 --> End[End]
+  N4 -->|Human rejects network design recommen...| B2[Revise and resubmit recommendations for review.]
+  B2 --> O2[Outcome: Iterative improvement of network design.]
+  O2 --> End[End]
+  N4 -->|Unexpected disruption in service part...| B3[Activate disaster recovery plan.]
+  B3 --> O3[Outcome: Maintain service levels during disruptions.]
+  O3 --> End[End]
+  Z1 --> End[End]

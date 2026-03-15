@@ -1,0 +1,31 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: build-specifications
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: current-inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: historical-assembly-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: AutoML
+    type: cortex
+    function: Generate optimized assembly sequences and parameters.
+  - component: Data Quality & Validation
+    type: cortex
+    function: Ensure feasibility and adherence to build specifications.
+  - component: Remote Functions
+    type: process_builder
+    function: Implement optimized assembly plan.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce cogs and improve line efficiency in biw assembly by
+      optimizing sub-assembly scheduling, welding line sequencing, and
+      quality-release decisions. and approve the recommended action.

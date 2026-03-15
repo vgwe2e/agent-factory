@@ -1,0 +1,40 @@
+decision: >-
+  Set optimal buffer stock levels, balance WIP, optimize finished goods
+  stocking, and set plant-level inventory targets.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic inventory review and optimization cycle initiated every month.
+  parameters:
+    objective: >-
+      Consolidate four L4 inventory decisions across raw material buffers, WIP
+      balance, finished goods stocking, and plant-level targets into a
+      coordinated, semi-autonomous DI engine to reduce working capital tied to
+      excess stock while preventing stockouts and elevating OTIF.
+    key_inputs:
+      - Raw Material Inventory Levels
+      - WIP Inventory Levels
+      - Finished Goods Inventory Levels
+      - Plant Inventory Targets
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automated calculation and recommendation of inventory levels across the
+    network, with human-in-the-loop review and approval.
+  outcome: >-
+    Reduced working capital tied to excess stock, minimized stockouts, and
+    improved OTIF.
+  affected_components:
+    - DDM/Crawler
+    - Safety Stock Service
+    - AutoML
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  By consolidating and automating inventory decisions, we can optimize the
+  entire supply chain, reducing waste and improving efficiency.

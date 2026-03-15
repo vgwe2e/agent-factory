@@ -1,0 +1,78 @@
+objective: >-
+  Optimize service parts inventory across dealer, distributor, and service
+  network by forecasting demand, replenishing high-risk parts, optimizing
+  inventory, managing obsolescence, and ensuring recall/warranty parts are
+  stocked.
+trigger: Periodic inventory check and demand forecast generation.
+decision: >-
+  Forecast and determine replenishment quantities and timing for service parts,
+  provide inventory optimization guidance, manage supercession and obsolescence,
+  and ensure adequate stocking for warranty and recall parts.
+expected_action: >-
+  Generate replenishment orders, provide inventory optimization recommendations,
+  manage part supercessions, and adjust safety stock levels.
+expected_outcome: >-
+  Reduced working capital, minimized stockouts, managed obsolescence risk, and
+  maintained optimal inventory levels for recall and warranty parts.
+rationale: >-
+  Leverage end-to-end visibility and real-time decisioning to optimize service
+  parts inventory, improving margins and capturing incremental revenue in
+  aftersales.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Historical Sales Data
+    source: SAP S/4HANA
+    purpose: Input for demand forecasting
+    preferred_stream_type: STREAMS
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Current inventory status for replenishment decisions
+    preferred_stream_type: STREAMS
+  - name: Parts Supercession Data
+    source: SAP S/4HANA
+    purpose: Identify obsolete parts and replacements
+    preferred_stream_type: STREAMS
+  - name: Warranty and Recall Data
+    source: SAP S/4HANA
+    purpose: Determine critical parts for safety stock
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Fetch historical sales data and current inventory levels
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for forecasting and replenishment
+  - step: Perform demand forecasting using historical sales data
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict future demand for service parts
+  - step: >-
+      Generate replenishment orders based on forecasted demand and current
+      inventory
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure optimal inventory levels across the network
+  - step: Provide dealers with inventory optimization guidance
+    stage: act
+    component: UI Screens
+    purpose: Offer actionable insights for local inventory management
+  - step: Manage supercession and obsolescence of service parts
+    stage: decide
+    component: Remote Functions
+    purpose: Prevent inventory waste and maintain part availability
+  - step: Adjust safety stock levels for warranty and recall parts
+    stage: act
+    component: Safety Stock Service
+    purpose: Balance service risk and cost of goods sold
+branches:
+  - condition: High inventory carrying costs detected
+    response: Adjust replenishment quantities to reduce working capital
+    outcome: Lowered inventory carrying costs
+  - condition: Obsolete parts identified
+    response: Initiate supercession process and update inventory targets
+    outcome: Reduced obsolescence risk
+  - condition: Recall campaign initiated
+    response: Increase safety stock for critical parts
+    outcome: Ensured adequate stock for recall campaigns

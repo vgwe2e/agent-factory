@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and prepare raw data for analysis
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Identify high-risk areas and potential issues
+    confidence: inferred
+    capability: Identify high-risk areas and potential issues
+process_builder:
+  - name: Process Builder
+    purpose: Develop actionable mitigation strategies
+    confidence: confirmed
+    node_type: decide
+  - name: CWB Lifecycle
+    purpose: Ensure human-in-the-loop validation and approval
+    confidence: confirmed
+    node_type: review
+  - name: Remote Functions
+    purpose: Implement risk mitigation strategies in SAP S/4HANA
+    confidence: inferred
+    node_type: act
+  - name: UI Screens
+    purpose: Provide real-time visibility into launch progress and KPIs
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: Review launch risk & issue management and approve the recommended action.
+    confidence: confirmed
+    component_type: display

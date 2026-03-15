@@ -1,0 +1,55 @@
+decision: >-
+  Manage pilot builds by scheduling and executing pilot runs: determine timing,
+  sequencing, resource allocation, and contingencies to validate manufacturing
+  processes.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New NPI program enters pilot phase or a status update (supplier readiness,
+    design freeze, or pilot request) is recorded in SAP S/4HANA.
+  parameters:
+    objective: >-
+      Autonomously plan and coordinate pilot builds and related NPI production
+      activities (pre-production, ramp-up, supplier readiness, pilot builds,
+      end-of-life) to minimize time-to-market and COGS while improving OTIF and
+      working capital during NPI cycles.
+    key_inputs:
+      - Bill of Materials (NPI BOM)
+      - Master Data (Part, Routing, Resource)
+      - Inventory & On-hand Levels
+      - Resource Capacity Calendars (lines, tools, labor shifts)
+      - Supplier Readiness Status (qualification, lead times)
+      - Pilot Build Specifications & Test Plans
+      - Launch / Demand Milestones
+    source_systems:
+      - SAP S/4HANA
+      - Supplier Readiness Portal
+      - Plant Capacity / MES (integration point)
+expected_output:
+  action: >-
+    Automatically generate an optimized pilot build schedule, validate against
+    capacity and supplier readiness rules, write approved schedules back to SAP
+    S/4HANA, and create exceptions with CWB items for any constraint violations
+    requiring human review.
+  outcome: >-
+    Faster validated pilot execution with optimized sequencing and resource
+    utilization, improved OTIF for NPI launches, lower pilot-related COGS and
+    inventory holding, and timely escalation of unresolved constraints to
+    stakeholders.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Remote Functions
+    - Process Builder (IF / Rules) + CWB Lifecycle
+    - Remote Functions + Notification + UI Screen
+    - Dashboard
+rationale: >-
+  Deterministic optimization plus process orchestration enables repeatable,
+  auditable scheduling decisions across multi-echelon supply and plant
+  resources. Integrating authoritative ERP data with automated rules and remote
+  optimization reduces manual coordination, shortens lead times, and enforces
+  readiness gates while surfacing exceptions for targeted human intervention.

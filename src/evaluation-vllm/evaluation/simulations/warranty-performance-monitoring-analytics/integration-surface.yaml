@@ -1,0 +1,43 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: monthly-warranty-costs
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: warranty-claims-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: dealer-claim-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: field-quality-reports
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: product-and-market-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Trend analysis
+  - component: RCA Service
+    type: cortex
+    function: Root cause analysis
+  - component: AutoML
+    type: cortex
+    function: Segmentation
+  - component: Action Item
+    type: process_builder
+    function: >-
+      Generate monthly warranty cost trend reports, prioritize quality
+      improvements for top warranty concerns, intervene with underperforming
+      dealers, guide comprehensive problem resolution decisions, proactively
+      mitigate future warranty costs
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review warranty performance monitoring & analytics and approve the
+      recommended action.

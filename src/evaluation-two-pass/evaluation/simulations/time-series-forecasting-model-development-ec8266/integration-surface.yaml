@@ -1,0 +1,53 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Market Data Provider
+    status: tbd
+  - name: Supplier Collaboration Portal
+    status: tbd
+aera_ingestion:
+  - stream_name: historical-sales-orders
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: inventory-on-hand-by-location
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: supplier-lead-times-and-lot-sizes
+    stream_type: Event Stream
+    source: Supplier Collaboration Portal
+  - stream_name: production-capacity-and-schedule
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: market-signals-and-promotions
+    stream_type: Event Stream
+    source: Market Data Provider
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Auto-select algorithms, produce demand forecasts and SHAP driver
+      explanations across SKUs and tiers
+  - component: Process Builder
+    type: process_builder
+    function: >-
+      Apply business rules, safety-stock optimization, and select forecast
+      variants; flag exceptions for CWB
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Write accepted forecasts and replenishment plans back to SAP S/4HANA and
+      trigger PO creation or change notifications
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Present exception recommendations for planner approval/override with audit
+      trail; surface results in UI Screens dashboard
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously develop, deploy, and operate time-series demand models
+      and integrated forecast optimization across supplier-plant-dc network to
+      reduce stockouts and excess, tighten cogs, and lower working capital. and
+      approve the recommended action.

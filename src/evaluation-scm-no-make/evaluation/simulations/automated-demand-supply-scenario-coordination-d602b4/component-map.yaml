@@ -1,0 +1,54 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Create a canonical dataset for scenario runs (forecasts from SAS,
+      ERP/stock/orders from S4, supplier feeds)
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Process Builder
+    purpose: >-
+      Call Remote Functions and Kinaxis RapidResponse to run supply/capacity
+      scenarios and should-cost calculations with supplier-provided constraints
+    confidence: confirmed
+    capability: >-
+      Call Remote Functions and Kinaxis RapidResponse to run supply/capacity
+      scenarios and should-cost calculations with supplier-provided constraints
+  - name: Data Science / Remote Functions
+    purpose: >-
+      Score alternatives by total cost, margin impact, delivery risk and
+      capacity feasibility
+    confidence: confirmed
+    capability: >-
+      Score alternatives by total cost, margin impact, delivery risk and
+      capacity feasibility
+process_builder:
+  - name: CWB Lifecycle
+    purpose: >-
+      Surface ranked plan + supplier shortlist to planners and sourcing for
+      approval or override
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: >-
+      Writeback approved allocations and sourcing decisions to S4 and Kinaxis
+      via Remote Functions
+    confidence: confirmed
+    node_type: act
+  - name: Notification / UI Screen
+    purpose: >-
+      Send contract / PO intents to suppliers and display finalized plan and
+      rationale to stakeholders
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically coordinate cross-functional demand planning and
+      supplier readiness by running integrated should-cost and capacity
+      scenarios with suppliers, then finalize an integrated demand plan and
+      supplier shortlist that satisfies cost and capacity constraints across
+      plan and source. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

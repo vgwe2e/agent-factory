@@ -1,0 +1,49 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Pull finished-goods ledger, movements, lot/date and location details from
+      SAP S/4HANA
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Calculate days-on-hand, aging buckets, velocity and trending per
+      SKU/location
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Rules
+    purpose: >-
+      Assign risk band (low/medium/high) and determine candidate actions
+      (reschedule, reallocate, promotion, write-off)
+    confidence: confirmed
+    node_type: control_flow
+  - name: Process Builder (Remote Functions)
+    purpose: >-
+      Push MPS/schedule changes, update dealer allocations, and create financial
+      disposition transactions in SAP S/4HANA
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: >-
+      Present exceptions to S&OP and Finance for approval with recommended
+      actions
+    confidence: confirmed
+    node_type: notify
+  - name: UI Screen
+    purpose: >-
+      Stakeholders review approvals, track aging KPIs, and confirm reduction in
+      at-risk inventory
+    confidence: confirmed
+    node_type: integration
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically coordinate finished goods aging management across
+      planning, production scheduling, dealer allocation, and finance to
+      minimize write-offs and reduce stock obsolescence while optimizing working
+      capital. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

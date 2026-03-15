@@ -1,0 +1,41 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate raw signals and transactional data into Subject Areas for
+      analysis.
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+  - name: STREAMS (Subject Areas)
+    purpose: >-
+      Produce consistent metrics and flags for deviation detection and impact
+      calculation.
+    confidence: confirmed
+    type: STREAMS (Subject Areas)
+cortex:
+  - name: Process Builder - Rules
+    purpose: Classify event (minor/major/systemic) and determine decision path.
+    confidence: confirmed
+    capability: Classify event (minor/major/systemic) and determine decision path.
+process_builder:
+  - name: Process Builder - Remote Functions
+    purpose: >-
+      Apply capacity constraints, tooling/changeover logic, and maintenance
+      windows to produce actionable schedule changes and orders.
+    confidence: confirmed
+    node_type: decide
+  - name: >-
+      Process Builder - Transaction + Notification (Remote Functions for ERP/MES
+      API)
+    purpose: >-
+      Update SAP S/4HANA and MES with revised schedules and create/assign
+      maintenance tasks; push alerts to operators/maintainers.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screen (dashboard)
+    purpose: >-
+      Provide shift leads and engineers with visibility and audit trail of
+      autonomous actions, and allow override if required.
+    confidence: confirmed
+    component_type: display

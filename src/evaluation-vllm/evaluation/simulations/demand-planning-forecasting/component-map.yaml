@@ -1,0 +1,36 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Data Collection
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Forecast Generation
+    confidence: confirmed
+    capability: Forecast Generation
+  - name: RCA Service
+    purpose: Trend Analysis
+    confidence: inferred
+    capability: Trend Analysis
+  - name: AutoML
+    purpose: Demand Sensing
+    confidence: inferred
+    capability: Demand Sensing
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Scenario Adoption
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Method Adjustment
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review augment demand planning across global ibp alignment, new product
+      launch sensing, and demand exception management using ai/ml and rule-based
+      systems. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

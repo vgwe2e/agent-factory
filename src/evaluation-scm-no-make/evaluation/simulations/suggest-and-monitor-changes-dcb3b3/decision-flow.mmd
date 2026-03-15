@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Daily scheduled run + event-trigger on promotional change or forecast deviation (15% vs baseline) detected from Advanced Statistical Forecasting or SAS]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Ingest masters, transactions, forecasts, promotions, and constraints into the Data Foundation]
+  N1 --> N2[Cortex: Cortex Auto Forecast + RCA Service - Run agentic analysis to detect anomalies, forecast deviations, promo uplift impacts, and candidate adjustments with scoring]
+  N2 --> N3{Agent: Process Builder (IF, Rules) + Agent Team - Evaluate recommendations against business rules and thresholds and decide route (auto-execute vs human review)}
+  N3 -->|Primary| N4[PB: Remote Functions + Process Builder (Action Item) - Execute approved changes (writebacks and notifications) and trigger downstream APS/ERP updates and Kinaxis rebalancing]
+  N4 --> N5[PB: CWB Lifecycle + Notification + UI Screen - Surface results, track completion, monitor effectiveness and schedule follow-up checks]
+  N5 --> Z1[Outcome: Timely SKU/location adjustments (demand alignment, replenishment, rebalancing, supplier alerts, promotional tactics) with measurable reduction in overstocks/waste, improved COGS, maintained service level, and auditable change tracking and stakeholder communication.]
+  N3 -->|Recommendation confidence high AND no...| B1[Auto-execute adjustments via Remote Functions to S4/Kinaxis; create audit record and notify stakeholders]
+  B1 --> O1[Outcome: Immediate enactment reduces lead-time to action; rebalancing or replenishment flows triggered]
+  O1 --> End[End]
+  N3 -->|Recommendation confidence medium OR c...| B2[Create CWB Lifecycle task routed to Agent Team (human-in-the-loop) with supporting evidence and recommended action]
+  B2 --> O2[Outcome: Human approval prevents risky automated changes; approved actions then executed and tracked]
+  O2 --> End[End]
+  N3 -->|Recommendation confidence low OR data...| B3[Hold change, surface exceptions to data governance via Process Builder (Data Quality) and notify data owners for remediation]
+  B3 --> O3[Outcome: Prevents erroneous changes; remediation loop restores data before re-running the orchestration]
+  O3 --> End[End]
+  Z1 --> End[End]

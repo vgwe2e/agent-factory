@@ -1,0 +1,59 @@
+decision: >-
+  Approve or adjust SKU-level vehicle configuration demand and production mix
+  recommendations for the upcoming planning horizon (including launch ramps and
+  constrained capacity allocations).
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled global planning cadence (weekly/monthly) or major event (new model
+    launch, market shock) that requires SKU/configuration-level forecast refresh
+    and production alignment.
+  parameters:
+    objective: >-
+      Automate end-to-end demand forecasting, market-intelligent mix planning,
+      and model-launch volume alignment to optimize revenue capture, working
+      capital, and COGS for vehicle configuration portfolios.
+    key_inputs:
+      - Global sales & shipment records (configuration-level)
+      - Vehicle configuration sales history & hierarchy
+      - >-
+        Market intelligence signals (pricing, incentives, macro, competitor
+        activity)
+      - Production capacity & constraint profiles (plant/line/variant)
+      - Forecast accuracy & bias metrics (MAPE, bias by SKU/region)
+      - New model launch targets and ramp plans
+    source_systems:
+      - SAP S/4HANA
+      - Dealer Point-of-Sale / Retail Sales DB
+      - Market Intelligence Provider (syndicated/third-party)
+      - Capacity & Production Planning System
+expected_output:
+  action: >-
+    Automatically generate configuration-level forecasts and constrained mix
+    recommendations; surface recommendations in a CWB for planner
+    review/override; route exceptions for human decisioning; write approved
+    production/mix plans back to SAP S/4HANA.
+  outcome: >-
+    Higher forecast accuracy and mix alignment at launch, reduced inventory tied
+    to forecast error, improved production efficiency and COGS through optimized
+    configuration mix and capacity-aware allocations.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex Auto Forecast + RCA Service
+    - Process Builder + Remote Functions + CWB Lifecycle
+    - UI Screens (CWB) + CWB Lifecycle
+    - Remote Functions + Process Builder + Notification
+    - Subject Areas + UI Screens (dashboard)
+rationale: >-
+  Use STREAMS/DDM to consolidate master transactional and market feeds into
+  Subject Areas, Cortex Auto Forecast for robust time-series forecasting at
+  SKU/configuration level, and Process Builder to orchestrate analysis,
+  exception routing and writebacks. Remote Functions handle constraint-aware mix
+  optimization and ERP integrations. CWB Lifecycle provides human-in-the-loop
+  governance for exceptions and launch approvals. This hybrid
+  deterministic/process route balances automation with necessary planner
+  oversight for high-impact launch and mix decisions.

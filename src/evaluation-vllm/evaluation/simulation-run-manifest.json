@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-03-13T13:15:45.150Z",
+  "wallDurationMs": 3590067,
+  "simulationDurationMs": 2726888,
+  "totalScored": 336,
+  "promotedToSimulation": 146,
+  "totalSimulated": 146,
+  "totalFailed": 0,
+  "totalConfirmed": 463,
+  "totalInferred": 376,
+  "gpu": "H100 SXM",
+  "podId": "t7s2g0jfkr6a94",
+  "legacyDir": "src/evaluation-vllm/evaluation/simulations-legacy-2026-03-13T12-15-55-126Z"
+}

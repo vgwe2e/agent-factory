@@ -1,0 +1,37 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: lpa-results
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: process-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: operator-logs
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: error-proofing-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: safety-environmental-logs
+    stream_type: STREAMS
+    source: SAP S/4HANA
+processing:
+  - component: AutoML
+    type: cortex
+    function: Identify process capability gaps
+  - component: Remote Functions
+    type: cortex
+    function: Check operator adherence
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Escalate findings
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review unify and automate end-to-end manufacturing quality audits to
+      reduce scrap and rework, accelerate issue resolution, and sustain
+      regulatory and process standards. and approve the recommended action.

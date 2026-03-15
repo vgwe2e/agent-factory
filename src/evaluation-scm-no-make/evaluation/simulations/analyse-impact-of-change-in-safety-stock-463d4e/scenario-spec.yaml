@@ -1,0 +1,147 @@
+objective: >-
+  Orchestrate integrated demand-supply scenario analyses to generate
+  risk-adjusted demand scenarios, run safety stock sensitivity across SKUs and
+  locations, and execute semi-autonomous actions to protect revenue while
+  optimizing working capital.
+trigger: >-
+  New or updated demand scenario (from SAS forecasting) or threshold breach in
+  service-risk or working-capital exposure detected during nightly scenario run.
+decision: >-
+  Whether to adjust safety stock levels (increase, decrease, or re-allocate
+  across echelons) and which semi-autonomous supply actions (expedite,
+  rebalance, PO change, transfer) to execute to balance service level targets
+  against working capital constraints.
+expected_action: >-
+  Process Builder runs an integrated scenario pipeline: ingest forecasts and
+  inventory data, run safety-stock sensitivity and risk-adjusted scenario
+  generation (Safety Stock Service / Remote Functions), surface ranked
+  recommendations via CWB Lifecycle for required approvals, then execute
+  accepted actions through Remote Functions to S4 and Kinaxis (or create action
+  items for manual follow-up).
+expected_outcome: >-
+  Reduced stockouts (improved revenue protection) and lower tied-up inventory
+  (working capital reduction) at target service levels; automated execution for
+  low-risk changes, human review for high-impact actions; audit trail of
+  decisions and ERP/APS writebacks.
+rationale: >-
+  Combines deterministic, repeatable scenario orchestration with targeted
+  ML-backed safety stock sensitivity to enable fast, defensible trade-offs
+  between service level and capital. Process Builder provides reliable
+  orchestration across ETL (STREAMS), analytics (Safety Stock Service / Remote
+  Functions), approvals (CWB Lifecycle), and system writebacks (Remote Functions
+  to S4/Kinaxis).
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Advanced Forecasting
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Advanced Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (shortage propagation / Maestro)
+    type: APS
+    status: identified
+  - name: Kinaxis (FG safety stock modeling)
+    type: APS
+    status: identified
+  - name: Kinaxis (rebalancing / order expediting)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS / 3PL
+    status: identified
+key_inputs:
+  - name: Touchless demand forecasts and demand scenarios
+    source: SAS (Advanced Statistical Forecasting)
+    purpose: >-
+      Baseline demand and scenario drivers for risk-adjusted analyses and
+      safety-stock sensitivity
+    preferred_stream_type: STREAMS
+  - name: Current inventory (on-hand, allocated, in-transit)
+    source: S4 (SAP) / Blue Yonder WMS
+    purpose: >-
+      Baseline inventory position for safety stock impact and working capital
+      calculation
+    preferred_stream_type: Subject Area
+  - name: Current safety stock parameters and policies
+    source: Kinaxis (FG safety stock modeling)
+    purpose: Input for sensitivity analysis and recommended adjustments
+    preferred_stream_type: STREAMS
+  - name: Open POs,Supplier lead times, and replenishment constraints
+    source: S4 (SAP) / Kinaxis
+    purpose: >-
+      Evaluate feasibility and cost of recommended actions (expedite, reorder,
+      transfer)
+    preferred_stream_type: STREAMS
+  - name: Service level targets and working capital thresholds
+    source: Finance (via S4) / Planning policy
+    purpose: Decision criteria for automated vs. manual approval and scenario ranking
+  - name: SKU/location master and hierarchy
+    source: S4 / Subject Areas
+    purpose: Aggregation, allocation, and multi-echelon sensitivity calculations
+    preferred_stream_type: Subject Area
+happy_path:
+  - step: Ingest forecasts, inventory, POs, and master data into Aera subject areas
+    stage: ingest
+    component: STREAMS
+    purpose: Consolidate inputs for consistent scenario and safety-stock analyses
+  - step: >-
+      Generate risk-adjusted demand scenarios and run multi-echelon safety-stock
+      sensitivity
+    stage: analyze
+    component: Process Builder (calls Safety Stock Service / Remote Functions)
+    purpose: Quantify service vs. working-capital trade-offs across SKUs and locations
+  - step: >-
+      Rank scenario outcomes and produce recommended safety-stock adjustments
+      and execution plans
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Surface recommendations with impact metrics for accept/reject/override
+  - step: >-
+      Execute accepted changes: write safety-stock updates and replenishment
+      actions to S4/Kinaxis or create expedite/rebalance orders
+    stage: act
+    component: Process Builder (Remote Functions)
+    purpose: Apply low-risk changes automatically and initiate system-level actions
+  - step: >-
+      Notify stakeholders and create action items for manual follow-up where
+      required; log audit trail
+    stage: notify
+    component: Notification / Action Item (Process Builder)
+    purpose: >-
+      Ensure visibility, required approvals, and traceability of decisions and
+      system writes
+branches:
+  - condition: >-
+      Recommended safety-stock increase yields working-capital impact above
+      configured threshold
+    response: >-
+      Escalate recommendation to manual approval via CWB Lifecycle and route to
+      finance + supply planning team
+    outcome: >-
+      Human review and explicit approval required before any writeback;
+      recommendation remains staged
+  - condition: >-
+      Scenario analysis indicates low service-risk and recommended decreases in
+      safety stock
+    response: >-
+      Auto-apply safety-stock reductions via Remote Functions to Kinaxis/S4 with
+      asynchronous notification
+    outcome: >-
+      Working capital freed quickly while monitoring for subsequent demand
+      deviations
+  - condition: ERP/APS writeback fails or integration unavailable
+    response: >-
+      Create Action Items assigned to operations/planners and mark transaction
+      for manual execution; retry integration per Process Builder schedule
+    outcome: >-
+      No silent failures: manual tasks ensure execution and reconciliation when
+      automated writes are unavailable

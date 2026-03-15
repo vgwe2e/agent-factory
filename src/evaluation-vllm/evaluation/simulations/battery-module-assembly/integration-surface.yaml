@@ -1,0 +1,34 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: cell-performance-metrics
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: module-assembly-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: cooling-system-components
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: electrical-test-results
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-line-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: AutoML
+    type: cortex
+    function: Apply deterministic optimization for cell grouping.
+  - component: Process Builder
+    type: process_builder
+    function: Determine optimal assembly sequences.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous optimization of the end-to-end battery module assembly
+      line to reduce cogs and improve on-time delivery while maintaining
+      quality. and approve the recommended action.

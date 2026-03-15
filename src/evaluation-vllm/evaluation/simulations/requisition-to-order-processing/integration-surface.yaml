@@ -1,0 +1,38 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: requisition-details
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supplier-information
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: catalog-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: goods-receipt-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: po-amendment-requests
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Action Item
+    type: process_builder
+    function: >-
+      Automatically create and approve requisitions, issue POs, manage catalogs,
+      process goods receipts, and handle PO amendments/cancellations.
+  - component: Agentic AI
+    type: agent_teams
+    function: >-
+      Analyze requisition details and automatically approve based on predefined
+      rules.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce cogs, accelerate po lifecycle, and improve working capital
+      through touchless, compliant, and optimized po creation, amendment, and
+      goods receipt workflows. and approve the recommended action.

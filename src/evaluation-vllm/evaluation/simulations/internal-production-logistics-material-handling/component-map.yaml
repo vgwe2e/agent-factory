@@ -1,0 +1,24 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for decision-making.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Ensure timely material delivery and minimize WIP.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Remote Functions
+    purpose: Maximize throughput while minimizing downtime and maintenance costs.
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce working capital and cogs while improving otif by automating
+      end-to-end material flow decisions across plants, suppliers, and dcs. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

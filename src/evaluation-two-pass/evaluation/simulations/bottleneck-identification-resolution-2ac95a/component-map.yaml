@@ -1,0 +1,46 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Aggregate and validate SAP S/4HANA master data, production orders,
+      MES/telemetry feeds, and demand forecasts for analysis.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: RCA Service + Data Science
+    purpose: >-
+      Identify recurring and emergent bottlenecks, compute lost capacity, and
+      score candidate corrective actions.
+    confidence: confirmed
+    capability: >-
+      Identify recurring and emergent bottlenecks, compute lost capacity, and
+      score candidate corrective actions.
+process_builder:
+  - name: Process Builder (Rules, IF)
+    purpose: >-
+      Apply deterministic rules (shift availability, changeover limits,
+      maintenance windows) to select actionable changes and rank them.
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder (Remote Functions, Action Item, CWB Lifecycle)
+    purpose: >-
+      Invoke Remote Functions to write sequencing and staffing changes to SAP
+      S/4HANA for low-risk items; open CWB for human approval where required.
+    confidence: confirmed
+    node_type: act
+  - name: UI Screen + Notification
+    purpose: >-
+      Present recommended actions and KPIs to planners/operators, capture
+      approve/reject, and notify affected teams; track throughput post-change.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously identify production bottlenecks across multi-site
+      lines and execute corrective actions (line changes, sequencing, buffer
+      adjustments, manpower/equipment reallocation) to improve throughput,
+      reduce cogs, and align capacity with demand signals. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Daily inventory data update from SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawlers - Extract inventory data from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze inventory turns and days of supply.]
+  N2 --> N3[Cortex: RCA Service - Perform root cause analysis on inventory discrepancies.]
+  N3 --> N4{PB: CWB Lifecycle - Recommend and implement process improvements.}
+  N4 -->|Primary| N5[PB: Notification - Notify stakeholders of findings and actions.]
+  N5 --> Z1[Outcome: Reduced carrying costs, minimized stockouts, improved COGS, and enhanced overall inventory health.]
+  N4 -->|Significant inventory discrepancy det...| B1[Initiate root cause analysis.]
+  B1 --> O1[Outcome: Corrective actions identified and implemented.]
+  O1 --> End[End]
+  N4 -->|High carrying costs identified.| B2[Propose policy changes.]
+  B2 --> O2[Outcome: Policy adjustments made to reduce costs.]
+  O2 --> End[End]
+  N4 -->|No actionable process improvements fo...| B3[Continue monitoring.]
+  B3 --> O3[Outcome: Maintain current inventory processes.]
+  O3 --> End[End]
+  Z1 --> End[End]

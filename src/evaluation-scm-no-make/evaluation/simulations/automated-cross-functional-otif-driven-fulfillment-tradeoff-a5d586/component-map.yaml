@@ -1,0 +1,41 @@
+streams:
+  - name: STREAMS
+    purpose: Consolidate inputs into Subject Areas for downstream analysis.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast + Remote Functions
+    purpose: >-
+      Produce demand signal consensus and run cost-to-serve + OTIF simulation
+      models.
+    confidence: confirmed
+    capability: >-
+      Produce demand signal consensus and run cost-to-serve + OTIF simulation
+      models.
+process_builder:
+  - name: Process Builder (Rules + IF) + CWB Lifecycle
+    purpose: >-
+      Apply business rules and surface recommendations for auto-apply or human
+      review.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Perform ERP/TMS/WMS writebacks and trigger downstream execution workflows.
+    confidence: inferred
+    node_type: act
+  - name: Process Builder (Notification) + Subject Areas (dashboard)
+    purpose: >-
+      Communicate outcomes, collect overrides, and provide performance
+      traceability.
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically coordinate demand planning, network optimization,
+      replenishment targets, and consensus forecasting to balance otif targets
+      with cost-to-serve across customers and locations. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,28 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ensure inventory accuracy.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Prevent supply disruptions.
+    confidence: inferred
+    capability: Prevent supply disruptions.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Maintain service levels.
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: Maintain inventory accuracy.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end replenishment and availability decisions for
+      returnable containers and packaging materials, reducing working capital
+      and preventing stockouts. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

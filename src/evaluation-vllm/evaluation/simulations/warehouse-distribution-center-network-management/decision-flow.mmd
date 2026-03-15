@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Monthly review of logistics cost and service coverage metrics.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve logistics cost and service coverage metrics from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze current logistics cost and service coverage using Cortex Auto Forecast.]
+  N2 --> N3{PB: AutoML - Determine optimal DC/cross-dock locations using AutoML.}
+  N3 -->|Primary| N4{PB: Remote Functions - Design warehouse automation and layout using Remote Functions.}
+  N4 --> N5{PB: Remote Functions - Optimize parts storage strategies using Remote Functions.}
+  N5 --> N6{PB: Remote Functions - Design service parts distribution network using Remote Functions.}
+  N6 --> Z1[Outcome: Reduced COGS, improved on-time in-full (OTIF) delivery performance, and enhanced order capture rates.]
+  N3 -->|High logistics cost despite optimal D...| B1[Re-evaluate warehouse automation and layout design.]
+  B1 --> O1[Outcome: Improved storage efficiency and reduced labor costs.]
+  O1 --> End[End]
+  N3 -->|Inefficient parts retrieval despite o...| B2[Adjust parts storage strategies and re-run analysis.]
+  B2 --> O2[Outcome: Enhanced retrieval efficiency and reduced handling costs.]
+  O2 --> End[End]
+  N3 -->|Poor service coverage despite optimal...| B3[Reassess DC/cross-dock locations and service parts distribution.]
+  B3 --> O3[Outcome: Improved service coverage and on-time deliveries.]
+  O3 --> End[End]
+  Z1 --> End[End]

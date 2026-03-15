@@ -1,0 +1,60 @@
+decision: >-
+  Choose PO change and approval path (auto-approve, routed approval, or reject)
+  by evaluating change magnitude, contract terms, budget impact, delivery risk,
+  and shortage urgency.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    PO change request from procurement user or supplier, or automated signal
+    from supplier performance / shortage propagation (Kinaxis/SAS) indicating
+    need to modify an open PO.
+  parameters:
+    objective: >-
+      Manage purchase order (PO) changes — quantity, cost, dates, amounts,
+      descriptions, cost objects — and orchestrate approvals and writebacks
+      while balancing immediate spend, delivery risk, and contract terms.
+    key_inputs:
+      - PO Change Request (fields and delta)
+      - Current PO Master Data
+      - Contract Terms & Approved Pricing
+      - Supplier Performance Signals
+      - Shortage & Inventory Impact
+      - Budget / Spend Availability
+      - Forecast / Demand Signal
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Kinaxis RapidResponse
+      - Kinaxis
+      - SAS
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Freight
+expected_output:
+  action: >-
+    Agentic AI (Agent Team) synthesizes inputs, proposes ranked change options
+    with recommended approval route, routes recommendation via Process Builder +
+    CWB Lifecycle for human-in-the-loop approvals, then Remote Functions writes
+    approved PO updates to S4.
+  outcome: >-
+    PO updates are applied in S4 for approved changes, exceptions are routed for
+    manual review, delivery and spend risk are mitigated through coordinated
+    coordination with Kinaxis signals and procurement approvals, and
+    stakeholders are notified.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Agent Team
+    - Process Builder / CWB Lifecycle
+    - Remote Functions / Notification
+    - UI Screen / Subject Areas
+    - Dashboard
+rationale: >-
+  Agentic route suits unstructured change requests and multi-criteria trade-offs
+  (cost vs delivery vs contracts). Use Process Builder to orchestrate checks,
+  CWB Lifecycle for human approvals, Remote Functions for secure S4 writeback,
+  and platform data services (DDM/Crawlers, STREAMS, Cortex/RCA) to evaluate
+  supplier performance and shortage impact.

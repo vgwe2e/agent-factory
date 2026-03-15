@@ -1,0 +1,36 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: historical-spend-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: market-intelligence-reports
+    stream_type: Event Stream
+    source: External Data Sources
+  - stream_name: supplier-performance-metrics
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: internal-capability-assessments
+    stream_type: Event Stream
+    source: Internal Surveys
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Generate accurate forecasts and identify trends.
+  - component: AutoML
+    type: cortex
+    function: Classify suppliers and assess internal capabilities.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Balance budget constraints, forecast accuracy, and working capital
+      objectives.
+  - component: Remote Functions
+    type: process_builder
+    function: Ensure alignment with business goals and market conditions.
+ui_surface:
+  - component: UI Screens
+    screen: Primary
+    purpose: Provide visibility and actionable insights.

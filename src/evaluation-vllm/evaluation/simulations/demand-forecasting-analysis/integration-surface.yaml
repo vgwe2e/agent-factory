@@ -1,0 +1,48 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: regional-sales-forecasts
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: vehicle-configuration-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: external-market-data
+    stream_type: Event Stream
+    source: External Data Sources
+  - stream_name: production-and-sales-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: new-model-launch-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: To generate a unified global sales forecast.
+  - component: AutoML
+    type: cortex
+    function: >-
+      To optimize the vehicle configuration mix based on profitability and
+      supply constraints.
+  - component: DDM/Crawlers
+    type: cortex
+    function: To enhance forecast accuracy with market intelligence.
+  - component: Cortex Monitoring
+    type: cortex
+    function: To evaluate forecast performance and identify areas for improvement.
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      To optimize COGS and capacity utilization based on demand signals and ramp
+      timelines.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end demand forecasting, market-intelligent mix
+      planning, and model-launch volume alignment to improve revenue capture,
+      reduce working capital tied to over/under forecasting, and optimize cogs.
+      and approve the recommended action.

@@ -1,0 +1,141 @@
+objective: >-
+  Automate end-to-end category innovation decisions to evaluate, validate, and
+  operationalize initiatives across demand, inventory and procurement to drive
+  revenue growth, EBITDA uplift, and improved working capital.
+trigger: >-
+  New or flagged category innovation initiative (submitted by category team,
+  supplier proposal, or analytics signal) enters the innovation pipeline.
+decision: >-
+  Approve (validate & commit), Pilot (partial commit), or Defer the innovation
+  initiative based on validated value, implementation risk, and working capital
+  impact.
+expected_action: >-
+  Run cross-domain valuation, run scenario trade-offs, present recommendation in
+  a CWB for approval, and execute approved actions (ERP writebacks, procurement
+  releases, inventory rebalances, supplier engagement).
+expected_outcome: >-
+  Validated initiatives either committed to execution (POs/production changes)
+  or deferred; measurable uplift in revenue and EBITDA for approved initiatives,
+  optimized working capital and reduced stockouts/overstocks across involved
+  SKUs and suppliers.
+rationale: >-
+  Use Process Builder to orchestrate deterministic, multi-step validation and
+  execution workflows; leverage STREAMS/DDM to unify master and transaction
+  data, Cortex Auto Forecast and RCA for scenario analysis, CWB Lifecycle for
+  human-in-the-loop approvals, and Remote Functions for ERP/TMS/WMS
+  writebacks—balancing automation and governance to reduce cycle time and
+  financial risk.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (Rebalancing / Order Expediting / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+key_inputs:
+  - name: >-
+      Innovation initiative dossier (requirements, proposed SKUs, supplier
+      proposals)
+    source: Category team / Supplier uploads
+    purpose: >-
+      Primary record describing the initiative to evaluate business case and
+      implementation scope
+    preferred_stream_type: api
+  - name: Demand forecasts and uplift scenarios
+    source: SAS (Advanced Statistical Forecasting) and Cortex Auto Forecast
+    purpose: >-
+      Estimate incremental demand, revenue and variability for initiative
+      scenarios
+    preferred_stream_type: scheduled_batch
+  - name: Inventory, on-hand and replenishment constraints
+    source: S4 (inventory tables) and Kinaxis (constraints & supply plans)
+    purpose: Assess working capital impact, feasibility and timing of fulfillment
+    preferred_stream_type: scheduled_batch
+  - name: Supplier capacity, lead-times and commercial terms
+    source: Supplier proposals / 3PL & TMS (Uber Freight)
+    purpose: Validate supplier ability to deliver and commercial viability
+    preferred_stream_type: api
+  - name: Financial KPIs (margin, cost, working capital impact)
+    source: S4 (finance)
+    purpose: Quantify EBITDA and working capital impacts for decision trade-offs
+    preferred_stream_type: scheduled_batch
+happy_path:
+  - step: >-
+      Ingest initiative dossier, master data, forecasts, inventory and supplier
+      inputs into the DI platform
+    stage: ingest
+    component: STREAMS (DDM/Crawlers)
+    purpose: Consolidate data needed for evaluation into Subject Areas and data views
+  - step: >-
+      Run scenario analysis: demand uplift, inventory impact, supplier
+      feasibility and financial valuation
+    stage: analyze
+    component: Cortex Auto Forecast + RCA Service
+    purpose: >-
+      Produce quantified scenarios (revenue, margin, working capital, stock
+      risk) and surface root causes/risks
+  - step: >-
+      Generate recommendation and route to human-in-the-loop approval with
+      supporting business case
+    stage: decide
+    component: Process Builder -> CWB Lifecycle (Rules + Notification)
+    purpose: >-
+      Present approve/pilot/defer recommendation and capture decision or
+      override
+  - step: >-
+      Execute approved actions: ERP writebacks, procurement releases, supplier
+      notifications, and supply plan updates
+    stage: act
+    component: 'Process Builder: Action Item + Remote Functions (ERP/TMS/WMS writeback)'
+    purpose: >-
+      Operationalize the approved initiative across S4, Kinaxis and
+      transport/WMS partners
+  - step: >-
+      Measure initiative performance and update dashboards for ongoing review
+      and lessons learned
+    stage: review
+    component: UI Screens (dashboard) + Subject Areas
+    purpose: >-
+      Track revenue, EBITDA, working capital and supply performance; feed back
+      into future decision cycles
+branches:
+  - condition: >-
+      Analysis shows strong positive NPV, low implementation risk, and supplier
+      capacity is adequate
+    response: >-
+      Auto-recommend Approve in CWB; trigger full execution path with
+      ERP/TMS/WMS writebacks
+    outcome: >-
+      Initiative committed; POs issued or production changes scheduled; expected
+      revenue and EBITDA uplift realized
+  - condition: Analysis shows marginal business case or constrained supplier capacity
+    response: >-
+      Recommend Pilot (partial commit) via CWB with defined pilot SKUs, limited
+      quantity and time-boxed KPIs
+    outcome: >-
+      Pilot executed to collect real-world signals; decision revisited after
+      pilot results to scale or defer
+  - condition: >-
+      Analysis shows negative business case or unacceptable working capital/risk
+      exposure
+    response: >-
+      Recommend Defer via CWB and capture rationale + mitigation backlog for
+      re-evaluation
+    outcome: >-
+      Initiative deferred; resources preserved and items added to backlog for
+      future reconsideration

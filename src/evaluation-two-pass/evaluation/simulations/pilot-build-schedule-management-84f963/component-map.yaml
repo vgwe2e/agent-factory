@@ -1,0 +1,42 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Collect latest NPI dataset from SAP S/4HANA and external readiness
+      sources.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Produce cleansed, analytics-ready dataset for scheduling and optimization.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Remote Functions
+    purpose: >-
+      Compute optimal pilot run timing and resource assignments respecting
+      constraints and cost tradeoffs.
+    confidence: inferred
+    capability: >-
+      Compute optimal pilot run timing and resource assignments respecting
+      constraints and cost tradeoffs.
+process_builder:
+  - name: Process Builder (IF / Rules) + CWB Lifecycle
+    purpose: Apply guardrails and route exceptions for decisioning or override.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions + Notification + UI Screen
+    purpose: >-
+      Execute plan via ERP writeback and inform execution teams; provide
+      visibility for pilot execution.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously plan and coordinate pilot builds and related npi
+      production activities (pre-production, ramp-up, supplier readiness, pilot
+      builds, end-of-life) to minimize time-to-market and cogs while improving
+      otif and working capital during npi cycles. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

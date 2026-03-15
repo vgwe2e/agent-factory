@@ -1,0 +1,28 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Fetch required data for press setup.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex: []
+process_builder:
+  - name: Action Item
+    purpose: >-
+      Execute optimized press setup, approve first-piece inspection, configure
+      stamping production runs, adjust in-process quality, collect production
+      data, and handle parts post-stamping.
+    confidence: confirmed
+    node_type: transaction
+agent_teams:
+  - name: Agentic AI
+    purpose: Optimize changeover time and readiness.
+    confidence: inferred
+    role: Optimize changeover time and readiness.
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review synchronize press setup, stamping production, in-process quality
+      monitoring, and post-stamping handling to minimize cogs, reduce
+      changeovers, prevent defects, and improve otif. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

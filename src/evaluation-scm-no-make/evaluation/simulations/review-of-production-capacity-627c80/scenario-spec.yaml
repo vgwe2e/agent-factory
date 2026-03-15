@@ -1,0 +1,139 @@
+objective: >-
+  Automate end-to-end production capacity review and feasibility checks across
+  SKUs and plants to optimize capacity utilization, reduce waste, protect
+  margins, and accelerate decision cycles.
+trigger: >-
+  Scheduled daily/shift batch or event-driven when projected plant utilization
+  or demand variance exceeds thresholds (e.g., projected utilization > 85% or
+  demand upside/downside > 15%).
+decision: >-
+  Choose DRP capacity adjustment plan (increase capacity vs maintain &
+  rebalance) that balances incremental COGS impact, service level risk, and
+  feasible production actions.
+expected_action: >-
+  Produce a ranked set of executable capacity actions (increase capacity via
+  overtime/subcontracting/shift change, or maintain and rebalance across plants)
+  and execute approved actions via ERP/APS writeback or Kinaxis rebalancing.
+expected_outcome: >-
+  Capacity plan aligned to demand across SKUs/locations with reduced stockouts
+  and waste, improved fill rate and on-time service, and controlled incremental
+  COGS from chosen capacity actions.
+rationale: >-
+  Deterministic process-based orchestration leverages existing forecasts,
+  inventory, and supply constraints to operationalize capacity decisions at
+  scale. Using Process Builder for orchestration, STREAMS for data
+  consolidation, and Remote Functions/ERP writebacks enables repeatable,
+  auditable decisions and faster cycle times.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting (SAS)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse / Kinaxis (APS)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: TMS/3PL
+    status: identified
+key_inputs:
+  - name: Master demand forecast (SKU x location x horizon)
+    source: SAS / Advanced Statistical Forecasting
+    purpose: Projected demand to size required production capacity
+    preferred_stream_type: STREAMS
+  - name: Current production capacity & constraints (plant, line, shift, skill)
+    source: S4 (SAP S/4HANA)
+    purpose: >-
+      Baseline capacity availability and configurable constraints for
+      feasibility checks
+    preferred_stream_type: Data View
+  - name: Production schedule / load and projected utilization
+    source: Kinaxis RapidResponse
+    purpose: Actual and planned load to identify bottlenecks and utilization thresholds
+    preferred_stream_type: Report Data
+  - name: Inventory on-hand, FG safety stock targets
+    source: Blue Yonder WMS / Kinaxis FG Safety Stock Modeling
+    purpose: >-
+      Assess service level risk and buffer availability for rebalancing
+      decisions
+    preferred_stream_type: STREAMS
+  - name: Open POs, lead times, procurement constraints
+    source: S4 (SAP S/4HANA)
+    purpose: Evaluate input/raw material availability for capacity actions
+    preferred_stream_type: STREAMS
+  - name: Shortage/expedite signals and rebalancing recommendations
+    source: Kinaxis (Order Expediting / Rebalancing)
+    purpose: Provide candidate reallocation actions and constraints for rapid response
+    preferred_stream_type: Report Data
+happy_path:
+  - step: >-
+      Ingest consolidated inputs (forecasts, capacity, schedules, inventory,
+      POs)
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Centralize and validate source data into Subject Areas/data views for
+      planning
+  - step: >-
+      Calculate projected utilization, capacity gaps, and feasibility (rules +
+      constraint checks)
+    stage: analyze
+    component: Process Builder (Process) + Rules
+    purpose: >-
+      Run deterministic rules to detect capacity shortfalls and feasible
+      mitigation options
+  - step: >-
+      Rank and generate executable capacity plans (overtime, subcontract,
+      rebalancing, hold)
+    stage: decide
+    component: Process Builder (IF) + Action Item / CWB Lifecycle
+    purpose: >-
+      Select best action by COGS impact, service uplift, and feasibility;
+      surface for approval when needed
+  - step: >-
+      Execute approved actions via system writebacks and replan (ERP/Kinaxis
+      updates)
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Writeback capacity adjustments and trigger Kinaxis rebalancing or S4
+      capacity updates
+  - step: Surface updated plan and KPIs to planners; notify stakeholders
+    stage: surface
+    component: UI Screen (dashboard) + Process Builder (Notification)
+    purpose: >-
+      Provide visibility into executed decisions, updated utilization, cost
+      impact, and follow-up actions
+  - step: Review outcomes and capture exceptions for learning
+    stage: review
+    component: Subject Areas + Report Data
+    purpose: Assess realized service levels, COGS delta, and adjust rules/thresholds
+branches:
+  - condition: Projected utilization within tolerance (no significant gap)
+    response: >-
+      Maintain current capacity; trigger rebalancing only for localized
+      imbalances; no ERP writeback needed
+    outcome: Minimal incremental cost, plan remains stable, monitor for changes
+  - condition: >-
+      Minor capacity deficit (can be resolved via rebalancing across plants or
+      schedule tweaks)
+    response: >-
+      Generate rebalancing actions and automated Kinaxis RapidResponse
+      adjustments; notify planners for confirmation if required
+    outcome: >-
+      Service levels protected with low incremental COGS; changes enacted via
+      Kinaxis without major CAPEX
+  - condition: >-
+      Major capacity deficit (exceeds feasible internal reallocation; requires
+      overtime/subcontract or capex)
+    response: >-
+      Recommend capacity increase options with cost/service trade-offs; route to
+      CWB Lifecycle for human approval and then execute Remote Functions for
+      ERP/TMS writebacks
+    outcome: >-
+      Higher COGS accepted to protect service or flagged for escalation to
+      supply chain leadership for longer-term capacity decisions

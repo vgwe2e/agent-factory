@@ -1,0 +1,68 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    type: Manufacturing Execution System
+    status: tbd
+  - name: SCADA / Equipment Telemetry
+    type: OT / Telemetry
+    status: tbd
+  - name: APS / Scheduling
+    type: Advanced Planning System
+    status: tbd
+  - name: Demand Forecasting Service
+    type: Forecasting
+    status: tbd
+aera_ingestion:
+  - stream_name: production-orders-routing
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: capacity-master-line-workcenter-shift
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: realized-throughput-oee
+    stream_type: time-series
+    source: MES
+  - stream_name: equipment-status-mttr-mtbf
+    stream_type: time-series
+    source: SCADA / Equipment Telemetry
+  - stream_name: demand-forecast
+    stream_type: time-series
+    source: Demand Forecasting Service
+  - stream_name: changeover-times-sequencing-rules
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: inventory-buffer-levels
+    stream_type: batch
+    source: SAP S/4HANA
+processing:
+  - component: RCA Service + Data Science
+    type: cortex
+    function: >-
+      Identify recurring and emergent bottlenecks, compute lost capacity, and
+      score candidate corrective actions.
+  - component: Process Builder (Rules, IF)
+    type: process_builder
+    function: >-
+      Apply deterministic rules (shift availability, changeover limits,
+      maintenance windows) to select actionable changes and rank them.
+  - component: Process Builder (Remote Functions, Action Item, CWB Lifecycle)
+    type: process_builder
+    function: >-
+      Invoke Remote Functions to write sequencing and staffing changes to SAP
+      S/4HANA for low-risk items; open CWB for human approval where required.
+  - component: UI Screen + Notification
+    type: process_builder
+    function: >-
+      Present recommended actions and KPIs to planners/operators, capture
+      approve/reject, and notify affected teams; track throughput post-change.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously identify production bottlenecks across multi-site
+      lines and execute corrective actions (line changes, sequencing, buffer
+      adjustments, manpower/equipment reallocation) to improve throughput,
+      reduce cogs, and align capacity with demand signals. and approve the
+      recommended action.

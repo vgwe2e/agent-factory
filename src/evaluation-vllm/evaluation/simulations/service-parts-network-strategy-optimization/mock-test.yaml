@@ -1,0 +1,36 @@
+decision: >-
+  Jointly optimize service parts distribution, transportation modes/lanes, and
+  end-to-end fulfillment planning.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Monthly inventory review and quarterly logistics planning cycle.
+  parameters:
+    objective: >-
+      Optimize service parts distribution, transportation, and fulfillment
+      planning to reduce working capital, lower COGS, and improve OTIF.
+    key_inputs:
+      - Inventory Levels
+      - Historical Order Data
+      - Carrier Costs
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate the selection of optimal DC locations, transportation modes, and
+    carrier routes using deterministic models.
+  outcome: >-
+    Reduced working capital, lower COGS, improved OTIF, and enhanced service
+    part network resilience.
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Leveraging deterministic models and real-time data to optimize service parts
+  logistics will lead to significant cost savings and improved service levels.

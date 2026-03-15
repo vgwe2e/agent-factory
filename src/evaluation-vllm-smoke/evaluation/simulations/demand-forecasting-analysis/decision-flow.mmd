@@ -1,0 +1,24 @@
+flowchart TD
+    A[PB: Process - Start] --> B[Cortex: Global Sales Forecast Aggregation]
+    B --> C[IF: Regional Variability within Tolerance?]
+    C -->|Yes| D[Cortex: Vehicle Configuration Mix Planning]
+    C -->|No| E[Cortex: Market Intelligence Integration]
+    E --> F[Cortex: Forecast Accuracy Measurement & Reporting]
+    F --> G[IF: Forecast Accuracy Satisfactory?]
+    G -->|Yes| H[Cortex: New Model Launch Volume Planning]
+    G -->|No| I[Cortex: Corrective Actions for Forecast Improvement]
+    I --> J[Cortex: Re-evaluate Forecast Accuracy]
+    J --> K[IF: Improved Forecast Accuracy?]
+    K -->|Yes| H
+    K -->|No| L[UI: Notification - Escalate for Manual Review]
+    D --> M[IF: Supply Constraints Met?]
+    M -->|Yes| N[UI: Notification - Finalize Configuration Mix]
+    M -->|No| O[Cortex: Adjust Configuration Mix]
+    O --> P[IF: Adjusted Mix Feasible?]
+    P -->|Yes| N
+    P -->|No| Q[UI: Notification - Escalate for Manual Review]
+    H --> R[UI: Notification - Confirm New Model Launch Plan]
+    R --> End
+    N --> End
+    L --> End
+    Q --> End

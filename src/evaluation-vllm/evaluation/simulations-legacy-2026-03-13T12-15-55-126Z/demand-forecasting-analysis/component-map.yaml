@@ -1,0 +1,30 @@
+streams:
+  - name: streams
+    purpose: >-
+      Data transformation, aggregation, and cleansing for global sales forecast
+      consolidation and market intelligence integration
+    confidence: confirmed
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Forecasting demand for vehicle configuration mix and new model launch
+      volumes using AI/ML
+    confidence: confirmed
+  - name: Cortex Monitoring
+    purpose: >-
+      Measuring forecast accuracy (MAPE metrics) and tracking forecasting
+      performance
+    confidence: confirmed
+process_builder:
+  - name: Process Builder
+    purpose: >-
+      Orchestrating end-to-end workflow including data ingestion (DDM/Crawlers),
+      transformation (streams), forecasting (cortex), and reporting (ui)
+    confidence: confirmed
+agent_teams: []
+ui:
+  - name: UI Screens
+    purpose: >-
+      Visualizing forecast accuracy metrics, demand forecasts, and new model
+      launch planning results for stakeholders
+    confidence: confirmed

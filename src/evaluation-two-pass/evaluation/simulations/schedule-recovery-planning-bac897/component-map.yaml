@@ -1,0 +1,47 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Consolidate schedule, inventory, quality, OT, and workforce feeds into
+      Subject Areas for analysis
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: RCA Service
+    purpose: >-
+      Identify root cause, impacted orders, severity, and estimated COGS / OTIF
+      impact
+    confidence: inferred
+    capability: >-
+      Identify root cause, impacted orders, severity, and estimated COGS / OTIF
+      impact
+process_builder:
+  - name: Remote Functions
+    purpose: >-
+      Perform reschedule writeback to SAP S/4HANA and send control commands or
+      work orders to MES; log actions
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: >-
+      Present recommendation for approve/reject/override with explainability and
+      allow manual adjustments
+    confidence: confirmed
+    node_type: review
+agent_teams:
+  - name: Process Builder (Agent Team + Remote Functions)
+    purpose: >-
+      Agentic pipeline runs multi-agent simulations, applies business rules and
+      risk thresholds, and selects a preferred recovery plan
+    confidence: confirmed
+    role: >-
+      Agentic pipeline runs multi-agent simulations, applies business rules and
+      risk thresholds, and selects a preferred recovery plan
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously detect, simulate, and resolve production constraints
+      and exceptions across scheduling, supply disruptions, and quality holds to
+      minimize cogs while preserving otif and availability. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

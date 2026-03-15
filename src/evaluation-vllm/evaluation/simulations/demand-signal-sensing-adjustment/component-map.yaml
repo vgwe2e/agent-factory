@@ -1,0 +1,28 @@
+streams:
+  - name: DDM/Crawler
+    purpose: Collect and prepare sales order data for analysis
+    confidence: inferred
+    type: DDM/Crawler
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Detect variances and potential demand shifts
+    confidence: confirmed
+    capability: Detect variances and potential demand shifts
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Implement rapid adjustments to forecasts
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: Trigger necessary actions across the supply network
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unified di solution for sensing real-time demand signals, adjusting
+      forecasts, and coordinating promotions, inventory, and order fulfillment
+      across the automotive supply network. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

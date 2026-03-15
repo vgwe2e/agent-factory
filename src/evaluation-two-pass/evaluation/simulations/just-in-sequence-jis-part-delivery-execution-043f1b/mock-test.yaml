@@ -1,0 +1,55 @@
+decision: >-
+  Execute Just-in-Sequence deliveries to assembly line, selecting delivery
+  timing and supplier/line-side fulfillment nodes to minimize line stop risk
+  while balancing cost and OTIF.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New or updated production sequence/schedule, inventory threshold breach, or
+    scheduled replenishment window for a line-side location.
+  parameters:
+    objective: >-
+      Orchestrate Just-in-Sequence (JIS) deliveries, pull-based replenishment,
+      and line-waste reduction across production lines by dynamically allocating
+      multi-echelon inventory and sequencing constraints to minimize COGS and
+      improve OTIF.
+    key_inputs:
+      - Production sequence & schedule
+      - Real-time inventory levels (multi-echelon)
+      - Supplier lead times, constraints, and shipment status
+      - Line-side buffer capacities & handling constraints
+      - Line stop / downtime indicators and quality exceptions
+    source_systems:
+      - SAP S/4HANA
+      - Plant MES (line buffers & sensors)
+      - Warehouse/WMS
+      - Supplier TMS / Supplier Portal
+expected_output:
+  action: >-
+    Agentic workflow computes optimal JIS delivery plan (timing, fulfillment
+    node, substitutions), allocates multi-echelon inventory, issues pick/ship
+    and AGV/line-side instructions via ERP writebacks, and opens CWB exceptions
+    when constraints or mismatches occur.
+  outcome: >-
+    Fewer line stoppages, higher sequence accuracy, lower material handling
+    costs and COGS, improved On-Time-In-Full (OTIF) for assembly lines, and
+    auditable ERP updates for executed deliveries.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast + Data Science
+    - Remote Functions
+    - Process Builder + Agent Team
+    - CWB Lifecycle + UI Screen + Agent Team
+    - Dashboard
+rationale: >-
+  Combining agentic AI for adaptive sequencing with Process Builder
+  orchestration, STREAMS data foundation, Cortex decisioning for
+  demand/allocation signals, and Remote Functions for ERP writeback enables
+  closed-loop JIS execution across suppliers and plant nodes. This hybrid DI
+  approach lets the system reason about last-minute changes, multi-echelon
+  tradeoffs, and cost vs. service decisions while surfacing exceptions for human
+  review.

@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect initial order and buffer data from SAP S/4HANA.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Evaluate BOM release and identify potential constraints.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Remote Functions
+    purpose: Calculate optimal buffer levels and mitigation strategies.
+    confidence: inferred
+    node_type: decide
+  - name: Exception Management
+    purpose: Track and address any material shortages.
+    confidence: inferred
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize multi-echelon stock rebalancing, buffer safety stocks, and
+      end-to-end launch material availability to reduce working capital, protect
+      ebitda, and improve on-time launch delivery. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

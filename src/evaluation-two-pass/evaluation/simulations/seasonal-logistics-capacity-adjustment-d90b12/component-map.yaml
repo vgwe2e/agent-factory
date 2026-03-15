@@ -1,0 +1,37 @@
+streams:
+  - name: STREAMS (ETL)
+    purpose: >-
+      Aggregate demand forecasts, capacity master data, cost rates and
+      constraints into subject area tables.
+    confidence: confirmed
+    type: STREAMS (ETL)
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Detect seasonality and produce smooth time-series forecasts per
+      SKU-location to drive capacity needs.
+    confidence: confirmed
+    capability: >-
+      Detect seasonality and produce smooth time-series forecasts per
+      SKU-location to drive capacity needs.
+process_builder:
+  - name: Process (Process Builder) - Rules + Remote Functions
+    purpose: >-
+      Apply business rules and run allocation calculations to balance service
+      level targets and transportation costs within constraints.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Perform ERP writeback to SAP S/4HANA with planned capacity changes and
+      transactional updates.
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screens (dashboard, report, action item)
+    purpose: >-
+      Present final allocation, highlight exceptions or constraint breaches, and
+      provide action items for planner overrides.
+    confidence: confirmed
+    component_type: display

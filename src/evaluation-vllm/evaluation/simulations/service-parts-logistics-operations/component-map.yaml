@@ -1,0 +1,34 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest parts orders and urgent requests for processing.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict optimal fulfillment routes and inventory deployment.
+    confidence: confirmed
+    capability: Predict optimal fulfillment routes and inventory deployment.
+process_builder:
+  - name: Process Builder
+    purpose: >-
+      Decide on expedited shipping and cross-DC transfers to minimize costs and
+      meet service levels.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Implement the optimized fulfillment and transfer decisions.
+    confidence: inferred
+    node_type: act
+  - name: Cortex Monitoring
+    purpose: Ensure continuous improvement and accuracy of logistics decisions.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize service parts logistics operations by autonomously
+      deciding and executing actions to reduce working capital, prevent
+      stockouts, and improve otif. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

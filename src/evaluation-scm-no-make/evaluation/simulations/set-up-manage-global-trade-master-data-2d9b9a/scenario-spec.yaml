@@ -1,0 +1,152 @@
+objective: >-
+  Automate and semi-autonomously execute global trade compliance decisions
+  (license validation/issuance, master data confirmation for HS
+  codes/INCOTERMs/trade classifications, restricted party screening) to reduce
+  compliance risk, improve duty/tax accuracy (COGS), and accelerate
+  license-to-ship and supplier onboarding.
+trigger: >-
+  New supplier or product master record creation OR shipment created OR periodic
+  re-screening/regulation update
+decision: >-
+  For each supplier-product-shipment: determine master data state (tentative vs
+  confirmed), whether license exists/needs issuance, and whether shipment is
+  allowed, auto-approved, or requires CWB/manual review based on risk score and
+  guardrail thresholds.
+expected_action: >-
+  Orchestrate ingestion of master data and documents, run rule-based
+  classification and screening, call screening/license services via Remote
+  Functions, auto-confirm low-risk master data and writeback to S4, create CWB
+  Lifecycle items for exceptions, and notify stakeholders.
+expected_outcome: >-
+  Higher compliance coverage and accuracy (reduced violations), improved
+  duty/tax treatment accuracy lowering COGS, faster license-to-ship cycles and
+  supplier onboarding, fewer manual reviews for low-risk cases, auditable
+  decision trail.
+rationale: >-
+  Combines deterministic rules, centralized master data, automated screening and
+  API-driven license checks with human-in-the-loop approvals when risk exceeds
+  guardrails — delivering consistent, auditable decisions while preserving speed
+  for low-risk flows.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: SAS
+    type: Analytics/Screening (existing screening or analytics)
+    status: identified
+  - name: External Restricted Party Screening Service / Government License Registry
+    status: tbd
+  - name: Supplier Portal / 3PL document repository
+    status: tbd
+key_inputs:
+  - name: Supplier master feed (contacts, country of origin, tax ID)
+    source: S4 (or Supplier Portal)
+    purpose: >-
+      Identify party attributes for screening, license eligibility, and
+      onboarding speed vs accuracy tradeoffs
+    preferred_stream_type: DDM/Crawlers
+  - name: Product master (SKU, descriptions, preliminary HS code, INCOTERM)
+    source: S4
+    purpose: >-
+      Provide base attributes for HS classification, duty/tax treatment, and
+      master data confirmation
+    preferred_stream_type: STREAMS
+  - name: Shipment/Order event (shipment date, route, ports, value)
+    source: Uber Freight TMS / Blue Yonder WMS / S4
+    purpose: >-
+      Trigger screening/license checks and evaluate shipment-level compliance
+      risk
+    preferred_stream_type: STREAMS
+  - name: Restricted party screening results
+    source: External Screening Service or SAS
+    purpose: >-
+      Detect denied parties, sanctions exposure, and feed risk score for
+      decisioning
+    preferred_stream_type: Remote Functions
+  - name: License documents & expiry metadata
+    source: Supplier Portal / 3PL repo / S4 attachments
+    purpose: >-
+      Validate existing licenses, determine renewals/issuance needs and attach
+      to CWB if manual review required
+    preferred_stream_type: DDM/Crawlers
+  - name: Regulatory rule set / tariff tables
+    source: External regulatory feeds / internal compliance rules
+    purpose: >-
+      Evaluate classification, duties, special programs, and license
+      requirements
+happy_path:
+  - step: >-
+      Ingest supplier, product, shipment, license docs, and regulatory feeds
+      into platform
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Centralize source data and documents for downstream processing
+  - step: >-
+      Normalize and enrich master data, map tentative HS/INCOTERM candidates,
+      compute preliminary risk attributes
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Create canonical master data view and derive classification candidates and
+      risk signals
+  - step: >-
+      Execute screening and license validation calls; compute composite risk
+      score and deterministic rule outcomes
+    stage: analyze
+    component: Remote Functions
+    purpose: >-
+      Call external screening/license services and apply regulatory rule engine
+      to produce decision inputs
+  - step: >-
+      Evaluate against guardrails in Process Builder rules; auto-confirm
+      low-risk master data and auto-approve shipments or create CWB for
+      exceptions
+    stage: decide
+    component: Process Builder & CWB Lifecycle
+    purpose: Apply deterministic thresholds to choose auto-action vs human review
+  - step: >-
+      Writeback confirmed master data and license status to S4 and trigger
+      shipment release or hold
+    stage: act
+    component: Remote Functions
+    purpose: Persist authoritative data and enforce shipment action in ERP/TMS
+  - step: >-
+      Surface exceptions and provide reviewers with UI Screen and attach
+      documents; send notifications to stakeholders
+    stage: review
+    component: UI Screen & Notification
+    purpose: >-
+      Enable human-in-the-loop decisions with context and close the loop with
+      alerts
+branches:
+  - condition: Screening result = denied match or composite risk above high threshold
+    response: >-
+      Create CWB Lifecycle exception for compliance review; block shipment;
+      request supplemental documents and escalate to legal
+    outcome: >-
+      Shipment held, human review ensures no prohibited activity; auditable case
+      created
+  - condition: >-
+      HS code mapping ambiguous or multiple conflicting classifications below
+      auto-confirm threshold
+    response: >-
+      Set product master state to 'tentative', create Process Builder Action
+      Item for trade data steward to resolve with UI Screen supporting document
+      attachments
+    outcome: >-
+      Avoid incorrect duty treatment while allowing onboarding to continue under
+      watch; decision recorded
+  - condition: Valid license present and risk score below auto-approval threshold
+    response: >-
+      Auto-confirm master data, auto-approve shipment, writeback license
+      metadata to S4 and mark CWB not required
+    outcome: Faster license-to-ship cycle and reduced manual workload

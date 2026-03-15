@@ -1,0 +1,41 @@
+decision: >-
+  Determine the optimal maintenance actions, repair routing, spare parts
+  procurement, robotic calibration, and filter replacement schedules.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Equipment breakdown or scheduled maintenance window.
+  parameters:
+    objective: >-
+      Minimize COGS impact from unplanned downtime, accelerate repairs, optimize
+      spare parts workflow, and ensure paint quality through calibrated
+      robotics.
+    key_inputs:
+      - Equipment Status
+      - Maintenance Windows
+      - Spare Parts Inventory Levels
+      - Robotic Calibration Parameters
+      - Filter Usage Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Schedule and execute preventative maintenance, allocate resources for
+    emergency repairs, manage spare parts inventory, calibrate robotic arms, and
+    replace filters.
+  outcome: >-
+    Reduced paint shop downtime, minimized material costs, improved on-time
+    maintenance, and enhanced production readiness.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - Process Builder
+    - Remote Functions
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  Leveraging agentic AI to automate and optimize maintenance activities,
+  ensuring efficient resource allocation and timely interventions.

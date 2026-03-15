@@ -1,0 +1,48 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Create consolidated dataset (schedules, inventory, POs, capacities) for
+      analysis
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex RCA Service
+    purpose: >-
+      Prioritize root causes (supplier risk, capacity limits, late receipts) and
+      quantify impact on schedules and OTD
+    confidence: confirmed
+    capability: >-
+      Prioritize root causes (supplier risk, capacity limits, late receipts) and
+      quantify impact on schedules and OTD
+  - name: Process Builder (Data Science / Remote Functions)
+    purpose: Generate ranked mitigation options with estimated COGS and OTD outcomes
+    confidence: confirmed
+    capability: Generate ranked mitigation options with estimated COGS and OTD outcomes
+process_builder:
+  - name: Agent Team
+    purpose: >-
+      Select executable plan respecting escalation policies and approval
+      thresholds
+    confidence: confirmed
+    node_type: integration
+  - name: Process Builder
+    purpose: >-
+      Apply accepted mitigations via Remote Functions to SAP S/4HANA and surface
+      exceptions via CWB Lifecycle
+    confidence: confirmed
+    node_type: act
+  - name: UI Screen
+    purpose: Enable review, monitoring, and P&L reconciliation
+    confidence: confirmed
+    node_type: integration
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously identify multi-plant and supplier-driven bottlenecks,
+      simulate mitigation trade-offs, and execute coordinated procurement,
+      production scheduling, and logistics actions to reduce cogs and improve
+      on-time delivery (otd) across automotive plants. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

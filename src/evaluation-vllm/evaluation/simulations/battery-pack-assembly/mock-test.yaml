@@ -1,0 +1,39 @@
+decision: >-
+  Optimize module-to-pack integration, BMS installation, sealing/leak testing,
+  end-of-line testing, and anomaly detection to maximize efficiency and quality.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Start of battery pack assembly process.
+  parameters:
+    objective: >-
+      Autonomous orchestration of end-to-end battery pack assembly decisions to
+      reduce COGS, improve OTIF, and enhance supplier/manufacturing
+      synchronization.
+    key_inputs:
+      - Module Integration Plan
+      - BMS Installation Parameters
+      - Sealing/Leak Test Conditions
+      - End-of-Line Test Suite
+      - Real-Time Monitoring Thresholds
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate and coordinate the assembly process across multiple activities
+    using Aera's orchestration capabilities.
+  outcome: >-
+    Reduced COGS, improved on-time in-full (OTIF) delivery, and enhanced quality
+    control through synchronized assembly processes.
+  affected_components:
+    - DDM/Crawler
+    - Cortex Auto Forecast
+    - Action Item
+    - Dashboard
+rationale: >-
+  By leveraging Aera's deterministic decision-making capabilities, the solution
+  can autonomously manage the battery pack assembly process, leading to
+  significant cost savings and quality improvements.

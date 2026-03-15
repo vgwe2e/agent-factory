@@ -1,0 +1,62 @@
+decision: >-
+  Allocate escalation and mitigation effort among competing risk indicators
+  (inventory write-off exposure, supplier volatility, promotion mispricing) by
+  selecting which items to auto-mitigate, which to surface for human review, and
+  which to suppress through adaptive thresholds.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled daily risk-scoring pipeline (batch) detects SKU/location
+    cumulative risk score above configurable threshold OR user-initiated risk
+    scan via Agentic AI.
+  parameters:
+    objective: >-
+      Automate unified risk segmentation, assessment, and proactive mitigation
+      across inventory, supplier, and promotion risks to protect working capital
+      and EBITDA across SKU/location matrices.
+    key_inputs:
+      - Inventory on-hand & location balances
+      - Forecasts and forecast error / bias
+      - Supplier risk & lead-time volatility
+      - Promotion pricing and uplift plans
+      - Open POs, inbound arrivals, and transit status
+      - Historical write-offs & adjustment history
+      - Working capital KPIs (DSO, DPO, Inventory days)
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Kinaxis RapidResponse
+      - Kinaxis (Order Expediting / Rebalancing / FG Safety Stock)
+      - SAS (Advanced Statistical Forecasting)
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Freight
+expected_output:
+  action: >-
+    Consolidate inputs, compute unified risk segments and root causes via Cortex
+    RCA and agentic reasoning, generate ranked mitigation recommendations,
+    automatically execute low-risk automated mitigations via Remote Functions
+    (S4/Kinaxis/Blue Yonder writebacks, expedite orders), and route
+    high-uncertainty or high-impact items to CWB Lifecycle for human approval.
+  outcome: >-
+    Earlier detection and prioritized mitigation of high-impact risks, fewer
+    inventory write-offs, reduced promotion mispricing exposure, faster
+    supplier-contingency response, and measurable improvement in working capital
+    and margin protection across SKU/location clusters.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex RCA Service + Data Science
+    - Remote Functions + Process Builder Action Item
+    - CWB Lifecycle + UI Screen + Notification
+    - Process Builder (IF + Rules) + Agent Team
+    - Dashboard
+rationale: >-
+  Agentic AI (Agent Team + Process Builder) coordinates across data ingestion
+  (DDM/STREAMS), ML-driven root-cause segmentation (Cortex RCA Service) and
+  deterministic actions (Remote Functions + CWB Lifecycle). This hybrid
+  architecture enables adaptive, conversational investigation of ambiguous cases
+  while preserving automated, auditable writebacks to ERPs and APS systems for
+  mitigation execution.

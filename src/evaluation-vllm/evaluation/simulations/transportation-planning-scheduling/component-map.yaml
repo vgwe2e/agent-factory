@@ -1,0 +1,27 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for load planning and carrier assignment
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Transform and cleanse data for further processing
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder
+    purpose: Determine optimal routes and carrier assignments
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Implement the optimized routes and monitor their execution
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomous transportation planning & scheduling and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

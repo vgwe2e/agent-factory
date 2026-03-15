@@ -1,0 +1,35 @@
+decision: >-
+  Collect sensor data, deploy ML models for anomaly detection, generate
+  predictive alerts, and trigger corrective actions
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Real-time sensor data collection and anomaly detection
+  parameters:
+    objective: Predictive Maintenance (PdM) & Condition Monitoring
+    key_inputs:
+      - Sensor Data
+      - Anomaly Detection Model Outputs
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Integrate sensor data into predictive analytics, deploy ML models, generate
+    alerts, and initiate corrective maintenance actions
+  outcome: >-
+    Optimize maintenance timing, reduce COGS from unexpected failures, and
+    improve OTIF by minimizing unplanned downtime
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - AutoML
+    - Notification
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  This scenario leverages deterministic and agentic decisions to enhance
+  maintenance operations through real-time monitoring and predictive analytics,
+  reducing costs and improving operational efficiency.

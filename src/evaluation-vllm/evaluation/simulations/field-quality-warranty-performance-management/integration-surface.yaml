@@ -1,0 +1,36 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: field-quality-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: warranty-claims-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supplier-financial-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: RCA Service
+    type: cortex
+    function: To determine the root causes of field quality issues.
+  - component: AutoML
+    type: process_builder
+    function: To choose the most effective corrective actions.
+  - component: Remote Functions
+    type: process_builder
+    function: To optimize financial recovery while maintaining supplier relationships.
+  - component: Process Builder
+    type: process_builder
+    function: To ensure timely and effective resolution of field actions and recalls.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce cogs related to warranty, shorten resolution cycles, and
+      improve otif by autonomously analyzing field quality data, identifying
+      warranty root causes, coordinating supplier recovery actions, and
+      automating critical field communications. and approve the recommended
+      action.

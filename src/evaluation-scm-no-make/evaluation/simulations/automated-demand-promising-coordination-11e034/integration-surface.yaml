@@ -1,0 +1,71 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (Rebalancing / Order Expediting / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL (Uber Freight / carrier integrations)
+    type: 3PL
+    status: identified
+aera_ingestion:
+  - stream_name: open-sales-orders
+    stream_type: Event Stream
+    source: S4 (orders module)
+  - stream_name: atp-available-inventory-by-location
+    stream_type: delta_batch
+    source: S4 (ATP calculations)
+  - stream_name: near-term-demand-signal-short-term-forecast
+    stream_type: batch
+    source: >-
+      SAS (Advanced Statistical Forecasting) and Cortex short-term demand
+      sensing
+  - stream_name: safety-stock-fg-targets
+    stream_type: batch
+    source: Kinaxis (FG safety stock modeling)
+  - stream_name: supply-inbound-eta-and-shortage-propagation
+    stream_type: delta_batch
+    source: Kinaxis RapidResponse (shortage propagation) + S4 inbound receipts
+  - stream_name: warehouse-availability-reservations
+    stream_type: delta_batch
+    source: Blue Yonder WMS
+  - stream_name: transportation-etas-expedite-options
+    stream_type: api
+    source: Uber Freight TMS / 3PL feeds
+  - stream_name: allocation-prioritization-rules-slas
+    stream_type: Event Stream
+    source: Kinaxis / business rules repo
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Produce short-horizon demand tendency and flag deviations that impact ATP
+      accuracy (integrate SAS outputs where applicable)
+  - component: Process Builder (Rules + Remote Functions)
+    type: process_builder
+    function: >-
+      Deterministically compute promise date/quantity and escalate exceptions
+      for CWB when thresholds are breached
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Writeback allocation/promise to S4 & Kinaxis and invoke TMS/3PL APIs for
+      expedited shipment or pickup
+ui_surface:
+  - component: CWB Lifecycle / UI Screen
+    screen: Primary
+    purpose: >-
+      Present recommendations for accept/reject/override and notify
+      Sales/Logistics of final promises and any expedite actions

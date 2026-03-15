@@ -1,0 +1,98 @@
+tier	l3_name	l1_name	l2_name	lead_archetype	quick_win	combined_max_value	flag_count	flags	is_cross_functional
+1	Cross-Functional: Finance + Sell + Customer	Cross-Functional	Value Flow	DETERMINISTIC	N	26000000	0		Y
+1	Cross-Functional: Fulfill + Sell + Deliver + Customer	Cross-Functional	Value Flow	DETERMINISTIC	N	24000000	0		Y
+1	Cross-Functional: Plan + Source	Cross-Functional	Cross Functional	DETERMINISTIC	N	24000000	0		Y
+1	Cross-Functional: Plan + Source	Cross-Functional	Cross Functional	DETERMINISTIC	N	24000000	0		Y
+1	Cross-Functional: Plan + Fulfill + Sell + Deliver	Cross-Functional	Value Flow	DETERMINISTIC	N	22000000	0		Y
+1	Cross-Functional: Fulfill + Plan + Finance	Cross-Functional	Value Flow	DETERMINISTIC	N	21000000	0		Y
+1	Cross-Functional: Fulfill + Sell + Finance	Cross-Functional	Value Flow	DETERMINISTIC	N	21000000	0		Y
+1	Cross-Functional: Plan + Fulfill	Cross-Functional	Cross Functional	DETERMINISTIC	N	21000000	0		Y
+1	Cross-Functional: Plan + Make + Source	Cross-Functional	Cross Functional	DETERMINISTIC	N	21000000	0		Y
+1	Cross-Functional: Fulfill + Source & Procure	Cross-Functional	Cross Functional	DETERMINISTIC	N	21000000	0		Y
+1	Manage Supply Planning Data	Plan	Supply Strategy & Analytics	DETERMINISTIC	N	17703000	0		N
+1	Review Supply Capability	Plan	Tactical Supply Planning	DETERMINISTIC	N	17703000	0		N
+1	Conduct Distribution Requirements Planning	Plan	Tactical Supply Planning	AGENTIC	N	17703000	0		N
+1	Conduct Transactional Procurement	Source & Procure	Order to "Ok To Pay"	AGENTIC	N	17703000	0		N
+1	Execute Spot Buy	Source & Procure	Order to "Ok To Pay"	DETERMINISTIC	N	17703000	0		N
+1	Execute Tactical Sourcing	Source & Procure	Sourcing	AGENTIC	N	17703000	0		N
+1	Manage Integrated Scenarios	Plan	Sales & Operations Planning	DETERMINISTIC	N	15000000	0		N
+1	Monitor Performance and Handle Exceptions	Plan	Sales & Operations Execution	AGENTIC	N	15000000	0		N
+1	Define Demand Segmentation	Plan	Forecast Analytics	DETERMINISTIC	N	12000000	0		N
+1	Conduct Supply Scenario Planning	Plan	Tactical Supply Planning	DETERMINISTIC	N	12000000	0		N
+1	Monitor Performance and Handle Exceptions	Plan	Sales & Operations Execution	AGENTIC	N	12000000	0		N
+1	Monitor Performance and Handle Exceptions	Plan	Sales & Operations Execution	DETERMINISTIC	N	12000000	0		N
+1	Execute Spot Buy	Source & Procure	Order to "Ok To Pay"	AGENTIC	N	12000000	0		N
+1	Receive Goods & Services	Source & Procure	Order to "Ok To Pay"	AGENTIC	N	12000000	0		N
+1	Cross-Functional: Procurement + Inventory + Finance	Cross-Functional	Toc	AGENTIC	N	9000000	0		Y
+1	Cross-Functional: Demand Domain (Plan) + Inventory Domain (Plan) + Procurement Domain (Source)	Cross-Functional	Feedback Loop	DETERMINISTIC	N	8500000	0		Y
+1	Manage Category Innovation	Source & Procure	Category Management	AGENTIC	N	8000000	0		N
+1	Receive Goods & Services	Source & Procure	Order to "Ok To Pay"	AGENTIC	N	8000000	0		N
+1	Conduct Volume to Value Planning	Plan	Sales & Operations Planning	DETERMINISTIC	N	7000000	0		N
+1	Cross-Functional: Procurement + Finance	Cross-Functional	Toc	DETERMINISTIC	N	7000000	0		Y
+1	Define Ml Forecast Model	Plan	Forecast Analytics	DETERMINISTIC	N	6000000	0		N
+1	Manage Supply Planning Data	Plan	Supply Strategy & Analytics	AGENTIC	N	6000000	0		N
+1	Conduct Distribution Requirements Planning	Plan	Tactical Supply Planning	AGENTIC	N	6000000	0		N
+1	Execute Material Call off	Plan	Operational Supply Planning	DETERMINISTIC	N	6000000	0		N
+1	Execute Sourcing	Source & Procure	Sourcing	AGENTIC	N	6000000	0		N
+1	Author Contract	Source & Procure	Contract Management	AGENTIC	N	6000000	0		N
+1	Monitor LSP Spend & Contract Compliance	Fulfill	Logistics Service Provider (LSP) Selection and Management	AGENTIC	N	6000000	0		N
+1	Cross-Functional: Inventory + Finance	Cross-Functional	Toc	DETERMINISTIC	N	6000000	0		Y
+1	Cross-Functional: Inventory Domain + Fulfill Domain + Finance Domain	Cross-Functional	Feedback Loop	DETERMINISTIC	N	6000000	0		Y
+1	Cross-Functional: Revenue Domain + Demand Domain + Plan Domain	Cross-Functional	Feedback Loop	DETERMINISTIC	N	5200000	0		Y
+2	Execute Spot Buy	Source & Procure	Order to "Ok To Pay"	AGENTIC	N	17703000	0		N
+2	Define Statistical Forecast Model	Plan	Forecast Analytics	DETERMINISTIC	N	5000000	0		N
+2	Cross-Functional: Demand + Procurement + Finance	Cross-Functional	Toc	AGENTIC	N	5000000	0		Y
+2	Cross-Functional: Procurement Domain + Supply Domain + Finance Domain	Cross-Functional	Feedback Loop	AGENTIC	N	4200000	0		Y
+2	Manage Integrated Scenarios	Plan	Sales & Operations Planning	DETERMINISTIC	N	3762000	0		N
+2	Prepare and Conduct Portfolio Review	Plan	Sales & Operations Planning	DETERMINISTIC	N	3762000	0		N
+2	Manage Risk Segmentation & Assessment	Source & Procure	Risk & Resiliency	AGENTIC	N	3762000	0		N
+2	Manage Resilience Procurement	Source & Procure	Risk & Resiliency	AGENTIC	N	3762000	0		N
+2	Manage Resilience Procurement	Source & Procure	Risk & Resiliency	AGENTIC	N	3762000	0		N
+2	Conduct Transactional Procurement	Source & Procure	Order to "Ok To Pay"	AGENTIC	N	3762000	0		N
+2	Execute Spot Buy	Source & Procure	Order to "Ok To Pay"	DETERMINISTIC	N	3762000	0		N
+2	Receive Goods & Services	Source & Procure	Order to "Ok To Pay"	DETERMINISTIC	N	3762000	0		N
+2	Manage Import / Export	Fulfill	Global Trade Management	DETERMINISTIC	N	3500000	0		N
+2	Cross-Functional: Revenue + Plan + Fulfill	Cross-Functional	Value Flow	AGENTIC	N	3500000	0		Y
+2	Manage Import / Export	Fulfill	Global Trade Management	DETERMINISTIC	N	3000000	0		N
+2	Manage Trade Compliance	Fulfill	Global Trade Management	DETERMINISTIC	N	2500000	0		N
+2	Identify and Implement Demand Initiatives	Source & Procure	Demand Planning for Source & Procure	DETERMINISTIC	N	2000000	0		N
+2	Cross-Functional: Fulfill Domain + Plan Domain + Procurement Domain	Cross-Functional	Feedback Loop	AGENTIC	N	1800000	0		Y
+2	Conduct Transactional Procurement	Source & Procure	Order to "Ok To Pay"	DETERMINISTIC	N	1500000	0		N
+2	Cross-Functional: Digital Control Tower + Plan + Fulfill + Source & Procure	Cross-Functional	Value Flow	AGENTIC	N	1500000	0		Y
+2	Cross-Functional: Plan + Fulfill	Cross-Functional	Five Whys	AGENTIC	N	1200000	0		Y
+2	Cross-Functional: Plan + Fulfill + Digital Control Tower	Cross-Functional	Five Whys	AGENTIC	N	1200000	0		Y
+2	Cross-Functional: Finance + Plan + Fulfill	Cross-Functional	Five Whys	AGENTIC	N	1100000	0		Y
+2	Cross-Functional: Procurement + Source & Procure	Cross-Functional	Five Whys	AGENTIC	N	1000000	0		Y
+2	Cross-Functional: Source & Procure + Plan + Procurement	Cross-Functional	Value Flow	AGENTIC	N	1000000	0		Y
+3	Conduct Volume to Value Planning	Plan	Sales & Operations Planning	DETERMINISTIC	N	12000000	0		N
+3	Prepare and Conduct Portfolio Review	Plan	Sales & Operations Planning	DETERMINISTIC	N	8000000	0		N
+3	Conduct Distribution Requirements Planning	Plan	Tactical Supply Planning	AGENTIC	N	7000000	0		N
+3	Prepare and Conduct Sales/Activity Review	Plan	Sales & Operations Planning	DETERMINISTIC	N	7000000	0		N
+3	Define Statistical Forecast Model	Plan	Forecast Analytics	DETERMINISTIC	N	6000000	0		N
+3	Review Supply Capability	Plan	Tactical Supply Planning	DETERMINISTIC	N	5000000	0		N
+3	Conduct Distribution Requirements Planning	Plan	Tactical Supply Planning	AGENTIC	N	5000000	0		N
+3	Define Ml Forecast Model	Plan	Forecast Analytics	DETERMINISTIC	N	4000000	0		N
+3	Define Ml Forecast Model	Plan	Forecast Analytics	DETERMINISTIC	N	4000000	0		N
+3	Develop Sourcing Profile & Strategy	Source & Procure	Sourcing	DETERMINISTIC	N	4000000	0		N
+3	Cross-Functional: Plan + Source & Procure + Fulfill	Cross-Functional	Value Flow	DETERMINISTIC	N	4000000	0		Y
+3	Define Demand Segmentation	Plan	Forecast Analytics	DETERMINISTIC	N	3762000	0		N
+3	Manage Performance Objectives	Source & Procure	Execute Governance & Infrastructure	DETERMINISTIC	N	3762000	0		N
+3	Manage Category Innovation	Source & Procure	Category Management	DETERMINISTIC	N	3762000	0		N
+3	Manage Category Innovation	Source & Procure	Category Management	DETERMINISTIC	N	3762000	0		N
+3	Manage Supplier Diversity & Inclusion Strategy	Source & Procure	Responsibility, Sustainability & Supplier Diversity	DETERMINISTIC	N	3762000	0		N
+3	Manage Sustainability Strategy	Source & Procure	Responsibility, Sustainability & Supplier Diversity	AGENTIC	N	3762000	0		N
+3	Develop Responsibility & Ethics Strategy	Source & Procure	Responsibility, Sustainability & Supplier Diversity	DETERMINISTIC	N	3762000	0		N
+3	Conduct Transactional Procurement	Source & Procure	Order to "Ok To Pay"	AGENTIC	N	3762000	0		N
+3	Develop Digital & Automation Strategy	Fulfill	Fulfilment Strategy	DETERMINISTIC	N	3762000	0		N
+3	Manage Business Processes	Source & Procure	Execute Governance & Infrastructure	DETERMINISTIC	N	2000000	0		N
+3	Demand Planning for Source & Procure	Source & Procure	Demand Planning for Source & Procure	DETERMINISTIC	N	2000000	0		N
+3	Manage Import / Export	Fulfill	Global Trade Management	DETERMINISTIC	N	2000000	0		N
+3	Cross-Functional: Plan + Source & Procure + Fulfill	Cross-Functional	Feedback Loop	DETERMINISTIC	N	2000000	0		Y
+3	Manage Customer Experience	Source & Procure	Business Intake	DETERMINISTIC	N	1500000	0		N
+3	Cross-Functional: Plan + Inventory	Cross-Functional	Five Whys	DETERMINISTIC	N	1500000	0		Y
+3	Cross-Functional: Inventory + Fulfill	Cross-Functional	Feedback Loop	DETERMINISTIC	N	1500000	0		Y
+3	Cross-Functional: Plan + Demand Planning + Forecast Analytics	Cross-Functional	Value Flow	DETERMINISTIC	N	1200000	0		Y
+3	Cross-Functional: Revenue + Plan + Inventory	Cross-Functional	Five Whys	DETERMINISTIC	N	1000000	0		Y
+3	Cross-Functional: Plan + Forecasting	Cross-Functional	Five Whys	DETERMINISTIC	N	900000	1	NO_STAKES	Y
+3	Cross-Functional: Plan + Inventory + Procurement + Digital Control Tower	Cross-Functional	Five Whys	DETERMINISTIC	N	900000	1	NO_STAKES	Y
+3	Cross-Functional: Demand Planning + Source & Procure + Fulfill	Cross-Functional	Toc	DETERMINISTIC	N	100000	1	NO_STAKES	Y

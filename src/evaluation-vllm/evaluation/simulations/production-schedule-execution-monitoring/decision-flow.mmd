@@ -1,0 +1,20 @@
+flowchart TD
+  A[Trigger: Daily production schedule generation and continuous production progress monitoring.]
+  A --> N1[Stream: DDM/Crawlers - Generate daily production schedule]
+  N1 --> N2{PB: CWB Lifecycle - Finalize and release schedule}
+  N2 -->|Primary| N3[Stream: STREAMS - Monitor production progress]
+  N3 --> N4[PB: Notification - Report deviations]
+  N4 --> N5[Cortex: RCA Service - Analyze deviations]
+  N5 --> N6{PB: CWB Lifecycle - Plan rework/repair activities}
+  N6 --> N7{PB: AutoML - Optimize changeover plans}
+  N7 --> Z1[Outcome: Improved on-time delivery, reduced COGS, and optimized working capital through efficient production scheduling and monitoring.]
+  N2 -->|High deviation from schedule| B1[Escalate to plant manager]
+  B1 --> O1[Outcome: Manual intervention to resolve critical issues.]
+  O1 --> End[End]
+  N2 -->|Insufficient materials| B2[Trigger material replenishment]
+  B2 --> O2[Outcome: Ensure availability of required materials.]
+  O2 --> End[End]
+  N2 -->|Unexpected equipment downtime| B3[Adjust schedule and notify maintenance team]
+  B3 --> O3[Outcome: Minimize impact on production.]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,48 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Manufacturing Execution System (MES)
+    type: MES
+    status: tbd
+  - name: Quality Management System (QMS)
+    type: QMS
+    status: tbd
+aera_ingestion:
+  - stream_name: production-orders
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: material-availability
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: welding-line-capacities
+    stream_type: Event Stream
+    source: MES
+  - stream_name: biw-panel-specifications
+    stream_type: Event Stream
+    source: PLM/CAD (tbd)
+  - stream_name: quality-history
+    stream_type: Event Stream
+    source: QMS
+processing:
+  - component: Remote Functions (constraint solver)
+    type: cortex
+    function: >-
+      Produce an optimized, feasible production sequence minimizing changeovers
+      and rework risk
+  - component: Process Builder - IF + Action Item
+    type: process_builder
+    function: >-
+      Automatically accept low-risk schedules; create CWB/Action Items for
+      exceptions beyond thresholds
+  - component: Process Builder - Transaction + Remote Functions (SAP writeback)
+    type: process_builder
+    function: >-
+      Write schedule and release decisions to SAP S/4HANA and notify MES for
+      execution
+ui_surface:
+  - component: UI Screen (dashboard + CWB Lifecycle view)
+    screen: Primary
+    purpose: >-
+      Provide visibility, enable targeted overrides, and capture operator
+      decisions

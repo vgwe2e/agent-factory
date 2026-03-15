@@ -1,0 +1,57 @@
+decision: >-
+  Choose supplier usage mix (preferred LSP vs. alternatives, ramp-ups) and
+  contract enforcement actions that balance marginal COGS impact against
+  supplier performance risk and contractual terms.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Daily scheduled ingest or detection of LSP performance deviation (KPIs
+    breach vs. contract SLAs) via STREAMS/monitoring job.
+  parameters:
+    objective: >-
+      Continuously optimize LSP (Logistics Service Provider) spend and enforce
+      contract compliance by aligning demand signals with supplier performance
+      to reduce COGS, improve working capital, and protect EBITDA.
+    key_inputs:
+      - Contract terms & rate cards (LSP master contracts)
+      - Shipment events & freight invoices
+      - Operational KPIs (on-time, claims, dwell, detention)
+      - Demand forecast / consumption signals
+      - Inventory & order shortage signals
+      - Historical spend and KPI trends
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Kinaxis RapidResponse
+      - Blue Yonder WMS
+      - Uber Freight (TMS / 3PL)
+      - SAS (Advanced Statistical Forecasting)
+expected_output:
+  action: >-
+    Automatically detect LSP performance deviations, surface root causes and
+    contract obligations, produce ranked corrective actions (auto-route
+    shipments, alternate LSP ramp-ups, claim/penalty initiation), and open CWB
+    Lifecycle recommendations for approvals or execute Remote Function
+    writebacks to S4/TMS when within auto-action thresholds.
+  outcome: >-
+    Tighter cost control and higher contract utilization leading to lower
+    freight COGS, fewer service exceptions, improved working capital through
+    timely dispute/claim handling, and measurable EBITDA uplift from optimized
+    LSP mix and penalty recovery.
+  affected_components:
+    - STREAMS / DDM/Crawlers
+    - Cortex Auto Forecast + RCA Service
+    - Remote Functions + CWB Lifecycle
+    - Notification + UI Screen (dashboard/report)
+    - Process Builder (Rules / IF) + Agent Team
+    - Dashboard
+rationale: >-
+  Combining demand forecasts, contract content, real shipment costs, and
+  supplier KPIs in an agentic DI workflow enables proactive, explainable
+  trade-offs between cost and risk. Agentic AI (Agent Team + Process Builder
+  orchestration) handles unstructured contract parsing and adaptive decisions
+  while Cortex services provide demand alignment and RCA for deviations—enabling
+  automated actions or human-in-the-loop approvals where required.

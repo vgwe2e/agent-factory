@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Start of planning cycle or detection of a material deviation between baseline plan and short-term demand signals (e.g., sudden sales uplift, promo event, or rising stockout risk).]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Consolidate and normalize master data and transaction history across S4, WMS, and external feeds]
+  N1 --> N2[Cortex: Cortex Auto Forecast + SAS integration (Data Science) - Generate baseline and short-horizon forecasts and anomaly signals]
+  N2 --> N3{PB: Process Builder (Rules + CWB Lifecycle) - Prioritize categories and SKU/location actions, run trade-off analytics and approval}
+  N3 -->|Primary| N4[PB: Process Builder + Remote Functions - Execute replenishment, expediting, reallocation, and order changes to planning/execution systems]
+  N4 --> N5[UI: UI Screens + Subject Areas - Surface dashboards, exception lists, and CWB recommendations to stakeholders and monitor outcomes]
+  N5 --> Z1[Outcome: Reduced stockouts and spoilage, improved service levels, optimized inventory (lower safety stock/working capital), protected revenue vs. promo spend, and measurable EBITDA uplift through coordinated demand planning and automated execution.]
+  N3 -->|Baseline forecast confidence is low o...| B1[Trigger short-term sensing subprocess: run higher-frequency forecasts, launch RCA Service, surface CWB for human review and consensus adjustments]
+  B1 --> O1[Outcome: Adjusted short-horizon plan with human-approved overrides or automated safe actions to avoid stockouts]
+  O1 --> End[End]
+  N3 -->|High stockout risk for priority SKUs ...| B2[Automated expedite/reallocation flow via Process Builder + Remote Functions to Kinaxis and S4; notify logistics (Uber Freight) for expedited transport]
+  B2 --> O2[Outcome: Mitigated stockout risk and preserved revenue for high-priority SKUs]
+  O2 --> End[End]
+  N3 -->|Planned promotions materially increas...| B3[Run scenario trade-off analysis in Process Builder, surface options via CWB Lifecycle (e.g., defer non-critical promos, increase temporary supply, reallocate inventory), and require stakeholder approval]
+  B3 --> O3[Outcome: Optimized promo execution that balances revenue with margin and supply constraints]
+  O3 --> End[End]
+  Z1 --> End[End]

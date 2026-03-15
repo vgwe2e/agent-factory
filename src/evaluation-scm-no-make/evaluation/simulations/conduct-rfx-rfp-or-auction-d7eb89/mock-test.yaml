@@ -1,0 +1,68 @@
+decision: >-
+  Select optimal sourcing approach (RFx / RFP / Auction / Direct Negotiation),
+  supplier shortlist, and contract-aware execution plan (timing of RFx,
+  negotiation path, PO timing) that balances price, speed, supplier risk, and
+  working capital impact.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Periodic category sourcing window or event-driven signal (high spend
+    cadence, forecasted demand surge, supplier risk alert, or contract
+    expiration) detected in planning or ERP systems.
+  parameters:
+    objective: >-
+      Automate end-to-end sourcing decisions—sourcing approach selection,
+      supplier prequalification, RFx execution, contract-aware negotiations, and
+      implementation planning—to minimize COGS, protect margins, and optimize
+      working capital while reducing cycle time and improving supplier
+      resilience.
+    key_inputs:
+      - Spend History & Open POs
+      - Forecasted Demand & Shortage Signals
+      - Supplier Risk Scores & Prequalification Data
+      - Active Contracts & Terms (pricing, volume discounts, payment/PO timing)
+      - Category Profiles & Sourcing Playbooks
+      - Market Pricing / Benchmark Data
+      - Inventory & FG Safety Stock Targets
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Kinaxis RapidResponse
+      - >-
+        Kinaxis (general services e.g., rebalancing, expediting, FG safety
+        stock)
+      - SAS
+      - Blue Yonder WMS
+      - Uber Freight / TMS
+      - Contract Management System
+      - Supplier Risk & Prequalification Platform
+      - Procurement Portal / Catalog
+      - Market Pricing / Benchmarking API
+expected_output:
+  action: >-
+    Agentic AI (Agent Team) evaluates consolidated spend, demand forecasts,
+    supplier risk, and contract rules, recommends sourcing route and supplier
+    shortlist; Process Builder automates RFx/RFP creation, invokes Remote
+    Functions for contract validation and ERP writeback plans, and routes
+    recommendations through CWB Lifecycle for procurement approvals.
+  outcome: >-
+    Reduced COGS (target 2–5%), preserved/expanded margins, improved supplier
+    resilience and reduced supply risk, shortened sourcing cycle times, and
+    optimized working capital via contract-aligned PO timing and smarter payment
+    terms.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex RCA Service + Cortex Auto Forecast
+    - Process Builder (Transaction + Remote Functions)
+    - CWB Lifecycle
+    - UI Screen + Notification
+    - Agent Team (agentic_ai) orchestrated by Process Builder
+    - Dashboard
+rationale: >-
+  Combining cross-domain data (ERP spend, forecasts, risk, contracts) with
+  agentic AI enables adaptive, rule-guarded sourcing choices that minimize
+  manual cycle time and enforce contract/working-capital constraints while
+  maximizing supplier competition where appropriate.

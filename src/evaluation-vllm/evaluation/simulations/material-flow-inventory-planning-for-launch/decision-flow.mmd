@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: New product launch initiation.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve initial parts order quantities and buffer levels.]
+  N1 --> N2[Stream: STREAMS - Analyze BOM release schedule and material constraints.]
+  N2 --> N3{PB: Remote Functions - Determine optimal buffer levels and mitigation actions.}
+  N3 -->|Primary| N4{PB: Remote Functions - Plan end-of-life for phased-out components.}
+  N4 --> N5[PB: Remote Functions - Execute initial orders and buffer adjustments.]
+  N5 --> N6[PB: Exception Management - Monitor and escalate material shortages.]
+  N6 --> Z1[Outcome: Reduced working capital, protected EBITDA, improved on-time launch delivery.]
+  N3 -->|High material constraint risk detected.| B1[Initiate alternative sourcing and expediting actions.]
+  B1 --> O1[Outcome: Mitigate EBITDA impact through proactive supply chain actions.]
+  O1 --> End[End]
+  N3 -->|Significant material shortage identif...| B2[Escalate to senior management for expedited recovery.]
+  B2 --> O2[Outcome: Ensure timely resolution of critical shortages.]
+  O2 --> End[End]
+  N3 -->|End-of-life transition risks identified.| B3[Adjust production schedules and inventory levels.]
+  B3 --> O3[Outcome: Minimize transition risks and optimize working capital.]
+  O3 --> End[End]
+  Z1 --> End[End]

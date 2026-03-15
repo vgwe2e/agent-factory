@@ -1,0 +1,58 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Aera Subject Areas
+    type: Data Warehouse
+    status: tbd
+  - name: Cortex Auto Forecast
+    type: AI Service
+    status: tbd
+aera_ingestion:
+  - stream_name: confirmed-orders-sales-orders
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: demand-forecasts-regional-npi-promotions
+    stream_type: time_series
+    source: Cortex Auto Forecast
+  - stream_name: on-hand-inventory-and-allocations
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: fulfillment-capacity-line-plant-schedules
+    stream_type: batch
+    source: Aera Subject Areas
+  - stream_name: s-op-capacity-and-cogs-targets
+    stream_type: batch
+    source: Aera Subject Areas
+  - stream_name: promotions-launch-schedules
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Produce demand signals and variance drivers (seasonality, promotion, NPI)
+      to inform ATP
+  - component: Process Builder (IF, Rules) + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Evaluate inventory vs. demand vs. capacity and produce
+      accept/partial/reject recommendation with rationale
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Write ATP commitment to SAP S/4HANA or initiate exception CWB for planner
+      action
+  - component: UI Screens + Notification
+    type: process_builder
+    function: >-
+      Provide transparent recommendations, explainability, and action items for
+      human review
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automatically align demand signals, inventory availability, and
+      fulfillment capacity to produce accurate atp commitments that support s&op
+      capacity and cogs targets while preserving service levels. and approve the
+      recommended action.

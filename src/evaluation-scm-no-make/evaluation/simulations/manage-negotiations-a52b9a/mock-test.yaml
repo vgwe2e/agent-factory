@@ -1,0 +1,59 @@
+decision: >-
+  Select an optimal execution strategy for the spot buy: (a) run aggregated
+  competitive spot auction, (b) execute targeted negotiated buy with preferred
+  suppliers, or (c) split buys across multiple suppliers — balancing expected
+  cost, supplier risk score, and contract constraints.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Detected spot-buy demand signal: high-variance input category demand spike
+    or shortage alert from planning that exceeds configured threshold and is
+    outside covered contract capacity.
+  parameters:
+    objective: >-
+      Automate end-to-end spot buy orchestration to minimize COGS and protect
+      EBITDA by combining touchless demand signals, real-time supplier markets,
+      and contract terms to dynamically select suppliers, negotiate terms, and
+      execute purchases with minimal manual intervention.
+    key_inputs:
+      - spot_demand_signals
+      - real_time_supplier_market_offers
+      - contract_terms_and_NRCs
+      - inventory_positions_and_fg_safety
+      - pricing_benchmarks_and_historical_spot
+      - supplier_risk_profiles
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Kinaxis RapidResponse
+      - Blue Yonder WMS
+      - Uber Freight (TMS)
+expected_output:
+  action: >-
+    Agentic workflow aggregates demand, evaluates real-time market offers and
+    contract terms, proposes a negotiation strategy, runs automated supplier
+    engagement (bids/requests), and executes purchase order writeback to S4 for
+    approved buys; human review only for high-risk or overridden cases.
+  outcome: >-
+    Touchless execution of spot buys where feasible, reduction in unit cost vs
+    baseline, preserved service levels, faster cash-to-invoice cycle, and audit
+    trail of decision rationale and supplier negotiations; exceptions routed to
+    procurement CWB for review.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex (RCA Service + AutoML) + Remote Functions
+    - CWB Lifecycle + UI Screen
+    - Process Builder (Notification) + Dashboard
+    - Process Builder (IF, Rules) + Agent Team (agentic_ai)
+    - Process Builder (Action Item, Remote Functions) + Agent Team
+    - Dashboard
+rationale: >-
+  Agentic AI can synthesize unstructured market signals, multi-source demand
+  inputs, and contractual rules to optimize supplier selection and negotiation
+  strategy. Using Process Builder orchestration with Agent Team agents + Remote
+  Functions enables secure ERP writeback and deterministic fallbacks for risk
+  control while minimizing manual cycles.

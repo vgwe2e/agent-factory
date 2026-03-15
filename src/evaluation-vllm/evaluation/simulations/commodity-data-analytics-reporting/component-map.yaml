@@ -1,0 +1,37 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Identify potential supply risks.
+    confidence: confirmed
+    capability: Identify potential supply risks.
+  - name: AutoML
+    purpose: Recommend strategic sourcing actions.
+    confidence: inferred
+    capability: Recommend strategic sourcing actions.
+process_builder:
+  - name: Report Data
+    purpose: Provide insights into market trends and risks.
+    confidence: confirmed
+    node_type: data
+  - name: CWB Lifecycle
+    purpose: Enable human-in-the-loop decision-making.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Implement optimized procurement strategies.
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce working capital tied to commodities, minimize supply risk
+      exposure, and improve ebitda by aligning spend with strategic sourcing,
+      supplier risk flags, and market dynamics. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

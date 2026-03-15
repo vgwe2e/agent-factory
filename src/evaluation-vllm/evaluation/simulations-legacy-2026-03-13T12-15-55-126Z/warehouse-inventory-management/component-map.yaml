@@ -1,0 +1,23 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      SQL-based data transformation, cleansing, aggregation, and validation of
+      warehouse data (e.g., inventory levels, equipment usage, item turnover) to
+      support rule-based decisioning.
+    confidence: confirmed
+cortex: []
+process_builder:
+  - name: Rules
+    purpose: >-
+      Apply business rules for inventory disposition, storage optimization,
+      slotting, and maintenance scheduling (e.g., 'if inventory age > 12 months
+      and demand = 0, write-off').
+    confidence: confirmed
+agent_teams: []
+ui:
+  - name: UI Screens
+    purpose: >-
+      User interface for viewing storage recommendations, slotting plans,
+      maintenance schedules, and handling exception workflows (e.g., manual
+      review of obsolete inventory disposition).
+    confidence: confirmed

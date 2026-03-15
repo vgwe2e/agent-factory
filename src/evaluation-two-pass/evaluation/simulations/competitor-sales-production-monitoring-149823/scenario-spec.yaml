@@ -1,0 +1,155 @@
+objective: >-
+  Autonomously prioritize regions and customer segments and orchestrate demand
+  shaping, supply commitments, and pricing adjustments using integrated market,
+  competitor, economic, consumer, and regulatory signals to reduce working
+  capital and increase revenue capture.
+trigger: >-
+  Scheduled daily/weekly orchestration or event-driven trigger when competitor
+  sales/production or regional market volatility exceeds configured threshold.
+decision: >-
+  Deterministic selection and ranking of regions and customer segments for
+  targeted demand-shaping, supply commitment adjustments, and price
+  recommendations using rule-based scoring + deterministic optimization with a
+  confidence threshold that gates human review.
+expected_action: >-
+  Process Builder ingests enterprise and external signals, runs deterministic
+  scoring and optimization (Rules + Remote Functions + Cortex forecasts),
+  surfaces prioritized actions; if confidence >= threshold then automatically
+  execute Remote Functions to update SAP S/4HANA supply commitments and push
+  pricing signals; if confidence < threshold then create Agent Team review
+  Action Items and hold writebacks until approval.
+expected_outcome: >-
+  Timely, region-specific adjustments that reduce inventory days and working
+  capital while increasing captured revenue from competitor-driven market
+  shifts; measurable KPIs: lower days-of-inventory, improved regional revenue
+  capture, reduced stock imbalances within the planning horizon.
+rationale: >-
+  Combining deterministic rules with forecast signals (demand shifts, competitor
+  moves, economic indicators, consumer preference changes, regulatory impacts)
+  enables fast, auditable decisions. Using Process Builder for orchestration,
+  deterministic scoring rules for explainability, Cortex forecasting for signal
+  validation, and Remote Functions for controlled writebacks balances speed with
+  safety and preserves ERP integrity.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Competitor data feeds (third-party / web-scrape)
+    type: External Feed
+    status: tbd
+  - name: Regional economic indicators (macro data provider)
+    type: External Feed
+    status: tbd
+  - name: Consumer preference signals (surveys/CRM insights)
+    type: External Feed
+    status: tbd
+  - name: Regulatory / policy updates feed
+    type: External Feed
+    status: tbd
+key_inputs:
+  - name: Current sales & supply commitments
+    source: SAP S/4HANA
+    purpose: >-
+      Baseline supply positions, open orders, shipments and lead times for
+      writeback and impact assessment
+    preferred_stream_type: batch
+  - name: Competitor sales & production signals
+    source: Competitor data feeds (third-party / web-scrape)
+    purpose: >-
+      Detect competitor production ramps, promotions, or supply constraints to
+      infer regional demand shifts
+    preferred_stream_type: api
+  - name: Regional economic indicators
+    source: Regional economic indicators (macro data provider)
+    purpose: >-
+      Adjust demand sensitivity and risk scores by macro conditions
+      (unemployment, consumer confidence)
+    preferred_stream_type: batch
+  - name: Consumer preference / channel signals
+    source: Consumer preference signals (surveys/CRM insights)
+    purpose: >-
+      Identify shifts in model/feature demand and channel-specific demand
+      shaping levers
+    preferred_stream_type: batch
+  - name: Regulatory event stream
+    source: Regulatory / policy updates feed
+    purpose: >-
+      Flag region-specific regulatory impacts (e.g., incentives, emissions
+      rules) that affect pricing and demand
+    preferred_stream_type: api
+  - name: Operational constraints
+    source: SAP S/4HANA
+    purpose: >-
+      Capacity, lead time, and fulfillment constraints used to filter feasible
+      supply commit actions
+    preferred_stream_type: batch
+happy_path:
+  - step: >-
+      Ingest external market, competitor, consumer, and regulatory feeds into
+      the platform and transform with STREAMS/DDM
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate and normalize external signals into subject-area friendly
+      tables for analysis
+  - step: >-
+      Ingest SAP S/4HANA sales, open orders, inventory and constraints into
+      Subject Areas
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Provide authoritative supply positions and operational constraints for
+      decisioning
+  - step: >-
+      Score regional/segment impact using Cortex Auto Forecast for short-term
+      demand validation and Process Builder Rules for deterministic scoring
+    stage: analyze
+    component: 'Cortex Auto Forecast + Process Builder: Rules'
+    purpose: >-
+      Combine forecasted demand shifts with rule-based business logic to compute
+      priority and expected ROI per region/segment
+  - step: >-
+      Decide prioritized actions via Process Builder; if confidence below
+      threshold, open Agent Team review; otherwise generate deterministic action
+      set
+    stage: decide
+    component: 'Process Builder: IF + Process Builder: Agent Team'
+    purpose: >-
+      Apply confidence gating and human-in-the-loop only when required,
+      producing clear action items for execution
+  - step: >-
+      Execute actions: Remote Functions write supply commits to SAP S/4HANA and
+      push pricing recommendations; notify stakeholders and surface
+      recommendations in UI
+    stage: act
+    component: 'Remote Functions + Process Builder: Notification + UI Screens'
+    purpose: >-
+      Make authorized changes to ERP and surface recommendations and rationale
+      to commercial and supply teams
+branches:
+  - condition: >-
+      Confidence score below configured threshold or conflicting signals across
+      inputs
+    response: >-
+      Create Agent Team CWB Action Items for manual review and hold automated
+      writebacks; include diagnostic payload and recommended conservative
+      options
+    outcome: >-
+      Human reviewers approve, modify, or reject actions; avoids risky automatic
+      changes when signals disagree
+  - condition: >-
+      Operational constraints in SAP S/4HANA prevent supply commitment changes
+      (capacity/lead-time limits)
+    response: >-
+      Fallback to demand-shaping and pricing levers only; generate
+      communications and promotions plan via Process Builder
+    outcome: >-
+      Revenue capture pursued without violating supply constraints; supply
+      adjustments deferred until feasible
+  - condition: Forecasted ROI for proposed actions is negative or below minimum threshold
+    response: >-
+      Suppress automatic action, log the decision, and schedule a re-evaluation
+      window; notify stakeholders with rationale
+    outcome: >-
+      Prevents unnecessary costs or inventory changes; maintains audit trail for
+      future analysis

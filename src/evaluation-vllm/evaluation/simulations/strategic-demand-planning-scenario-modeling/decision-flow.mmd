@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Quarterly business review meeting]
+  A --> N1[Stream: DDM/Crawlers - Extract historical sales data from SAP S/4HANA]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Perform time-series forecasting using Cortex Auto Forecast]
+  N2 --> N3[Stream: STREAMS - Integrate macroeconomic indicators and technology adoption rates]
+  N3 --> N4{PB: CWB Lifecycle - Validate and refine demand projections}
+  N4 -->|Primary| N5[PB: Remote Functions - Deliver validated demand forecasts to manufacturing and suppliers]
+  N5 --> Z1[Outcome: Reduced working capital, improved OIFF delivery, and tighter production/CAPEX alignment with strategic product shifts]
+  N4 -->|High uncertainty in macroeconomic ind...| B1[Engage CWB Lifecycle for manual review and adjustment]
+  B1 --> O1[Outcome: Adjusted demand plan with higher buffer for risk mitigation]
+  O1 --> End[End]
+  N4 -->|Significant technology shift (e.g., E...| B2[Trigger additional analysis using AutoML for technology impact assessment]
+  B2 --> O2[Outcome: Updated demand plan reflecting technology shift implications]
+  O2 --> End[End]
+  N4 -->|Inaccurate historical sales data| B3[Initiate data quality checks using Data Quality & Validation]
+  B3 --> O3[Outcome: Corrected historical data and re-run demand forecasting]
+  O3 --> End[End]
+  Z1 --> End[End]

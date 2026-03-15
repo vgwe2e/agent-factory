@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New or updated production sequence/schedule, inventory threshold breach, or scheduled replenishment window for a line-side location.]
+  A --> N1[Stream: STREAMS - Consolidate production schedule, inventory, supplier data into subject area]
+  N1 --> N2[Cortex: Cortex Auto Forecast + Data Science - Forecast short-horizon demand windows and compute allocation risk across nodes]
+  N2 --> N3{Agent: Process Builder + Agent Team - Agentic planning selects optimal JIS delivery timing, fulfillment node, and exceptions}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute logistics and ERP updates for picks/shipments and line-side delivery instructions]
+  N4 --> N5[Agent: CWB Lifecycle + UI Screen + Agent Team - Surface recommendations, exceptions and execution status to planners; allow overrides]
+  N5 --> Z1[Outcome: Fewer line stoppages, higher sequence accuracy, lower material handling costs and COGS, improved On-Time-In-Full (OTIF) for assembly lines, and auditable ERP updates for executed deliveries.]
+  N3 -->|Insufficient inventory at all nearby ...| B1[Agent triggers expedited supplier shipment or suggests sequence swap/substitution and presents cost/service tradeoffs via CWB]
+  B1 --> O1[Outcome: Expedited fulfillment reduces line-stop risk at higher cost; planner approves or adjusts plan]
+  O1 --> End[End]
+  N3 -->|Last-minute sequence change within cr...| B2[Process Builder + Agent Team recalculates deliveries, holds/redirects shipments and issues updated pick/ship instructions; alerts impacted lines]
+  B2 --> O2[Outcome: Deliveries realigned to new sequence preserving OTIF where possible; some manual handling may increase]
+  O2 --> End[End]
+  N3 -->|Delivery mismatch or quality exceptio...| B3[CWB Lifecycle opens exception, invokes Rollback Transaction for ERP picks if needed, and routes to human approval with recommended corrective actions]
+  B3 --> O3[Outcome: Incorrect materials prevented from consumption; exception tracked and resolved with audit trail]
+  O3 --> End[End]
+  Z1 --> End[End]

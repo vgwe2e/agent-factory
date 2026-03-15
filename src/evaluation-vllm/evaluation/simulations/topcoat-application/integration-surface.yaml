@@ -1,0 +1,37 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: vehicle-batch-details
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: environmental-parameters
+    stream_type: Event Stream
+    source: Paint Booth Sensors
+  - stream_name: color-standards
+    stream_type: Event Stream
+    source: Color Matching Database
+  - stream_name: curing-oven-temperatures
+    stream_type: Event Stream
+    source: Curing Oven Sensors
+processing:
+  - component: AutoML
+    type: cortex
+    function: >-
+      To select the best application plans based on historical data and current
+      requirements.
+  - component: Remote Functions
+    type: process_builder
+    function: To ensure optimal conditions for paint application.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: To ensure correct color and minimize rework.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review increase revenue by improving paint yield and finish quality,
+      reduce cogs through optimized energy and material usage, and improve otif
+      by ensuring correct sequences and precise environmental control. and
+      approve the recommended action.

@@ -1,0 +1,67 @@
+objective: >-
+  Integrate deterministic, end-to-end inventory and build decisions across
+  global multi-echelon networks to reduce working capital, prevent stockouts,
+  and lower COGS.
+trigger: Periodic review of inventory levels and supply chain performance.
+decision: >-
+  Define and optimize inventory targets, safety stocks, and build strategies to
+  balance working capital and service levels.
+expected_action: >-
+  Automate target setting, safety stock optimization, obsolete/excess inventory
+  reduction, and service-parts integration with coordinated replenishment and
+  build decisions.
+expected_outcome: Near real-time policy-driven actions with measurable P&L impact.
+rationale: >-
+  This solution will enable a more efficient and cost-effective inventory
+  management strategy by leveraging deterministic models and real-time data.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: To assess current inventory positions and identify areas for optimization.
+  - name: Demand Forecasts
+    source: SAP S/4HANA
+    purpose: To predict future demand and set appropriate safety stock levels.
+  - name: Supply Variability Data
+    source: SAP S/4HANA
+    purpose: >-
+      To understand supply chain disruptions and adjust buffer strategies
+      accordingly.
+happy_path:
+  - step: Retrieve current inventory levels and demand forecasts from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+  - step: Analyze data to define optimal inventory targets and policies.
+    stage: analyze
+    component: AutoML
+    purpose: Determine strategic inventory targets and policies.
+  - step: Optimize safety stock levels and buffer strategies using historical data.
+    stage: analyze
+    component: Safety Stock Service
+    purpose: Mitigate demand and supply variability.
+  - step: Identify and plan strategies to reduce obsolete and excess inventory.
+    stage: analyze
+    component: Remote Functions
+    purpose: Minimize carrying costs and improve inventory turnover.
+  - step: Review and adjust build-to-order vs. build-to-stock balance.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Optimize working capital while meeting service levels.
+  - step: Integrate service parts inventory planning across the network.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure post-production support and avoid obsolescence.
+branches:
+  - condition: High variability in supply chain data
+    response: Increase buffer strategies and safety stock levels.
+    outcome: Improved resilience against supply chain disruptions.
+  - condition: Significant excess inventory identified
+    response: Implement targeted promotions or markdowns to reduce excess inventory.
+    outcome: Reduced carrying costs and improved inventory turnover.
+  - condition: Low demand forecast accuracy
+    response: Engage human review and adjustment of inventory targets.
+    outcome: Enhanced accuracy in inventory planning and reduced risk of stockouts.

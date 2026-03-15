@@ -1,0 +1,37 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect production stage data
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Monitoring
+    purpose: Analyze production data for quality issues
+    confidence: confirmed
+    capability: Analyze production data for quality issues
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Decide on quality gate inspections and rework management
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Execute quality checks and rework actions
+    confidence: inferred
+    node_type: act
+  - name: UI Screens
+    purpose: Review quality control plans and adherence
+    confidence: confirmed
+    node_type: review
+  - name: Notification
+    purpose: Notify stakeholders of quality issues and actions
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce waste, prevent rework delays, and improve first-pass yields
+      through coordinated automated inspection decisions, defect-root-cause
+      actions, and adaptive rework/no-rework routing. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

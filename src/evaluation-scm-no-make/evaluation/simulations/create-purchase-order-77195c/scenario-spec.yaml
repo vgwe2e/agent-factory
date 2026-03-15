@@ -1,0 +1,133 @@
+objective: >-
+  Automatically create Purchase Orders in S4 for approved material/service
+  requests while balancing cost, lead-time risk, and contract compliance.
+trigger: >-
+  New material or service request submitted (S4 procurement request or
+  procurement portal).
+decision: >-
+  Choosing purchase order creation quantity and terms between immediate PO
+  issuance and deferred/approval-required options, balancing total cost of
+  ownership, lead-time risk, and contract compliance.
+expected_action: >-
+  Evaluate request against inventory, forecast, supplier contracts, lead times,
+  budget and business rules in Process Builder; auto-issue PO to S4 via Remote
+  Functions when within rules, otherwise open a CWB Lifecycle approval or Action
+  Item for buyer review; notify stakeholders and record transaction.
+expected_outcome: >-
+  Purchase Order created in S4 with legal/commercial/financial terms recorded,
+  financial commitment reserved or approval workflow created, procurement and
+  supplier notified, and transaction logged in Subject Areas for audit and
+  downstream planning.
+rationale: >-
+  PO creation is deterministic and governed by enterprise rules (contracts,
+  budget, ATP, supplier approvals). Automating reduces cycle time, enforces
+  compliance, and ensures financial commitments are captured in ERP while
+  surfacing exceptions for human review.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+  - name: Contract Repository
+    status: tbd
+  - name: Supplier Portal / Catalog
+    status: tbd
+key_inputs:
+  - name: Purchase / Procurement Request
+    source: S4 (procurement module) or Supplier Portal
+    purpose: Trigger and baseline for PO creation (items, qty req, requested dates).
+    preferred_stream_type: Report Data
+  - name: Material Master (prices, UoM, lead times)
+    source: S4
+    purpose: >-
+      Validate item attributes, units, base price and default lead time for PO
+      terms.
+    preferred_stream_type: Data View
+  - name: Forecasted Demand / Recommended Qty
+    source: SAS / Advanced Statistical Forecasting in SAS
+    purpose: Recommend order quantity to balance demand signal vs inventory targets.
+    preferred_stream_type: Report Data
+  - name: Inventory On Hand & Reserved
+    source: Blue Yonder WMS / S4
+    purpose: Determine net requirement and avoid excess ordering.
+  - name: Available-to-Promise (ATP) & Supply Constraints
+    source: S4 / Kinaxis RapidResponse
+    purpose: Assess supply availability and lead-time risk to set PO dates/quantities.
+  - name: Supplier Contracts & Approved Terms
+    source: Contract Repository / S4
+    purpose: >-
+      Enforce negotiated pricing, minimum order quantities, and legal terms in
+      PO.
+  - name: Budget / Financial Approval Limits
+    source: S4 (FI) / Finance system
+    purpose: Validate financial commitment thresholds to decide auto-issue vs approval.
+  - name: Supplier Performance / Qualification
+    source: Kinaxis / Supplier Portal
+    purpose: Determine whether supplier is approved or requires sourcing review.
+happy_path:
+  - step: Ingest new purchase request and enrich with master data
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Collect request and join material, supplier, contract and inventory data
+      for processing.
+  - step: Compute net requirement and recommended order quantity
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Apply demand/forecast data, on-hand inventory, ATP, and contract rules to
+      determine qty and dates.
+  - step: Evaluate rules to decide auto-issue vs approval and finalize terms
+    stage: decide
+    component: Process Builder
+    purpose: >-
+      Run deterministic rules (budget limits, contract compliance, lead-time
+      risk) and branch to auto-issue or CWB approval.
+  - step: Create PO in S4 and persist transaction
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Write PO with legal/commercial terms into S4 and record financial
+      commitment.
+  - step: Notify stakeholders and surface PO for audit and downstream planning
+    stage: notify
+    component: Notification
+    purpose: >-
+      Alert procurement, requester and supplier; update Subject Areas for
+      reporting.
+branches:
+  - condition: Estimated PO value exceeds budget/approval limits
+    response: >-
+      Open CWB Lifecycle approval Action Item routed to finance and procurement;
+      hold PO creation until approval.
+    outcome: >-
+      PO creation deferred; financial approval recorded; on-approval the process
+      resumes to create PO.
+  - condition: Supplier is not approved or contract terms missing
+    response: >-
+      Route to sourcing team via Process Builder Subprocess for supplier
+      qualification or contract negotiation.
+    outcome: >-
+      Sourcing intervention to approve supplier or apply correct contract; PO
+      creation paused until resolution.
+  - condition: Inventory/forecast discrepancy suggests consolidation or different timing
+    response: >-
+      Create an Action Item for buyer review with recommendations (consolidate,
+      split, or postpone).
+    outcome: >-
+      Buyer adjusts order recommendation; updated decision re-evaluated and
+      either auto-issued or sent for approval.

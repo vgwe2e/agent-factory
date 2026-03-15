@@ -1,0 +1,136 @@
+objective: >-
+  Automatically coordinate demand planning, network optimization, replenishment
+  targets, and consensus forecasting to balance OTIF targets with cost-to-serve
+  across customers and locations.
+trigger: >-
+  Daily scheduled run (overnight) plus event-driven triggers from Kinaxis
+  RapidResponse for shortage or capacity breach events.
+decision: >-
+  Select replenishment targets, network configuration changes, and forecast
+  consensus actions that optimize customer-level OTIF subject to cost-to-serve
+  and capacity constraints; present exceptions for human approval when
+  thresholds or overrides occur.
+expected_action: >-
+  Process Builder orchestrates ingestion and analysis (STREAMS + Cortex Auto
+  Forecast + Remote Functions), applies business rules to produce recommended
+  replenishment and network changes, routes exceptions to CWB Lifecycle for
+  review/override, and uses Remote Functions to write approved changes back to
+  S4/Kinaxis/TMS/WMS.
+expected_outcome: >-
+  Improved OTIF consistent with customer SLAs while keeping cost-to-serve within
+  configured thresholds; automated, auditable decisions and writebacks reduce
+  manual cycle time and provide traceability for finance and operations.
+rationale: >-
+  Aligning planning decisions to actual fulfillment capabilities and true
+  cost-to-serve enables targeted tradeoffs (service vs. margin) across Plan,
+  Fulfill, and Finance. Automation reduces latency between detection
+  (shortage/capacity) and remediation (replenishment, rebalancing, forecast
+  consensus), while human-in-the-loop handling of high-impact exceptions
+  preserves control.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: >-
+      Kinaxis RapidResponse (APS / shortage propagation / rebalancing / order
+      expediting)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS / 3PL (transportation & 3PL execution)
+    type: TMS / 3PL
+    status: identified
+key_inputs:
+  - name: Sales orders & on-hand inventory
+    source: S4 (SAP S/4HANA)
+    purpose: Baseline demand, current stock positions, reserve allocations
+    preferred_stream_type: STREAMS
+  - name: Advanced statistical forecasts
+    source: SAS (Advanced Statistical Forecasting)
+    purpose: Baseline demand signal for consensus forecasting and scenario analysis
+    preferred_stream_type: STREAMS
+  - name: Shortage signals & rebalancing options
+    source: Kinaxis RapidResponse
+    purpose: Constraint signals and candidate mitigations for APS-driven rebalancing
+    preferred_stream_type: STREAMS
+  - name: Customer-level SLA / OTIF targets
+    source: S4 (contracts) / Subject Areas
+    purpose: Target service levels to prioritize fulfillment and exceptions
+  - name: Cost-to-serve & transportation cost matrix
+    source: S4 / Uber Freight TMS / Finance Subject Areas
+    purpose: Evaluate margin impact for candidate fulfillment plans
+  - name: Fulfillment capacity & WMS constraints
+    source: Blue Yonder WMS
+    purpose: Validate pick/pack/ship capacity and identify local bottlenecks
+    preferred_stream_type: STREAMS
+  - name: Network topology & lead times
+    source: Kinaxis / S4
+    purpose: Assess network configuration changes and transit impacts
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: >-
+      Ingest master and transactional data (orders, inventory, contracts,
+      WMS/TMS feeds, forecasts, shortage signals).
+    stage: ingest
+    component: STREAMS
+    purpose: Consolidate inputs into Subject Areas for downstream analysis.
+  - step: >-
+      Generate consensus forecasts and quantify OTIF vs cost tradeoffs across
+      scenarios.
+    stage: analyze
+    component: Cortex Auto Forecast + Remote Functions
+    purpose: >-
+      Produce demand signal consensus and run cost-to-serve + OTIF simulation
+      models.
+  - step: >-
+      Orchestrate decision logic to select replenishment targets, rebalancing
+      actions, and network changes; flag exceptions over thresholds.
+    stage: decide
+    component: Process Builder (Rules + IF) + CWB Lifecycle
+    purpose: >-
+      Apply business rules and surface recommendations for auto-apply or human
+      review.
+  - step: >-
+      Execute approved changes: write replenishment orders to S4, push
+      rebalancing to Kinaxis, and schedule transport with TMS.
+    stage: act
+    component: Remote Functions
+    purpose: Perform ERP/TMS/WMS writebacks and trigger downstream execution workflows.
+  - step: >-
+      Notify stakeholders and surface results in dashboards; capture decisions
+      and overrides for RCA and finance reporting.
+    stage: notify
+    component: Process Builder (Notification) + Subject Areas (dashboard)
+    purpose: >-
+      Communicate outcomes, collect overrides, and provide performance
+      traceability.
+branches:
+  - condition: Recommended plan increases cost-to-serve beyond configured threshold
+    response: >-
+      Process Builder holds automated apply, notifies Finance and planners via
+      Notification, and generates lower-cost alternative scenarios for approval.
+    outcome: >-
+      Decision deferred; lower-cost candidate applied after approval or routed
+      to executive signoff.
+  - condition: >-
+      Capacity or supply constraints prevent meeting OTIF targets for a subset
+      of customers
+    response: >-
+      Trigger Kinaxis shortage propagation and prioritization rules;
+      automatically prioritize customers by SLA, adjust replenishment targets
+      and update consensus forecast; notify account teams.
+    outcome: >-
+      Partial fulfillment prioritized per SLA; affected customers flagged and
+      communications issued; alternative mitigation tracked.
+  - condition: Planner manually overrides automated recommendation in CWB
+    response: >-
+      Record override in CWB Lifecycle, require justification, and apply manual
+      targets via Remote Functions; schedule RCA for posterior analysis.
+    outcome: >-
+      Manual plan enacted and tracked for performance and financial
+      reconciliation.

@@ -1,0 +1,59 @@
+decision: >-
+  Finalize integrated demand allocations and supplier shortlist by selecting
+  demand allocations and contract terms that satisfy capacity and cost
+  constraints across SKUs and locations after running SCM should-cost and
+  capacity scenarios with supplier input.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Nightly or on-demand planning run triggered by updated forecast, supplier
+    capacity change, or lead-time exception.
+  parameters:
+    objective: >-
+      Automatically coordinate cross-functional demand planning and supplier
+      readiness by running integrated should-cost and capacity scenarios with
+      suppliers, then finalize an integrated demand plan and supplier shortlist
+      that satisfies cost and capacity constraints across Plan and Source.
+    key_inputs:
+      - Baseline demand forecast
+      - Inventory, open orders, historical shipments
+      - Supplier capacity, lead times, and readiness
+      - Should-cost estimates and contract terms
+      - APS scenario results and shortage propagation
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS / Advanced Statistical Forecasting in SAS
+      - Kinaxis RapidResponse
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL / Uber Freight (carrier)
+      - Supplier portals / direct supplier feeds
+expected_output:
+  action: >-
+    Orchestrate data ingestion, run integrated should-cost and capacity
+    scenarios (Kinaxis + Remote Functions/should-cost models), surface ranked
+    plan + supplier shortlist recommendations via CWB Lifecycle for
+    accept/override, and write finalized plan and shortlist back to S4 and
+    Kinaxis.
+  outcome: >-
+    Aligned Plan and Source: reduced total cost of ownership, protected margins,
+    improved on-time delivery and feasible supplier allocations across SKUs and
+    locations; finalized plan and supplier shortlist persisted to ERP/APS and
+    notifications sent to suppliers/stakeholders.
+  affected_components:
+    - STREAMS
+    - Process Builder
+    - Data Science / Remote Functions
+    - CWB Lifecycle
+    - Process Builder
+    - Notification / UI Screen
+    - Dashboard
+rationale: >-
+  Running linked should-cost and capacity scenarios with supplier inputs before
+  plan finalization ensures demand allocations are cost- and capacity-feasible
+  across Plan and Source, enabling holistic trade-offs (cost vs. availability)
+  and automated execution while preserving human oversight for exceptions.

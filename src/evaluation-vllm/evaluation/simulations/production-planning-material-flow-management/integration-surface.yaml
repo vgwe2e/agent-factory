@@ -1,0 +1,36 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: line-capacity-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-availability-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: throughput-targets
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: agv-status
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Process Builder
+    type: cortex
+    function: >-
+      Create optimal production schedules based on capacity and material
+      availability.
+  - component: Process Builder
+    type: process_builder
+    function: Ensure timely delivery of raw materials to support production.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize daily production scheduling, material replenishment, and
+      capacity utilization to reduce cogs, protect revenue, and improve working
+      capital. and approve the recommended action.

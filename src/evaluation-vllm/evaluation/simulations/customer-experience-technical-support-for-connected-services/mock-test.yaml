@@ -1,0 +1,43 @@
+decision: >-
+  Choose optimal onboarding and activation strategy for connected services,
+  determine remediation actions based on remote diagnostics, decide escalation
+  pathways for critical service failures, and plan proactive communication
+  strategies for service interruptions.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Customer initiates onboarding process or reports a connectivity issue.
+  parameters:
+    objective: >-
+      Enhance customer experience and technical support for connected services
+      by autonomously coordinating onboarding, diagnostics, and real-time
+      communications to maximize revenue, reduce service downtime, and improve
+      retention metrics.
+    key_inputs:
+      - Customer Onboarding Data
+      - Diagnostic Logs
+      - Service Interruption Alerts
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Guide customers through onboarding and activation, recommend and execute
+    remediation actions, escalate critical issues to appropriate teams, and
+    notify customers about service interruptions.
+  outcome: >-
+    Improved customer satisfaction, reduced downtime, increased activation
+    revenue, and decreased churn.
+  affected_components:
+    - DDM/Crawlers
+    - RCA Service
+    - Remote Functions
+    - Process Builder
+    - Notification
+    - Agentic AI
+    - Dashboard
+rationale: >-
+  Autonomous coordination across onboarding, diagnostics, and communications
+  will enhance the overall customer experience and operational efficiency.

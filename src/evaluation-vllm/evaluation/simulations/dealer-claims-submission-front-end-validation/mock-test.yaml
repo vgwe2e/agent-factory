@@ -1,0 +1,38 @@
+decision: >-
+  Determine the completeness of the claim, enforce documentation requirements,
+  and process pre-authorization requests.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Dealer submits a warranty claim.
+  parameters:
+    objective: >-
+      Automate and coordinate end-to-end dealer claim data entry, validation,
+      and pre-authorization processing to reduce manual handling, accelerate
+      claim cash-flows, and improve OTIF metrics.
+    key_inputs:
+      - Warranty Claim Data
+      - Repair Order Documentation
+      - Pre-Authorization Requests
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate claim validation, enforce documentation requirements, and approve
+    or escalate pre-authorization requests.
+  outcome: >-
+    Reduced manual handling, accelerated claim processing, improved OTIF
+    metrics, and standardized front-end compliance.
+  affected_components:
+    - DDM/Crawler
+    - STREAMS
+    - Process Builder
+    - Notification
+    - Dashboard
+rationale: >-
+  Unify L4 processes into a decision-centric workflow to lower working capital
+  tied to claims, reduce error-driven rework, and standardize front-end
+  compliance across dealer networks and service channels.

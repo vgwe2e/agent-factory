@@ -1,0 +1,92 @@
+objective: >-
+  Consolidate four L4 inventory decisions across raw material buffers, WIP
+  balance, finished goods stocking, and plant-level targets into a coordinated,
+  semi-autonomous DI engine to reduce working capital tied to excess stock while
+  preventing stockouts and elevating OTIF.
+trigger: Periodic inventory review and optimization cycle initiated every month.
+decision: >-
+  Set optimal buffer stock levels, balance WIP, optimize finished goods
+  stocking, and set plant-level inventory targets.
+expected_action: >-
+  Automated calculation and recommendation of inventory levels across the
+  network, with human-in-the-loop review and approval.
+expected_outcome: >-
+  Reduced working capital tied to excess stock, minimized stockouts, and
+  improved OTIF.
+rationale: >-
+  By consolidating and automating inventory decisions, we can optimize the
+  entire supply chain, reducing waste and improving efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Raw Material Inventory Levels
+    source: SAP S/4HANA
+    purpose: Calculate optimal buffer stock levels for raw materials.
+  - name: WIP Inventory Levels
+    source: SAP S/4HANA
+    purpose: Balance WIP levels between production stages.
+  - name: Finished Goods Inventory Levels
+    source: SAP S/4HANA
+    purpose: Optimize finished goods stocking at regional DCs.
+  - name: Plant Inventory Targets
+    source: SAP S/4HANA
+    purpose: >-
+      Set plant-level inventory targets balancing throughput, capex, and working
+      capital.
+happy_path:
+  - step: Extract raw material inventory levels from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Collect raw material inventory data.
+  - step: Analyze raw material inventory levels using Safety Stock Service.
+    stage: analyze
+    component: Safety Stock Service
+    purpose: Calculate optimal buffer stock levels.
+  - step: Extract WIP inventory levels from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Collect WIP inventory data.
+  - step: Analyze WIP inventory levels using AutoML.
+    stage: analyze
+    component: AutoML
+    purpose: Optimize WIP levels between production stages.
+  - step: Extract finished goods inventory levels from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Collect finished goods inventory data.
+  - step: Analyze finished goods inventory levels using Safety Stock Service.
+    stage: analyze
+    component: Safety Stock Service
+    purpose: Optimize finished goods stocking at regional DCs.
+  - step: Extract plant inventory targets from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Collect plant inventory target data.
+  - step: Analyze plant inventory targets using AutoML.
+    stage: analyze
+    component: AutoML
+    purpose: Set optimal plant-level inventory targets.
+  - step: Present recommendations to users for review and approval.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Human-in-the-loop review and approval of inventory recommendations.
+  - step: Update inventory levels in SAP S/4HANA based on approved recommendations.
+    stage: act
+    component: Remote Functions
+    purpose: Writeback updated inventory levels to SAP S/4HANA.
+branches:
+  - condition: Inventory levels exceed predefined thresholds.
+    response: Trigger alert and notify relevant stakeholders.
+    outcome: Stakeholders receive notifications and take corrective actions.
+  - condition: Recommendations are rejected by the user.
+    response: Log rejection reason and revert to previous inventory levels.
+    outcome: >-
+      Previous inventory levels are restored, and reasons for rejection are
+      recorded.
+  - condition: Data quality issues detected during extraction.
+    response: Trigger data quality checks and rerun analysis.
+    outcome: >-
+      Data quality is improved, and analysis is rerun to generate accurate
+      recommendations.

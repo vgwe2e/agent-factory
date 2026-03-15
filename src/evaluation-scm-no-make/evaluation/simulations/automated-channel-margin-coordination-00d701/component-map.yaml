@@ -1,0 +1,37 @@
+streams:
+  - name: STREAMS
+    purpose: Consolidate and validate inputs for downstream analysis.
+    confidence: confirmed
+    type: STREAMS
+  - name: Process Builder (Stream -> Data View)
+    purpose: Create consistent margin view and scenario inputs for deterministic rules.
+    confidence: confirmed
+    type: Process Builder (Stream -> Data View)
+cortex: []
+process_builder:
+  - name: Process Builder (IF + Rules)
+    purpose: >-
+      Automatically decide approved actions or flag exceptions based on
+      thresholds and rules.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (ERP writeback) / Transaction
+    purpose: Persist decisions to ERP with transactional integrity and recordability.
+    confidence: confirmed
+    node_type: act
+  - name: Notification + Data View
+    purpose: >-
+      Provide visibility, audit trail, and routing of exceptions to
+      Sales/Finance/Planning via CWB if needed.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically synchronize pricing, rebates, and price-protection
+      actions across direct, distributor, and retail channels to prevent
+      channel-induced margin erosion while preserving channel integrity and
+      financial controls. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

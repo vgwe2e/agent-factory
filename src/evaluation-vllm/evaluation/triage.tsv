@@ -1,0 +1,363 @@
+tier	l3_name	l1_name	l2_name	lead_archetype	quick_win	combined_max_value	flag_count	flags
+1	Warranty Performance Monitoring & Analytics	Service	Warranty Administration & Claims Management	DETERMINISTIC	Y	78000000	0	
+1	Material Handling & Preparation	Make	Stamping Operations	DETERMINISTIC	Y	68000000	0	
+1	Service Parts Network Strategy & Optimization	Move & Fulfill	Service Parts Logistics & Distribution	DETERMINISTIC	Y	42000000	0	
+1	Service Network Performance & Quality Management	Service	Customer Experience & Service Quality	DETERMINISTIC	Y	42000000	1	CONFIDENCE_GAP
+1	Commercial Change Management	Procure Source & Buy	Contract & Commercial Management	DETERMINISTIC	Y	36000000	0	
+1	Executive S&OP / IBP Review & Decision Making	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	Y	34000000	0	
+1	Body-In-White (BIW) Assembly Execution	Make	Body Shop & Welding	DETERMINISTIC	Y	32000000	0	
+1	Dealer Claims Submission & Front-End Validation	Service	Warranty Administration & Claims Management	DETERMINISTIC	Y	32000000	0	
+1	Supplier Quality Strategy & Governance	Procure Source & Buy	Supplier Quality Management	DETERMINISTIC	Y	26000000	0	
+1	Order to Production Scheduling Integration	Move & Fulfill	Order Management & Fulfillment	DETERMINISTIC	Y	26000000	0	
+1	Supplier Acknowledgment & Communication	Procure Source & Buy	Purchase Order Management & Execution	DETERMINISTIC	Y	25000000	0	
+1	Indirect Sourcing Strategy & Planning	Procure Source & Buy	Indirect Procurement	DETERMINISTIC	Y	24000000	0	
+1	Customs	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	Y	24000000	1	ORPHAN
+1	Packaging Compliance & Sustainability	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	Y	24000000	1	CONFIDENCE_GAP
+1	Finished Goods Handling & Dispatch	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	Y	21000000	0	
+1	Asset Lifecycle Management & Tracking	Make	Plant Maintenance & Reliability	DETERMINISTIC	Y	21000000	0	
+1	Statistical Demand Modeling & Analytics	Plan	Demand Forecasting & Sensing	DETERMINISTIC	Y	19500000	0	
+1	New Product Introduction (NPI) Network Readiness	Plan	Supply Network Design & Planning	DETERMINISTIC	Y	18000000	1	CONFIDENCE_GAP
+1	Inbound Logistics & Material Handling	Make	Powertrain Manufacturing (Engine & Transmission)	DETERMINISTIC	Y	18000000	0	
+1	Finished Powertrain Logistics & Outbound Preparation	Make	Powertrain Manufacturing (Engine & Transmission)	DETERMINISTIC	Y	18000000	0	
+1	New Model Launch Quality Readiness	Make	Quality Control & In-Process Inspection	DETERMINISTIC	Y	18000000	0	
+1	Strategic Demand Planning & Scenario Modeling	Plan	Demand Forecasting & Sensing	DETERMINISTIC	Y	17600000	0	
+1	Procurement Technology & Digitalization	Procure Source & Buy	Indirect Procurement	DETERMINISTIC	Y	17000000	0	
+1	Parts Supply Chain & Logistics Coordination	Service	Recall & Field Service Action Management	DETERMINISTIC	Y	17000000	0	
+1	Continuous Improvement & Digital Transformation	Plan	Production Planning & Scheduling	DETERMINISTIC	Y	15000000	0	
+1	Data & Technology Enablement for IBP	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	Y	14000000	0	
+1	Warehouse & Inventory Management	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	Y	14000000	0	
+1	Service Parts Master Data & Bill of Material (BOM) Management	Service	Service Parts Planning & Management	DETERMINISTIC	Y	14000000	0	
+1	New Product Introduction (NPI) Demand Forecasting	Plan	Demand Forecasting & Sensing	DETERMINISTIC	Y	12000000	0	
+1	Demand & Supply Data Integration	Plan	Inventory Planning & Optimization	DETERMINISTIC	Y	11000000	0	
+1	Environmental	Make	Production Support Services	DETERMINISTIC	Y	10000000	2	ORPHAN; CONFIDENCE_GAP
+1	Indirect Category Management & Stakeholder Engagement	Procure Source & Buy	Indirect Procurement	DETERMINISTIC	Y	9100000	0	
+1	Inbound Receiving & Putaway	Move & Fulfill	Warehouse & Distribution Center Operations	DETERMINISTIC	Y	9000000	0	
+1	Paint Material Management	Make	Paint Operations	DETERMINISTIC	Y	8700000	0	
+1	Packaging Inventory Management	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	Y	8600000	0	
+1	Process Validation & Simulation	Make	Manufacturing Engineering & Process Design	DETERMINISTIC	Y	8000000	0	
+1	Compliance	Procure Source & Buy	Procurement Operations & Compliance	DETERMINISTIC	Y	6000000	1	ORPHAN
+1	Sustainability & Circularity Planning	Plan	Supply Network Design & Planning	DETERMINISTIC	Y	5900000	0	
+1	Outbound Shipping & Loading	Move & Fulfill	Warehouse & Distribution Center Operations	DETERMINISTIC	Y	5700000	0	
+2	Cost & Value Optimization Initiatives	Procure Source & Buy	Commodity Management & Market Intelligence	DETERMINISTIC	N	1840000000	0	
+2	Multi-Echelon Inventory Optimization	Plan	Inventory Planning & Optimization	DETERMINISTIC	N	130000000	0	
+2	Production Schedule Execution & Monitoring	Plan	Production Planning & Scheduling	DETERMINISTIC	N	100000000	0	
+2	Stamping Supplier & Outsource Management	Make	Stamping Operations	AGENTIC	N	52000000	0	
+2	Compliance & Risk Management	Move & Fulfill	Outbound Vehicle Logistics & Distribution	AGENTIC	N	52000000	0	
+2	Production Planning & Control	Make	Powertrain Manufacturing (Engine & Transmission)	DETERMINISTIC	N	43000000	0	
+2	New Product Introduction & Lifecycle Planning	Plan	Integrated Business Planning (IBP)	AGENTIC	N	42000000	0	
+2	Manufacturing Anomaly & Issue Resolution	Make	Powertrain Manufacturing (Engine & Transmission)	AGENTIC	N	42000000	0	
+2	Request for Quote (RFQ) & Bid Management	Procure Source & Buy	Strategic Sourcing & Supplier Selection	DETERMINISTIC	N	42000000	0	
+2	Order Fulfillment Exception & Escalation Management	Move & Fulfill	Order Management & Fulfillment	AGENTIC	N	42000000	1	CONFIDENCE_GAP
+2	Production Quality Control & Assurance	Make	Production Support Services	DETERMINISTIC	N	39000000	0	
+2	Carrier Performance & Relationship Management	Move & Fulfill	Outbound Vehicle Logistics & Distribution	AGENTIC	N	39000000	0	
+2	Supplier Identification & Pre-Qualification	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	N	35700000	0	
+2	New Supplier Quality Assessment & Selection	Procure Source & Buy	Supplier Quality Management	DETERMINISTIC	N	35000000	0	
+2	PO Performance Analysis & Continuous Improvement	Procure Source & Buy	Purchase Order Management & Execution	DETERMINISTIC	N	32000000	0	
+2	Indirect Supplier Qualification & Selection	Procure Source & Buy	Indirect Procurement	DETERMINISTIC	N	32000000	0	
+2	Service Parts Inventory & Distribution	Service	Ford Pro Fleet Service & Upfit Operations	AGENTIC	N	32000000	0	
+2	Battery Pack Assembly	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	N	31000000	0	
+2	Order Fulfillment & Picking	Move & Fulfill	Warehouse & Distribution Center Operations	DETERMINISTIC	N	30000000	0	
+2	Returnable Container Fleet Management	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	N	29000000	1	CONFIDENCE_GAP
+2	Inbound Transportation Execution & Monitoring	Move & Fulfill	Inbound Logistics & Material Flow	AGENTIC	N	28000000	0	
+2	Production Planning & Execution Control	Make	Trim Chassis & Final Assembly	DETERMINISTIC	N	27000000	0	
+2	Global Market & Economic Intelligence	Procure Source & Buy	Commodity Management & Market Intelligence	DETERMINISTIC	N	24000000	0	
+2	Connected Services & Aftermarket Order Integration	Move & Fulfill	Order Management & Fulfillment	AGENTIC	N	24000000	0	
+2	Inventory Positioning & Optimization	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	N	24000000	0	
+2	Production Planning & Scheduling (Stamping)	Make	Stamping Operations	AGENTIC	N	22100000	0	
+2	Demand Forecasting & Analysis	Plan	Production Planning & Scheduling	DETERMINISTIC	N	21000000	0	
+2	Material Flow & Inventory Planning for Launch	Plan	New Product Launch Planning	DETERMINISTIC	N	21000000	0	
+2	Supply Base Risk & Resilience Management	Procure Source & Buy	Commodity Management & Market Intelligence	AGENTIC	N	21000000	0	
+2	Supplier Quality Assurance & Improvement	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	N	21000000	0	
+2	Supplier Relationship Management (Operational & Strategic)	Procure Source & Buy	Procurement Operations & Compliance	AGENTIC	N	21000000	0	
+2	Inbound Logistics Exception Management	Move & Fulfill	Inbound Logistics & Material Flow	AGENTIC	N	21000000	0	
+2	Service Parts Network Design & Operations	Service	Service Parts Planning & Management	DETERMINISTIC	N	21000000	0	
+2	Capacity Scenario Modeling & Simulation	Plan	Capacity Planning & Constraint Management	DETERMINISTIC	N	19000000	0	
+2	Supplier Launch Readiness Management	Plan	New Product Launch Planning	DETERMINISTIC	N	19000000	0	
+2	Commodity Data Analytics & Reporting	Procure Source & Buy	Commodity Management & Market Intelligence	DETERMINISTIC	N	19000000	0	
+2	Vehicle & Part Order Allocation	Move & Fulfill	Order Management & Fulfillment	DETERMINISTIC	N	19000000	0	
+2	Launch Risk & Issue Management	Plan	New Product Launch Planning	AGENTIC	N	18000000	0	
+2	Service Parts Order Management	Move & Fulfill	Service Parts Logistics & Distribution	AGENTIC	N	17000000	0	
+2	Returns & Reverse Logistics Management	Move & Fulfill	Warehouse & Distribution Center Operations	AGENTIC	N	17000000	1	CONFIDENCE_GAP
+2	Service Parts Warehouse & Distribution Center Operations	Move & Fulfill	Service Parts Logistics & Distribution	AGENTIC	N	15600000	0	
+2	Line-side Material Delivery	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	N	15500000	0	
+2	New Product Introduction (NPI) Production Planning	Plan	Production Planning & Scheduling	DETERMINISTIC	N	15000000	0	
+2	Transportation Planning & Scheduling	Move & Fulfill	Outbound Vehicle Logistics & Distribution	DETERMINISTIC	N	14000000	0	
+2	Customer Request & Incident Management	Service	Roadside Assistance & Emergency Services	AGENTIC	N	14000000	0	
+2	Constraint Identification & Resolution	Plan	Sales & Operations Planning (S&OP)	AGENTIC	N	13000000	0	
+2	Supplier Interface & Performance Management	Make	Trim Chassis & Final Assembly	AGENTIC	N	12900000	0	
+2	Supplier Collaboration for Inventory Optimization	Plan	Inventory Planning & Optimization	AGENTIC	N	12000000	0	
+2	Battery Module Assembly	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	N	9800000	0	
+2	Transportation Strategy & Mode Optimization	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	N	9000000	0	
+2	Customer Order Modification & Cancellation	Move & Fulfill	Order Management & Fulfillment	DETERMINISTIC	N	8000000	0	
+2	Operator & Automated Quality Inspections	Make	Quality Control & In-Process Inspection	AGENTIC	N	7800000	0	
+2	Emergency & Critical Parts Fulfillment	Move & Fulfill	Service Parts Logistics & Distribution	AGENTIC	N	4000000	0	
+2	Warehouse & Distribution Center Network Management	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	Y	3500000	0	
+2	Goods Receipt, Invoice Verification & Resolution	Procure Source & Buy	Purchase Order Management & Execution	DETERMINISTIC	Y	2740000	0	
+2	Service Parts Demand Forecasting	Plan	Demand Forecasting & Sensing	DETERMINISTIC	Y	0	0	
+2	Aggregate Supply Planning & Capacity	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	N	0	0	
+2	Inventory & Material Flow Strategy	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	N	0	0	
+2	Financial Integration & Profitability Analysis	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	N	0	0	
+2	Master Production Scheduling (MPS)	Plan	Production Planning & Scheduling	DETERMINISTIC	N	0	0	
+2	Material Requirements Planning (MRP) Integration	Plan	Production Planning & Scheduling	DETERMINISTIC	N	0	0	
+2	New Product Introduction (NPI) Capacity Assessment	Plan	Capacity Planning & Constraint Management	DETERMINISTIC	N	0	0	
+2	Service Parts Inventory Management	Plan	Inventory Planning & Optimization	DETERMINISTIC	N	0	0	
+2	Inventory Risk & Obsolescence Management	Plan	Inventory Planning & Optimization	DETERMINISTIC	N	0	0	
+2	Internal Manufacturing Launch Readiness	Plan	New Product Launch Planning	AGENTIC	N	0	0	
+2	Supply Planning & Production Scheduling	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	N	0	0	
+2	Production Planning & Sequencing Integration	Make	Body Shop & Welding	DETERMINISTIC	N	0	0	
+2	Material Flow & In-Plant Logistics	Make	Trim Chassis & Final Assembly	DETERMINISTIC	Y	0	0	
+2	New Model Launch & Production Readiness	Make	Trim Chassis & Final Assembly	DETERMINISTIC	N	0	0	
+2	Maintenance & Asset Management	Make	Trim Chassis & Final Assembly	AGENTIC	N	0	0	
+2	Powertrain Assembly & Sub-Assembly	Make	Powertrain Manufacturing (Engine & Transmission)	AGENTIC	N	0	0	
+2	Supplier In-Plant Quality & Performance Management	Make	Powertrain Manufacturing (Engine & Transmission)	AGENTIC	N	0	0	
+2	Production Planning & Material Flow Management	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	N	0	0	
+2	Manufacturing System Integration & Layout Design	Make	Manufacturing Engineering & Process Design	DETERMINISTIC	N	0	0	
+2	Industrial Engineering & Efficiency	Make	Production Support Services	DETERMINISTIC	N	0	0	
+2	Sourcing Strategy & Category Management	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	N	0	0	
+2	Supplier Capacity & Business Continuity Planning	Procure Source & Buy	Supplier Relationship Management	AGENTIC	N	0	0	
+2	Field Quality & Warranty Performance Management	Procure Source & Buy	Supplier Quality Management	AGENTIC	N	0	0	
+2	Purchase Order Creation & Issuance	Procure Source & Buy	Purchase Order Management & Execution	AGENTIC	N	0	0	
+2	PO Lifecycle Tracking & Monitoring	Procure Source & Buy	Purchase Order Management & Execution	AGENTIC	N	0	0	
+2	Exception & Dispute Management	Procure Source & Buy	Purchase Order Management & Execution	AGENTIC	N	0	0	
+2	Supplier Financial Viability Assessment	Procure Source & Buy	Contract & Commercial Management	AGENTIC	N	0	0	
+2	Supplier Performance & Relationship Management (Strategic)	Procure Source & Buy	Commodity Management & Market Intelligence	AGENTIC	N	0	0	
+2	Strategic Sourcing Incident Management	Procure Source & Buy	Commodity Management & Market Intelligence	AGENTIC	N	0	0	
+2	Supplier Qualification & Onboarding	Procure Source & Buy	Supplier Development & Capability Building	DETERMINISTIC	N	0	0	
+2	Supply Base Strategy & Optimization	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	N	0	0	
+2	Purchase Order (PO) Management	Procure Source & Buy	Procurement Operations & Compliance	AGENTIC	N	0	0	
+2	Inbound Logistics Network Design & Optimization	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	N	0	0	
+2	Outbound Logistics Network Strategy & Optimization	Move & Fulfill	Outbound Vehicle Logistics & Distribution	DETERMINISTIC	N	0	0	
+2	Service Parts Inbound Logistics	Move & Fulfill	Service Parts Logistics & Distribution	DETERMINISTIC	N	0	0	
+2	Service Parts Outbound Logistics & Transportation	Move & Fulfill	Service Parts Logistics & Distribution	DETERMINISTIC	N	0	0	
+2	Service Parts Inventory Planning & Replenishment	Move & Fulfill	Service Parts Logistics & Distribution	DETERMINISTIC	N	0	0	
+2	Service Parts Logistics Operations	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	N	0	0	
+2	Dealer Order Management & Support	Move & Fulfill	Order Management & Fulfillment	DETERMINISTIC	N	0	0	
+2	Returnable Container Logistics & Tracking	Move & Fulfill	Packaging & Returnable Container Management	AGENTIC	N	0	0	
+2	Packaging Supplier & 3PL Management	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	N	0	0	
+2	Field Service Engineering Support	Service	Dealer Technical Support & Service Engineering	DETERMINISTIC	Y	0	1	CONFIDENCE_GAP
+2	Product Quality & Reliability Feedback Loop	Service	Dealer Technical Support & Service Engineering	AGENTIC	N	0	0	
+2	Service Parts Demand Forecasting	Service	Service Parts Planning & Management	DETERMINISTIC	N	0	0	
+2	Service Parts Supply Planning & Procurement	Service	Service Parts Planning & Management	DETERMINISTIC	N	0	0	
+2	Service Parts Lifecycle Management (NPI to Obsolescence)	Service	Service Parts Planning & Management	DETERMINISTIC	N	0	0	
+2	Service Parts Supplier Relationship Management	Service	Service Parts Planning & Management	DETERMINISTIC	N	0	0	
+2	Unscheduled Repair & Recall Execution	Service	Ford Pro Fleet Service & Upfit Operations	AGENTIC	N	0	0	
+3	Strategic Network Design & Optimization	Plan	Supply Network Design & Planning	DETERMINISTIC	N	1050000000	0	
+3	Emergency & Escalation Management	Service	Recall & Field Service Action Management	AGENTIC	N	210000000	1	CONFIDENCE_GAP
+3	OTA Software Deployment & Management	Service	Connected Vehicle Services & OTA Updates	AGENTIC	N	168000000	0	
+3	Service Parts Regulatory Compliance & Quality Assurance	Service	Service Parts Planning & Management	AGENTIC	N	120000000	0	
+3	Logistics Technology & Data Management	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	N	82000000	0	
+3	Sourcing Risk Management	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	N	78000000	0	
+3	Supplier Defect Management & Recovery	Service	Recall & Field Service Action Management	AGENTIC	N	76000000	1	CONFIDENCE_GAP
+3	Supplier Performance Management	Procure Source & Buy	Supplier Relationship Management	AGENTIC	N	70000000	0	
+3	Internal Production Logistics & Material Handling	Make	Production Support Services	DETERMINISTIC	N	68000000	0	
+3	Digital & Connected Service Experience	Service	Customer Experience & Service Quality	AGENTIC	N	65000000	1	CONFIDENCE_GAP
+3	Paint Shop Maintenance & Reliability	Make	Paint Operations	AGENTIC	N	54000000	0	
+3	Commodity Strategy & Roadmap Development	Procure Source & Buy	Commodity Management & Market Intelligence	AGENTIC	N	54000000	0	
+3	Logistics Technology & Digitalization Strategy	Move & Fulfill	Logistics Network Optimization	AGENTIC	N	54000000	0	
+3	Integrated Financial & Operational Reconciliation	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	N	52000000	1	CONFIDENCE_GAP
+3	Press Operations & Production Execution	Make	Stamping Operations	AGENTIC	N	52000000	0	
+3	Dealer & Customer Delivery Operations	Move & Fulfill	Outbound Vehicle Logistics & Distribution	DETERMINISTIC	N	52000000	0	
+3	Warranty Policy & Program Development	Service	Warranty Administration & Claims Management	DETERMINISTIC	N	43000000	0	
+3	Data & Technology Management for S&OP	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	N	42000000	0	
+3	Quality Control & Metrology	Make	Body Shop & Welding	AGENTIC	N	42000000	0	
+3	Topcoat Application	Make	Paint Operations	DETERMINISTIC	N	42000000	0	
+3	Quality Control & Performance Testing	Make	Powertrain Manufacturing (Engine & Transmission)	DETERMINISTIC	N	42000000	0	
+3	Transportation Compliance & Risk Management	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	N	42000000	0	
+3	Technical Service Information Management	Service	Dealer Technical Support & Service Engineering	DETERMINISTIC	N	42000000	0	
+3	Diagnostic Software & Firmware Management	Service	Dealer Technical Support & Service Engineering	AGENTIC	N	42000000	0	
+3	Customer Experience & Technical Support for Connected Services	Service	Connected Vehicle Services & OTA Updates	AGENTIC	N	42000000	0	
+3	Sales Channel & Marketing Management	Service	Extended Service Plans & Maintenance Programs	DETERMINISTIC	N	42000000	0	
+3	Manufacturing Engineering & Process Optimization	Make	Powertrain Manufacturing (Engine & Transmission)	DETERMINISTIC	N	41000000	0	
+3	Quality Control & Assurance	Make	Electric Vehicle Battery & Drive Unit Production	AGENTIC	N	39000000	0	
+3	Manufacturing Process Quality Audits	Make	Quality Control & In-Process Inspection	AGENTIC	N	39000000	0	
+3	Market & Economic Intelligence Gathering	Plan	Demand Forecasting & Sensing	AGENTIC	N	38000000	0	
+3	Drive Unit Final Assembly & Testing	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	N	38000000	0	
+3	Contract Management & Lifecycle	Procure Source & Buy	Strategic Sourcing & Supplier Selection	DETERMINISTIC	N	36000000	0	
+3	Warranty Cost Recovery & Supplier Management	Service	Warranty Administration & Claims Management	AGENTIC	N	35000000	1	CONFIDENCE_GAP
+3	Pricing Management	Procure Source & Buy	Contract & Commercial Management	DETERMINISTIC	N	34000000	0	
+3	Advanced Product Quality Planning (APQP) & PPAP Management	Procure Source & Buy	Supplier Quality Management	AGENTIC	N	32000000	1	CONFIDENCE_GAP
+3	Inbound Freight Operations (Parts & Components)	Move & Fulfill	Transportation Management & Carrier Operations	AGENTIC	N	32000000	0	
+3	Logistics Performance Management & Analytics	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	N	32000000	1	CONFIDENCE_GAP
+3	Digital Manufacturing & Automation Process Design	Make	Manufacturing Engineering & Process Design	DETERMINISTIC	N	31000000	0	
+3	Demand Planning & Forecasting	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	N	30800000	1	CONFIDENCE_GAP
+3	Logistics Capital Planning & Investment	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	N	30000000	0	
+3	Supplier Quality & Development	Procure Source & Buy	Supplier Relationship Management	AGENTIC	N	29000000	0	
+3	Constraint & Exception Management	Plan	Production Planning & Scheduling	AGENTIC	N	27000000	0	
+3	Launch Program Strategy & Governance	Plan	New Product Launch Planning	DETERMINISTIC	N	26000000	0	
+3	Regulatory & Trade Policy Compliance	Procure Source & Buy	Commodity Management & Market Intelligence	DETERMINISTIC	N	26000000	0	
+3	Invoice & Payment Processing (P2P part)	Procure Source & Buy	Indirect Procurement	DETERMINISTIC	N	26000000	0	
+3	Launch Logistics & Distribution Planning	Plan	New Product Launch Planning	AGENTIC	N	24000000	0	
+3	Global Trade & Customs Compliance (Service Parts)	Move & Fulfill	Service Parts Logistics & Distribution	AGENTIC	N	24000000	0	
+3	Order Management System & Data Governance	Move & Fulfill	Order Management & Fulfillment	DETERMINISTIC	N	24000000	1	NO_STAKES
+3	Packaging Design & Specification	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	N	24000000	1	CONFIDENCE_GAP
+3	Mobile Service Delivery & Dispatch	Service	Ford Pro Fleet Service & Upfit Operations	DETERMINISTIC	N	24000000	0	
+3	Non-Conformance Management & Containment	Make	Quality Control & In-Process Inspection	AGENTIC	N	23000000	0	
+3	Manufacturing Quality Process Engineering	Make	Manufacturing Engineering & Process Design	AGENTIC	N	23000000	0	
+3	Continuous Improvement & Data Analytics	Move & Fulfill	Outbound Vehicle Logistics & Distribution	DETERMINISTIC	N	23000000	0	
+3	Connected Vehicle Data Governance & Analytics	Service	Connected Vehicle Services & OTA Updates	AGENTIC	N	23000000	0	
+3	Commercial Dispute Resolution	Procure Source & Buy	Contract & Commercial Management	DETERMINISTIC	N	22000000	1	CONFIDENCE_GAP
+3	Production Planning Governance & Strategy	Plan	Production Planning & Scheduling	DETERMINISTIC	N	21000000	0	
+3	Inventory Performance Monitoring & Analytics	Plan	Inventory Planning & Optimization	AGENTIC	N	21000000	0	
+3	Regulatory & Compliance Inventory Review	Plan	Inventory Planning & Optimization	AGENTIC	N	21000000	0	
+3	Die Engineering & Management	Make	Stamping Operations	AGENTIC	N	21000000	0	
+3	Primer & Sealer Application	Make	Paint Operations	AGENTIC	N	21000000	1	CONFIDENCE_GAP
+3	Quality Management & Control	Make	Trim Chassis & Final Assembly	DETERMINISTIC	N	21000000	0	
+3	Facilities & Equipment Maintenance	Make	Production Support Services	DETERMINISTIC	N	21000000	1	CONFIDENCE_GAP
+3	Supplier Risk Management	Procure Source & Buy	Supplier Relationship Management	AGENTIC	N	21000000	0	
+3	Supplier Innovation Management	Procure Source & Buy	Supplier Relationship Management	AGENTIC	N	21000000	1	CONFIDENCE_GAP
+3	Purchase Order Amendment & Change Management	Procure Source & Buy	Purchase Order Management & Execution	DETERMINISTIC	Y	21000000	1	NO_STAKES
+3	Requisition-to-Order Processing	Procure Source & Buy	Indirect Procurement	AGENTIC	N	21000000	0	
+3	Carrier Relationship Management & Sourcing	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	N	21000000	0	
+3	Customer Order Receipt & Validation	Move & Fulfill	Order Management & Fulfillment	AGENTIC	N	21000000	1	CONFIDENCE_GAP
+3	Returnable Container Maintenance & Repair	Move & Fulfill	Packaging & Returnable Container Management	AGENTIC	N	21000000	1	NO_STAKES
+3	Upfit Solution Design & Integration	Service	Ford Pro Fleet Service & Upfit Operations	DETERMINISTIC	N	21000000	0	
+3	Preventive Maintenance & Predictive Diagnostics	Service	Ford Pro Fleet Service & Upfit Operations	AGENTIC	N	21000000	1	CONFIDENCE_GAP
+3	Third-Party & Supplier Management	Service	Extended Service Plans & Maintenance Programs	AGENTIC	N	21000000	0	
+3	Labor & Skills Capacity Planning	Plan	Capacity Planning & Constraint Management	AGENTIC	N	20000000	0	
+3	Capacity Planning & Optimization	Plan	Production Planning & Scheduling	AGENTIC	N	19000000	0	
+3	Compliance & Trade Regulations Planning	Plan	Supply Network Design & Planning	AGENTIC	N	19000000	0	
+3	Data & Analytics for Production Performance	Make	Trim Chassis & Final Assembly	DETERMINISTIC	N	19000000	0	
+3	Battery Cell Production	Make	Electric Vehicle Battery & Drive Unit Production	AGENTIC	N	19000000	0	
+3	Predictive Maintenance (PdM) & Condition Monitoring	Make	Plant Maintenance & Reliability	DETERMINISTIC	N	19000000	0	
+3	Supplier Development & Capacity Management	Procure Source & Buy	Procurement Operations & Compliance	AGENTIC	N	19000000	0	
+3	Data Analytics & Performance Management	Make	Stamping Operations	AGENTIC	N	18000000	0	
+3	Non-Conformance & Rework Management	Make	Body Shop & Welding	AGENTIC	N	18000000	0	
+3	Contract & Agreement Management (Post-Award)	Procure Source & Buy	Procurement Operations & Compliance	AGENTIC	N	18000000	0	
+3	Service Parts Returns & Reverse Logistics	Move & Fulfill	Service Parts Logistics & Distribution	DETERMINISTIC	N	18000000	1	CONFIDENCE_GAP
+3	Service Parts Inventory Planning & Optimization	Service	Service Parts Planning & Management	DETERMINISTIC	N	18000000	0	
+3	Recall & FSA Execution & Monitoring	Service	Recall & Field Service Action Management	AGENTIC	N	18000000	2	NO_STAKES; CONFIDENCE_GAP
+3	Technical Service Support & Diagnostic Tooling	Service	Customer Experience & Service Quality	AGENTIC	N	17000000	1	CONFIDENCE_GAP
+3	Risk Management & Scenario Planning	Plan	Integrated Business Planning (IBP)	AGENTIC	N	15600000	1	CONFIDENCE_GAP
+3	Global Trade & Export Order Compliance	Move & Fulfill	Order Management & Fulfillment	AGENTIC	N	15600000	0	
+3	Contract Compliance & Governance	Procure Source & Buy	Contract & Commercial Management	DETERMINISTIC	N	15000000	2	NO_STAKES; CONFIDENCE_GAP
+3	Exception & Non-Conformance Management	Make	Trim Chassis & Final Assembly	DETERMINISTIC	N	14000000	0	
+3	Drive Unit Component & Sub-Assembly	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	N	14000000	0	
+3	Supplier Contract & Relationship Governance	Procure Source & Buy	Supplier Relationship Management	AGENTIC	N	14000000	0	
+3	Contract Negotiation & Execution	Procure Source & Buy	Contract & Commercial Management	AGENTIC	N	14000000	0	
+3	Supplier Capability Development	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	N	14000000	0	
+3	Preventive Maintenance (PM) Program Execution	Make	Plant Maintenance & Reliability	DETERMINISTIC	N	13500000	0	
+3	Production Line Maintenance & Uptime Management	Make	Electric Vehicle Battery & Drive Unit Production	AGENTIC	N	13200000	0	
+3	Indirect Spend Analytics & Optimization	Procure Source & Buy	Indirect Procurement	AGENTIC	N	13100000	0	
+3	Supplier Sustainability & Compliance	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	N	12000000	1	CONFIDENCE_GAP
+3	Transportation Performance & Continuous Improvement	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	N	12000000	0	
+3	Customer Issue Resolution & Escalation	Service	Customer Experience & Service Quality	AGENTIC	N	12000000	0	
+3	Logistics Sustainability & Green Initiatives	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	N	11000000	1	CONFIDENCE_GAP
+3	Paint Quality & Rework Management	Make	Paint Operations	AGENTIC	N	10600000	0	
+3	Service Tool & Equipment Development	Service	Dealer Technical Support & Service Engineering	DETERMINISTIC	N	9720000	0	
+3	Supplier Commercial Relationship Management	Procure Source & Buy	Contract & Commercial Management	DETERMINISTIC	Y	9000000	1	NO_STAKES
+3	Supplier Risk & Resilience Management	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	N	9000000	0	
+3	Root Cause Analysis & Corrective Action (QRCI)	Make	Quality Control & In-Process Inspection	AGENTIC	N	8800000	1	NO_STAKES
+3	Cross-Functional Demand Collaboration	Plan	Demand Forecasting & Sensing	AGENTIC	N	8600000	1	CONFIDENCE_GAP
+3	Maintenance Workforce Management & Development	Make	Plant Maintenance & Reliability	DETERMINISTIC	N	8600000	0	
+3	Receiving & Putaway Operations	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	N	8600000	1	CONFIDENCE_GAP
+3	Returnable Packaging Management	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	N	8600000	0	
+3	Maintenance Performance Monitoring & Continuous Improvement	Make	Plant Maintenance & Reliability	AGENTIC	N	7500000	1	CONFIDENCE_GAP
+3	Regulatory & Compliance Planning	Plan	Production Planning & Scheduling	DETERMINISTIC	Y	5200000	1	NO_STAKES
+3	Environmental Health & Safety (EHS) & Compliance	Make	Paint Operations	AGENTIC	N	5200000	0	
+3	Continuous Quality Improvement Initiatives	Make	Quality Control & In-Process Inspection	DETERMINISTIC	N	5100000	2	NO_STAKES; CONFIDENCE_GAP
+3	In-Process Component & Assembly Verification	Make	Quality Control & In-Process Inspection	DETERMINISTIC	N	4800000	0	
+3	Supplier Relationship & Innovation Management	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	N	4800000	1	CONFIDENCE_GAP
+3	Customer Experience & Dispute Resolution	Service	Extended Service Plans & Maintenance Programs	AGENTIC	N	4800000	1	NO_STAKES
+3	Raw Material & Component Receipt & Kitting	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	Y	4300000	0	
+3	Supplier Communication & Collaboration	Procure Source & Buy	Supplier Relationship Management	AGENTIC	N	4200000	0	
+3	Dealer Operations & Service Readiness	Service	Recall & Field Service Action Management	DETERMINISTIC	Y	3800000	0	
+3	Current Production Supplier Quality Monitoring	Procure Source & Buy	Supplier Quality Management	AGENTIC	N	2400000	0	
+3	Indirect Supplier Performance & Relationship Management	Procure Source & Buy	Indirect Procurement	AGENTIC	N	2400000	0	
+3	Dealer Technical Case Management	Service	Dealer Technical Support & Service Engineering	AGENTIC	N	2400000	2	NO_STAKES; CONFIDENCE_GAP
+3	Regulatory & Environmental Compliance Planning	Plan	New Product Launch Planning	AGENTIC	N	2280000	0	
+3	Demand Signal Sensing & Adjustment	Plan	Demand Forecasting & Sensing	DETERMINISTIC	N	0	0	
+3	Forecast Performance Management & Improvement	Plan	Demand Forecasting & Sensing	GENERATIVE	Y	0	1	NO_STAKES
+3	Demand Sensing & Forecasting	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	Y	0	0	
+3	S&OP Cycle Management & Governance	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	N	0	0	
+3	New Program & Lifecycle S&OP Integration	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	N	0	0	
+3	S&OP Performance Monitoring & Improvement	Plan	Sales & Operations Planning (S&OP)	AGENTIC	N	0	0	
+3	Risk & Scenario Planning for S&OP	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	N	0	0	
+3	Strategic Capacity Planning	Plan	Capacity Planning & Constraint Management	DETERMINISTIC	N	0	0	
+3	Tactical Capacity Planning	Plan	Capacity Planning & Constraint Management	DETERMINISTIC	N	0	0	
+3	Supplier Capacity Management	Plan	Capacity Planning & Constraint Management	DETERMINISTIC	N	0	0	
+3	Inventory Strategy & Policy Definition	Plan	Inventory Planning & Optimization	DETERMINISTIC	Y	0	0	
+3	New Product Introduction (NPI) Inventory Planning	Plan	Inventory Planning & Optimization	DETERMINISTIC	N	0	0	
+3	Inventory Exception Management & Resolution	Plan	Inventory Planning & Optimization	AGENTIC	N	0	0	
+3	Supply Chain Risk Management & Resilience	Plan	Supply Network Design & Planning	AGENTIC	N	0	0	
+3	Digital Transformation & Analytics Strategy	Plan	Supply Network Design & Planning	DETERMINISTIC	N	0	0	
+3	Supplier Network Strategy & Development	Plan	Supply Network Design & Planning	DETERMINISTIC	N	0	0	
+3	Performance Measurement & Continuous Improvement	Plan	Supply Network Design & Planning	AGENTIC	N	0	0	
+3	Inventory & Working Capital Optimization	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	N	0	0	
+3	Capacity & Resource Planning	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	N	0	0	
+3	Equipment Maintenance & Reliability	Make	Stamping Operations	AGENTIC	N	0	0	
+3	Continuous Improvement & Process Optimization	Make	Stamping Operations	DETERMINISTIC	N	0	0	
+3	Material Flow & Inventory Management (Internal)	Make	Body Shop & Welding	DETERMINISTIC	N	0	1	CONFIDENCE_GAP
+3	Pre-treatment & E-Coat Operations	Make	Paint Operations	DETERMINISTIC	N	0	0	
+3	Paint Process Engineering & Optimization	Make	Paint Operations	DETERMINISTIC	N	0	0	
+3	Paint Production Planning & Control	Make	Paint Operations	DETERMINISTIC	N	0	0	
+3	Vehicle Assembly Operations	Make	Trim Chassis & Final Assembly	DETERMINISTIC	N	0	0	
+3	Manufacturing Engineering & Process Optimization	Make	Trim Chassis & Final Assembly	DETERMINISTIC	N	0	0	
+3	Workforce Management & Development	Make	Trim Chassis & Final Assembly	AGENTIC	N	0	1	CONFIDENCE_GAP
+3	Plant Maintenance & Asset Management	Make	Powertrain Manufacturing (Engine & Transmission)	AGENTIC	N	0	0	
+3	Process Engineering & Continuous Improvement	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	N	0	0	
+3	Quality Standards & Compliance Adherence	Make	Quality Control & In-Process Inspection	AGENTIC	N	0	0	
+3	Continuous Process Improvement & Optimization	Make	Manufacturing Engineering & Process Design	DETERMINISTIC	N	0	0	
+3	Maintenance Strategy & Planning	Make	Plant Maintenance & Reliability	AGENTIC	N	0	0	
+3	Corrective Maintenance & Breakdown Management	Make	Plant Maintenance & Reliability	AGENTIC	N	0	0	
+3	Maintenance Parts & Spares Inventory Management	Make	Plant Maintenance & Reliability	DETERMINISTIC	N	0	0	
+3	Manufacturing Engineering & Process Development	Make	Production Support Services	DETERMINISTIC	N	0	0	
+3	Manufacturing Systems & IT Support	Make	Production Support Services	DETERMINISTIC	N	0	0	
+3	Continuous Improvement & Lean Initiatives	Make	Production Support Services	DETERMINISTIC	N	0	2	NO_STAKES; CONFIDENCE_GAP
+3	Supplier Evaluation	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	N	0	1	ORPHAN
+3	Strategic Supplier Relationship Management (SRM)	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	N	0	0	
+3	Cost & Value Optimization (Sourcing Phase)	Procure Source & Buy	Strategic Sourcing & Supplier Selection	DETERMINISTIC	N	0	0	
+3	New Product Introduction (NPI) Sourcing	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	N	0	0	
+3	Supplier Diversity & Sustainability	Procure Source & Buy	Supplier Relationship Management	DETERMINISTIC	Y	0	0	
+3	Supplier Compliance & Ethics	Procure Source & Buy	Supplier Relationship Management	AGENTIC	N	0	1	CONFIDENCE_GAP
+3	Supplier Financial Health Monitoring	Procure Source & Buy	Supplier Relationship Management	AGENTIC	N	0	0	
+3	Supplier Launch Readiness & Support	Procure Source & Buy	Supplier Quality Management	DETERMINISTIC	Y	0	0	
+3	Supplier Problem Resolution & Corrective Actions	Procure Source & Buy	Supplier Quality Management	AGENTIC	N	0	0	
+3	Supplier Quality Performance & Development	Procure Source & Buy	Supplier Quality Management	AGENTIC	N	0	1	NO_STAKES
+3	Risk Management in Contracts	Procure Source & Buy	Contract & Commercial Management	DETERMINISTIC	N	0	0	
+3	Sustainability & Ethical Sourcing Governance	Procure Source & Buy	Commodity Management & Market Intelligence	AGENTIC	N	0	0	
+3	Technology & Innovation Scouting	Procure Source & Buy	Commodity Management & Market Intelligence	DETERMINISTIC	Y	0	0	
+3	Supplier Performance Management	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	N	0	0	
+3	Procurement Systems & Data Governance	Procure Source & Buy	Procurement Operations & Compliance	DETERMINISTIC	N	0	2	NO_STAKES; CONFIDENCE_GAP
+3	Indirect Contract & Agreement Management	Procure Source & Buy	Indirect Procurement	AGENTIC	N	0	1	NO_STAKES
+3	Logistics Performance & Supplier Collaboration	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	N	0	0	
+3	In-Transit Visibility & Exception Management	Move & Fulfill	Outbound Vehicle Logistics & Distribution	AGENTIC	N	0	1	CONFIDENCE_GAP
+3	Vehicle Distribution Center (VDC) Operations	Move & Fulfill	Outbound Vehicle Logistics & Distribution	DETERMINISTIC	N	0	0	
+3	Service Parts Logistics Performance & Quality Management	Move & Fulfill	Service Parts Logistics & Distribution	AGENTIC	N	0	0	
+3	Inventory Management & Accuracy	Move & Fulfill	Warehouse & Distribution Center Operations	DETERMINISTIC	N	0	0	
+3	Warehouse Performance & Continuous Improvement	Move & Fulfill	Warehouse & Distribution Center Operations	AGENTIC	N	0	1	CONFIDENCE_GAP
+3	Strategic Warehouse Network Planning	Move & Fulfill	Warehouse & Distribution Center Operations	DETERMINISTIC	N	0	1	CONFIDENCE_GAP
+3	Freight Planning & Network Optimization	Move & Fulfill	Transportation Management & Carrier Operations	AGENTIC	N	0	0	
+3	Outbound Vehicle Logistics Operations	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	N	0	0	
+3	Trade Compliance & International Logistics	Move & Fulfill	Customs	AGENTIC	N	0	0	
+3	Order Status Tracking & Visibility	Move & Fulfill	Order Management & Fulfillment	AGENTIC	N	0	1	NO_STAKES
+3	Packaging Cost Management & Optimization	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	N	0	0	
+3	Expendable Packaging Management	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	N	0	1	CONFIDENCE_GAP
+3	Performance Monitoring & Continuous Improvement	Move & Fulfill	Packaging & Returnable Container Management	AGENTIC	N	0	1	CONFIDENCE_GAP
+3	Packaging Exception & Issue Management	Move & Fulfill	Packaging & Returnable Container Management	AGENTIC	N	0	1	CONFIDENCE_GAP
+3	Logistics Network Design & Modeling	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	N	0	1	CONFIDENCE_GAP
+3	Logistics Risk Management & Resilience Planning	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	N	0	1	CONFIDENCE_GAP
+3	Claim Adjudication & Processing	Service	Warranty Administration & Claims Management	AGENTIC	N	0	0	
+3	Warranty Parts Management	Service	Warranty Administration & Claims Management	AGENTIC	N	0	0	
+3	Service Training & Certification	Service	Dealer Technical Support & Service Engineering	AGENTIC	N	0	1	NO_STAKES
+3	Regulatory Compliance & Safety Issue Support	Service	Dealer Technical Support & Service Engineering	DETERMINISTIC	N	0	1	NO_STAKES
+3	Service Parts Performance Management & Continuous Improvement	Service	Service Parts Planning & Management	DETERMINISTIC	Y	0	0	
+3	Service Parts Business Continuity & Risk Management	Service	Service Parts Planning & Management	AGENTIC	N	0	1	CONFIDENCE_GAP
+3	Recall & FSA Determination & Strategy	Service	Recall & Field Service Action Management	AGENTIC	N	0	1	CONFIDENCE_GAP
+3	Regulatory Affairs & Compliance Reporting	Service	Recall & Field Service Action Management	AGENTIC	N	0	3	DEAD_ZONE; NO_STAKES; CONFIDENCE_GAP
+3	Financial Management & Cost Recovery	Service	Recall & Field Service Action Management	AGENTIC	N	0	0	
+3	Performance Analysis & Process Improvement	Service	Recall & Field Service Action Management	DETERMINISTIC	Y	0	1	CONFIDENCE_GAP
+3	Dispatch & Resource Allocation	Service	Roadside Assistance & Emergency Services	AGENTIC	N	0	3	DEAD_ZONE; NO_STAKES; CONFIDENCE_GAP
+3	Emergency Services Integration	Service	Roadside Assistance & Emergency Services	DETERMINISTIC	N	0	1	CONFIDENCE_GAP
+3	Software & Feature Supply Chain Integration	Service	Connected Vehicle Services & OTA Updates	DETERMINISTIC	Y	0	0	
+3	Service Part Quality & Availability Management	Service	Customer Experience & Service Quality	DETERMINISTIC	Y	0	0	
+3	Warranty & Goodwill Policy Management	Service	Customer Experience & Service Quality	AGENTIC	N	0	1	CONFIDENCE_GAP
+3	Service Process Continuous Improvement	Service	Customer Experience & Service Quality	AGENTIC	N	0	0	
+3	Fleet Service Network & Capacity Management	Service	Ford Pro Fleet Service & Upfit Operations	DETERMINISTIC	Y	0	0	
+3	Service & Upfit Quality Assurance	Service	Ford Pro Fleet Service & Upfit Operations	AGENTIC	N	0	0	
+3	Extended Service Product Development & Lifecycle Management	Service	Extended Service Plans & Maintenance Programs	AGENTIC	N	0	0	
+3	Claims Adjudication & Payment Processing	Service	Extended Service Plans & Maintenance Programs	AGENTIC	Y	0	0	
+3	Performance Analytics & Program Optimization	Service	Extended Service Plans & Maintenance Programs	DETERMINISTIC	N	0	0	
+3	Fraud Prevention & Audit	Service	Extended Service Plans & Maintenance Programs	AGENTIC	N	0	0	
+3	Capacity Performance Monitoring & Reporting	Plan	Capacity Planning & Constraint Management	AGENTIC	N	-1	0	
+3	Fixture	Make	Body Shop & Welding		N		4	PHANTOM; ORPHAN; DEAD_ZONE; CONFIDENCE_GAP
+3	Invoice & Payment Reconciliation	Procure Source & Buy	Procurement Operations & Compliance		N		1	PHANTOM

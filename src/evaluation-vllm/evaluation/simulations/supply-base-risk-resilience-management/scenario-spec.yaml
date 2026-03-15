@@ -1,0 +1,63 @@
+objective: >-
+  Jointly optimize supply risk detection, contingency sourcing, and financial
+  health guardrails across Ford's multi-echelon supplier network.
+trigger: Detection of potential supply chain disruptions or material shortages.
+decision: >-
+  Decide on proactive interventions such as expedite orders, alternate sourcing,
+  safety stock adjustments, and supplier financial health actions.
+expected_action: >-
+  Implement early warning systems, develop contingency plans, and regularly
+  assess supplier financial health.
+expected_outcome: >-
+  Reduced working capital tied to safety stock and lead-time risks, improved
+  OTIF, and enhanced supplier resilience.
+rationale: >-
+  By harmonizing early warning signals, contingency sourcing decisions, and
+  supplier financial health constraints, the system will improve visibility,
+  proactive disruption response, and financially disciplined supplier
+  management.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Supply Chain Data
+    source: SAP S/4HANA
+    purpose: To map the supply chain and identify single points of failure.
+  - name: Material Shortage Alerts
+    source: SAP S/4HANA
+    purpose: To trigger early warning systems for supply disruptions.
+  - name: Supplier Financial Data
+    source: SAP S/4HANA
+    purpose: To assess supplier financial health and take risk-based actions.
+happy_path:
+  - step: Ingest supply chain data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To gather necessary data for supply chain mapping.
+  - step: Analyze supply chain data to identify single points of failure.
+    stage: analyze
+    component: AutoML
+    purpose: To detect potential risks in the supply chain.
+  - step: Develop contingency plans and identify alternate sources.
+    stage: decide
+    component: Process Builder
+    purpose: To create proactive strategies for supply continuity.
+  - step: Monitor supplier financial health and trigger alerts.
+    stage: analyze
+    component: RCA Service
+    purpose: To assess supplier financial stability and take actions.
+  - step: Present recommendations for supplier actions to stakeholders.
+    stage: act
+    component: CWB Lifecycle
+    purpose: To enable human-in-the-loop decision-making.
+branches:
+  - condition: High risk detected in supplier financial health.
+    response: Initiate supplier diversification or renegotiation process.
+    outcome: Improved supplier resilience and reduced financial risk.
+  - condition: Potential material shortage identified.
+    response: Expedite orders or adjust safety stock levels.
+    outcome: Minimized impact of supply disruptions.
+  - condition: No single points of failure identified.
+    response: Continue monitoring and regular assessments.
+    outcome: Maintained supply chain visibility and resilience.

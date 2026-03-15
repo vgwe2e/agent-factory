@@ -1,0 +1,66 @@
+objective: Inbound Logistics Exception Management
+trigger: >-
+  Supplier shipment delay notifications, damaged material incidents,
+  non-compliance with shipping instructions, transportation disruptions,
+  critical material shortages
+decision: Determine appropriate mitigation actions for each type of logistics exception
+expected_action: >-
+  Automatically resolve common disruptions, re-route shipments, trigger
+  contingency sourcing, and enforce recovery plans
+expected_outcome: Measurable reductions in working capital, COGS, and OTIF improvements
+rationale: >-
+  Unify exception handling across five L4 processes to autonomously detect,
+  decide, and execute corrective actions
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Shipment Delay Alerts
+    source: SAP S/4HANA
+    purpose: To identify supplier shipment delays
+  - name: Damaged Material Reports
+    source: SAP S/4HANA
+    purpose: To assess damaged inbound material
+  - name: Non-Compliance Reports
+    source: SAP S/4HANA
+    purpose: To identify non-compliance with shipping instructions
+  - name: Transportation Disruption Alerts
+    source: SAP S/4HANA
+    purpose: To activate contingency plans
+  - name: Material Shortage Alerts
+    source: SAP S/4HANA
+    purpose: To escalate critical material shortages
+happy_path:
+  - step: Receive shipment delay alerts
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To collect shipment delay notifications from SAP S/4HANA
+  - step: Analyze shipment delay data
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: To predict potential impacts and recommend mitigation actions
+  - step: Decide on mitigation actions
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      To determine the best course of action (expedite, reroute, alternate
+      supplier)
+  - step: Execute mitigation actions
+    stage: act
+    component: Remote Functions
+    purpose: To implement the chosen mitigation actions
+  - step: Monitor and report outcomes
+    stage: review
+    component: UI Screens
+    purpose: To track the effectiveness of the mitigation actions and report results
+branches:
+  - condition: High severity damage reported
+    response: Initiate claims process
+    outcome: Recover costs and maintain supply integrity
+  - condition: Non-compliance detected
+    response: Issue corrective orders or penalties
+    outcome: Bring suppliers back to specification
+  - condition: Major transportation disruption
+    response: Activate contingency plan
+    outcome: Minimize COGS impact and ensure timely recovery

@@ -1,0 +1,153 @@
+objective: >-
+  Autonomously optimize battery module assembly line cycle times and scheduling
+  across plants, balancing takt reduction, quality gates, changeover
+  constraints, and supplier variability to reduce COGS and improve on-time
+  delivery.
+trigger: >-
+  Scheduled production planning run or receipt of new/updated SAP S/4HANA
+  production orders or major changeover/quality event.
+decision: >-
+  Optimize cycle time and line-level schedule for module production lines to
+  minimize takt while satisfying quality gates, changeover constraints, resource
+  capacity, and supplier availability.
+expected_action: >-
+  Run deterministic optimization to produce updated line schedules and
+  workstation timing; write optimized production schedules and reschedule
+  transactions back to SAP S/4HANA via Remote Functions; create CWB exceptions
+  for infeasible or risky changes and surface recommended approvals to line
+  managers.
+expected_outcome: >-
+  Reduced average cycle time and takt across targeted module lines, improved
+  on-time delivery across plants, fewer unplanned changeovers, maintained or
+  improved quality gate pass rates, and measurable COGS reduction.
+rationale: >-
+  A deterministic orchestration + optimization approach can jointly consider
+  constraints across cell sorting, module allocation, cooling routing,
+  electrical testing, and line-cycle timing. Process Builder orchestrates data
+  flow and decision logic; Remote Functions host the solver and ERP writebacks;
+  STREAMS/DDM prepare inputs. Medium implementation complexity maps to
+  multi-system integration (SAP + plant telemetry + quality systems) and
+  constrained optimization.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant Floor Telemetry / MES
+    type: MES
+    status: tbd
+  - name: Quality Lab System (electrical test results)
+    type: Quality
+    status: tbd
+  - name: Supplier Portal / APS
+    type: Supply Chain
+    status: tbd
+key_inputs:
+  - name: Production orders & routing (work centers, operation sequence)
+    source: SAP S/4HANA
+    purpose: >-
+      Baseline demand, operation sequences, planned start/due dates for
+      scheduling and constraints.
+    preferred_stream_type: DDM/Crawlers
+  - name: BOM and resource master (stations, capacities, tooling)
+    source: SAP S/4HANA
+    purpose: >-
+      Map module structure to workstations and available resources for capacity
+      constraints and changeover planning.
+    preferred_stream_type: DDM/Crawlers
+  - name: Station-level cycle times & throughput (per-operation telemetry)
+    source: Plant Floor Telemetry / MES
+    purpose: >-
+      Current measured cycle times and variability for use in optimization and
+      takt calculations.
+    preferred_stream_type: delta_batch
+  - name: Changeover matrix (setup times by family/line/tooling)
+    source: Manufacturing Engineering (or MES)
+    purpose: >-
+      Model changeover costs/times when sequencing different module families to
+      minimize downtime.
+  - name: Quality test results & gate pass/fail rates
+    source: Quality Lab System (electrical test results)
+    purpose: >-
+      Ensure candidate schedules meet quality constraints and route failing lots
+      for rework without impacting takt.
+    preferred_stream_type: DDM/Crawlers
+  - name: Supplier lead times and delivery reliability
+    source: Supplier Portal / APS
+    purpose: >-
+      Model upstream supply constraints and decide reroute/reschedule options
+      when supplier delays impact line scheduling.
+  - name: Shift schedules and labor availability
+    source: HR / Timekeeping
+    purpose: >-
+      Respect labor constraints and planned overtime windows in schedule
+      optimization.
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: >-
+      Ingest master and transactional data from SAP and plant systems on
+      scheduled planning cadence.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Collect production orders, BOM, resource master, telemetry snapshots and
+      recent quality results for the planning horizon.
+  - step: >-
+      Transform and validate inputs, compute derived constraints and KPIs
+      (current cycle times, takt, changeover impact).
+    stage: analyze
+    component: STREAMS / Subject Areas
+    purpose: >-
+      Create canonical subject-area views and validated metrics for optimizer
+      inputs and reporting.
+  - step: >-
+      Execute deterministic optimization to produce line-level schedules,
+      sequence decisions, and workstation cycle timing.
+    stage: decide
+    component: Process Builder + Remote Functions
+    purpose: >-
+      Run solver with constraints (quality gates, changeovers, capacity,
+      supplier windows) and select feasible, cost-minimizing schedule.
+  - step: >-
+      Write optimized schedule and reschedule transactions back to SAP S/4HANA
+      and enqueue operator work instructions; create CWB entries for exceptions.
+    stage: act
+    component: Process Builder (Transaction) + Remote Functions
+    purpose: >-
+      Implement schedule changes in ERP, update shop-floor instructions, and
+      persist audit trail for approvals.
+  - step: >-
+      Surface recommendations and exceptions to planners and line managers for
+      review/approval; collect overrides if any.
+    stage: review
+    component: CWB Lifecycle + UI Screen
+    purpose: >-
+      Human-in-the-loop approval for risky or infeasible changes and capture
+      overrides for governance and learning.
+branches:
+  - condition: >-
+      Optimizer finds no feasible schedule that meets all quality gates and
+      capacity constraints
+    response: >-
+      Create prioritized CWB exception list and route to manufacturing
+      engineering and planning team via CWB Lifecycle for manual rework; suggest
+      minimal relaxations (e.g., limited overtime windows) via Remote Functions.
+    outcome: >-
+      Manual intervention resolves infeasibility; current production schedule
+      maintained or minimally adjusted until constraints are addressed.
+  - condition: >-
+      Supplier lead-time deterioration or inbound shortage impacts required
+      components for optimized schedule
+    response: >-
+      Trigger alternate sourcing/rescheduling subprocess in Process Builder:
+      evaluate secondary suppliers, shift production between lines, or postpone
+      low-priority orders.
+    outcome: >-
+      Adjusted schedule that preserves high-priority deliveries with minimal
+      COGS impact and documented supplier mitigation actions.
+  - condition: Significant data quality or missing telemetry detected during validation
+    response: >-
+      Pause optimization, run STREAMS data quality checks and notify data
+      owners; queue a retry after remediation.
+    outcome: >-
+      Avoids making decisions on bad data; alerts ensure remediation and
+      eventual re-run with accurate inputs.

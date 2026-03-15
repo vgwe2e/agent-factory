@@ -1,0 +1,59 @@
+objective: Predictive Maintenance (PdM) & Condition Monitoring
+trigger: Real-time sensor data collection and anomaly detection
+decision: >-
+  Collect sensor data, deploy ML models for anomaly detection, generate
+  predictive alerts, and trigger corrective actions
+expected_action: >-
+  Integrate sensor data into predictive analytics, deploy ML models, generate
+  alerts, and initiate corrective maintenance actions
+expected_outcome: >-
+  Optimize maintenance timing, reduce COGS from unexpected failures, and improve
+  OTIF by minimizing unplanned downtime
+rationale: >-
+  This scenario leverages deterministic and agentic decisions to enhance
+  maintenance operations through real-time monitoring and predictive analytics,
+  reducing costs and improving operational efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Sensor Data
+    source: IoT Devices
+    purpose: Real-time monitoring and early intervention
+    preferred_stream_type: real-time
+  - name: Anomaly Detection Model Outputs
+    source: Cortex Auto Forecast
+    purpose: Predictive alerts and proactive interventions
+    preferred_stream_type: batch
+happy_path:
+  - step: Collect sensor data from IoT devices
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Real-time data collection
+  - step: Integrate sensor data into predictive analytics platform
+    stage: analyze
+    component: STREAMS
+    purpose: Data transformation and preparation
+  - step: Deploy and refine ML models for anomaly detection
+    stage: analyze
+    component: AutoML
+    purpose: Predictive model deployment
+  - step: Generate predictive alerts based on model outputs
+    stage: decide
+    component: Notification
+    purpose: Proactive intervention
+  - step: Trigger corrective maintenance actions based on alerts
+    stage: act
+    component: Remote Functions
+    purpose: Maintenance scheduling and execution
+branches:
+  - condition: Anomaly detected but no immediate action required
+    response: Monitor and escalate if condition worsens
+    outcome: Continued monitoring and conditional escalation
+  - condition: Critical failure predicted
+    response: Immediate maintenance scheduling and notification
+    outcome: Preventive maintenance action initiated
+  - condition: Insufficient data for accurate prediction
+    response: Data quality check and retraining of ML model
+    outcome: Improved model accuracy and reliability

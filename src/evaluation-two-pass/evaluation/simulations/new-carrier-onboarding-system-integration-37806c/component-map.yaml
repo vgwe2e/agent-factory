@@ -1,0 +1,41 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Centralize external bids and internal master data for processing and audit
+      trail
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Compute deterministic carrier score and total landed transport cost impact
+      per lane
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder (Rules + IF + Branch)
+    purpose: >-
+      Automate selection logic, route exceptions to human review when thresholds
+      or policy conflicts occur
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Perform ERP writebacks, trigger EDI/API provisioning, and create
+      onboarding tasks
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: >-
+      Manage exceptions, create action items, and track remediation until SLA
+      compliance is restored
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: UI Screen / Dashboard
+    purpose: >-
+      Provide transparent decision audit trail and operational status for
+      stakeholders
+    confidence: confirmed
+    component_type: display

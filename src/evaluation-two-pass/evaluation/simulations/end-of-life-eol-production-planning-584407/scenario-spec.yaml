@@ -1,0 +1,130 @@
+objective: >-
+  Autonomously plan and coordinate NPI and EOL production phases to minimize
+  COGS and obsolescence while meeting OTIF and working capital targets across
+  multi-echelon supply for Ford.
+trigger: >-
+  Initiation of an NPI program milestone or formal EOL review window (e.g.,
+  program start, 6-month ramp review, or executive EOL decision cadence).
+decision: >-
+  Which production phase(s) to phase out for outgoing vehicle models and
+  variants, balancing remaining demand, supplier readiness/impact,
+  cost-to-serve, and obsolescence risk.
+expected_action: >-
+  Run deterministic optimization to produce a phased EOL production plan (dates,
+  build volumes by plant and variant, supplier order cadence and cancellations),
+  route recommendations through a CWB Lifecycle for stakeholder approval, and
+  write approved changes back to SAP S/4HANA plus notify impacted suppliers and
+  internal teams.
+expected_outcome: >-
+  Optimized phase-out schedule that minimizes inventory write-downs and COGS,
+  maintains target OTIF during ramp-down, reduces working capital tied to
+  obsolete parts, and aligns supplier commitments with phased production
+  reductions.
+rationale: >-
+  Deterministic optimization combined with Process Builder orchestration and
+  Remote Functions allows repeatable, auditable phase-out decisions that
+  integrate SAP transactional data, supplier capacity, and demand signals.
+  Human-in-the-loop via CWB Lifecycle captures governance and overrides for
+  high-risk or strategic models. This approach reduces manual coordination
+  overhead and speeds time-to-decision for NPI/EOL cycles.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Portal
+    type: portal
+    status: tbd
+  - name: Demand Forecasting Service
+    type: internal_forecasting
+    status: tbd
+key_inputs:
+  - name: Bill of Materials & Routings
+    source: SAP S/4HANA
+    purpose: >-
+      Identify affected parts, substitution options, and production routing
+      constraints for phased models.
+    preferred_stream_type: STREAMS
+  - name: On-hand and WIP Inventory
+    source: SAP S/4HANA
+    purpose: >-
+      Quantify current inventory positions to compute obsolescence risk and
+      buffer requirements during phase-out.
+    preferred_stream_type: STREAMS
+  - name: Forecasted Demand (remaining lifecycle)
+    source: Demand Forecasting Service
+    purpose: Estimate remaining customer demand to size phase-out volumes and timing.
+  - name: Supplier Capacity & Readiness
+    source: Supplier Portal
+    purpose: >-
+      Determine ability to reduce production/orders, lead-time constraints, and
+      renegotiation windows.
+  - name: Cost-to-Serve and Unit COGS
+    source: SAP S/4HANA
+    purpose: >-
+      Trade off continuing production costs vs obsolescence/write-downs to
+      select phase-out plan.
+    preferred_stream_type: STREAMS
+  - name: EOL Policy & Governance Rules
+    source: Program Management / Policy
+    purpose: >-
+      Apply business rules for minimum service levels, strategic retention, and
+      regulatory constraints.
+happy_path:
+  - step: Ingest program, BOM, inventory, demand, supplier data
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: Consolidate canonical dataset for the model/program into Subject Areas.
+  - step: Assemble subject area and validate constraints
+    stage: analyze
+    component: Subject Areas + Data Quality & Validation
+    purpose: >-
+      Ensure data completeness and enforce EOL policy constraints before
+      optimization.
+  - step: Run deterministic optimizer to generate phased EOL options
+    stage: analyze
+    component: Remote Functions (optimization solver) invoked by Process Builder
+    purpose: >-
+      Produce candidate phase-out schedules, costs, supplier impact, and KPI
+      trade-offs.
+  - step: Route recommended plan to stakeholders for approval
+    stage: decide
+    component: Process (Process Builder) + CWB Lifecycle
+    purpose: Present recommendation with key trade-offs for accept/reject/override.
+  - step: Execute approved plan and notify systems/partners
+    stage: act
+    component: Remote Functions (SAP writeback) + Notification
+    purpose: >-
+      Write changes to SAP S/4HANA, push PO adjustments/cancellations, and
+      notify suppliers and internal teams.
+  - step: Surface results and monitor KPIs
+    stage: surface
+    component: UI Screen (dashboard) + Cortex Monitoring
+    purpose: >-
+      Track OTIF, COGS, inventory write-downs, and supplier compliance through
+      the phase-out.
+branches:
+  - condition: Optimizer returns infeasible solution due to binding supplier constraints
+    response: >-
+      Process Builder triggers alternative solver run with relaxed constraints
+      and flags affected suppliers; create exception CWB routing to procurement
+      and engineering
+    outcome: >-
+      Feasible contingency schedule proposed; procurement engages suppliers for
+      capacity negotiation or rework options.
+  - condition: Stakeholder rejects recommended plan during CWB review
+    response: >-
+      Capture override inputs via CWB Lifecycle, run targeted what-if Remote
+      Function to show impact of requested changes, and re-submit for approval
+    outcome: >-
+      Adjusted plan reflecting stakeholder constraints with quantified
+      trade-offs; approval or escalation path recorded.
+  - condition: >-
+      Significant supplier non-compliance after execution (late acknowledgements
+      or capacity drop)
+    response: >-
+      Process Builder branches to Agent Team (Procurement) with packaged
+      exception details and suggested mitigation actions; re-run optimizer with
+      updated supplier status
+    outcome: >-
+      Rapid mitigation (alternate sourcing, slowed phase-out, or temporary
+      buffer allocation) and updated plan written back to SAP.

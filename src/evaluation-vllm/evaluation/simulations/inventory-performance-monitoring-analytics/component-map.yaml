@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary inventory data.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Generate insights on inventory performance.
+    confidence: confirmed
+    capability: Generate insights on inventory performance.
+  - name: RCA Service
+    purpose: Identify underlying issues.
+    confidence: inferred
+    capability: Identify underlying issues.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Drive continuous improvement.
+    confidence: confirmed
+    node_type: decide
+  - name: Notification
+    purpose: Ensure transparency and accountability.
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review monitor and optimize inventory performance by analyzing inventory
+      turns, days of supply, carrying costs, and identifying root causes of
+      discrepancies. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

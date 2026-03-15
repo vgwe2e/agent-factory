@@ -1,0 +1,57 @@
+decision: >-
+  Should the production line start or stop based on current constraints,
+  downtime risks, and demand signals, balancing cost of idling against missed
+  throughput?
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New or updated production/telemetry/quality data indicating a potential
+    constraint, disruption, or quality hold (e.g., unexpected equipment
+    degradation, supply shortfall, or QC failure) ingested into the platform.
+  parameters:
+    objective: >-
+      Autonomously detect, simulate, and resolve production constraints and
+      exceptions to optimize stop/start decisions, reduce downtime and waste,
+      and preserve OTIF and availability.
+    key_inputs:
+      - Work Orders & Production Schedule
+      - Inventory On-Hand & Supply Commitments
+      - Equipment Telemetry & Status
+      - Quality Holds and Inspection Results
+      - Demand Signal & Priority (OTIF targets)
+      - Downstream Impact & Recovery Windows
+    source_systems:
+      - SAP S/4HANA
+      - OT/SCADA (equipment telemetry)
+      - Quality Management System / LIMS
+      - Advanced Planning System / Demand Signal
+expected_output:
+  action: >-
+    Automatically evaluate constraint scenarios, simulate recovery & sequencing
+    alternatives, execute stop/start or sequencing adjustments via ERP
+    writeback, and create CWB exceptions for human review when confidence is low
+    or safety/quality rules require manual approval.
+  outcome: >-
+    Reduced COGS through improved line sequencing and reduced downtime,
+    minimized waste from targeted holds, and maintained OTIF and availability
+    via faster, coordinated recovery actions.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Cortex RCA Service
+    - Process Builder
+    - Remote Functions
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  Use deterministic Process Builder orchestration to coordinate data ingestion,
+  constraint analysis (Cortex RCA Service) and simulation (Remote Functions),
+  automated ERP writebacks to SAP S/4HANA for executed start/stop or reschedule,
+  and CWB Lifecycle for exception handling and human-in-the-loop approvals. This
+  hybrid deterministic route enables safe automation for high-impact operational
+  decisions while preserving oversight for safety or quality-critical
+  conditions.

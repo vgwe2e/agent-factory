@@ -1,0 +1,111 @@
+objective: >-
+  Adjust logistics capacity plans to accommodate seasonal demand fluctuations or
+  peak periods.
+trigger: >-
+  Scheduled pre-season planning run (monthly/quarterly) or automated detection
+  of sustained demand increase above threshold.
+decision: >-
+  What logistics capacity to allocate across nodes and time to meet seasonal
+  demand, balancing service levels and transportation costs.
+expected_action: >-
+  Compute node- and time-specific capacity allocations using demand forecasts
+  and constraints; write approved capacity plans back to SAP S/4HANA and surface
+  plans to planners for review.
+expected_outcome: >-
+  Updated logistics capacity plans in SAP S/4HANA aligned to seasonal demand,
+  maintained service levels with minimized transportation cost impact, and a
+  prioritized exception list for manual review.
+rationale: >-
+  A deterministic, process-driven flow uses consolidated demand forecasts,
+  operational constraints, and cost rules to produce repeatable capacity
+  allocations. Process Builder orchestrates data ingestion, rules-based
+  allocation and Remote Functions handle calculations and ERP writeback to SAP
+  S/4HANA. Cortex Auto Forecast (where used) provides consistent seasonality
+  signals; UI Screens surface results and exceptions for planner verification.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Seasonal demand forecast (SKU x location x week)
+    source: Cortex Auto Forecast
+    purpose: >-
+      Predict seasonal demand to drive capacity sizing across nodes and time
+      buckets.
+    preferred_stream_type: batch
+  - name: >-
+      Current logistics capacity (warehouse slots, dock capacity, vehicle hours)
+      by node
+    source: SAP S/4HANA
+    purpose: Baseline available capacity and constraints for allocation calculations.
+    preferred_stream_type: batch
+  - name: Transportation cost rates (mode, lane, distance-based costs)
+    source: SAP S/4HANA
+    purpose: >-
+      Cost inputs to trade off service level vs. transportation expense during
+      allocation.
+    preferred_stream_type: batch
+  - name: Service level targets and business policies
+    source: Subject Areas / Operational policy
+    purpose: >-
+      Define minimum service levels and prioritization rules for allocation
+      decisions.
+    preferred_stream_type: batch
+  - name: Operational constraints (labor schedules, vehicle/driver availability)
+    source: SAP S/4HANA
+    purpose: Hard and soft constraints applied during capacity allocation calculations.
+    preferred_stream_type: batch
+happy_path:
+  - step: Consolidate inputs
+    stage: ingest
+    component: STREAMS (ETL)
+    purpose: >-
+      Aggregate demand forecasts, capacity master data, cost rates and
+      constraints into subject area tables.
+  - step: Derive seasonal demand signal
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Detect seasonality and produce smooth time-series forecasts per
+      SKU-location to drive capacity needs.
+  - step: Calculate capacity allocations
+    stage: decide
+    component: Process (Process Builder) - Rules + Remote Functions
+    purpose: >-
+      Apply business rules and run allocation calculations to balance service
+      level targets and transportation costs within constraints.
+  - step: Write approved capacity plans to ERP
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Perform ERP writeback to SAP S/4HANA with planned capacity changes and
+      transactional updates.
+  - step: Surface plan and exceptions to planners
+    stage: surface
+    component: UI Screens (dashboard, report, action item)
+    purpose: >-
+      Present final allocation, highlight exceptions or constraint breaches, and
+      provide action items for planner overrides.
+branches:
+  - condition: Forecast uncertainty or confidence below threshold (high variance)
+    response: >-
+      Create Action Item for planner review via UI Screens; hold writeback
+      pending manual approval; attach forecast explanation from Cortex.
+    outcome: >-
+      Plan changes are reviewed and approved manually to avoid
+      over/under-allocation during uncertain forecasts.
+  - condition: Hard capacity constraints prevent meeting service targets for some nodes
+    response: >-
+      Run alternative cost-prioritized allocation rules (deprioritize low-margin
+      SKUs, optimize cross-node reallocation) and notify stakeholders of service
+      impacts.
+    outcome: >-
+      A feasible, cost-aware plan is produced with explicit service level
+      trade-offs and stakeholder notifications for escalation.
+  - condition: ERP writeback to SAP S/4HANA fails or returns transactional errors
+    response: >-
+      Trigger rollback transaction, log failure in Process Builder, create IT
+      action item and retry policy via Remote Functions.
+    outcome: >-
+      Failed writebacks are captured for remediation and system state remains
+      consistent until retry/resolution.

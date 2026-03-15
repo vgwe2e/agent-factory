@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New daily touchless demand forecast run or material/inbound change (daily cadence) that materially changes demand or inbound availability for planable SKUs.]
+  A --> N1[Stream: STREAMS - Consolidate inputs (forecasts, inventory, inbound, capacity, supplier lead times) into a canonical view]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Compute touchless demand signal and supply readiness adjustments]
+  N2 --> N3{PB: Process Builder (Rules + IF + Branch) - Run deterministic scheduling rules to produce demand-constrained production allocations}
+  N3 -->|Primary| N4[PB: Remote Function - Commit executable orders and exception actions to downstream systems]
+  N4 --> N5[PB: CWB Lifecycle - Surface exceptions and planned changes to planners for review-only]
+  N5 --> Z1[Outcome: Conflict-free, executable production schedule aligned to inbound materials and supplier lead times; reduced stockouts and obsolescence; minimized expediting costs where possible; prioritized fulfillment of high-margin SKUs; clear exceptions for planner review.]
+  N3 -->|Inbound material availability is insu...| B1[Process triggers Kinaxis Order Expediting via Remote Function and creates Action Item(s) in CWB; if expediting not possible, reallocate production to alternate locations or lower-risk SKUs per rules.]
+  B1 --> O1[Outcome: Expedite requests generated; schedule adjusted to maintain service for prioritized SKUs; remaining shortages flagged for planner intervention.]
+  O1 --> End[End]
+  N3 -->|Production capacity at all sites is c...| B2[Process Builder reassigns load to alternate capable locations (Kinaxis Rebalancing) or sequences high-margin SKUs first; generates transfer/outsource recommendations and creates notifications for procurement/planning.]
+  B2 --> O2[Outcome: Capacity-aware redistribution reduces critical stockouts for prioritized SKUs; lower-priority items queued or flagged for CWB review.]
+  O2 --> End[End]
+  N3 -->|Forecast spike exceeds safety stock a...| B3[Trigger transfer proposals to 3PL/contract manufacturers via Remote Function and Uber Freight integrations; create procurement/expedite action items for planners.]
+  B3 --> O3[Outcome: Short-term fulfillment maintained through transfers/outsourcing at higher cost, protecting revenue while preserving traceability and capturing cost impacts.]
+  O3 --> End[End]
+  Z1 --> End[End]

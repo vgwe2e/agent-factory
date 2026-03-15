@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: New sales order creation in SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawler - Retrieve new sales orders from SAP S/4HANA.]
+  N1 --> N2[Cortex: Process Builder - Analyze sales orders and inventory levels to plan picking waves.]
+  N2 --> N3{PB: Process Builder - Generate optimized picking routes based on inventory and equipment availability.}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute picking routes and prepare kits/sub-assemblies.]
+  N4 --> N5{PB: Process Builder - Resolve picking errors and trigger replenishment if needed.}
+  N5 --> N6[PB: Remote Functions - Prioritize and expedite urgent orders by adjusting picking and routing.]
+  N6 --> Z1[Outcome: Increased order capture, reduced labor/waste, improved working capital, and enhanced OTIF.]
+  N3 -->|Insufficient stock for an order.| B1[Trigger replenishment request and reallocate stock if possible.]
+  B1 --> O1[Outcome: Maintain optimal stock levels and fulfill orders.]
+  O1 --> End[End]
+  N3 -->|Picking error detected.| B2[Resolve error and adjust picking routes if necessary.]
+  B2 --> O2[Outcome: Ensure accurate and efficient picking.]
+  O2 --> End[End]
+  N3 -->|Urgent order requires expedited handl...| B3[Adjust picking and staging to prioritize the urgent order.]
+  B3 --> O3[Outcome: Meet critical timelines for urgent orders.]
+  O3 --> End[End]
+  Z1 --> End[End]

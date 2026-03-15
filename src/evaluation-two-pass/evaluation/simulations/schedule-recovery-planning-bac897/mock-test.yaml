@@ -1,0 +1,62 @@
+decision: >-
+  Select and execute the recovery action (reschedule, stop/start, re-sequencing,
+  substitute supply, or quality quarantine) that minimizes incremental COGS
+  impact while meeting OTIF and availability constraints.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Detection of a production constraint or exception (schedule slippage, supply
+    disruption, machine fault, or quality hold) from operational feeds or
+    operator input.
+  parameters:
+    objective: >-
+      Autonomously detect, simulate, and resolve production constraints and
+      exceptions across scheduling, supply disruptions, and quality holds to
+      minimize COGS while preserving OTIF and availability.
+    key_inputs:
+      - Production schedule (planned orders, sequencing, takt times)
+      - >-
+        Inventory & component availability (on-hand, inbound receipts, lead
+        times)
+      - Shop-floor events (machine status, downtime events, throughput)
+      - Quality holds / test results
+      - OT telemetry (sensor alarms, process deviations)
+      - Labor availability & skills
+      - Operator inputs / Incident reports
+    source_systems:
+      - SAP S/4HANA
+      - MES
+      - SCADA/OT
+      - Quality Lab / LIMS
+      - Workforce / Labor Planning
+expected_output:
+  action: >-
+    Continuously ingest schedule, inventory, OT & quality signals; run RCA to
+    identify root cause and impact; run multi-agent simulations of recovery
+    alternatives; rank alternatives by COGS and service impact; automatically
+    execute low-risk actions with Remote Functions (writeback to SAP S/4HANA /
+    MES) and escalate high-risk or low‑confidence actions into a CWB Lifecycle
+    for human approval; notify stakeholders and persist decision telemetry.
+  outcome: >-
+    Faster recovery from disruptions, fewer and shorter downtime events, reduced
+    waste and expedited recovery scheduling, maintained or improved OTIF and
+    availability, and measurable reduction in COGS impact per disruption.
+  affected_components:
+    - STREAMS
+    - RCA Service
+    - Remote Functions
+    - CWB Lifecycle
+    - Process Builder (Agent Team + Remote Functions)
+    - Dashboard
+rationale: >-
+  Agentic AI coordinates multi-step reasoning and simulation across structured
+  and semi-structured data. STREAMS provides robust batch ETL of
+  schedule/inventory/quality data; RCA Service surfaces root causes and impacts;
+  Remote Functions perform constrained simulations and writebacks to SAP
+  S/4HANA; Process Builder orchestrates agentic workflows and approval routing.
+  This hybrid autonomous + human-in-loop design balances speed (auto-execute
+  low-risk fixes) with control (CWB for high-impact decisions).

@@ -1,0 +1,53 @@
+decision: >-
+  Determine whether to automatically apply mitigation actions (adjust
+  MPS/production slots, reallocate dealer inventory, trigger
+  promotions/markdowns, or initiate finance write-off actions) for SKUs flagged
+  with elevated aging risk.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled daily aging job or threshold breach for SKU aging (days-on-hand or
+    aging bucket threshold) detected from inventory data.
+  parameters:
+    objective: >-
+      Automatically coordinate finished goods aging management across Planning,
+      Production Scheduling, Dealer Allocation, and Finance to minimize
+      write-offs and reduce stock obsolescence while optimizing working capital.
+    key_inputs:
+      - Finished goods inventory ledger (on-hand, lot/expiry, location)
+      - Inventory movements (receipts, shipments, transfers)
+      - Production schedule / MPS and capacity
+      - Dealer allocation and shipment plan
+      - Finance provisioning and write-off policy (thresholds, approval rules)
+      - Aging thresholds and mitigation rules
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Process Builder evaluates aging risk via deterministic rules, executes
+    mitigation steps through Remote Functions to SAP S/4HANA (adjust
+    MPS/schedules, update dealer allocations, create disposition or write-off
+    transactions), and creates CWB exceptions for high-risk SKUs for human
+    approval; stakeholders are notified and dashboards updated.
+  outcome: >-
+    Aligned cross-domain actions reduce obsolescence and write-offs, faster
+    mitigation of aging SKUs, improved S&OP-to-Finance traceability, and
+    measurable reduction in inventory aging and related working-capital impact.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Rules
+    - Process Builder (Remote Functions)
+    - CWB Lifecycle
+    - UI Screen
+    - Dashboard
+rationale: >-
+  A deterministic Process Builder workflow with rule-based scoring and Remote
+  Functions provides timely, auditable coordination across ERP, planning,
+  manufacturing and finance systems. This minimizes manual handoffs, ensures
+  consistent policy enforcement, and enables human oversight for high-impact
+  write-offs.

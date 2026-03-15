@@ -1,0 +1,45 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Consolidate SAP orders, routing/BOM, MES capacity and historical
+      changeover durations into Subject Areas
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Remote Functions (solver) invoked by Process Builder
+    purpose: >-
+      Compute optimal sequences and changeover plans minimizing total production
+      cost subject to constraints
+    confidence: confirmed
+    capability: >-
+      Compute optimal sequences and changeover plans minimizing total production
+      cost subject to constraints
+process_builder:
+  - name: CWB Lifecycle (recommendation view)
+    purpose: >-
+      Allow planners to accept, override, or request alternative scenarios
+      (human-in-the-loop)
+    confidence: confirmed
+    node_type: decide
+  - name: Process (Process Builder) + Remote Functions (SAP writeback)
+    purpose: >-
+      Execute transactional writeback of order start times, line assignments,
+      and changeover instructions to SAP S/4HANA and MES
+    confidence: confirmed
+    node_type: act
+  - name: Subject Areas + Process (Rules & Notifications)
+    purpose: >-
+      Detect deviations (e.g., extended changeovers), update schedule forecasts,
+      notify stakeholders, and auto-reschedule if within policy
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically generate and release changeover-aware, multi-plant
+      production schedules that minimize total production cost while meeting
+      demand and operational constraints, with continuous execution monitoring
+      and autonomous exception handling. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,60 @@
+decision: >-
+  Approve system-generated SKU-level replenishment and procurement allocation
+  recommendations (auto-apply where rules allow; human-in-the-loop for
+  exceptions).
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Daily scheduled ingest (overnight batch) plus event-driven ingest for
+    recalls/campaigns or field failure signals.
+  parameters:
+    objective: >-
+      Unify six service-parts demand processes into a single end-to-end decision
+      engine that autonomously generates SKU-level forecasts, adapts inputs in
+      near real time, mitigates excess/obsolete inventory, plans for
+      recalls/campaigns, and models lifecycle-driven demand for EV components to
+      align inventory and procurement with demand signals.
+    key_inputs:
+      - Historical service parts demand (sales/service orders/returns)
+      - >-
+        Parts master & lifecycle metadata (SKU, substitute parts, BOM linkage,
+        EV component flags)
+      - Recall/campaign schedules and severity signals
+      - Dealer/repair-order failure rates and usage signals
+      - Inventory on-hand, inbound receipts, open POs
+    source_systems:
+      - SAP S/4HANA
+      - Dealer Service Portal
+      - Field Service Management / Campaign Management
+expected_output:
+  action: >-
+    Run STREAMS ETL to consolidate SAP S/4HANA transactional and master data;
+    run Cortex Auto Forecast to produce SKU-level demand & lifecycle signals;
+    evaluate replenishment rules in Process Builder; route exceptions to CWB
+    Lifecycle; write approved replenishment orders and allocation changes back
+    to SAP S/4HANA via Remote Functions; surface recommendations to planners via
+    UI Screens and notifications.
+  outcome: >-
+    Continuous alignment of inventory and procurement with demand signals: lower
+    working capital and excess/obsolete parts, improved on-time parts
+    availability, reduced emergency procurements for recalls/campaigns, and more
+    accurate COGS allocation across the service parts network.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast
+    - Process Builder
+    - Remote Functions
+    - UI Screens
+    - Cortex Monitoring
+    - Dashboard
+rationale: >-
+  Consolidating multiple fragmented processes into a single Process
+  Builder-driven decision engine with STREAMS for data foundation and Cortex
+  Auto Forecast for SKU/time-series accuracy enables deterministic, repeatable
+  replenishment decisions, faster response to recalls/campaigns, and
+  lifecycle-aware demand planning for EV parts while preserving human oversight
+  for exceptions.

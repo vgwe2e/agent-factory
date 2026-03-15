@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled re-segmentation cadence (e.g., weekly) or detection of significant demand-pattern shift from monitoring (Cortex/streamed alerts).]
+  A --> N1[Stream: STREAMS (DDM/Crawlers) - Ingest authoritative masters and transactions into the Subject Area]
+  N1 --> N2[Cortex: Process Builder (Rules node) - Execute deterministic segmentation rules to assign SKU-location pairs into demand blocs]
+  N2 --> N3{PB: Process Builder (IF + Remote Functions) - Compute segment-level allocation volumes honoring revenue priority and capacity}
+  N3 -->|Primary| N4[PB: Remote Functions (ERP writeback) - S4, Kinaxis updates, WMS/TMS notifications - Write allocations and replenishment orders to execution and planning systems]
+  N4 --> N5[UI: UI Screen (dashboard) + CWB Lifecycle snapshot / Action Item - Surface results and provide operational rollback/exception handling]
+  N5 --> Z1[Outcome: Precise SKU-location demand blocs driving optimized, touchless allocations that prioritize revenue and service while respecting capacity; downstream ERP/planning/WMS/TMS updated automatically; exceptions routed for review; rapid rollback available to revert allocations if needed.]
+  N3 -->|Data quality failures detected (missi...| B1[Process Builder invokes Data Quality & Validation (STREAMS) and creates Action Item/CWB for human review; pause allocation writebacks and optionally run conservative fallback allocations]
+  B1 --> O1[Outcome: Allocation deferred until data reconciled or conservative allocations applied to protect service levels]
+  O1 --> End[End]
+  N3 -->|Computed allocations exceed productio...| B2[Process Builder calls Kinaxis RapidResponse via Remote Functions to re-optimize allocations by revenue priority; if re-optimization fails, flag for manual intervention via Action Item]
+  B2 --> O2[Outcome: Rebalanced allocation that respects capacity or escalation to planners for exceptions]
+  O2 --> End[End]
+  N3 -->|Rollback requested within retention w...| B3[Process Builder executes Rollback Transaction node to revert writes in S4/Kinaxis and notify downstream systems; surface rollback audit in UI]
+  B3 --> O3[Outcome: Touchless rapid rollback completed and systems restored to prior state with audit trail]
+  O3 --> End[End]
+  Z1 --> End[End]

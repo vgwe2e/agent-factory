@@ -1,0 +1,79 @@
+objective: >-
+  Enable end-to-end automation for inbound receiving, quality inspection
+  triggers, putaway optimization, discrepancy resolution, and hazardous material
+  segregation.
+trigger: Supplier shipment arrival notification.
+decision: >-
+  Verify incoming supplier shipments against manifest and purchase orders for
+  accuracy; choose quality inspection steps and rejections based on material
+  type, supplier, and criticality; determine optimal putaway location for each
+  received material; resolve inbound discrepancies by selecting remediation
+  actions; determine segregation and handling actions for high-value or
+  hazardous materials.
+expected_action: >-
+  Verify shipment documentation; trigger quality inspections; assign optimal
+  putaway locations; resolve discrepancies; segregate and handle
+  high-value/hazardous materials.
+expected_outcome: Reduced COGS, improved OTIF, and enhanced inventory accuracy.
+rationale: >-
+  Automating inbound receiving and putaway processes improves operational
+  efficiency, reduces costs, and ensures compliance with safety and quality
+  standards.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Shipment Manifest
+    source: SAP S/4HANA
+    purpose: Verify shipment accuracy
+  - name: Purchase Orders
+    source: SAP S/4HANA
+    purpose: Cross-reference with manifest
+  - name: Material Types
+    source: SAP S/4HANA
+    purpose: Determine inspection paths
+  - name: Storage Locations
+    source: SAP S/4HANA
+    purpose: Optimize putaway locations
+  - name: Discrepancy Records
+    source: SAP S/4HANA
+    purpose: Resolve discrepancies
+  - name: Hazardous Materials List
+    source: SAP S/4HANA
+    purpose: Segregate high-value/hazardous materials
+happy_path:
+  - step: Receive shipment notification
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Capture shipment data
+  - step: Verify shipment against manifest and PO
+    stage: analyze
+    component: Remote Functions
+    purpose: Validate shipment accuracy
+  - step: Trigger quality inspection based on material type
+    stage: decide
+    component: Process Builder
+    purpose: Initiate inspection process
+  - step: Assign optimal putaway location
+    stage: decide
+    component: Remote Functions
+    purpose: Optimize storage
+  - step: Resolve discrepancies
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Address discrepancies
+  - step: Segregate high-value/hazardous materials
+    stage: act
+    component: Remote Functions
+    purpose: Ensure safety and compliance
+branches:
+  - condition: Shipment does not match manifest
+    response: Reject shipment
+    outcome: Notify supplier for correction
+  - condition: Quality inspection fails
+    response: Quarantine materials
+    outcome: Initiate re-inspection or return process
+  - condition: No available storage location
+    response: Hold shipment
+    outcome: Re-evaluate storage options

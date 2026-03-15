@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Daily or event-driven ingest of updated market signals (POS, promotions, pricing, macro indicators) or weekly scheduled model-selection cycle.]
+  A --> N1[Stream: STREAMS - Consolidate market, POS, master and inventory data into Aera Subject Areas]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Run automated algorithm selection and baseline forecasts]
+  N2 --> N3{PB: Process Builder (Process, Rules) - Orchestrate model selection and EBITDA-aligned parameter tuning}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute parameter optimization and write final forecasts]
+  N4 --> N5[PB: CWB Lifecycle / UI Screens - Surface recommendations and exceptions for review]
+  N5 --> Z1[Outcome: Continuous improvement in forecast accuracy (lower MAPE), fewer stockouts and overstocks, reduced promo-driven volatility, faster propagation of demand signal into supply plans (Kinaxis), and measurable EBITDA-aligned tradeoffs in forecast bias and service levels.]
+  N3 -->|Model fit (MAPE/bias) fails business ...| B1[Process Builder triggers Data Science subprocess to run alternate algorithms or feature engineering (Script/Data Science node) and flags results; escalate persistent failures to data science team via Notification]
+  B1 --> O1[Outcome: Fallback models or retrained models deployed; persistent issues routed for manual investigation]
+  O1 --> End[End]
+  N3 -->|EBITDA constraint cannot be satisfied...| B2[Adjust tradeoff weights via Process Rules and surface tradeoff options in CWB Lifecycle for finance approval; if rejected, apply predefined conservative parameter set]
+  B2 --> O2[Outcome: Either approved EBITDA-aligned parameters or conservative defaults to protect service levels]
+  O2 --> End[End]
+  N3 -->|Critical input data (promotions, POS)...| B3[DDM/Crawlers and STREAMS retry ingestion; if unresolved, tag affected SKUs and route to CWB Lifecycle for manual data correction]
+  B3 --> O3[Outcome: Either automated ingestion succeeds and loop continues, or affected forecasts are held/flagged for human remediation]
+  O3 --> End[End]
+  Z1 --> End[End]

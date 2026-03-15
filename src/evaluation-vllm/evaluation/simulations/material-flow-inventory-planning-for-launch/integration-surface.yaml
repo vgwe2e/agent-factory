@@ -1,0 +1,35 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: initial-parts-order-quantities
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: bom-release-schedule
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-constraints
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: end-of-life-plans
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-shortages
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Remote Functions
+    type: process_builder
+    function: Calculate optimal buffer levels and mitigation strategies.
+  - component: Exception Management
+    type: process_builder
+    function: Track and address any material shortages.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize multi-echelon stock rebalancing, buffer safety stocks, and
+      end-to-end launch material availability to reduce working capital, protect
+      ebitda, and improve on-time launch delivery. and approve the recommended
+      action.

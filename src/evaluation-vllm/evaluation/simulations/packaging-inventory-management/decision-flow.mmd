@@ -1,0 +1,17 @@
+flowchart TD
+  A[Trigger: Daily reconciliation of physical returnable container counts vs system records.]
+  A --> N1[Stream: DDM/Crawlers - Reconcile physical container counts with system records.]
+  N1 --> N2[Cortex: AutoML - Determine optimal buffer stock levels for packaging.]
+  N2 --> N3{PB: CWB Lifecycle - Monitor inventory levels and trigger reorders.}
+  N3 -->|Primary| N4[PB: Process Builder - Plan and conduct periodic physical counts and cycle counts.]
+  N4 --> Z1[Outcome: Improved inventory accuracy, minimized carrying costs, and reduced stockouts.]
+  N3 -->|Discrepancy between physical and syst...| B1[Trigger exception management workflow.]
+  B1 --> O1[Outcome: Correct discrepancies and update system records.]
+  O1 --> End[End]
+  N3 -->|Inventory levels fall below predefine...| B2[Initiate emergency reorder process.]
+  B2 --> O2[Outcome: Prevent stockouts and maintain service levels.]
+  O2 --> End[End]
+  N3 -->|Cycle count results indicate signific...| B3[Adjust future cycle counting frequency.]
+  B3 --> O3[Outcome: Improve inventory accuracy and minimize disruption.]
+  O3 --> End[End]
+  Z1 --> End[End]

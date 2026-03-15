@@ -1,0 +1,124 @@
+objective: >-
+  Autonomously orchestrate production shift sequencing, internal labor
+  assignments, training-driven capacity, and contingent worker sourcing to
+  minimize labor cost variance and prevent line stoppages while sustaining OTIF
+  targets.
+trigger: >-
+  New/updated production plan or material constraint detected for a platform
+  that changes required labor hours beyond configured threshold.
+decision: >-
+  Determine optimal shift schedules and mix of internal vs. contingent labor
+  (including targeted training assignments) to meet target output with minimized
+  overtime and labor cost.
+expected_action: >-
+  Process Builder invokes Agent Team to run joint optimization using historical
+  demand and labor supply signals (Cortex Auto Forecast + Streams), propose
+  shift sequences and contingent worker requests, execute SAP S/4HANA schedule
+  writeback via Remote Functions, and raise CWB for human approval when
+  escalation rules are met.
+expected_outcome: >-
+  Optimized shift rosters and contingent worker placements written to SAP
+  S/4HANA; training assignments scheduled; reduced overtime and COGS variance;
+  maintained or improved OTIF and fewer line stoppages.
+rationale: >-
+  Combines predictive labor demand (seasonality/shifts), supply visibility
+  (internal availability, certifications, training backlog), and contingent
+  market signals to make proactive staffing decisions. Agentic AI enables
+  contextual reasoning across exceptions and vendor sourcing while Process
+  Builder ensures auditable orchestration and safe ERP writebacks.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Time & Attendance System
+    status: tbd
+  - name: Learning Management System (LMS)
+    status: tbd
+  - name: Contingent Staffing Vendor Portal
+    status: tbd
+key_inputs:
+  - name: Production Plan (required labor hours by line & shift)
+    source: SAP S/4HANA
+    purpose: Defines target output and baseline labor demand per line/shift
+    preferred_stream_type: STREAMS
+  - name: >-
+      Workforce Master & Time Bookings (availability, scheduled hours, OT
+      limits)
+    source: SAP S/4HANA / Time & Attendance System
+    purpose: >-
+      Current internal workforce capacity, certifications, and booked hours to
+      compute supply and OT exposure
+    preferred_stream_type: STREAMS
+  - name: Training Completion & Eligibility
+    source: Learning Management System (LMS)
+    purpose: >-
+      Identify employees who can unlock additional capacity after scheduled
+      training
+  - name: Contingent Worker Availability & Rates
+    source: Contingent Staffing Vendor Portal
+    purpose: Market supply and cost for flexible staffing to cover gaps
+    preferred_stream_type: DDM/Crawlers
+  - name: Labor Cost Rules & Overtime Policies
+    source: SAP S/4HANA
+    purpose: >-
+      Calculate cost trade-offs between overtime, re-sequencing, and contingent
+      hires
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Ingest production plan and workforce master records on schedule or event
+    stage: ingest
+    component: STREAMS
+    purpose: Consolidate demand and supply inputs into Subject Areas
+  - step: Forecast required labor hours and shortfall risk over the planning horizon
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict per-line/shift labor demand and identify upcoming gaps
+  - step: >-
+      Agent Team evaluates options (re-sequence shifts, assign trained staff,
+      source contingent labor) and scores trade-offs
+    stage: decide
+    component: Agent Team
+    purpose: >-
+      Generate prioritized staffing plan balancing cost, certifications, and
+      OTIF
+  - step: >-
+      Orchestrate actions and perform safe ERP writebacks for shift rosters and
+      contingent purchase requests
+    stage: act
+    component: Process Builder + Remote Functions
+    purpose: Execute schedule updates in SAP S/4HANA and send contingent requisitions
+  - step: >-
+      Notify planners and HR with CWB when exceptions or escalation criteria are
+      met
+    stage: notify
+    component: CWB Lifecycle
+    purpose: Human-in-the-loop approval for high-cost or high-risk staffing changes
+  - step: Surface consolidated plan and KPIs on planner dashboard for review
+    stage: surface
+    component: UI Screen (dashboard)
+    purpose: Provide visibility into labor plan, cost impact, and OTIF risk
+branches:
+  - condition: Contingent vendor capacity insufficient for required gap within lead time
+    response: >-
+      Agent Team increases internal overtime allocation, reprioritizes
+      non-critical work, and raises CWB notification to operations leadership
+      for manual contingency
+    outcome: >-
+      Short-term OT increases but line stoppage avoided; leadership alerted for
+      follow-up sourcing
+  - condition: Training pipeline cannot be completed before demand spike
+    response: >-
+      Agent Team sequences shifts to leverage certified staff across lines,
+      triggers expedited training slots in LMS, and flags residual gap for
+      contingent sourcing
+    outcome: >-
+      Partial capacity recovered via re-sequencing; remaining gap covered by
+      contingent workers or product sequencing changes
+  - condition: Forecast uncertainty (high variance / low confidence)
+    response: >-
+      Process Builder creates a conservative buffer plan (limited OT +
+      contingent hold) and schedules a review meeting with planners via Agent
+      Team summary
+    outcome: >-
+      Risk-managed plan with explicit buffer and human review before
+      irreversible writebacks

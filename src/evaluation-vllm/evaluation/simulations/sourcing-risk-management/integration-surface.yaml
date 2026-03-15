@@ -1,0 +1,40 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: supplier-financial-health-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: operational-risk-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: geopolitical-risk-data
+    stream_type: Event Stream
+    source: External APIs
+  - stream_name: early-warning-signals
+    stream_type: Event Stream
+    source: External APIs
+processing:
+  - component: AutoML
+    type: cortex
+    function: Identify high-risk suppliers and potential issues
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure human oversight before executing plans
+  - component: Remote Functions
+    type: process_builder
+    function: Implement plans and update systems accordingly
+  - component: UI Screens
+    type: process_builder
+    function: Provide visibility into risk management outcomes
+  - component: Agentic AI
+    type: agent_teams
+    function: Develop actionable plans to mitigate risks
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce working capital tied to inventory and cut cogs by managing
+      sourcing risks through proactive supplier risk assessment and dynamic
+      mitigation planning. and approve the recommended action.

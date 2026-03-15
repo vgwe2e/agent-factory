@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New or flagged category innovation initiative (submitted by category team, supplier proposal, or analytics signal) enters the innovation pipeline.]
+  A --> N1[Stream: STREAMS (DDM/Crawlers) - Ingest initiative dossier, master data, forecasts, inventory and supplier inputs into the DI platform]
+  N1 --> N2[Cortex: Cortex Auto Forecast + RCA Service - Run scenario analysis: demand uplift, inventory impact, supplier feasibility and financial valuation]
+  N2 --> N3{PB: Process Builder - CWB Lifecycle (Rules + Notification) - Generate recommendation and route to human-in-the-loop approval with supporting business case}
+  N3 -->|Primary| N4[PB: Process Builder: Action Item + Remote Functions (ERP/TMS/WMS writeback) - Execute approved actions: ERP writebacks, procurement releases, supplier notifications, and supply plan updates]
+  N4 --> N5[PB: UI Screens (dashboard) + Subject Areas - Measure initiative performance and update dashboards for ongoing review and lessons learned]
+  N5 --> Z1[Outcome: Validated initiatives either committed to execution (POs/production changes) or deferred; measurable uplift in revenue and EBITDA for approved initiatives, optimized working capital and reduced stockouts/overstocks across involved SKUs and suppliers.]
+  N3 -->|Analysis shows strong positive NPV, l...| B1[Auto-recommend Approve in CWB; trigger full execution path with ERP/TMS/WMS writebacks]
+  B1 --> O1[Outcome: Initiative committed; POs issued or production changes scheduled; expected revenue and EBITDA uplift realized]
+  O1 --> End[End]
+  N3 -->|Analysis shows marginal business case...| B2[Recommend Pilot (partial commit) via CWB with defined pilot SKUs, limited quantity and time-boxed KPIs]
+  B2 --> O2[Outcome: Pilot executed to collect real-world signals; decision revisited after pilot results to scale or defer]
+  O2 --> End[End]
+  N3 -->|Analysis shows negative business case...| B3[Recommend Defer via CWB and capture rationale + mitigation backlog for re-evaluation]
+  B3 --> O3[Outcome: Initiative deferred; resources preserved and items added to backlog for future reconsideration]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,66 @@
+objective: >-
+  Autonomous planning and coordination of NPI production activities across
+  multiple phases to reduce COGS, improve time-to-market, and enhance OTIF.
+trigger: New product introduction (NPI) initiation.
+decision: >-
+  Plan and coordinate all NPI production activities including pre-production,
+  ramp-up, supplier readiness, pilot builds, and end-of-life phases.
+expected_action: >-
+  Automate and optimize production planning activities using deterministic
+  optimization and agentic orchestration.
+expected_outcome: >-
+  Reduced COGS, faster time-to-market, improved OTIF, and better working capital
+  management during NPI cycles.
+rationale: >-
+  The solution integrates deterministic optimization and agentic orchestration
+  to streamline NPI production planning, ensuring efficient resource allocation
+  and cost management.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: New Product Data
+    source: SAP S/4HANA
+    purpose: To initiate NPI planning activities.
+  - name: Supplier Readiness Data
+    source: SAP S/4HANA
+    purpose: To assess supplier readiness for NPI.
+  - name: Production Capacity Data
+    source: SAP S/4HANA
+    purpose: To align production capacity with demand.
+happy_path:
+  - step: Initiate NPI planning
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect initial NPI data from SAP S/4HANA.
+  - step: Pre-production build planning
+    stage: analyze
+    component: STREAMS
+    purpose: Optimize pre-production build schedules and resource allocation.
+  - step: Ramp-up volume planning
+    stage: analyze
+    component: STREAMS
+    purpose: Detail sequencing and capacity alignment for ramp-up.
+  - step: Supplier readiness assessment
+    stage: analyze
+    component: STREAMS
+    purpose: Evaluate supplier readiness and onboarding actions.
+  - step: Pilot build schedule management
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Validate manufacturing processes through pilot builds.
+  - step: End-of-life production planning
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Plan the phasing out of production for EOL models.
+branches:
+  - condition: Insufficient supplier readiness
+    response: Delay NPI launch
+    outcome: Adjust production timelines to ensure supplier readiness.
+  - condition: Excess production capacity
+    response: Allocate excess capacity to other projects
+    outcome: Optimize resource utilization and reduce costs.
+  - condition: High demand for EOL models
+    response: Extend production phase
+    outcome: Balance demand with production capability and cost.

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled hourly data refresh (or on ingestion of new order/shipment/supply status events) where demand vs supply KPIs breach configured thresholds or predicted shortfall/overage is detected.]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Ingest consolidated demand, inventory, supply and transport feeds into platform subject areas]
+  N1 --> N2[Stream: Subject Areas + Data Quality & Validation (STREAMS rules) - Compute KPIs and run deterministic rules to detect exceptions and predicted shortfalls/overages]
+  N2 --> N3{PB: Process Builder (Rules + IF) + CWB Lifecycle - Apply Process Builder rules/IF logic to generate ranked prescriptive actions and evaluate guardrail compliance}
+  N3 -->|Primary| N4[PB: Remote Functions + Process Builder (Action Item / Transaction) - Execute approved touchless actions via secure integrations and create action items for manual tasks]
+  N4 --> N5[UI: UI Screens (Control Tower dashboard) + Notification - Surface results and open exceptions dashboard with audit trail and notifications for impacted teams]
+  N5 --> Z1[Outcome: Reduced stockouts and expedited fulfillment for prioritized demand, minimized waste through proactive rebalancing, controlled COGS impact via guardrails, faster exception resolution, and auditable decision trail for all automated and manual interventions.]
+  N3 -->|Prescriptive action violates guardrai...| B1[Create CWB Lifecycle task routed to assigned planner/team for approval with recommended options and SHAP-like explanation]
+  B1 --> O1[Outcome: Human-in-the-loop decision; system pauses automated writeback until approval or modified instruction]
+  O1 --> End[End]
+  N3 -->|Sufficient inventory exists in altern...| B2[Auto-generate reallocation transaction and update shipments via Remote Functions; notify receiving DCs and carriers]
+  B2 --> O2[Outcome: Touchless rebalancing reduces local stockouts without changing sourcing or production plans]
+  O2 --> End[End]
+  N3 -->|Severe supplier outage or multi-SKU s...| B3[Escalate to supply planning via Process Builder Subprocess + Agent Team (planner) and create prioritized mitigation plan in Kinaxis]
+  B3 --> O3[Outcome: Coordinated human-led replanning with tracked mitigation steps and downstream impacts surfaced]
+  O3 --> End[End]
+  Z1 --> End[End]

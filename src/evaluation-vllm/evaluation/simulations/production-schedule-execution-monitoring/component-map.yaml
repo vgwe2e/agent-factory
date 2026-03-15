@@ -1,0 +1,36 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest daily production schedule data from SAP S/4HANA.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Continuously track production progress against the schedule.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: RCA Service
+    purpose: Determine root causes and corrective actions.
+    confidence: inferred
+    capability: Determine root causes and corrective actions.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Ensure alignment with capacity
+    confidence: confirmed
+    node_type: decide
+  - name: Notification
+    purpose: Trigger corrective actions for deviations.
+    confidence: confirmed
+    node_type: communication
+  - name: AutoML
+    purpose: Minimize production costs while meeting demand and constraints.
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce cogs, improve on-time delivery, and lower working capital by
+      optimizing production schedules and monitoring execution across
+      multi-plant automotive production. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

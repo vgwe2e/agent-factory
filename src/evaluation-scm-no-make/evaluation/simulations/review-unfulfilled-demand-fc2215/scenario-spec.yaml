@@ -1,0 +1,137 @@
+objective: >-
+  Continuously monitor demand and supply performance, autonomously detect
+  unfulfilled demand and supply exceptions, and execute prescriptive,
+  guardrailed actions to minimize stockouts, reduce waste, and protect margin.
+trigger: >-
+  New or updated demand/supply deviation detected (unexpected demand surge,
+  supplier constraint, or shortage propagation) exceeding configured exception
+  thresholds.
+decision: >-
+  Agentic decision to either (A) autonomously reallocate inventory and adjust
+  allocations/production plans within guardrails, (B) initiate expedited
+  sourcing or order rebalancing, or (C) escalate to human review when guardrails
+  or confidence levels are breached.
+expected_action: >-
+  Agent Team (agentic AI) reasons over forecasts, inventory, and constraints,
+  generates a ranked set of prescriptive actions (reallocations, production
+  reprioritization, expediting), executes allowed actions via Remote Functions
+  to Kinaxis/S4, and opens CWB Lifecycle cases for exceptions requiring human
+  approval.
+expected_outcome: >-
+  Reduced stockouts and expedited shipments, improved service levels with fewer
+  manual interventions, lower waste from smarter reallocation, and measurable
+  protection of margin via constraint-aware decisions and audit trail of
+  automated actions.
+rationale: >-
+  Agentic AI (Agent Team + Cortex services) enables adaptive, conversation-like
+  reasoning over heterogeneous signals; Process Builder orchestrates decision
+  flow and guardrails; Cortex Auto Forecast / RCA Service surface root causes
+  and confidence; Remote Functions enable safe, auditable writes to Kinaxis/S4;
+  CWB Lifecycle provides human-in-the-loop where guardrails or low confidence
+  require approval.
+source_systems:
+  - name: SAP S/4HANA (S4)
+    type: ERP
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting
+    type: Statistical forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / Supply planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL (Uber Freight / carrier systems)
+    type: Logistics partner
+    status: identified
+key_inputs:
+  - name: Touchless demand signals (sales, promotions, POS surge)
+    source: SAS / Advanced Statistical Forecasting
+    purpose: Detect unexpected demand surges and update demand baseline
+  - name: Time-series demand forecasts and confidence intervals
+    source: Cortex Auto Forecast and SAS
+    purpose: Provide baseline demand and confidence for deviation detection
+    preferred_stream_type: STREAMS
+  - name: Inventory on-hand, reserved, and available-to-promise (ATP)
+    source: SAP S/4HANA, Blue Yonder WMS
+    purpose: Assess available supply for reallocation and fulfillment decisions
+    preferred_stream_type: STREAMS
+  - name: Open orders, inbound receipts, and supplier lead-times
+    source: SAP S/4HANA, Kinaxis RapidResponse
+    purpose: Understand incoming supply and constraints for replanning/expediting
+    preferred_stream_type: STREAMS
+  - name: Shortage propagation & constraint alerts
+    source: Kinaxis RapidResponse
+    purpose: Signal downstream impacts and candidate SKUs/locations for action
+    preferred_stream_type: STREAMS
+  - name: Safety stock targets and FG safety stock model outputs
+    source: Kinaxis (FG Safety Stock Modeling)
+    purpose: Guardrails to prevent over-depletion when reallocating inventory
+    preferred_stream_type: STREAMS
+  - name: Business priority rules and margin protection policies
+    source: Planning policy repository / UI Screen inputs
+    purpose: >-
+      Define business priorities, SKU/customer preferences, and margin
+      guardrails
+  - name: >-
+      Operational constraints (production capacity, routing, transportation lead
+      times)
+    source: Kinaxis RapidResponse, Uber Freight TMS, SAP S/4HANA
+    purpose: Validate feasibility of recommended actions (replan/expedite)
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: >-
+      Ingest demand, inventory, orders, and shortage alerts into the data
+      foundation
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: Consolidate enterprise signals into Subject Areas for analysis
+  - step: Detect deviations and quantify impact using forecasts and RCA
+    stage: analyze
+    component: Cortex Auto Forecast + RCA Service
+    purpose: Identify unfulfilled demand, root causes, and confidence of signal
+  - step: >-
+      Agentic reasoning generates ranked prescriptive options and applies
+      guardrails
+    stage: decide
+    component: Agent Team + Process Builder (IF + Rules) + CWB Lifecycle
+    purpose: Select autonomous actions within policy constraints or flag for approval
+  - step: Execute approved autonomous actions and update execution systems
+    stage: act
+    component: Remote Functions -> Kinaxis RapidResponse / SAP S/4HANA
+    purpose: Reallocate inventory, reprioritize production, or create expedite orders
+  - step: Surface actions, outcomes, and audit trail to planners for review
+    stage: surface
+    component: UI Screens (report/dashboard) + Notification
+    purpose: Provide visibility, allow manual override, and capture decision history
+branches:
+  - condition: Agentic confidence high and action within guardrails
+    response: >-
+      Autonomously execute reallocation/replan via Remote Functions and log
+      action
+    outcome: >-
+      Immediate corrective action reduces risk of stockout without human
+      intervention
+  - condition: >-
+      Low model confidence or guardrail threshold breached (e.g., margin or
+      safety-stock constraint)
+    response: >-
+      Create CWB Lifecycle case routed to planners with recommended options;
+      wait for human approval
+    outcome: >-
+      Prevents risky automated changes; ensures human-in-the-loop for sensitive
+      decisions
+  - condition: >-
+      Execution blocked by external constraint (supplier cannot expedite /
+      logistics capacity insufficient)
+    response: >-
+      Agent Team proposes contingency plan (alternate sourcing, customer
+      prioritization) and notifies stakeholders; escalate if no viable automated
+      option
+    outcome: >-
+      Maintains service-level tradeoffs while minimizing manual churn and
+      protecting margin

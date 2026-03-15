@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for production planning
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Optimize production schedules based on demand and inventory
+    confidence: confirmed
+    capability: Optimize production schedules based on demand and inventory
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Ensure timely material availability for production
+    confidence: confirmed
+    node_type: decide
+  - name: Exception Management
+    purpose: Identify and address deviations proactively
+    confidence: inferred
+    node_type: act
+  - name: Remote Functions
+    purpose: Reallocate resources to meet demand efficiently
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end production planning and control decisions to
+      maximize ebitda, minimize cogs, and optimize working capital. and approve
+      the recommended action.
+    confidence: confirmed
+    component_type: display

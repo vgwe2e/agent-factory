@@ -1,0 +1,35 @@
+streams:
+  - name: STREAMS
+    purpose: Create a unified, validated data foundation for analysis
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Provide demand input to replenishment and slotting optimization
+    confidence: confirmed
+    capability: Provide demand input to replenishment and slotting optimization
+  - name: Remote Functions (optimization routine) called from Process Builder
+    purpose: >-
+      Generate move plans, slot assignments, and replenishment targets that
+      respect handling capacity and service levels
+    confidence: confirmed
+    capability: >-
+      Generate move plans, slot assignments, and replenishment targets that
+      respect handling capacity and service levels
+process_builder:
+  - name: CWB Lifecycle (via Process Builder Action Item)
+    purpose: Auto-apply safe recommendations; route exceptions to planners for override
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (ERP writeback) + Process Builder Transaction
+    purpose: >-
+      Persist slotting and replenishment changes to SAP S/4HANA and trigger
+      execution tasks
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screens + Notification node
+    purpose: Provide visibility, audit trail, and next-step assignments
+    confidence: confirmed
+    component_type: display

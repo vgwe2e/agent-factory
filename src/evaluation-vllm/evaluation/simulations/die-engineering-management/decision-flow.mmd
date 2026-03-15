@@ -1,0 +1,21 @@
+flowchart TD
+  A[Trigger: New die design submission or maintenance request.]
+  A --> N1[Stream: DDM/Crawlers - Receive die design submission]
+  N1 --> N2[Cortex: AutoML - Evaluate die design manufacturability]
+  N2 --> N3{PB: CWB Lifecycle - Approve die design}
+  N3 -->|Primary| N4[PB: Process Builder - Manage fabrication & sourcing]
+  N4 --> N5{PB: Exception Management - Plan maintenance and repairs}
+  N5 --> N6[PB: Process Builder - Optimize die changeover]
+  N6 --> N7[PB: Process Builder - Validate new dies]
+  N7 --> N8[Cortex: AutoML - Analyze life cycle costs]
+  N8 --> Z1[Outcome: Reduced COGS, improved yield, accelerated time-to-market, minimized downtime, and optimized cost of ownership.]
+  N3 -->|Design does not meet manufacturabilit...| B1[Reject design and request redesign]
+  B1 --> O1[Outcome: Design is returned for revision.]
+  O1 --> End[End]
+  N3 -->|Supplier cannot meet production requi...| B2[Select alternative supplier]
+  B2 --> O2[Outcome: Alternative supplier is chosen and scheduled.]
+  O2 --> End[End]
+  N3 -->|Maintenance window conflicts with pro...| B3[Reschedule maintenance]
+  B3 --> O3[Outcome: Maintenance is rescheduled to avoid production disruption.]
+  O3 --> End[End]
+  Z1 --> End[End]

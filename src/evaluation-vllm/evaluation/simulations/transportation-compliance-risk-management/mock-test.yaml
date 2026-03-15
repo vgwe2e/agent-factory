@@ -1,0 +1,43 @@
+decision: >-
+  Determine optimal routes, carriers, and compliance actions for HazMat
+  transport, customs declarations, carrier safety, incident response, and
+  roadworthiness permits.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New shipment request or detected risk event in the transportation network.
+  parameters:
+    objective: >-
+      Minimize COGS impact from compliance delays and incidents, improve on-time
+      delivery, and reduce working capital tied to risk events by automating
+      policy-driven routing, carrier selection, incident response, and
+      regulatory permitting across global transportation networks.
+    key_inputs:
+      - Shipment Details
+      - Carrier Safety Records
+      - Incident Reports
+      - Permit Requirements
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate policy-driven routing, carrier selection, incident response, and
+    regulatory permitting.
+  outcome: >-
+    Reduced compliance delays, minimized COGS impact, improved on-time delivery,
+    and reduced working capital tied to risk events.
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - Data Quality & Validation
+    - CWB Lifecycle
+    - Remote Functions
+    - Process Builder
+    - Dashboard
+rationale: >-
+  By leveraging deterministic risk optimization and agentic end-to-end
+  decisioning, the ACO can ensure compliance and minimize costs associated with
+  transportation risks.

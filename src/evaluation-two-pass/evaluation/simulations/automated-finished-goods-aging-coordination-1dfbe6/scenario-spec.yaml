@@ -1,0 +1,119 @@
+objective: >-
+  Automatically coordinate finished goods aging management across Planning,
+  Production Scheduling, Dealer Allocation, and Finance to minimize write-offs
+  and reduce stock obsolescence while optimizing working capital.
+trigger: >-
+  Scheduled daily aging job or threshold breach for SKU aging (days-on-hand or
+  aging bucket threshold) detected from inventory data.
+decision: >-
+  Determine whether to automatically apply mitigation actions (adjust
+  MPS/production slots, reallocate dealer inventory, trigger
+  promotions/markdowns, or initiate finance write-off actions) for SKUs flagged
+  with elevated aging risk.
+expected_action: >-
+  Process Builder evaluates aging risk via deterministic rules, executes
+  mitigation steps through Remote Functions to SAP S/4HANA (adjust
+  MPS/schedules, update dealer allocations, create disposition or write-off
+  transactions), and creates CWB exceptions for high-risk SKUs for human
+  approval; stakeholders are notified and dashboards updated.
+expected_outcome: >-
+  Aligned cross-domain actions reduce obsolescence and write-offs, faster
+  mitigation of aging SKUs, improved S&OP-to-Finance traceability, and
+  measurable reduction in inventory aging and related working-capital impact.
+rationale: >-
+  A deterministic Process Builder workflow with rule-based scoring and Remote
+  Functions provides timely, auditable coordination across ERP, planning,
+  manufacturing and finance systems. This minimizes manual handoffs, ensures
+  consistent policy enforcement, and enables human oversight for high-impact
+  write-offs.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Finished goods inventory ledger (on-hand, lot/expiry, location)
+    source: SAP S/4HANA
+    purpose: >-
+      Baseline inventory positions required to compute days-on-hand and aging
+      buckets
+    preferred_stream_type: DDM/Crawlers
+  - name: Inventory movements (receipts, shipments, transfers)
+    source: SAP S/4HANA
+    purpose: Compute inflow/outflow trends and support aging velocity calculations
+    preferred_stream_type: DDM/Crawlers
+  - name: Production schedule / MPS and capacity
+    source: SAP S/4HANA
+    purpose: Identify adjustable production slots and assess impact of rescheduling
+    preferred_stream_type: DDM/Crawlers
+  - name: Dealer allocation and shipment plan
+    source: SAP S/4HANA
+    purpose: Determine reallocation opportunities and downstream demand impact
+    preferred_stream_type: STREAMS
+  - name: Finance provisioning and write-off policy (thresholds, approval rules)
+    source: Finance policy (configured in ERP / governance documents)
+    purpose: >-
+      Drive finance actions and approval requirements for write-offs or
+      provisions
+  - name: Aging thresholds and mitigation rules
+    source: Business configuration (Process Builder rules)
+    purpose: Define deterministic scoring, risk bands, and automated mitigation logic
+happy_path:
+  - step: Ingest inventory and transaction data from ERP
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Pull finished-goods ledger, movements, lot/date and location details from
+      SAP S/4HANA
+  - step: Transform and compute aging metrics
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Calculate days-on-hand, aging buckets, velocity and trending per
+      SKU/location
+  - step: Score aging risk and select mitigations via deterministic rules
+    stage: decide
+    component: Rules
+    purpose: >-
+      Assign risk band (low/medium/high) and determine candidate actions
+      (reschedule, reallocate, promotion, write-off)
+  - step: Execute automated mitigations and ERP updates
+    stage: act
+    component: Process Builder (Remote Functions)
+    purpose: >-
+      Push MPS/schedule changes, update dealer allocations, and create financial
+      disposition transactions in SAP S/4HANA
+  - step: Escalate high-risk items to human-in-the-loop exception workflow
+    stage: notify
+    component: CWB Lifecycle
+    purpose: >-
+      Present exceptions to S&OP and Finance for approval with recommended
+      actions
+  - step: Surface results and monitor outcome KPIs
+    stage: review
+    component: UI Screen
+    purpose: >-
+      Stakeholders review approvals, track aging KPIs, and confirm reduction in
+      at-risk inventory
+branches:
+  - condition: Aging risk = low (below thresholds)
+    response: >-
+      No automated plan changes; monitor and continue standard replenishment
+      cadence.
+    outcome: >-
+      No disruption to production or allocation; continued normal S&OP
+      governance.
+  - condition: Aging risk = medium (mitigation feasible within planning horizon)
+    response: >-
+      Automatically adjust production slots and reallocate inventory; schedule
+      promotions/markdowns where applicable via Process Builder.
+    outcome: >-
+      Mitigations executed without escalation; expected reduction in aging
+      within one planning cycle.
+  - condition: Aging risk = high or finance threshold for write-off triggered
+    response: >-
+      Create CWB exception routed to S&OP and Finance for approval; hold or
+      quarantine inventory actions until sign-off; record proposed write-off
+      provisioning.
+    outcome: >-
+      Human approval prevents unauthorized write-offs; controlled disposition or
+      write-off performed after governance review.

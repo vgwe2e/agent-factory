@@ -1,0 +1,84 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Advanced Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (general)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+aera_ingestion:
+  - stream_name: approved-initiative-record
+    stream_type: batch
+    source: Process Builder / Subject Areas
+  - stream_name: supplier-master-and-profiles
+    stream_type: api
+    source: S4 / external supplier registry
+  - stream_name: demand-forecasts-by-sku
+    stream_type: batch
+    source: Cortex Auto Forecast / SAS
+  - stream_name: inventory-and-safety-stock
+    stream_type: batch
+    source: Kinaxis / Blue Yonder WMS
+  - stream_name: procurement-terms-and-pricing
+    stream_type: api
+    source: S4
+  - stream_name: financial-targets-and-thresholds
+    stream_type: batch
+    source: Subject Areas / Finance reports
+  - stream_name: supplier-risk-scores
+    stream_type: batch
+    source: RCA Service / Data Science
+  - stream_name: collaboration-model-templates
+    stream_type: Event Stream
+    source: Process Builder / Document repository
+processing:
+  - component: Cortex Auto Forecast + RCA Service + Data Science
+    type: cortex
+    function: >-
+      Generate demand scenarios, financial impact estimates, and supplier risk
+      scores to inform model selection
+  - component: CWB Lifecycle + UI Screen
+    type: process_builder
+    function: >-
+      Present recommendation, allow accept/override, and capture approval or
+      negotiation instructions
+  - component: Remote Functions + Process Builder (Action Item)
+    type: process_builder
+    function: >-
+      Draft/agreement creation, S4 purchase terms writeback, and trigger
+      logistics updates (TMS/WMS) and supplier notifications
+  - component: >-
+      Process Builder Notification + Cortex Monitoring + Dashboard (Subject
+      Areas)
+    type: process_builder
+    function: >-
+      Send supplier and internal notifications; surface KPI tracking for
+      revenue, EBITDA, and working capital impact
+  - component: Process Builder -> Agent Team (agentic_ai) + Rules IF node
+    type: agent_teams
+    function: >-
+      Combine analytical outputs and business rules to propose the best-fit
+      supplier and collaboration model
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end category innovation collaboration: select
+      supplier and collaboration model, execute agreements and procurement
+      actions, and measure initiative performance to drive revenue, ebitda
+      uplift, and working capital improvements across multiple skus and
+      suppliers. and approve the recommended action.

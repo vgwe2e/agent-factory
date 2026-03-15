@@ -1,0 +1,70 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: Supply Chain Planning
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Analytics
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS/3PL
+    status: identified
+  - name: Supplier Portal / External Documents
+    status: tbd
+aera_ingestion:
+  - stream_name: advance-shipping-notice-asn
+    stream_type: DDM/Crawlers
+    source: Supplier / Carrier (via EDI/API)
+  - stream_name: purchase-order-po-po-line
+    stream_type: STREAMS
+    source: S4 (SAP)
+  - stream_name: carrier-manifest-bill-of-lading
+    stream_type: DDM/Crawlers
+    source: Uber Freight / Carrier
+  - stream_name: inspection-criteria-quality-specifications
+    stream_type: STREAMS
+    source: S4 Quality Management or Quality SOP repository
+  - stream_name: wms-receiving-scan-dock-scan
+    stream_type: DDM/Crawlers
+    source: Blue Yonder WMS
+  - stream_name: supplier-performance-historical-quality
+    stream_type: STREAMS
+    source: S4 / Kinaxis / SAS analytics
+  - stream_name: physical-inspection-results-measurements-photos-notes
+    stream_type: Event Stream
+    source: Inspector via UI Screen / Agent Team interaction
+  - stream_name: cost-impact-expedite-estimate
+    stream_type: STREAMS
+    source: S4 / Kinaxis calculation or Remote Function
+processing:
+  - component: Agent Team
+    type: process_builder
+    function: >-
+      Assist inspector with unstructured guidance and produce a recommended
+      disposition with rationale
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Human-in-the-loop decision capture (accept/partial/quarantine/reject) with
+      audit trail
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Reliable ERP/WMS writebacks and cross-system notifications/workflow
+      creation
+  - component: UI Screen
+    type: process_builder
+    function: Operational visibility and follow-up tracking for stakeholders
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review coordinate inbound deliveries, perform inspection against quality
+      criteria, and decide accept/reject (or partial) with automated erp/wms
+      updates and supplier/3pl notifications. and approve the recommended
+      action.

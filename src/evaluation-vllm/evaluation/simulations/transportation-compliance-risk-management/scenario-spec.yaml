@@ -1,0 +1,72 @@
+objective: >-
+  Minimize COGS impact from compliance delays and incidents, improve on-time
+  delivery, and reduce working capital tied to risk events by automating
+  policy-driven routing, carrier selection, incident response, and regulatory
+  permitting across global transportation networks.
+trigger: New shipment request or detected risk event in the transportation network.
+decision: >-
+  Determine optimal routes, carriers, and compliance actions for HazMat
+  transport, customs declarations, carrier safety, incident response, and
+  roadworthiness permits.
+expected_action: >-
+  Automate policy-driven routing, carrier selection, incident response, and
+  regulatory permitting.
+expected_outcome: >-
+  Reduced compliance delays, minimized COGS impact, improved on-time delivery,
+  and reduced working capital tied to risk events.
+rationale: >-
+  By leveraging deterministic risk optimization and agentic end-to-end
+  decisioning, the ACO can ensure compliance and minimize costs associated with
+  transportation risks.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Shipment Details
+    source: SAP S/4HANA
+    purpose: To determine the nature of the shipment and required compliance actions.
+  - name: Carrier Safety Records
+    source: External Databases
+    purpose: To continuously monitor carrier safety and compliance.
+  - name: Incident Reports
+    source: Internal Systems
+    purpose: To trigger incident response plans.
+  - name: Permit Requirements
+    source: Regulatory Bodies
+    purpose: To obtain necessary permits for oversized vehicles or special loads.
+happy_path:
+  - step: Retrieve shipment details from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To gather necessary information about the shipment.
+  - step: Analyze shipment details for HazMat compliance.
+    stage: analyze
+    component: AutoML
+    purpose: To ensure compliance with global HazMat regulations.
+  - step: Select optimal routes and carriers based on compliance and cost.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: To minimize risk and cost.
+  - step: Generate customs declarations and optimize clearance time.
+    stage: act
+    component: Remote Functions
+    purpose: To maintain compliance and reduce delays.
+  - step: Monitor carrier safety and compliance records.
+    stage: analyze
+    component: Data Quality & Validation
+    purpose: To ensure carriers meet safety standards.
+  - step: Execute incident response plans if necessary.
+    stage: act
+    component: Process Builder
+    purpose: To handle transportation incidents effectively.
+branches:
+  - condition: Carrier fails safety compliance check.
+    response: Escalate to compliance team for further action.
+    outcome: Carrier utilization decision deferred to compliance team.
+  - condition: Oversize permit required but not available.
+    response: Re-route shipment or delay until permit is obtained.
+    outcome: Shipment re-routed or delayed to ensure compliance.
+  - condition: Incident occurs during transportation.
+    response: Trigger incident response plan and update shipment status.
+    outcome: Incident handled and shipment status updated accordingly.

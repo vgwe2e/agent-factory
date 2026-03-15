@@ -1,0 +1,70 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting (SAS)
+    type: Advanced Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: >-
+      Kinaxis (Rebalancing / Shortage / Order Expediting / FG Safety Stock
+      modules)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: TMS/3PL
+    status: identified
+aera_ingestion:
+  - stream_name: drp-candidate-allocations-suggested-replenishment-volumes
+    stream_type: STREAMS
+    source: Kinaxis RapidResponse / Kinaxis Rebalancing
+  - stream_name: short-term-release-str-signals-and-timing-constraints
+    stream_type: STREAMS
+    source: Kinaxis / S4
+  - stream_name: demand-forecast-and-forecast-deltas
+    stream_type: Subject Areas
+    source: SAS Advanced Statistical Forecasting
+  - stream_name: on-hand-inventory-and-committed-orders
+    stream_type: STREAMS
+    source: S4 (SAP) and Blue Yonder WMS
+  - stream_name: safety-stock-targets-and-fg-model-outputs
+    stream_type: Subject Areas
+    source: Kinaxis FG Safety Stock Modeling / Safety Stock Service
+  - stream_name: transportation-capacity-lead-times-and-cost
+    stream_type: Event Stream
+    source: Uber Freight / TMS
+  - stream_name: cogs-unit-cost-and-margin-parameters
+    stream_type: Subject Areas
+    source: S4 (SAP)
+  - stream_name: open-exceptions-and-business-rules
+    stream_type: Event Stream
+    source: Process Builder ruleset / CWB Lifecycle
+processing:
+  - component: Cortex Auto Forecast + Safety Stock Service
+    type: cortex
+    function: Generate updated demand signals and buffer requirements for DRP evaluation
+  - component: Process Builder -> Remote Functions
+    type: process_builder
+    function: Safe, auditable writebacks to APS/ERP and plan distribution
+  - component: CWB Lifecycle + UI Screen
+    type: process_builder
+    function: Human-in-the-loop review of exceptions and final sign-off where required
+  - component: Process Builder Notification + Subject Areas
+    type: process_builder
+    function: Communicate decisions and update analytics/scorecards for KPI tracking
+  - component: Agentic AI (orchestrated via Process Builder / Agent Team)
+    type: agent_teams
+    function: Adaptive reasoning to balance COGS, service level, and working capital
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously optimize multi-echelon drp decisions (drp adjustments
+      vs. str releases) end-to-end to minimize cogs, improve working capital,
+      and protect ebitda while maintaining service levels and rapid execution
+      with exception handling. and approve the recommended action.

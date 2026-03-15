@@ -1,0 +1,38 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: s-op-plans
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: cogs-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: revenue-and-gross-margin-targets
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: working-capital-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Quantify financial implications and model COGS impact.
+  - component: AutoML
+    type: cortex
+    function: Ensure plans meet corporate financial objectives.
+  - component: Safety Stock Service
+    type: cortex
+    function: Balance inventory, payables, and receivables.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Provide actionable insights for decision-makers.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review link s&op financial impact assessments, cogs optimization,
+      revenue/gross margin alignment, and working capital improvements into a
+      coordinated, semi-autonomous decision engine to achieve material ebitda
+      uplift and improved cash conversion. and approve the recommended action.

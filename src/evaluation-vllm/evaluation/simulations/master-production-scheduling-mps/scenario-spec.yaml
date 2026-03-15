@@ -1,0 +1,83 @@
+objective: >-
+  Finalize and optimize master production scheduling (MPS) across weekly
+  planning, long-range capacity, dealer allocation, and production sequencing to
+  reduce COGS, improve line efficiency, and enhance on-time delivery.
+trigger: >-
+  Weekly and monthly planning cycles, demand forecasts, supplier readiness
+  updates, and capacity constraints.
+decision: >-
+  Finalize weekly build schedule by plant and shift, develop long-range
+  production plan (12-24 months), allocate available production slots to dealer
+  and fleet orders, determine optimal vehicle build sequence, manage and
+  distribute global MPS data.
+expected_action: >-
+  Generate conflict-free, cost-optimized production schedules and distribute
+  accurate and timely MPS data to stakeholders.
+expected_outcome: Reduced COGS, improved line efficiency, and higher on-time delivery rates.
+rationale: >-
+  Automate and optimize MPS processes to ensure efficient production planning
+  and execution, leveraging advanced analytics and decision intelligence.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Weekly Production Constraints
+    source: SAP S/4HANA
+    purpose: Evaluate production feasibility
+    preferred_stream_type: STREAMS
+  - name: Supplier Readiness
+    source: SAP S/4HANA
+    purpose: Ensure material availability
+    preferred_stream_type: STREAMS
+  - name: Demand Forecasts
+    source: SAP S/4HANA
+    purpose: Align production with market demand
+    preferred_stream_type: STREAMS
+  - name: Capacity Constraints
+    source: SAP S/4HANA
+    purpose: Balance production capacity
+    preferred_stream_type: STREAMS
+  - name: Dealer Orders
+    source: SAP S/4HANA
+    purpose: Allocate production slots
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Collect and validate input data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ensure data accuracy and completeness
+  - step: Analyze production constraints and supplier readiness
+    stage: analyze
+    component: STREAMS
+    purpose: Evaluate production feasibility
+  - step: Generate weekly build schedule
+    stage: decide
+    component: Process Builder
+    purpose: Finalize weekly production plan
+  - step: Develop long-range production plan
+    stage: decide
+    component: Process Builder
+    purpose: Align with strategic business objectives
+  - step: Allocate production slots to dealers
+    stage: decide
+    component: Process Builder
+    purpose: Balance revenue and efficiency
+  - step: Optimize production sequence
+    stage: decide
+    component: Process Builder
+    purpose: Maximize throughput efficiency
+  - step: Distribute MPS data
+    stage: act
+    component: Remote Functions
+    purpose: Ensure timely and accurate data dissemination
+branches:
+  - condition: Insufficient supplier readiness
+    response: Delay production schedule
+    outcome: Adjust weekly build schedule
+  - condition: Exceeding capacity constraints
+    response: Reallocate production slots
+    outcome: Optimize long-range plan
+  - condition: High demand variability
+    response: Review and adjust production sequence
+    outcome: Enhance line efficiency

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New or updated confirmed order/demand forecast, inventory snapshot, or capacity plan (scheduled or event-driven ingest).]
+  A --> N1[Stream: STREAMS - Ingest confirmed orders, inventory snapshot, capacity plan, forecasts, and S&OP targets]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Compute reconciled demand and near-term forecast adjustments]
+  N2 --> N3{PB: Process Builder (IF, Rules) + CWB Lifecycle - Apply ATP rules and capacity checks, generate recommended commitment}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute commitment writeback or create exception workflow]
+  N4 --> N5[PB: UI Screens + Notification - Surface commitments and exceptions to planners and S&OP]
+  N5 --> Z1[Outcome: Higher ATP accuracy and fewer over-promises, improved revenue realization and gross margin alignment to COGS targets, predictable fulfillment sequencing, and fewer manual exception escalations.]
+  N3 -->|Inventory sufficient but plant capaci...| B1[Recommend partial fulfillment or alternative promise date; flag for S&OP sequencing adjustments]
+  B1 --> O1[Outcome: Avoid over-promising; maintain service levels by offering revised delivery options and escalating capacity trade-offs]
+  O1 --> End[End]
+  N3 -->|Inventory shortage for high-margin it...| B2[Allocate available inventory based on financial/priority rules and create backorder plan for remainder]
+  B2 --> O2[Outcome: Maximize revenue and margin while transparently managing backlog and customer expectations]
+  O2 --> End[End]
+  N3 -->|Significant forecast deviation (promo...| B3[Trigger S&OP exception subprocess (Process Builder - Notification - Agent Team) for cross-functional replan]
+  B3 --> O3[Outcome: Cross-domain decision established (capacity expansion, alternate sourcing, or demand shaping) to realign ATP and financial targets]
+  O3 --> End[End]
+  Z1 --> End[End]

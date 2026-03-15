@@ -1,0 +1,145 @@
+objective: >-
+  Orchestrate integrated demand-impact and safety-stock sensitivity analyses
+  across SKUs/locations to auto-generate risk-adjusted scenarios and execute
+  semi-autonomous actions that protect revenue and optimize working capital.
+trigger: >-
+  Detected demand uplift or forecast deviation beyond configured threshold
+  (sales orders / forecast delta) during daily planning cadence.
+decision: >-
+  Accept, modify, or reject risk-adjusted scenario that updates safety stock
+  targets and supply actions (procurement, production shifts, rebalancing)
+  produced by the automated orchestration.
+expected_action: >-
+  Process Builder orchestrates Cortex Auto Forecast + Safety Stock Service
+  sensitivity runs to create ranked scenarios; CWB Lifecycle presents
+  semi-autonomous recommendations; accepted scenarios invoke Remote Functions to
+  write adjustments to S4 and Kinaxis RapidResponse and create execution tasks
+  (procurement POs, shift changes, rebalancing orders).
+expected_outcome: >-
+  Reduced stockouts (improved revenue protection), lower excess inventory
+  (reduced working capital), prioritized mitigation actions executed across
+  procurement/production/fulfillment with audit trail and optional human
+  overrides.
+rationale: >-
+  A deterministic process route ties touchless demand forecasts to ML-driven
+  safety-stock sensitivity and rule-based exception management. Using Process
+  Builder to orchestrate Cortex Auto Forecast, Safety Stock Service, CWB
+  Lifecycle and Remote Functions enables repeatable, semi-autonomous decisions
+  that balance service-level protection and inventory cost, leveraging existing
+  ERP/APS/WMS investments for execution.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS - Advanced Statistical Forecasting
+    type: forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / planning
+    status: identified
+  - name: Kinaxis (FG safety stock & rebalancing / order expediting)
+    type: planning_services
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: 3PL/TMS
+    status: identified
+key_inputs:
+  - name: Touchless demand forecast + uplift flags
+    source: Cortex Auto Forecast / SAS forecasts / S4 sales orders
+    purpose: Detect demand deviations and produce baseline & upside demand scenarios
+    preferred_stream_type: API
+  - name: On-hand inventory and transactions
+    source: Blue Yonder WMS / S4
+    purpose: >-
+      Baseline inventory positions for safety stock sensitivity and rebalancing
+      calculations
+    preferred_stream_type: API
+  - name: Safety stock baselines and service-level targets
+    source: Kinaxis RapidResponse / Kinaxis safety stock models
+    purpose: >-
+      Input to Safety Stock Service sensitivity and risk-adjusted scenario
+      generation
+    preferred_stream_type: API
+  - name: Capacity & production constraints
+    source: S4 manufacturing / Kinaxis APS
+    purpose: >-
+      Assess feasibility of production shift or resource additions under demand
+      upside
+    preferred_stream_type: API
+  - name: Logistics lead times and constraints
+    source: Uber Freight / Blue Yonder WMS
+    purpose: Estimate expedite feasibility and inventory replenishment timing
+    preferred_stream_type: API
+  - name: Business policies and tolerance thresholds
+    source: Planning team input (UI Screen / Configuration)
+    purpose: >-
+      Control automation thresholds, override rules, and acceptable
+      working-capital tradeoffs
+happy_path:
+  - step: >-
+      Ingest sales, forecast, inventory, capacity and logistics data into the
+      Data Foundation
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: Consolidate authoritative inputs for analysis
+  - step: >-
+      Generate touchless forecasts and detect uplift; run safety-stock
+      sensitivity across SKUs/locations
+    stage: analyze
+    component: Cortex Auto Forecast + Safety Stock Service
+    purpose: >-
+      Produce baseline and risk-adjusted demand/safety-stock scenarios with
+      impact metrics
+  - step: >-
+      Orchestrate scenario ranking and semi-autonomous decision logic, present
+      recommendations
+    stage: decide
+    component: Process Builder + CWB Lifecycle
+    purpose: >-
+      Automatically rank scenarios, apply business rules, and surface CWB
+      recommendations for accept/reject/override
+  - step: >-
+      Execute accepted changes: write safety-stock updates, create
+      procurement/production/expedite actions
+    stage: act
+    component: Remote Functions -> S4 / Kinaxis RapidResponse
+    purpose: Implement adjustments across ERP/APS with transactional guarantees
+  - step: >-
+      Surface decisions, exceptions, and KPI impact to planners for review;
+      notify stakeholders
+    stage: review
+    component: UI Screen (CWB) + Notification
+    purpose: >-
+      Provide audit trail, allow overrides, and inform procurement/operations
+      teams
+branches:
+  - condition: >-
+      Demand uplift high but capacity constrained (insufficient production
+      capacity or lead time)
+    response: >-
+      Process Builder triggers capacity option analysis and presents choices:
+      add shifts, outsource, or prioritize SKUs; CWB shows recommended action
+      and impact
+    outcome: >-
+      If accepted, Remote Functions create production shift change requests or
+      expedite orders; if rejected, scenario escalates to planning team for
+      manual resolution
+  - condition: >-
+      Risk-adjusted scenarios indicate significant excess inventory in
+      medium-term horizon
+    response: >-
+      Recommend reducing safety stock targets and deferring new orders; generate
+      rebalancing actions in Kinaxis and push hold requests to procurement
+    outcome: >-
+      Working capital reduced via fewer incoming POs and targeted rebalancing;
+      monitoring rule tracks for rebound in demand
+  - condition: Planner rejects automated recommendation in CWB (override)
+    response: >-
+      Process Builder triggers Rollback Transaction or creates exception task
+      and routes to Agent Team for collaborative resolution
+    outcome: >-
+      No writeback occurs; exception tracked with alternate plan and owner
+      assigned for manual execution

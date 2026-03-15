@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Daily inventory update from SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve current inventory levels from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Generate demand forecasts using Cortex Auto Forecast.]
+  N2 --> N3{PB: AutoML - Optimize inventory positioning using AutoML.}
+  N3 -->|Primary| N4{Stream: STREAMS - Plan outbound routes and load sequences using STREAMS.}
+  N4 --> N5[PB: Remote Functions - Execute optimized load plans and generate shipment documentation.]
+  N5 --> N6[PB: UI Screens - Track shipments and report transit damage.]
+  N6 --> Z1[Outcome: 2-10% COGS reduction, improved OTIF, reduced handling and vessel/tractor utilization inefficiencies.]
+  N3 -->|Inventory levels exceed predefined th...| B1[Adjust inventory positioning and rerun optimization.]
+  B1 --> O1[Outcome: Ensures balanced inventory levels and minimizes carrying costs.]
+  O1 --> End[End]
+  N3 -->|Unexpected demand spike detected.| B2[Recalculate demand forecasts and adjust inventory positioning.]
+  B2 --> O2[Outcome: Aligns inventory with sudden changes in demand.]
+  O2 --> End[End]
+  N3 -->|Transit damage reported.| B3[Initiate damage assessment and claim processing.]
+  B3 --> O3[Outcome: Minimizes working capital impact from damaged shipments.]
+  O3 --> End[End]
+  Z1 --> End[End]

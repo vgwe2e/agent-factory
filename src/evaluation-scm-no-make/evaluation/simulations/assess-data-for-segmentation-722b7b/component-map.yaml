@@ -1,0 +1,39 @@
+streams:
+  - name: STREAMS (DDM/Crawlers)
+    purpose: >-
+      Consolidate sales, inventory, SKU and location data into curated subject
+      tables for segmentation
+    confidence: confirmed
+    type: STREAMS (DDM/Crawlers)
+cortex:
+  - name: Process Builder (Rules node)
+    purpose: >-
+      Run ABC/XYZ-style rule engine using configured thresholds and attribute
+      weights to produce segments
+    confidence: confirmed
+    capability: >-
+      Run ABC/XYZ-style rule engine using configured thresholds and attribute
+      weights to produce segments
+process_builder:
+  - name: Process Builder (IF + Remote Functions)
+    purpose: >-
+      Apply allocation logic and invoke Remote Functions for complex
+      calculations or revenue-weighted allocation
+    confidence: confirmed
+    node_type: decide
+  - name: >-
+      Remote Functions (ERP writeback) -> S4, Kinaxis updates, WMS/TMS
+      notifications
+    purpose: >-
+      Perform transactional updates to S4 and Kinaxis and push pick/ship
+      instructions to WMS/TMS with rollback tokens
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screen (dashboard) + CWB Lifecycle snapshot / Action Item
+    purpose: >-
+      Show allocation outcomes, KPIs, exceptions and allow one-click rollback or
+      human review via Action Item/CWB
+    confidence: confirmed
+    component_type: display

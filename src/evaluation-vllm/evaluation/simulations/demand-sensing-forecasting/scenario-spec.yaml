@@ -1,0 +1,71 @@
+objective: >-
+  Unify and automate demand sensing and forecast optimization across multiple L4
+  processes to improve forecast accuracy, reduce working capital, and enhance
+  service levels.
+trigger: Monthly demand planning cycle initiation.
+decision: >-
+  Develop aggregated monthly demand plan by product family, manage and refine
+  forecasting models, predict new model launch volumes, and analyze forecast
+  accuracy and bias.
+expected_action: >-
+  Automate demand sensing and forecasting processes using deterministic
+  optimization and agentic orchestration.
+expected_outcome: >-
+  Improved forecast accuracy, reduced working capital tied to inventory and
+  supplier commitments, and smoother new model launches.
+rationale: >-
+  By automating and unifying demand sensing and forecasting processes, Ford can
+  achieve tighter working capital management, reduced obsolescence, and improved
+  service levels across its multi-echelon automotive parts network.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Market Trends Data
+    source: External APIs
+    purpose: Incorporate market trends into long-range forecasts
+    preferred_stream_type: ETL
+  - name: Historical Sales Data
+    source: SAP S/4HANA
+    purpose: Train and validate statistical forecasting models
+    preferred_stream_type: ETL
+  - name: Product Lifecycle Data
+    source: SAP S/4HANA
+    purpose: Inform long-range volume forecasting
+    preferred_stream_type: ETL
+happy_path:
+  - step: Ingest market trends and historical sales data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and prepare data for forecasting
+  - step: Generate long-range volume forecasts
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict demand 3-5 years out
+  - step: Refine statistical forecasting models
+    stage: analyze
+    component: AutoML
+    purpose: Optimize forecast bias and RMSE
+  - step: Develop monthly consensus demand plans
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Aggregate and finalize monthly demand plans
+  - step: Predict new model launch volumes
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Estimate initial launch volumes and ramp-up profiles
+  - step: Analyze forecast accuracy and bias
+    stage: review
+    component: RCA Service
+    purpose: Identify areas for improvement in forecasting processes
+branches:
+  - condition: Forecast accuracy below threshold
+    response: Trigger re-evaluation of forecasting models and parameters
+    outcome: Adjust forecasting processes to improve accuracy
+  - condition: Significant market trend changes detected
+    response: Update long-range forecasts and notify stakeholders
+    outcome: Align forecasts with updated market conditions
+  - condition: New model launch volume predictions exceed capacity
+    response: Adjust production schedules and notify supply chain teams
+    outcome: Ensure smooth new model launches within capacity constraints

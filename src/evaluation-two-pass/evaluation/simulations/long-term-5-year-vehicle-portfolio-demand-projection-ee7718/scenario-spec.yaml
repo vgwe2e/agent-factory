@@ -1,0 +1,141 @@
+objective: >-
+  Produce an autonomous, deterministic multi-year (5+ year) vehicle portfolio
+  demand and scenario engine that jointly optimizes demand projections,
+  macroeconomic scenarios, technology shift impacts, and capacity constraints to
+  align production and CAPEX with strategic product shifts.
+trigger: >-
+  Periodic strategic planning cadence (quarterly) or material change in
+  macroeconomic/technology/capacity inputs (ad hoc trigger from Agentic AI or
+  system alert).
+decision: >-
+  Decide the optimal multi-year vehicle portfolio demand plan that balances
+  forecast accuracy, service level targets (OIFF), working capital reduction,
+  and capacity/CAPEX alignment.
+expected_action: >-
+  Orchestrate scenario generation, evaluate demand vs. capacity across
+  scenarios, recommend a single approved multi-year demand plan (with documented
+  alternatives and overrides) and write approved plan back to planning subject
+  areas / SAP S/4HANA.
+expected_outcome: >-
+  Tighter alignment of production and CAPEX to strategic product shifts, reduced
+  working capital, improved OIFF delivery, and documented scenario rationale
+  with auditable approvals.
+rationale: >-
+  A deterministic process route couples robust ETL and subject-area modeling
+  (STREAMS + Subject Areas) with Cortex forecasting and agentic scenario
+  orchestration to produce repeatable, auditable multi-year demand plans.
+  Process Builder orchestrates scenario ensembles, Remote Functions handle
+  complex capacity/CAPEX calculations and SAP writebacks, and CWB Lifecycle
+  provides human-in-the-loop approvals and override tracking. This hybrid
+  approach balances automation and governance for strategic decisions while
+  enabling rapid re-runs when macro or capacity inputs change.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Macro Scenario Provider (e.g., economic data vendor)
+    type: External Data
+    status: tbd
+  - name: Engineering / Capacity Planning
+    type: PLM/Capacity Planning
+    status: tbd
+  - name: Dealer Orders / Order Backlog System
+    type: Order Management
+    status: tbd
+key_inputs:
+  - name: Historical sales, production, backlog, shipment records
+    source: SAP S/4HANA
+    purpose: Baseline demand history, fill rate/OIFF metrics, production lead times
+    preferred_stream_type: STREAMS
+  - name: Macroeconomic scenario sets (GDP, unemployment, fuel/energy prices)
+    source: Macro Scenario Provider (external)
+    purpose: Drive scenario-level demand elasticity and market size assumptions
+    preferred_stream_type: DDM/Crawlers
+  - name: Technology adoption curves & shift assumptions (EV uptake, autonomy)
+    source: Strategy / Market Research
+    purpose: Adjust portfolio-level demand by technology cohort and timing
+    preferred_stream_type: Subject Areas
+  - name: Manufacturing capacity & planned CAPEX / ramp schedules
+    source: Engineering / Capacity Planning
+    purpose: Constrain feasible production and inform CAPEX alignment decisions
+    preferred_stream_type: DDM/Crawlers
+  - name: Market share and competitive dynamics
+    source: Market Intelligence / External
+    purpose: Inform scenario-specific share assumptions and sensitivity analyses
+happy_path:
+  - step: >-
+      Ingest historical transactional and master data from SAP S/4HANA and
+      external macro feeds into the platform
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Collect baseline sales, production, backlog, capacity, and macro scenario
+      inputs for modeling
+  - step: >-
+      Transform and build subject-area fact tables and dimensional hierarchies
+      for portfolio, region, and technology cohorts
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Create clean, aggregated datasets suitable for multi-year analysis and
+      scenario inputs
+  - step: >-
+      Generate demand projections and scenario ensembles using time-series
+      models and scenario adjustments
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Provide baseline multi-year forecasts and alternative trajectories under
+      macro/tech scenarios
+  - step: >-
+      Orchestrate scenario exploration, capacity evaluation, and policy
+      trade-offs; surface recommended plan with documented alternatives
+    stage: decide
+    component: Process Builder (Process + Agentic AI + CWB Lifecycle)
+    purpose: >-
+      Run deterministic scenario ensembles, invoke Remote Functions for
+      capacity/CAPEX math, and produce an approval-ready recommendation
+  - step: >-
+      Persist approved multi-year demand plan and exceptions back to planning
+      subject areas and SAP S/4HANA
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Write approved plan and CAPEX alignment actions to systems of record for
+      downstream execution
+  - step: >-
+      Human review, approval capture, and stakeholder notification with
+      dashboards
+    stage: review
+    component: UI Screens / Notification (CWB Lifecycle)
+    purpose: >-
+      Capture sign-offs, record overrides, and notify supply chain, finance, and
+      product teams
+branches:
+  - condition: >-
+      Feasible production capacity cannot satisfy recommended demand in target
+      years
+    response: >-
+      Process Builder triggers capacity-aligned rerun; Remote Functions propose
+      phased launches, shift in portfolio timing, or CAPEX increase and prepare
+      CAPEX request package
+    outcome: >-
+      Adjusted demand plan aligned to capacity with explicit CAPEX/launch
+      recommendations and impact metrics
+  - condition: >-
+      Severe downside macro scenario exceeds materiality threshold (e.g., demand
+      drop > X%)
+    response: >-
+      Agentic AI escalates to conservative scenario set; Process Builder flags
+      for expedited executive review and recommends working-capital preserving
+      actions
+    outcome: >-
+      Conservative demand plan approved to protect OIFF and working capital with
+      contingency triggers defined
+  - condition: Stakeholder rejects automated recommendation or requests significant edits
+    response: >-
+      CWB Lifecycle routes plan back for manual revision; changes and rationale
+      are recorded as overrides, and a re-approval workflow is started
+    outcome: >-
+      Final approved plan reflecting stakeholder adjustments with audit trail
+      and preserved scenario provenance

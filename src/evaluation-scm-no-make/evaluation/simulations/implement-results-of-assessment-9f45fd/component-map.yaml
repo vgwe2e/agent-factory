@@ -1,0 +1,43 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate and validate all source inputs into Subject Areas for
+      segmentation.
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+  - name: STREAMS (Rules) + Data Science (deterministic rule set)
+    purpose: >-
+      Produce stable SKU-Location segments and per-record confidence for
+      decisioning.
+    confidence: confirmed
+    type: STREAMS (Rules) + Data Science (deterministic rule set)
+cortex: []
+process_builder:
+  - name: Process Builder (IF/Rules) + CWB Lifecycle (recommendation view)
+    purpose: >-
+      Automatically accept high-confidence segments; route low-confidence
+      exceptions.
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder (Transaction) + Remote Functions
+    purpose: >-
+      Apply segment-driven production/replenishment and inventory rebalancing
+      across systems.
+    confidence: confirmed
+    node_type: act
+  - name: Cortex Monitoring + Process Builder (Rollback Transaction) + UI Screen
+    purpose: >-
+      Confirm allocations applied correctly and provide a rapid revert path if
+      anomalies detected.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review use deterministic demand segmentation to create sku-location demand
+      blocs (abc/xyz), then automatically allocate production and
+      inventory/replenishment at the segment level with touchless execution and
+      rapid rollback. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

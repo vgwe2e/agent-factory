@@ -1,0 +1,24 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest cell performance data for sorting.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Apply deterministic optimization for cell grouping.
+    confidence: inferred
+    capability: Apply deterministic optimization for cell grouping.
+process_builder:
+  - name: Process Builder
+    purpose: Determine optimal assembly sequences.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomous optimization of the end-to-end battery module assembly
+      line to reduce cogs and improve on-time delivery while maintaining
+      quality. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

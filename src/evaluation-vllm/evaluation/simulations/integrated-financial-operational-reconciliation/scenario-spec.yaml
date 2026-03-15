@@ -1,0 +1,79 @@
+objective: Integrated Financial & Operational Reconciliation
+trigger: Monthly S&OP cycle initiation
+decision: >-
+  Assess financial impact of the integrated IBP plan on revenue and alignment
+  with ops; identify discrepancies between operational plans and financial
+  targets; analyze profitability by vehicle line and region; integrate CapEx
+  requirements into the overall financial plan; evaluate multiple financial and
+  operational scenarios
+expected_action: >-
+  Present financial impact assessment for plan variants; recommend corrective
+  actions for alignment; provide investment/divestment recommendations for
+  EBITDA optimization; approve, defer, or scale CapEx projects; select optimal
+  scenario based on trade-offs
+expected_outcome: >-
+  Optimized revenue, EBITDA, and working capital through integrated financial
+  and operational planning
+rationale: >-
+  Leverage deterministic optimization and agentic coordination to align
+  financial and operational goals, ensuring revenue maximization and EBITDA
+  optimization while managing working capital effectively.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: IBP Plan Variants
+    source: SAP S/4HANA
+    purpose: Financial Impact Assessment
+  - name: Operational Plans
+    source: SAP S/4HANA
+    purpose: Gap Analysis
+  - name: Profitability Data
+    source: SAP S/4HANA
+    purpose: Profitability Analysis
+  - name: CapEx Requirements
+    source: SAP S/4HANA
+    purpose: CapEx Planning
+  - name: Scenario Models
+    source: SAP S/4HANA
+    purpose: Scenario Evaluation
+happy_path:
+  - step: Retrieve IBP plan variants
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Data Ingestion
+  - step: Perform financial impact assessment
+    stage: analyze
+    component: AutoML
+    purpose: Financial Impact Analysis
+  - step: Identify discrepancies between plans
+    stage: analyze
+    component: Rules
+    purpose: Gap Analysis
+  - step: Analyze profitability by product/region
+    stage: analyze
+    component: AutoML
+    purpose: Profitability Analysis
+  - step: Integrate CapEx requirements
+    stage: analyze
+    component: Remote Functions
+    purpose: CapEx Planning
+  - step: Evaluate financial scenarios
+    stage: analyze
+    component: AutoML
+    purpose: Scenario Evaluation
+  - step: Present recommendations
+    stage: surface
+    component: UI Screens
+    purpose: Decision Support
+branches:
+  - condition: Discrepancies identified
+    response: Recommend corrective actions
+    outcome: Aligned plans
+  - condition: Low profitability detected
+    response: Recommend divestment
+    outcome: Optimized EBITDA
+  - condition: High CapEx impact
+    response: Defer or scale projects
+    outcome: Balanced CapEx

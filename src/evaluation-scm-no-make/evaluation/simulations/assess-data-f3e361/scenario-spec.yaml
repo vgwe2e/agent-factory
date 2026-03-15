@@ -1,0 +1,142 @@
+objective: >-
+  Unify demand forecasting, data validation, feature enrichment, and
+  forecast-driven revenue optimization across multi-SKU, multi-location CPG
+  network to accelerate accurate demand signals, optimize inventory, and protect
+  revenue while reducing waste.
+trigger: >-
+  Scheduled weekly data refresh or ingestion of new driver datasets (new
+  promotional, COGS or external signals) that could affect demand model inputs.
+decision: >-
+  Assess whether to add new driver features to model inputs by evaluating
+  statistical significance and incremental forecast accuracy vs. data
+  complexity. Triggered by Assess Data activity that compares baseline forecasts
+  to feature-enriched forecasts and scores driver importance.
+expected_action: >-
+  Automatically ingest and validate new driver data, run significance and impact
+  analysis, if significant then enrich feature set and retrain Cortex Auto
+  Forecast, propagate updated forecasts to Safety Stock Service and downstream
+  planners via Process Builder + Remote Functions, create CWB Lifecycle item for
+  manual review when human-in-the-loop is required, and write approved
+  replenishment or pricing adjustments back to S4/Kinaxis.
+expected_outcome: >-
+  Improved forecast accuracy and demand signal freshness, optimized safety stock
+  and replenishment plans, prioritized exceptions for planner review, reduced
+  stockouts and overstocks, and protected promotional revenue through COGS-aware
+  feature updates.
+rationale: >-
+  Combining touchless ingestion, automated validation, model-driven feature
+  selection, and lifecycle recommendation balances automation with controlled
+  human oversight. This reduces manual feature engineering, accelerates updates
+  to planning inputs, and aligns inventory and pricing actions to revenue impact
+  and cost-of-goods-sold considerations.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Advanced Forecasting Platform
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / S&OP
+    status: identified
+  - name: Kinaxis
+    type: Supply Chain Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Frieght
+    status: identified
+key_inputs:
+  - name: Historical sales / shipments
+    source: S4 (SAP S/4HANA) + Blue Yonder WMS
+    purpose: Baseline demand signal for time-series forecasting and reconciliation
+    preferred_stream_type: STREAMS
+  - name: Advanced statistical forecasts
+    source: SAS
+    purpose: Benchmark forecasts and ensemble input for Cortex Auto Forecast
+  - name: Promotion & pricing calendar
+    source: S4 (SAP S/4HANA)
+    purpose: Feature for demand uplift and revenue impact modeling
+    preferred_stream_type: Report Data
+  - name: COGS and gross margin by SKU
+    source: S4 (SAP S/4HANA)
+    purpose: COGS-aware feature engineering to optimize revenue-protecting decisions
+  - name: Inventory on-hand and locations
+    source: Blue Yonder WMS
+    purpose: Safety stock and replenishment optimization inputs
+    preferred_stream_type: Subject Area
+  - name: Lead times and supply constraints
+    source: Kinaxis RapidResponse
+    purpose: >-
+      Supply-side constraints for replenishment planning and shortage
+      propagation
+  - name: 3rd-party shipments / carrier events
+    source: Uber Freight TMS / 3PL Uber Frieght
+    purpose: Lag/fulfillment signals and exception detection
+  - name: External drivers (weather, holidays, macro)
+    source: DDM/Crawlers
+    purpose: Candidate features for enrichment and causal signals
+    preferred_stream_type: DDM/Crawlers
+  - name: Feature candidate dataset (new driver data)
+    source: DDM/Crawlers / STREAMS
+    purpose: Assess statistical significance and incremental forecast value
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Ingest master datasets and new driver feeds
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Touchless collection and ETL of sales, inventory, promotions, COGS,
+      external signals
+  - step: Automated data validation and feature candidate generation
+    stage: analyze
+    component: STREAMS (Data Quality & Validation) + Data Foundation Subject Areas
+    purpose: >-
+      Profile data, enforce integrity, and generate engineered feature
+      candidates
+  - step: Run significance and impact tests and generate forecast variants
+    stage: analyze
+    component: Cortex Auto Forecast + RCA Service (feature importance)
+    purpose: Compare baseline vs. enriched forecasts and score driver importance/impact
+  - step: Decision routing for feature inclusion
+    stage: decide
+    component: Process Builder (IF, Rules) + CWB Lifecycle
+    purpose: Auto-accept significant drivers or create CWB for human review/override
+  - step: Apply approved feature set, retrain forecasts, and push plan updates
+    stage: act
+    component: Cortex Auto Forecast + Safety Stock Service + Remote Functions
+    purpose: >-
+      Produce updated forecasts, recalc safety stock, and writebacks to
+      S4/Kinaxis for replenishment
+  - step: Surface results and exceptions to planners
+    stage: surface
+    component: UI Screens (CWB) + Process Builder Notification
+    purpose: Present changes, revenue impact, and exception items for review and audit
+branches:
+  - condition: >-
+      New driver shows statistically significant improvement and positive
+      revenue impact
+    response: >-
+      Process Builder auto-enriches feature set, retrains model, updates
+      forecasts and safety stock; create audit record
+    outcome: >-
+      Faster deployment of beneficial features, improved forecast accuracy and
+      inventory posture
+  - condition: Driver is marginal (small significance or insufficient data history)
+    response: >-
+      Schedule additional data collection via Process Builder Wait node and flag
+      candidate for periodic reassessment; no model change
+    outcome: >-
+      Avoids overfitting and premature feature proliferation while preserving
+      candidate for future evaluation
+  - condition: Driver not significant or negatively impacts accuracy
+    response: >-
+      Reject feature candidate, log rationale via Report Data, and notify data
+      owners; optionally create CWB for escalation if business insists
+    outcome: >-
+      Maintains model parsimony, prevents unnecessary complexity, and ensures
+      governance/audit trail

@@ -1,0 +1,40 @@
+decision: >-
+  Choose optimal production and capacity plans, procurement strategies, and
+  forecast adjustments for S&OP
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New vehicle launch, EOL planning, parts transition, engineering change,
+    marketing campaign initiation
+  parameters:
+    objective: Unified decision intelligence for S&OP integration across lifecycle events
+    key_inputs:
+      - New Vehicle Launch Data
+      - EOL Vehicle Data
+      - Component Run-Out Data
+      - Engineering Change Data
+      - Marketing Campaign Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate end-to-end S&OP decisions to reduce COGS, protect revenue, and
+    improve working capital
+  outcome: >-
+    Reduced costs, protected revenue, improved working capital through
+    coordinated demand, supply, and financial planning
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Remote Functions
+    - Cortex Monitoring
+    - Notification
+    - Dashboard
+rationale: >-
+  Automating S&OP decisions across lifecycle events ensures consistent and
+  optimized planning, reducing manual effort and improving financial outcomes

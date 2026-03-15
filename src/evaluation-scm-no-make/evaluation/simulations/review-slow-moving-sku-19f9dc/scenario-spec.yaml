@@ -1,0 +1,141 @@
+objective: >-
+  Orchestrate a unified demand-inventory-procurement (DI) pipeline that
+  continuously reviews portfolio performance (focus on slow-moving SKUs), aligns
+  demand forecasts, multi-echelon inventory, and supplier terms to optimize
+  EBITDA and COGS while providing auditable autonomous and semi-autonomous
+  recommendations and approvals.
+trigger: >-
+  Scheduled portfolio review cadence (e.g., weekly/monthly) or threshold-based
+  portfolio risk/turnover signal (forecast bias, excess days of supply, supplier
+  term deviation).
+decision: >-
+  Select which slow-moving or at-risk SKUs to de-prioritize, reallocate, adjust
+  safety stock for, or escalate for procurement renegotiation versus which
+  recommendations to auto-execute.
+expected_action: >-
+  Run deterministic Process Builder pipeline to ingest forecasts and inventory,
+  evaluate portfolio risk/return, generate ranked recommendations (auto-execute
+  low-risk adjustments via Remote Functions; route medium/high-risk changes to
+  CWB Lifecycle for approval), and write approved changes back to S4/Kinaxis.
+expected_outcome: >-
+  Reduced slow-moving inventory, improved EBITDA/COGS alignment with demand
+  signals, optimized multi-echelon safety stock, auditable decision trail for
+  approvals/overrides, and measurable reduction in excess days-of-supply and
+  procurement cost deltas.
+rationale: >-
+  A deterministic Process Builder route ensures reproducible, auditable
+  orchestration across demand, inventory, and procurement systems. Use
+  STREAMS/DDM to centralize and validate inputs; Cortex Auto Forecast and Safety
+  Stock Service to quantify demand and inventory levers; Rules + CWB Lifecycle
+  for controlled human-in-the-loop approvals; Remote Functions for safe ERP/APS
+  writebacks. This blends automated low-risk actions with governed escalation
+  for financial/regulatory sensitivity.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting (SAS)
+    type: Forecasting Engine
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (FG Safety Stock Modeling / Rebalancing / Order Expediting)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight / 3PL (TMS/Logistics)
+    type: TMS/3PL
+    status: identified
+key_inputs:
+  - name: Demand Forecast (statistical + SAS adjustments)
+    source: SAS / Advanced Statistical Forecasting
+    purpose: >-
+      Baseline demand signal and forecast bias detection for portfolio review
+      and reprioritization
+    preferred_stream_type: fact
+  - name: Multi-echelon Inventory Positions (on-hand, in-transit, reserved)
+    source: S4 / Kinaxis RapidResponse / Blue Yonder WMS
+    purpose: Compute days-of-supply, excess inventory, and redistribution opportunities
+    preferred_stream_type: fact
+  - name: Supplier Terms & Lead Time Profiles
+    source: S4 (procurement master) / Kinaxis supplier feeds
+    purpose: Assess procurement risk, cost-to-serve, and renegotiation opportunities
+  - name: SKU Master & Portfolio Attributes (ABC/XYZ, margin, obsolescence flags)
+    source: S4 / Subject Areas
+    purpose: Segment SKUs for prioritization and financial impact modeling
+  - name: Portfolio Financial Metrics (COGS, margin, EBITDA contribution)
+    source: Subject Areas / Finance extracts
+    purpose: Quantify financial impact of recommended actions and rank by ROI
+happy_path:
+  - step: >-
+      Ingest and validate demand, inventory, supplier, and SKU master data into
+      the Data Foundation
+    stage: ingest
+    component: STREAMS / DDM/Crawlers
+    purpose: >-
+      Consolidate and cleanse inputs to a single subject area for portfolio
+      analysis
+  - step: >-
+      Compute demand signals, forecast variance, and multi-echelon inventory
+      metrics; run safety stock and ROI simulations
+    stage: analyze
+    component: Cortex Auto Forecast + Safety Stock Service
+    purpose: >-
+      Quantify forecast reliability, excess supply, and optimal safety stock per
+      SKU/location
+  - step: >-
+      Evaluate business rules and portfolio risk/return; generate ranked
+      recommendations and classify into auto-executable vs. approval-required
+    stage: decide
+    component: Process Builder (Rules, IF, Data View) + CWB Lifecycle
+    purpose: >-
+      Deterministically decide which SKUs to reprioritize, reallocate, adjust,
+      or escalate
+  - step: >-
+      Execute low-risk changes automatically and create CWB tasks for approvals
+      on high-impact recommendations
+    stage: act
+    component: Remote Functions + Process Builder (Action Item)
+    purpose: >-
+      Write changes back to S4/Kinaxis for executed items; surface approval
+      items for human review
+  - step: >-
+      Surface results and audit trail to stakeholders and trigger notifications
+      for approvals or negotiations
+    stage: surface
+    component: UI Screens + Notification (CWB)
+    purpose: >-
+      Provide dashboards, decision rationale, and auditable history to
+      procurement, supply planners, and finance
+branches:
+  - condition: >-
+      Portfolio score indicates high financial risk or recommendation impacts
+      exceed predefined cost/EBITDA thresholds
+    response: >-
+      Force human-in-the-loop: route to CWB Lifecycle with detailed ROI analysis
+      and require multirole approvals before any writeback
+    outcome: >-
+      Prevents autonomous execution of high-impact changes; ensures auditable
+      cross-functional approval
+  - condition: >-
+      Supplier terms or lead time data indicate inability to execute recommended
+      replenishment changes (e.g., constrained supplier capacity)
+    response: >-
+      Create procurement negotiation Action Item and schedule Agent Team /
+      procurement owner CWB; hold automated changes for affected SKUs
+    outcome: >-
+      Negotiation path initiated; affected SKUs remain protected until
+      resolution to avoid stockouts or cost spikes
+  - condition: >-
+      Forecast variance or recent demand signal volatility exceeds tolerance for
+      an SKU
+    response: >-
+      Trigger demand review subprocess (Process Builder Wait + IF) and flag SKU
+      for temporary hold on permanent reprioritization; optionally run
+      accelerated forecast refresh via SAS
+    outcome: >-
+      Reduces risk of acting on noisy signals; defers permanent portfolio
+      changes until forecast clarity is restored

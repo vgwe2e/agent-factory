@@ -1,0 +1,25 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: new-product-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supplier-readiness-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-capacity-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Validate manufacturing processes through pilot builds.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous planning and coordination of npi production activities
+      across multiple phases to reduce cogs, improve time-to-market, and enhance
+      otif. and approve the recommended action.

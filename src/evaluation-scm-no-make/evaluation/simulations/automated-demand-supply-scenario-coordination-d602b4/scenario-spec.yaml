@@ -1,0 +1,134 @@
+objective: >-
+  Automatically coordinate cross-functional demand planning and supplier
+  readiness by running integrated should-cost and capacity scenarios with
+  suppliers, then finalize an integrated demand plan and supplier shortlist that
+  satisfies cost and capacity constraints across Plan and Source.
+trigger: >-
+  Nightly or on-demand planning run triggered by updated forecast, supplier
+  capacity change, or lead-time exception.
+decision: >-
+  Finalize integrated demand allocations and supplier shortlist by selecting
+  demand allocations and contract terms that satisfy capacity and cost
+  constraints across SKUs and locations after running SCM should-cost and
+  capacity scenarios with supplier input.
+expected_action: >-
+  Orchestrate data ingestion, run integrated should-cost and capacity scenarios
+  (Kinaxis + Remote Functions/should-cost models), surface ranked plan +
+  supplier shortlist recommendations via CWB Lifecycle for accept/override, and
+  write finalized plan and shortlist back to S4 and Kinaxis.
+expected_outcome: >-
+  Aligned Plan and Source: reduced total cost of ownership, protected margins,
+  improved on-time delivery and feasible supplier allocations across SKUs and
+  locations; finalized plan and supplier shortlist persisted to ERP/APS and
+  notifications sent to suppliers/stakeholders.
+rationale: >-
+  Running linked should-cost and capacity scenarios with supplier inputs before
+  plan finalization ensures demand allocations are cost- and capacity-feasible
+  across Plan and Source, enabling holistic trade-offs (cost vs. availability)
+  and automated execution while preserving human oversight for exceptions.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting in SAS
+    type: Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL / Uber Freight (carrier)
+    status: identified
+  - name: Supplier portals / direct supplier feeds
+    status: tbd
+key_inputs:
+  - name: Baseline demand forecast
+    source: SAS / Advanced Statistical Forecasting in SAS
+    purpose: >-
+      Baseline demand signal to be validated against supplier capacity and cost
+      scenarios
+    preferred_stream_type: Subject Area
+  - name: Inventory, open orders, historical shipments
+    source: S4 (SAP S/4HANA) / Blue Yonder WMS / Kinaxis RapidResponse
+    purpose: >-
+      Supply availability and current pipeline for feasibility and shortage
+      propagation
+    preferred_stream_type: STREAMS
+  - name: Supplier capacity, lead times, and readiness
+    source: Supplier portals / DDM/Crawlers / direct supplier feeds
+    purpose: Capacity constraints and lead-time inputs for scenario simulations
+    preferred_stream_type: DDM/Crawlers
+  - name: Should-cost estimates and contract terms
+    source: SAS models and sourcing master data (S4)
+    purpose: Cost inputs used in scenario optimization and supplier ranking
+  - name: APS scenario results and shortage propagation
+    source: Kinaxis RapidResponse
+    purpose: Simulated allocations, constraint violations, and reorder recommendations
+happy_path:
+  - step: >-
+      Consolidate demand, inventory, orders, supplier and contract data into the
+      planning subject area
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Create a canonical dataset for scenario runs (forecasts from SAS,
+      ERP/stock/orders from S4, supplier feeds)
+  - step: >-
+      Orchestrate integrated should-cost and capacity scenario runs with
+      supplier inputs
+    stage: analyze
+    component: Process Builder
+    purpose: >-
+      Call Remote Functions and Kinaxis RapidResponse to run supply/capacity
+      scenarios and should-cost calculations with supplier-provided constraints
+  - step: >-
+      Rank and generate recommended integrated demand allocations and supplier
+      shortlist
+    stage: analyze
+    component: Data Science / Remote Functions
+    purpose: >-
+      Score alternatives by total cost, margin impact, delivery risk and
+      capacity feasibility
+  - step: Present recommendations for accept/override and capture decision
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      Surface ranked plan + supplier shortlist to planners and sourcing for
+      approval or override
+  - step: >-
+      Persist finalized plan and supplier shortlist to ERP and APS and trigger
+      execution
+    stage: act
+    component: Process Builder
+    purpose: >-
+      Writeback approved allocations and sourcing decisions to S4 and Kinaxis
+      via Remote Functions
+  - step: Notify suppliers and stakeholders and surface results on UI
+    stage: notify
+    component: Notification / UI Screen
+    purpose: >-
+      Send contract / PO intents to suppliers and display finalized plan and
+      rationale to stakeholders
+branches:
+  - condition: >-
+      Scenario results satisfy cost and capacity thresholds without manual
+      adjustments
+    response: >-
+      Auto-accept recommendation and proceed with writeback to S4 and Kinaxis;
+      notify suppliers
+    outcome: Faster execution; plan and supplier shortlist finalized automatically
+  - condition: Scenario shows constraint violations or unacceptable margin erosion
+    response: >-
+      Open CWB Lifecycle for manual review and targeted resolution (negotiation,
+      reprioritization, alternative suppliers)
+    outcome: Human-in-the-loop resolves trade-offs; modified scenario re-run if needed
+  - condition: Supplier capacity shortfall for critical SKUs detected
+    response: >-
+      Process Builder triggers alternate supplier evaluation and re-runs
+      should-cost/capacity scenarios to reallocate demand
+    outcome: Alternate sourcing selected and validated, minimizing service disruption

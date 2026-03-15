@@ -1,0 +1,31 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Real-time data collection
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Data transformation and preparation
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: AutoML
+    purpose: Predictive model deployment
+    confidence: inferred
+    capability: Predictive model deployment
+process_builder:
+  - name: Notification
+    purpose: Proactive intervention
+    confidence: confirmed
+    node_type: communication
+  - name: Remote Functions
+    purpose: Maintenance scheduling and execution
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review predictive maintenance (pdm) & condition monitoring and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,55 @@
+decision: >-
+  Which production phase(s) to phase out for outgoing vehicle models and
+  variants, balancing remaining demand, supplier readiness/impact,
+  cost-to-serve, and obsolescence risk.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Initiation of an NPI program milestone or formal EOL review window (e.g.,
+    program start, 6-month ramp review, or executive EOL decision cadence).
+  parameters:
+    objective: >-
+      Autonomously plan and coordinate NPI and EOL production phases to minimize
+      COGS and obsolescence while meeting OTIF and working capital targets
+      across multi-echelon supply for Ford.
+    key_inputs:
+      - Bill of Materials & Routings
+      - On-hand and WIP Inventory
+      - Forecasted Demand (remaining lifecycle)
+      - Supplier Capacity & Readiness
+      - Cost-to-Serve and Unit COGS
+      - EOL Policy & Governance Rules
+    source_systems:
+      - SAP S/4HANA
+      - Supplier Portal
+      - Demand Forecasting Service
+expected_output:
+  action: >-
+    Run deterministic optimization to produce a phased EOL production plan
+    (dates, build volumes by plant and variant, supplier order cadence and
+    cancellations), route recommendations through a CWB Lifecycle for
+    stakeholder approval, and write approved changes back to SAP S/4HANA plus
+    notify impacted suppliers and internal teams.
+  outcome: >-
+    Optimized phase-out schedule that minimizes inventory write-downs and COGS,
+    maintains target OTIF during ramp-down, reduces working capital tied to
+    obsolete parts, and aligns supplier commitments with phased production
+    reductions.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Subject Areas + Data Quality & Validation
+    - Remote Functions (optimization solver) invoked by Process Builder
+    - Process (Process Builder) + CWB Lifecycle
+    - Remote Functions (SAP writeback) + Notification
+    - UI Screen (dashboard) + Cortex Monitoring
+rationale: >-
+  Deterministic optimization combined with Process Builder orchestration and
+  Remote Functions allows repeatable, auditable phase-out decisions that
+  integrate SAP transactional data, supplier capacity, and demand signals.
+  Human-in-the-loop via CWB Lifecycle captures governance and overrides for
+  high-risk or strategic models. This approach reduces manual coordination
+  overhead and speeds time-to-decision for NPI/EOL cycles.

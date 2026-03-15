@@ -1,0 +1,58 @@
+decision: >-
+  Select and approve an optimized set of inventory moves, slotting
+  reassignments, and replenishment adjustments across plants and distribution
+  centers (auto-apply when within guardrails; route to CWB when
+  exceptions/overrides required).
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled nightly batch plus delta inventory/transaction updates from SAP
+    S/4HANA and cycle count completion events.
+  parameters:
+    objective: >-
+      Autonomously rebalance multi-echelon inventory and optimize warehouse
+      slotting for raw materials/components to minimize handling cost and cycle
+      time while respecting material handling capacity and service targets.
+    key_inputs:
+      - Inventory on-hand by location/lot
+      - Product master (dimensions, weight, storage requirements)
+      - Historical demand & forecast
+      - Lead times and supplier constraints
+      - Cycle count records & accuracy metrics
+      - Warehouse layout, slot capacities, travel distances
+      - Material handling capacity (equipment & labor schedules)
+      - Obsolescence & age metrics (days since receipt, slow-moving flags)
+    source_systems:
+      - SAP S/4HANA
+      - WMS / Warehouse Layout DB
+      - Labor & Equipment Capacity System
+expected_output:
+  action: >-
+    Process Builder orchestrates data ingest (STREAMS) → Cortex forecasts +
+    Remote Functions optimization → generate CWB recommendations for human
+    review when needed → write approved slotting/move/replenishment changes back
+    to SAP S/4HANA via Remote Functions; create tasks for physical moves and
+    cycle counts.
+  outcome: >-
+    Reduced handling cost and cycle time, lower COGS and working capital through
+    balanced multi-echelon inventory, fewer obsolete items, improved cycle count
+    accuracy, and sustained material handling capacity without operational
+    disruption.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast
+    - Remote Functions (optimization routine) called from Process Builder
+    - CWB Lifecycle (via Process Builder Action Item)
+    - Remote Functions (ERP writeback) + Process Builder Transaction
+    - UI Screens + Notification node
+rationale: >-
+  Deterministic, process-driven opportunity suited to Process Builder
+  orchestration with Cortex forecasting and Remote Functions optimization.
+  Medium implementation complexity because SAP S/4HANA integration and
+  constrained optimization are required; benefits are cross-echelon and
+  operational (COGS, WC, SG&A). Semi-autonomous approach uses CWB Lifecycle for
+  human-in-the-loop exceptions to limit risk.

@@ -1,0 +1,118 @@
+objective: >-
+  Continuously align demand signals, inventory positioning, and financial impact
+  to dynamically synchronize safety stock levels and S&OP horizons across
+  Planning, Inventory, and Finance, reducing working capital tied to excess
+  inventory while protecting revenue and EBITDA in automotive operations.
+trigger: >-
+  Scheduled daily batch (end-of-day) ingest plus on-demand when significant
+  demand or supply deviations detected.
+decision: >-
+  Dynamically synchronize safety stock levels, inventory positioning, and S&OP
+  horizon alignment across Planning, Inventory, and Finance; apply automated
+  rebalances when within policy thresholds, otherwise open exception CWB for
+  human review and approval.
+expected_action: >-
+  Detect safety stock misallocations via analytics, generate recommended
+  node-to-node inventory rebalances and policy updates, write planned
+  adjustments to SAP S/4HANA (transfer orders / safety stock parameters) via
+  Remote Functions, and route exceptions through CWB Lifecycle with
+  notifications to Planning and Finance.
+expected_outcome: >-
+  Reduction in excess working capital and inventory carrying costs, maintained
+  or improved service levels and revenue protection, synchronized planning
+  horizons between Planning and Finance, and auditable changes with stakeholder
+  approvals for exceptions.
+rationale: >-
+  Automating safety stock alignment using deterministic rules plus Aera
+  forecasting and safety-stock optimization reduces manual tuning, uncovers
+  misallocation across nodes, and enables coordinated S&OP trade-offs that
+  protect EBITDA. Use of Process Builder ensures repeatable orchestration;
+  Cortex services provide robust demand and safety-stock calculations; Remote
+  Functions enable safe ERP writebacks and financial reconciliation.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Aera Subject Areas
+    type: Data Warehouse
+    status: tbd
+key_inputs:
+  - name: Inventory on-hand & location
+    source: SAP S/4HANA
+    purpose: >-
+      Determine current stock levels, availability, and candidate nodes for
+      rebalancing
+    preferred_stream_type: STREAMS
+  - name: Demand signals & forecasts
+    source: Cortex Auto Forecast (derived from SAP orders and historical sales)
+    purpose: Drive safety stock calculations and detect demand shifts
+  - name: Lead times & transit variability
+    source: SAP S/4HANA
+    purpose: Input to safety stock and reorder policy calculations
+    preferred_stream_type: STREAMS
+  - name: Financial KPIs (working capital, inventory carrying cost, EBITDA impact)
+    source: SAP S/4HANA finance ledger / Aera Subject Areas
+    purpose: >-
+      Quantify financial impact of proposed safety stock / rebalance actions for
+      S&OP alignment
+    preferred_stream_type: STREAMS
+  - name: Inventory & corporate policy constraints
+    source: Planning policy master data (Aera Subject Areas / manual)
+    purpose: >-
+      Enforce business rules and guardrails (service levels, min/max stock, node
+      permissions)
+happy_path:
+  - step: Ingest operational, demand and financial data
+    stage: ingest
+    component: DDM/Crawlers -> STREAMS
+    purpose: >-
+      Consolidate SAP S/4HANA inventory, orders, lead times and finance into
+      Subject Areas
+  - step: Generate demand forecasts and compute optimal safety stocks
+    stage: analyze
+    component: Cortex Auto Forecast + Safety Stock Service
+    purpose: >-
+      Identify misallocations, compute node-level safety stock targets and
+      rebalance candidates
+  - step: Evaluate recommendations against policy and S&OP financial impact
+    stage: decide
+    component: Process Builder (Rules -> Data View -> IF -> CWB Lifecycle)
+    purpose: >-
+      Automatically accept low-risk rebalances; surface exceptions for human
+      approval when policy or financial thresholds exceeded
+  - step: Execute approved rebalances and policy updates
+    stage: act
+    component: Remote Functions (ERP writeback)
+    purpose: >-
+      Create transfer orders, update safety stock parameters in SAP S/4HANA and
+      record planned changes
+  - step: Surface results and notify stakeholders
+    stage: notify
+    component: UI Screens + Process Builder Notification
+    purpose: >-
+      Deliver dashboard showing inventory shifts, working capital impact, and
+      open exceptions to Planning, Inventory and Finance
+branches:
+  - condition: Recommendation within policy thresholds and low financial impact
+    response: >-
+      Auto-apply rebalance and update SAP safety stock; log transaction and
+      notify stakeholders
+    outcome: >-
+      Fast reduction in excess stock without human intervention; improved
+      working capital
+  - condition: >-
+      Recommendation exceeds financial or policy guardrails (high EBITDA risk or
+      supplier constraint)
+    response: >-
+      Open CWB Lifecycle exception, route to Planning + Finance for joint review
+      with required attachments and impact metrics
+    outcome: >-
+      Human-in-the-loop decision preserves revenue/EBITDA and ensures
+      cross-functional agreement
+  - condition: Insufficient replenishment capacity or inbound supply constraint detected
+    response: >-
+      Hold automated rebalance, trigger mitigation subprocess (notify
+      procurement, adjust S&OP horizon), and schedule follow-up review
+    outcome: >-
+      Prevents stockouts or failed transfers; aligns procurement and planning to
+      resolve constraint

@@ -1,0 +1,36 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and prepare raw data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Data Quality & Validation
+    purpose: Ensure data integrity for reliable forecasting.
+    confidence: inferred
+    capability: Ensure data integrity for reliable forecasting.
+  - name: Cortex Auto Forecast
+    purpose: Predict future demand accurately.
+    confidence: confirmed
+    capability: Predict future demand accurately.
+  - name: AutoML
+    purpose: Identify and quantify demand drivers.
+    confidence: inferred
+    capability: Identify and quantify demand drivers.
+process_builder:
+  - name: Remote Functions
+    purpose: Implement advanced models for dynamic demand prediction.
+    confidence: inferred
+    node_type: decide
+  - name: Cortex Monitoring
+    purpose: Evaluate model performance and guide improvements.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review develop and deploy statistical and ml-based demand forecasting
+      models to improve production planning and inventory decisions, reducing
+      stockouts and excess inventory. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

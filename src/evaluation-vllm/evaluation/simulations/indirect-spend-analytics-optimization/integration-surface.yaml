@@ -1,0 +1,34 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: indirect-spend-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: consumption-patterns
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: savings-tracking-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Identify potential areas for cost reduction.
+  - component: AutoML
+    type: cortex
+    function: Determine optimal categories and suppliers for optimization.
+  - component: Process Builder
+    type: process_builder
+    function: Optimize and consolidate small tail-spend items.
+  - component: UI Screens
+    type: process_builder
+    function: Monitor and communicate the value generated.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review implement an indirect spend analytics and optimization initiative
+      to autonomously identify and realize indirect spend opportunities across
+      the enterprise. and approve the recommended action.

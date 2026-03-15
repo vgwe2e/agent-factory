@@ -1,0 +1,44 @@
+streams:
+  - name: STREAMS
+    purpose: Aggregate and validate all source system inputs for scheduling logic
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Produce demand forecast and identify variance/near-term spikes affecting
+      schedule
+    confidence: confirmed
+    capability: >-
+      Produce demand forecast and identify variance/near-term spikes affecting
+      schedule
+process_builder:
+  - name: Process Builder (Rules + IF + Branch)
+    purpose: >-
+      Apply business priorities, capacity limits, inbound readiness and lead
+      times to create an optimized plan
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Function
+    purpose: >-
+      Write production orders to S4, push plan and shortage information to
+      Kinaxis RapidResponse, and trigger supplier expediting where required
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: >-
+      Present prioritized exceptions for human review/override and provide audit
+      trail
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically coordinate demand-informed production scheduling with
+      inbound material readiness and supplier lead times to produce executable,
+      conflict-free production plans that minimize stockouts and obsolescence
+      while protecting revenue and margins across sku/location. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

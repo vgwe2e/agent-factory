@@ -1,0 +1,60 @@
+objective: >-
+  Identify and resolve supply chain bottlenecks to minimize COGS and improve
+  on-time delivery.
+trigger: Detection of supply-demand imbalance or critical component shortage.
+decision: Autonomous identification of bottlenecks and simulation of mitigation options.
+expected_action: Coordinated actions across procurement, production scheduling, and logistics.
+expected_outcome: Reduced COGS and improved on-time delivery.
+rationale: >-
+  Fusing multiple L4 processes into a single decision architecture for
+  end-to-end orchestration and measurable P&L impact.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Supply-Demand Data
+    source: SAP S/4HANA
+    purpose: To identify global supply-demand imbalances.
+  - name: Component Shortages
+    source: SAP S/4HANA
+    purpose: To escalate and manage critical component shortages.
+  - name: Production Schedule
+    source: SAP S/4HANA
+    purpose: To propose adjustments to the production schedule.
+  - name: Real-Time Production Data
+    source: SAP S/4HANA
+    purpose: To monitor production lines for emerging bottlenecks.
+happy_path:
+  - step: Ingest supply-demand data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and prepare data for analysis.
+  - step: Analyze global supply-demand imbalances using Cortex Auto Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Identify significant imbalances.
+  - step: Simulate mitigation options using AutoML.
+    stage: analyze
+    component: AutoML
+    purpose: Propose optimal mitigation strategies.
+  - step: Execute coordinated actions through Process Builder.
+    stage: act
+    component: Process Builder
+    purpose: Implement mitigation plans across procurement, production, and logistics.
+  - step: Review outcomes and adjust strategies as needed.
+    stage: review
+    component: CWB Lifecycle
+    purpose: Ensure continuous improvement and alignment with business goals.
+branches:
+  - condition: Critical component shortage detected.
+    response: Escalate and manage shortages using Process Builder.
+    outcome: Maintain production schedules and minimize COGS impact.
+  - condition: Emerging production bottleneck identified.
+    response: >-
+      Adjust production schedules and reallocate resources using Process
+      Builder.
+    outcome: Maximize throughput and on-time delivery.
+  - condition: Unresolved capacity constraint.
+    response: Initiate formal escalation process with predefined thresholds.
+    outcome: Take responsive actions to address critical constraints.

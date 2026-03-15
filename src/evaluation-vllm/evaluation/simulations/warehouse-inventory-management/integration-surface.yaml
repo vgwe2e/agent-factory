@@ -1,0 +1,31 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-handling-equipment-status
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: historical-inventory-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: AutoML
+    type: cortex
+    function: Generate insights for storage and cycle counting optimization.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Present recommendations for review and approval.
+  - component: Remote Functions
+    type: process_builder
+    function: Implement changes in the ERP system.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous rebalancing of stock, maintaining tight cycle counts,
+      discarding obsolete inventory, optimizing warehouse slotting, and ensuring
+      material handling capacity. and approve the recommended action.

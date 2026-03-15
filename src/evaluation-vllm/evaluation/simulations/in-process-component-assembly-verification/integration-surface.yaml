@@ -1,0 +1,35 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: component-dimensions
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: functional-test-results
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: torque-audit-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-finish-quality-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: sealing-leakage-test-results
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Process Builder
+    type: process_builder
+    function: Optimize test time and line utilization.
+  - component: Remote Functions
+    type: process_builder
+    function: Ensure joint integrity and minimize rework.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review to autonomously decide and execute inspection actions, prioritize
+      critical checks, and route exceptions with predefined remediation for
+      in-process component and assembly verification. and approve the
+      recommended action.

@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Start of final assembly line cycle]
+  A --> N1[Stream: DDM/Crawlers - Retrieve production schedule and component availability]
+  N1 --> N2[Cortex: AutoML - Determine optimal integration plan for motor-to-gearbox casing]
+  N2 --> N3{PB: Process Builder - Schedule and sequence inverter & cooling system integration}
+  N3 -->|Primary| N4{PB: Process Builder - Schedule dynamometer testing within final assembly}
+  N4 --> N5{PB: Process Builder - Configure dynamic software flash and configuration steps}
+  N5 --> N6[Agent: Agentic AI - Execute scheduled activities and monitor progress]
+  N6 --> Z1[Outcome: Reduced COGS, improved line throughput, enhanced OTIF]
+  N3 -->|Insufficient component availability d...| B1[Trigger alert and reroute production schedule]
+  B1 --> O1[Outcome: Adjusted production schedule to avoid delays]
+  O1 --> End[End]
+  N3 -->|Test station unavailable during sched...| B2[Reschedule test and update production schedule]
+  B2 --> O2[Outcome: Updated production schedule with new test times]
+  O2 --> End[End]
+  N3 -->|Unexpected defect detected during tes...| B3[Initiate exception management workflow]
+  B3 --> O3[Outcome: Defect addressed and production resumed]
+  O3 --> End[End]
+  Z1 --> End[End]

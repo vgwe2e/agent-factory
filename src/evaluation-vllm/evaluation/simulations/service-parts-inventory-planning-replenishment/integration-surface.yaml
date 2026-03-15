@@ -1,0 +1,32 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: historical-service-part-sales-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: current-inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: lead-times-and-supplier-information
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: obsolescence-and-excess-inventory-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Produce accurate demand forecasts.
+  - component: Remote Functions
+    type: process_builder
+    function: Determine optimal inventory levels.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous optimization of service part stock levels, replenishment
+      orders, obsolescence handling, and critical part stocking strategies
+      across a multi-echelon service parts network. and approve the recommended
+      action.

@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: import-export-regulations
+    stream_type: Event Stream
+    source: External Regulatory Bodies
+  - stream_name: local-content-requirements
+    stream_type: Event Stream
+    source: Government Agencies
+  - stream_name: tariffs-and-trade-barriers
+    stream_type: Event Stream
+    source: World Trade Organization (WTO)
+  - stream_name: environmental-regulations
+    stream_type: Event Stream
+    source: Environmental Protection Agencies
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Predict the financial impact of regulatory changes on COGS and working
+      capital.
+  - component: AutoML
+    type: cortex
+    function: >-
+      Optimize sourcing and supplier strategies to minimize COGS impact while
+      maintaining compliance.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Provide human-in-the-loop review and approval for recommended adjustments.
+  - component: Remote Functions
+    type: process_builder
+    function: Implement approved changes in SAP S/4HANA.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate monitoring and decision-making for regulatory and trade
+      policy compliance to minimize cogs impact and protect otif while ensuring
+      compliance. and approve the recommended action.

@@ -1,0 +1,67 @@
+objective: >-
+  Unify six service-parts demand processes into a single, end-to-end decision
+  engine for precise SKU-level forecasts, real-time input adjustments, and
+  lifecycle-driven demand modeling.
+trigger: Periodic data refresh from SAP S/4HANA and real-time demand signals.
+decision: >-
+  Forecast service parts demand for aftermarket, warranty claims, consumables,
+  Ford Pro uptime, global service parts, new models, and EV components.
+expected_action: >-
+  Automatically generate SKU-level forecasts, adjust inputs in real time,
+  mitigate excess/obsolete parts, plan for recalls/campaigns, and model
+  lifecycle-driven demand.
+expected_outcome: >-
+  Continuous alignment of inventory and procurement with demand signals,
+  reducing working capital while increasing on-time availability and COGS
+  efficiency.
+rationale: >-
+  Unifying demand forecasting processes improves forecast accuracy, reduces
+  excess inventory, and optimizes working capital.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Historical Sales Data
+    source: SAP S/4HANA
+    purpose: Provide baseline for demand forecasting
+    preferred_stream_type: STREAMS
+  - name: Reliability Trends
+    source: SAP S/4HANA
+    purpose: Inform warranty part claim volume forecasting
+    preferred_stream_type: STREAMS
+  - name: Market Trends
+    source: External Data Sources
+    purpose: Enhance global service parts forecast generation
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: Ingest historical sales and reliability data from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for forecasting
+  - step: Apply Cortex Auto Forecast to generate SKU-level demand forecasts
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict demand for service parts
+  - step: Adjust forecasts based on real-time demand signals and market trends
+    stage: decide
+    component: Remote Functions
+    purpose: Ensure forecasts reflect current conditions
+  - step: Route adjusted forecasts to CWB Lifecycle for human-in-the-loop review
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Allow for manual overrides and adjustments
+  - step: Execute replenishment orders and update inventory levels in SAP S/4HANA
+    stage: act
+    component: Remote Functions
+    purpose: Automate procurement actions
+branches:
+  - condition: Forecast accuracy falls below threshold
+    response: Trigger Forecast Accuracy Analysis & Adjustment process
+    outcome: Improve future forecast accuracy through parameter tuning
+  - condition: Excess inventory detected
+    response: Initiate Excess & Obsolete Parts Demand Mitigation process
+    outcome: Reduce excess inventory and optimize working capital
+  - condition: Recall or campaign event detected
+    response: Activate Recall/Campaign Parts Demand Surge Planning process
+    outcome: Ensure timely availability of parts for recall or campaign needs

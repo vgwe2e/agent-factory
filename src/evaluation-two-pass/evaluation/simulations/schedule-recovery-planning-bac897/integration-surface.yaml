@@ -1,0 +1,67 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    type: Manufacturing Execution System
+    status: tbd
+  - name: SCADA/OT
+    type: Operational Technology/SCADA
+    status: tbd
+  - name: Quality Lab / LIMS
+    type: LIMS
+    status: tbd
+  - name: Workforce / Labor Planning
+    type: Workforce Management
+    status: tbd
+aera_ingestion:
+  - stream_name: production-schedule-planned-orders-sequencing-takt-times
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: inventory-component-availability-on-hand-inbound-receipts-lead-times
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: shop-floor-events-machine-status-downtime-events-throughput
+    stream_type: Event Stream
+    source: MES
+  - stream_name: quality-holds-test-results
+    stream_type: Event Stream
+    source: Quality Lab / LIMS
+  - stream_name: ot-telemetry-sensor-alarms-process-deviations
+    stream_type: Event Stream
+    source: SCADA/OT
+  - stream_name: labor-availability-skills
+    stream_type: Event Stream
+    source: Workforce / Labor Planning
+  - stream_name: operator-inputs-incident-reports
+    stream_type: Event Stream
+    source: Operator Input (UI)
+processing:
+  - component: RCA Service
+    type: cortex
+    function: >-
+      Identify root cause, impacted orders, severity, and estimated COGS / OTIF
+      impact
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Perform reschedule writeback to SAP S/4HANA and send control commands or
+      work orders to MES; log actions
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Present recommendation for approve/reject/override with explainability and
+      allow manual adjustments
+  - component: Process Builder (Agent Team + Remote Functions)
+    type: agent_teams
+    function: >-
+      Agentic pipeline runs multi-agent simulations, applies business rules and
+      risk thresholds, and selects a preferred recovery plan
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously detect, simulate, and resolve production constraints
+      and exceptions across scheduling, supply disruptions, and quality holds to
+      minimize cogs while preserving otif and availability. and approve the
+      recommended action.

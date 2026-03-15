@@ -1,0 +1,17 @@
+flowchart TD
+  A[Trigger: Daily batch process initiated by SAP S/4HANA data refresh.]
+  A --> N1[Stream: DDM/Crawlers - Ingest OEE, KPI, quality, energy, and maintenance data from SAP S/4HANA]
+  N1 --> N2[Cortex: Cortex Auto Forecast, RCA Service - Analyze OEE, KPIs, quality yield, energy consumption, and maintenance data using Cortex Auto Forecast and RCA Service]
+  N2 --> N3{PB: CWB Lifecycle - Generate recommendations for maintenance, capacity planning, and quality improvements}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute approved recommendations and update SAP S/4HANA with new data and insights]
+  N4 --> Z1[Outcome: Reduced COGS and SG&A, improved working capital, and increased EBITDA through synchronized, constraint-aware decisions.]
+  N3 -->|Detected significant OEE decline| B1[Trigger immediate investigation and corrective actions]
+  B1 --> O1[Outcome: Prevent further decline and minimize downtime]
+  O1 --> End[End]
+  N3 -->|Identified high energy consumption wi...| B2[Recommend energy-saving measures and monitor implementation]
+  B2 --> O2[Outcome: Reduce energy costs while maintaining production levels]
+  O2 --> End[End]
+  N3 -->|Predicted maintenance issue with high...| B3[Schedule preemptive maintenance and notify relevant teams]
+  B3 --> O3[Outcome: Minimize unplanned downtime and reduce maintenance costs]
+  O3 --> End[End]
+  Z1 --> End[End]

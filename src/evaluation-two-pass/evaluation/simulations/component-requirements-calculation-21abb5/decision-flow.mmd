@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled MPS update or BOM release event in SAP S/4HANA (daily or on-demand), or detection of inventory shortfall exceeding threshold.]
+  A --> N1[Stream: STREAMS - Ingest master data and transactional supply/demand (BOM, MPS, inventory, open POs, supplier LTs) from SAP S/4HANA into the Data Foundation]
+  N1 --> N2[Cortex: Process (Process Builder) - Remote Functions - Orchestrate deterministic MRP calculation to explode BOMs, apply on-hand and PO supply, enforce lot-sizing, and compute net component requirements and shortage risk]
+  N2 --> N3{PB: CWB Lifecycle + UI Screen - Present recommended component releases and exception flags to planners for review with explainability (cost impact, shortage drivers, lead-time risks)}
+  N3 -->|Primary| N4[PB: Remote Functions (ERP Writeback) - Execute approved releases and write back production reservations or purchase orders to SAP S/4HANA; create supplier release notifications]
+  N4 --> N5[PB: Process (Notification) - Safety Stock Service (or Data View) - Monitor outcomes, notify stakeholders of exceptions, and feed results to inventory policy service for dynamic safety stock tuning]
+  N5 --> Z1[Outcome: Timely, cost-efficient material releases with reduced stockouts and excess inventory, improved OTIF and working capital, and automated feedback to inventory policies and supplier lead-time settings.]
+  N3 -->|Planner approves recommended releases...| B1[System proceeds to writeback approved releases to SAP S/4HANA and notify suppliers]
+  B1 --> O1[Outcome: Automated execution with minimal manual intervention; inventory reservations and POs updated]
+  O1 --> End[End]
+  N3 -->|Planner modifies quantities or timing...| B2[Capture override reason in CWB, invoke Remote Functions to revalidate downstream impacts, and present updated release plan for final confirmation]
+  B2 --> O2[Outcome: Modified release executed after revalidation; override metadata logged for governance and model feedback]
+  O2 --> End[End]
+  N3 -->|Detected shortage or supplier constra...| B3[Route as exception: create expedited PO proposal, alert procurement and supplier teams via notifications, and surface alternative sourcing options]
+  B3 --> O3[Outcome: Expedited actions initiated to mitigate stockout risk; additional cost/lead-time impact recorded for working capital analysis]
+  O3 --> End[End]
+  Z1 --> End[End]

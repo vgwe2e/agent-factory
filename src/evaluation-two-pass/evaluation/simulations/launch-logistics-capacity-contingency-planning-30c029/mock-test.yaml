@@ -1,0 +1,59 @@
+decision: >-
+  Select and activate the contingency logistics plan (alternate carrier/route,
+  buffer inventory deployment, split shipments, or packaging/sequence
+  adjustments) balancing cost vs. resilience vs. lead time.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Launch program entry + detection of inbound/outbound disruption (carrier ETA
+    slip, port delay, capacity shortfall) within pre-launch or launch window.
+  parameters:
+    objective: >-
+      Orchestrate semi-autonomous, multi-echelon logistics decisions during
+      automotive model launches to minimize COGS, protect OTIF service levels,
+      and accelerate time-to-market by coordinating inbound/outbound routing,
+      packaging sequencing, and contingency activation.
+    key_inputs:
+      - Launch schedule & sequencing
+      - Inventory balances (multi-echelon)
+      - Warehouse capacity & slotting
+      - Transportation ETAs and carrier capacity
+      - Packaging constraints & sequence rules
+      - Service-level targets and cost/risk policy
+      - External disruption signals (weather, port closures)
+    source_systems:
+      - SAP S/4HANA
+      - Transportation Management System (TMS)
+      - Warehouse Management System (WMS)
+      - PLM / Launch Schedule
+      - Carrier APIs / 3PL feeds
+      - External Risk Feeds (weather, port congestion)
+expected_output:
+  action: >-
+    Process Builder evaluates data signals, scores contingency alternatives via
+    rules and Remote Functions, writes selected plan to SAP S/4HANA (transport
+    orders, inventory reservations, packaging sequences), triggers execution
+    with carriers/3PLs, and issues CWB notifications for required human
+    approvals/overrides.
+  outcome: >-
+    Activated contingency minimizes OTIF impact while constraining incremental
+    logistics cost; multi-echelon stock repositions and sequencing adjustments
+    executed in SAP S/4HANA; operations and carrier partners notified; launch
+    timeline preserved or minimally impacted.
+  affected_components:
+    - Process Builder - Stream (STREAMS / DDM)
+    - Process Builder - Rules + Remote Functions (cost/lead-time calcs)
+    - Process Builder - IF + CWB Lifecycle
+    - Remote Functions (ERP writeback) + Process Builder - Transaction
+    - Process Builder - Notification + UI Screen (dashboard)
+    - Dashboard
+rationale: >-
+  Deterministic process orchestration across multi-echelon inventory, transport,
+  and packaging systems enables repeatable, auditable contingency activations
+  during high-risk launches. Process Builder ensures governed routing and Remote
+  Functions enable secure SAP writebacks; CWB provides human-in-the-loop when
+  trade-offs exceed policy thresholds.

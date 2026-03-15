@@ -1,0 +1,56 @@
+decision: >-
+  Determine whether to auto-create receipt records vs. require manual
+  acknowledgment based on supplier rules, PO/ASN quantity match within
+  tolerance, and QA inspection results
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Inbound ASN, WMS receiving event, or carrier delivery confirmation for a PO
+    line
+  parameters:
+    objective: >-
+      Automatically create receipts of goods or services in SAP S/4HANA when
+      inbound shipments/ASNs and receiving events match purchase orders and QA
+      checks; route exceptions for manual acknowledgment.
+    key_inputs:
+      - Purchase Order (PO) header & lines
+      - Advanced Shipping Notice (ASN) / Carrier EDI
+      - WMS receiving events / scan logs
+      - QA inspection results
+      - Carrier delivery confirmation
+      - Receipt tolerance & supplier auto-receipt rules
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Freight
+      - Kinaxis RapidResponse
+      - Kinaxis
+      - SAS
+expected_output:
+  action: >-
+    If rules pass (supplier allowed for auto-receipt, quantities within
+    tolerance, QA OK) then auto-create goods receipt in S4 and update WMS;
+    otherwise open an exception action item for manual acknowledgment and place
+    hold if required.
+  outcome: >-
+    Receipts recorded in S4 and reflected in WMS; inventory and financial
+    receipts updated for accepted shipments; exceptions surfaced to receiving/QA
+    teams for resolution; suppliers and carriers notified of receipt status.
+  affected_components:
+    - STREAMS
+    - Data Quality & Validation
+    - Process Builder (IF / Rules)
+    - Remote Functions
+    - UI Screen / Notification
+    - Dashboard
+rationale: >-
+  Deterministic, rule-based routing using Process Builder and STREAMS reduces
+  manual work for straightforward inbound receipts while ensuring control for
+  quantity mismatches and QA failures. Remote Functions provide reliable ERP
+  writeback and integration with WMS/TMS; Action Items/CWB handle
+  human-in-the-loop exceptions.

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Detection of potential supply chain disruptions or material shortages.]
+  A --> N1[Stream: DDM/Crawlers - Ingest supply chain data from SAP S/4HANA.]
+  N1 --> N2[Cortex: AutoML - Analyze supply chain data to identify single points of failure.]
+  N2 --> N3{PB: Process Builder - Develop contingency plans and identify alternate sources.}
+  N3 -->|Primary| N4[Cortex: RCA Service - Monitor supplier financial health and trigger alerts.]
+  N4 --> N5[PB: CWB Lifecycle - Present recommendations for supplier actions to stakeholders.]
+  N5 --> Z1[Outcome: Reduced working capital tied to safety stock and lead-time risks, improved OTIF, and enhanced supplier resilience.]
+  N3 -->|High risk detected in supplier financ...| B1[Initiate supplier diversification or renegotiation process.]
+  B1 --> O1[Outcome: Improved supplier resilience and reduced financial risk.]
+  O1 --> End[End]
+  N3 -->|Potential material shortage identified.| B2[Expedite orders or adjust safety stock levels.]
+  B2 --> O2[Outcome: Minimized impact of supply disruptions.]
+  O2 --> End[End]
+  N3 -->|No single points of failure identified.| B3[Continue monitoring and regular assessments.]
+  B3 --> O3[Outcome: Maintained supply chain visibility and resilience.]
+  O3 --> End[End]
+  Z1 --> End[End]

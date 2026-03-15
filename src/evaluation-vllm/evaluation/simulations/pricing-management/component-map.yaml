@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawler
+    purpose: Gather initial piece price information
+    confidence: inferred
+    type: DDM/Crawler
+cortex:
+  - name: AutoML
+    purpose: Determine optimal initial piece price
+    confidence: inferred
+    capability: Determine optimal initial piece price
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Human-in-the-loop approval
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Writeback to ERP
+    confidence: inferred
+    node_type: act
+  - name: UI Screens
+    purpose: Provide visibility into pricing decisions
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate price setting, negotiation, and cost validation across
+      various pricing scenarios to optimize cogs and sustain margin integrity.
+      and approve the recommended action.
+    confidence: confirmed
+    component_type: display

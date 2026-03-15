@@ -1,0 +1,71 @@
+objective: >-
+  Autonomous detection, simulation, and resolution of production constraints and
+  exceptions to reduce COGS while maintaining OTIF and availability.
+trigger: >-
+  Detection of production constraints, supply disruptions, quality holds, or
+  other critical issues.
+decision: >-
+  Should the production line start or stop based on current constraints,
+  downtime risks, and demand signals, balancing cost of idling against missed
+  throughput.
+expected_action: >-
+  Coordinate stop/start decisions, disruption responses, recovery scheduling,
+  and quality hold adjustments to minimize COGS and maintain OTIF.
+expected_outcome: >-
+  Reduced COGS, minimized downtime, and maintained OTIF and availability through
+  optimized line sequencing and rapid recovery.
+rationale: >-
+  Leverage agentic AI to autonomously manage production constraints and
+  exceptions, improving efficiency and reducing costs.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Production Constraints
+    source: SAP S/4HANA
+    purpose: Identify current production constraints
+  - name: Supply Disruptions
+    source: SAP S/4HANA
+    purpose: Assess supply disruptions
+  - name: Quality Holds
+    source: SAP S/4HANA
+    purpose: Manage quality holds
+  - name: Demand Signals
+    source: SAP S/4HANA
+    purpose: Balance demand signals
+happy_path:
+  - step: Detect production constraints
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest constraint data
+  - step: Analyze constraints and demand signals
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict impact
+  - step: Decide on production line actions
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Make stop/start decisions
+  - step: Simulate supply disruption scenarios
+    stage: analyze
+    component: AutoML
+    purpose: Assess mitigation options
+  - step: Implement recovery actions
+    stage: act
+    component: Process Builder
+    purpose: Execute recovery plan
+  - step: Adjust production plans for quality holds
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Optimize production plans
+branches:
+  - condition: High risk of missed throughput
+    response: Recommend production start
+    outcome: Minimize downtime
+  - condition: Severe supply disruption
+    response: Escalate to management
+    outcome: Rapid resolution
+  - condition: Quality hold exceeds threshold
+    response: Initiate rework plan
+    outcome: Maintain OTIF

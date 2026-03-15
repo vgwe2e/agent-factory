@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Detection of potential supply chain risks or geopolitical events.]
+  A --> N1[Stream: DDM/Crawlers - Ingest supply chain risk data from SAP S/4HANA.]
+  N1 --> N2[Cortex: AutoML - Analyze geopolitical events and their impact using AutoML.]
+  N2 --> N3{PB: Process Builder - Develop disaster recovery plans using Process Builder.}
+  N3 -->|Primary| N4{PB: Remote Functions - Generate single-source risk mitigation strategies using Remote Functions.}
+  N4 --> N5[Cortex: Cortex Auto Forecast - Model supply disruption scenarios using Cortex Auto Forecast.]
+  N5 --> N6[UI: UI Screens - Surface actionable insights and recommendations via UI Screens.]
+  N6 --> Z1[Outcome: Reduced working capital volatility, improved on-time delivery, and minimized COGS exposure.]
+  N3 -->|High geopolitical risk detected.| B1[Trigger disaster recovery plan.]
+  B1 --> O1[Outcome: Preserve supply chain flow during geopolitical disruptions.]
+  O1 --> End[End]
+  N3 -->|Single-source supplier identified as ...| B2[Implement alternative sourcing decisions.]
+  B2 --> O2[Outcome: Reduce dependency on single-source suppliers.]
+  O2 --> End[End]
+  N3 -->|Supply disruption scenario indicates ...| B3[Adjust capacity and sourcing plans.]
+  B3 --> O3[Outcome: Enhance network resilience against potential disruptions.]
+  O3 --> End[End]
+  Z1 --> End[End]

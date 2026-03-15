@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest supplier capacity commitment data.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Process Builder
+    purpose: Review and formalize supplier capacity commitments.
+    confidence: confirmed
+    capability: Review and formalize supplier capacity commitments.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Approve supplier capacity expansion requests.
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: Monitor and support critical sub-tier suppliers.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize supplier capacity commitments, validate production-part
+      capacity, assess risk, route capacity expansion decisions, and monitor
+      tiered supplier capacity to reduce cogs, improve otif, and strengthen
+      supply resilience. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

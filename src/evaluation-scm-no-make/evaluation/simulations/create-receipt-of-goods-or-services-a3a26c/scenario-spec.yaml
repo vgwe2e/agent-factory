@@ -1,0 +1,125 @@
+objective: >-
+  Automatically create receipts of goods or services in SAP S/4HANA when inbound
+  shipments/ASNs and receiving events match purchase orders and QA checks; route
+  exceptions for manual acknowledgment.
+trigger: >-
+  Inbound ASN, WMS receiving event, or carrier delivery confirmation for a PO
+  line
+decision: >-
+  Determine whether to auto-create receipt records vs. require manual
+  acknowledgment based on supplier rules, PO/ASN quantity match within
+  tolerance, and QA inspection results
+expected_action: >-
+  If rules pass (supplier allowed for auto-receipt, quantities within tolerance,
+  QA OK) then auto-create goods receipt in S4 and update WMS; otherwise open an
+  exception action item for manual acknowledgment and place hold if required.
+expected_outcome: >-
+  Receipts recorded in S4 and reflected in WMS; inventory and financial receipts
+  updated for accepted shipments; exceptions surfaced to receiving/QA teams for
+  resolution; suppliers and carriers notified of receipt status.
+rationale: >-
+  Deterministic, rule-based routing using Process Builder and STREAMS reduces
+  manual work for straightforward inbound receipts while ensuring control for
+  quantity mismatches and QA failures. Remote Functions provide reliable ERP
+  writeback and integration with WMS/TMS; Action Items/CWB handle
+  human-in-the-loop exceptions.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: Carrier/3PL
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis
+    type: APS
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+key_inputs:
+  - name: Purchase Order (PO) header & lines
+    source: S4 (ERP)
+    purpose: >-
+      Baseline expected quantities, units, delivered-to location, and receipt
+      tolerances
+    preferred_stream_type: Stream
+  - name: Advanced Shipping Notice (ASN) / Carrier EDI
+    source: Supplier via TMS / EDI ingests
+    purpose: Expected shipment contents and arrival details to pre-validate receipts
+    preferred_stream_type: Stream
+  - name: WMS receiving events / scan logs
+    source: Blue Yonder WMS
+    purpose: Physical received quantities, lot/serial data, and QA trigger events
+    preferred_stream_type: Stream
+  - name: QA inspection results
+    source: WMS or QA system / manual entry
+    purpose: Accept/reject decision for received goods and trigger holds
+  - name: Carrier delivery confirmation
+    source: Uber Freight TMS / 3PL
+    purpose: Proof of delivery and timing for receipt processing
+    preferred_stream_type: Report Data
+  - name: Receipt tolerance & supplier auto-receipt rules
+    source: Master data / business rules in Data View
+    purpose: >-
+      Determine automatic vs manual routing based on supplier and tolerance
+      thresholds
+    preferred_stream_type: Data View
+happy_path:
+  - step: Ingest PO, ASN, WMS receiving events and carrier confirmations via ETL
+    stage: ingest
+    component: STREAMS
+    purpose: Collect and normalize inbound documents and scan events for matching
+  - step: >-
+      Validate and match ASN/receiving events to PO lines; apply tolerance
+      checks and QA rule lookups
+    stage: analyze
+    component: Data Quality & Validation
+    purpose: Detect quantity/UM mismatches, missing items, and QA triggers
+  - step: Apply routing rules to decide auto-create vs manual acknowledgment
+    stage: decide
+    component: Process Builder (IF / Rules)
+    purpose: Deterministic decision based on supplier policy, tolerance, and QA outcome
+  - step: Auto-create goods receipt and post to ERP/WMS when rules pass
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Writeback receipt transaction to S4 and update Blue Yonder WMS
+      inventory/receiving records
+  - step: Surface confirmation and notify stakeholders
+    stage: notify
+    component: UI Screen / Notification
+    purpose: Inform receiving team, supplier, and update dashboards with receipt status
+branches:
+  - condition: >-
+      Quantity mismatch beyond configured tolerance between ASN/WMS receipts and
+      PO
+    response: >-
+      Create exception Action Item and route to receiving team for manual
+      acknowledgement and discrepancy resolution; flag PO lines and create
+      discrepancy record
+    outcome: >-
+      Receipt held or partially recorded pending adjustment/resolution; manual
+      decision to accept/short-close or reject
+  - condition: QA inspection failed for received goods
+    response: >-
+      Place QA hold, open QA Action Item, and prevent auto-create; route to QA
+      team for disposition (reject, return, rework, partial accept)
+    outcome: >-
+      Inventory held and receipt not posted to financials until QA disposition;
+      supplier and procurement notified
+  - condition: ERP writeback (S4) fails or integration error
+    response: >-
+      Enqueue writeback retry via Remote Functions with backoff and raise a
+      notification to integration/support team
+    outcome: >-
+      Receipt remains in retry/failure queue; alert created for manual
+      intervention until successful post

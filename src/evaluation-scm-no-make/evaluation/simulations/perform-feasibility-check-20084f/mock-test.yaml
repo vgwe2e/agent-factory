@@ -1,0 +1,61 @@
+decision: >-
+  Determine whether existing production capability can satisfy updated demand
+  within current utilization or whether to add resources (OT, shifts,
+  subcontracting, or tooling) or rebalance across plants.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Materialized change in demand signal or forecast (SAS) or shortage
+    propagation/constraint alert from Kinaxis RapidResponse crossing predefined
+    threshold
+  parameters:
+    objective: >-
+      Automate end-to-end production feasibility checks and capacity assurance
+      across SKUs and plants to optimize run-rate, reduce waste, and protect
+      margins by aligning demand, inventory, and procurement with plant
+      capability.
+    key_inputs:
+      - Forecast demand (SKU x location x horizon)
+      - Confirmed sales orders and shipment commitments
+      - On-hand inventory and WIP levels
+      - Current production schedules, machine/line capacity, and labor roster
+      - Open POs, lead times, and supplier constraints
+      - Safety stock / target inventory settings
+      - Constraint/shortage alerts and propagated impacts
+      - SKU attributes (lead times, family grouping, lines qualified)
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS (Advanced Statistical Forecasting)
+      - Kinaxis RapidResponse
+      - Kinaxis (Order Expediting / Rebalancing / FG Safety Stock)
+      - Blue Yonder WMS
+      - Uber Freight TMS / 3PL Uber Freight
+expected_output:
+  action: >-
+    Automatically run feasibility analysis combining demand, inventory,
+    production capacity, and procurement lead times; surface ranked
+    recommendations (run-rate change, shift/OT, subcontracting, purchase orders,
+    or SKU rebalancing); create CWB action items for planner approval; write
+    approved changes back to S4/Kinaxis via Remote Functions.
+  outcome: >-
+    Faster decision cycles for capacity adjustments, improved capacity
+    utilization, reduced waste and lower COGS, maintained or improved service
+    levels across SKU/location matrix, and auditable action trail in enterprise
+    systems.
+  affected_components:
+    - STREAMS
+    - Remote Functions
+    - CWB Lifecycle
+    - Process Builder
+    - Notification / Subject Areas
+    - UI Screen
+    - Dashboard
+rationale: >-
+  Deterministic, process-driven feasibility checks reduce manual analysis time
+  and standardize resource-add vs. rebalance decisions. Integration with
+  S4/Kinaxis and execution via Remote Functions closes the loop for rapid,
+  low-risk capacity changes while protecting margins.

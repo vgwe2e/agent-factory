@@ -1,0 +1,32 @@
+decision: >-
+  Autonomous scheduling and coordination of end-to-end final-drive assembly,
+  integration with inverter/cooling, end-of-line testing, and automated
+  flash/configuration
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Start of final assembly line cycle
+  parameters:
+    objective: Drive Unit Final Assembly & Testing
+    key_inputs:
+      - Production Schedule
+      - Component Availability
+      - Test Station Status
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: Optimized scheduling and execution of L4 activities
+  outcome: Reduced COGS, improved line throughput, enhanced OTIF
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - Process Builder
+    - Agentic AI
+    - Dashboard
+rationale: >-
+  Coupling deterministic optimization for sequencing and capacity with agentic
+  orchestration for cross-station decision execution to align plant, supplier,
+  and test-station operations in real-time

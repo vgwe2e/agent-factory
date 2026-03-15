@@ -1,0 +1,75 @@
+objective: >-
+  Optimize DC/cross-dock location strategy, warehouse automation, parts storage,
+  and service parts distribution network to reduce COGS, improve OTIF, and boost
+  order capture.
+trigger: Monthly review of logistics cost and service coverage metrics.
+decision: >-
+  Optimal DC/cross-dock location strategy, warehouse automation and layout
+  design, parts storage optimization, and service parts distribution network
+  design.
+expected_action: >-
+  Implement optimal DC/cross-dock locations, automate warehouse operations,
+  optimize parts storage, and design efficient service parts distribution
+  network.
+expected_outcome: >-
+  Reduced COGS, improved on-time in-full (OTIF) delivery performance, and
+  enhanced order capture rates.
+rationale: >-
+  Coordinating cross-dock placement, inventory positioning/rotation, and parts
+  distribution network decisions will minimize handling costs, stockouts, and
+  expediting, leading to tangible COGS improvements and stronger delivery
+  performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Logistics Cost Metrics
+    source: SAP S/4HANA
+    purpose: Evaluate current logistics cost and identify areas for improvement.
+  - name: Service Coverage Metrics
+    source: SAP S/4HANA
+    purpose: Assess current service coverage and determine optimal locations.
+  - name: Warehouse Layout Data
+    source: SAP S/4HANA
+    purpose: Analyze existing warehouse layouts and automation potential.
+  - name: Parts Inventory Data
+    source: SAP S/4HANA
+    purpose: Identify storage optimization opportunities for parts and materials.
+happy_path:
+  - step: Retrieve logistics cost and service coverage metrics from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+  - step: >-
+      Analyze current logistics cost and service coverage using Cortex Auto
+      Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Identify trends and areas for improvement.
+  - step: Determine optimal DC/cross-dock locations using AutoML.
+    stage: decide
+    component: AutoML
+    purpose: Optimize logistics cost and service coverage.
+  - step: Design warehouse automation and layout using Remote Functions.
+    stage: decide
+    component: Remote Functions
+    purpose: Maximize storage efficiency and throughput.
+  - step: Optimize parts storage strategies using Remote Functions.
+    stage: decide
+    component: Remote Functions
+    purpose: Balance space, retrieval efficiency, and handling costs.
+  - step: Design service parts distribution network using Remote Functions.
+    stage: decide
+    component: Remote Functions
+    purpose: Ensure timely and cost-effective delivery of service parts.
+branches:
+  - condition: High logistics cost despite optimal DC/cross-dock locations.
+    response: Re-evaluate warehouse automation and layout design.
+    outcome: Improved storage efficiency and reduced labor costs.
+  - condition: Inefficient parts retrieval despite optimized storage.
+    response: Adjust parts storage strategies and re-run analysis.
+    outcome: Enhanced retrieval efficiency and reduced handling costs.
+  - condition: Poor service coverage despite optimal network design.
+    response: Reassess DC/cross-dock locations and service parts distribution.
+    outcome: Improved service coverage and on-time deliveries.

@@ -1,0 +1,51 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Collect SAP S/4HANA orders/inventory and MES capacity data for the
+      planning window
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Cleanse, join, and produce subject-area-ready facts (demand, inventory,
+      capacity, changeover matrix)
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Remote Functions
+    purpose: >-
+      Run deterministic scheduling solver (sequence optimization, minimize
+      changeovers, respect constraints) and produce candidate schedule
+    confidence: inferred
+    capability: >-
+      Run deterministic scheduling solver (sequence optimization, minimize
+      changeovers, respect constraints) and produce candidate schedule
+process_builder:
+  - name: Process Builder (Process + Rules)
+    purpose: >-
+      Enforce release rules, prioritize customer commitments, detect exceptions
+      and determine automated vs. human approval paths (generate CWB if needed)
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Write final schedule to MES, update SAP S/4HANA MRP/schedule confirms, and
+      send expedited POs/ASN requests to suppliers
+    confidence: inferred
+    node_type: act
+  - name: UI Screen
+    purpose: >-
+      Provide dashboard of schedule, KPIs, and CWB list for review or manual
+      override
+    confidence: confirmed
+    node_type: integration
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously generate and synchronize daily stamping production
+      schedules across plants and suppliers to minimize changeovers and idle
+      time, maximize capacity utilization, and trigger expedited actions to meet
+      delivery commitments. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

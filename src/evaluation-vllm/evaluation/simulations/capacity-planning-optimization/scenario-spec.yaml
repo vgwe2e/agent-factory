@@ -1,0 +1,67 @@
+objective: Capacity Planning & Optimization
+trigger: Monthly demand forecast update from SAP S/4HANA
+decision: >-
+  Optimize plant and line capacity allocation, manpower and equipment resource
+  allocation, and identify and resolve production bottlenecks.
+expected_action: >-
+  Generate optimized capacity plans and resource allocations, implement
+  corrective actions for identified bottlenecks, provide reporting on capacity
+  utilization, and recommend capital investments.
+expected_outcome: >-
+  Reduced COGS, improved line throughput, and better alignment of capacity with
+  demand signals.
+rationale: >-
+  This scenario leverages AI/ML to model and optimize capacity planning and
+  resource allocation, ensuring efficient production and cost reduction.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Demand Forecast
+    source: SAP S/4HANA
+    purpose: Input for capacity planning models
+    preferred_stream_type: STREAMS
+  - name: Production Schedule
+    source: SAP S/4HANA
+    purpose: Basis for resource allocation
+    preferred_stream_type: STREAMS
+  - name: Current Capacity Utilization
+    source: SAP S/4HANA
+    purpose: Reporting and analysis
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Fetch demand forecast data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest demand forecast from SAP S/4HANA
+  - step: Run capacity planning models
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Generate optimized capacity plans
+  - step: Allocate manpower and equipment
+    stage: decide
+    component: Remote Functions
+    purpose: Optimize resource allocation based on production schedules
+  - step: Identify production bottlenecks
+    stage: analyze
+    component: RCA Service
+    purpose: Detect and prioritize bottlenecks
+  - step: Implement corrective actions
+    stage: act
+    component: Process Builder
+    purpose: Execute bottleneck resolution strategies
+  - step: Generate capacity utilization reports
+    stage: surface
+    component: UI Screens
+    purpose: Provide visibility into capacity usage
+branches:
+  - condition: Insufficient capacity to meet demand
+    response: Trigger CWB Lifecycle for manual review
+    outcome: Manual intervention for capacity adjustments
+  - condition: High variance in bottleneck resolution effectiveness
+    response: Engage Agentic AI for adaptive reasoning
+    outcome: Enhanced bottleneck resolution strategies
+  - condition: Significant capital investment required
+    response: Generate detailed ROI analysis
+    outcome: Justified capital expenditure plan presented to stakeholders

@@ -1,0 +1,43 @@
+decision: >-
+  Assess and adjust sourcing strategies, determine local content strategies,
+  choose tariff mitigation strategies, and decide material composition
+  compliance actions.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Changes in import/export regulations, local content requirements, tariffs,
+    and environmental regulations.
+  parameters:
+    objective: >-
+      Automate monitoring and decision-making for regulatory and trade policy
+      compliance to minimize COGS impact and protect OTIF while ensuring
+      compliance.
+    key_inputs:
+      - Import/Export Regulations
+      - Local Content Requirements
+      - Tariffs and Trade Barriers
+      - Environmental Regulations
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Adapt sourcing, adjust supplier mix, re-route shipments, or modify
+    production plans based on regulatory changes.
+  outcome: >-
+    Minimized COGS impact, protected OTIF, and ensured compliance with all
+    relevant regulations.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - AutoML
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Automating the monitoring and decision-making process ensures timely
+  adjustments to sourcing and production strategies, reducing financial risks
+  and maintaining compliance.

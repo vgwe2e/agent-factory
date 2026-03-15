@@ -1,0 +1,40 @@
+decision: >-
+  Prioritize logistics facilities and investments, optimize CAPEX and working
+  capital trade-offs, and coordinate capacity investments with supply network
+  constraints.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Quarterly financial review and logistics performance assessment.
+  parameters:
+    objective: >-
+      Combine deterministic optimization and agentic orchestration to prioritize
+      logistics capital planning and investment decisions.
+    key_inputs:
+      - Logistics Facility Investment Proposals
+      - CAPEX Project Proposals
+      - ROI Analysis Scenarios
+      - Annual Logistics Budget
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Approve or defer CAPEX projects, conduct ROI analysis for logistics
+    technology investments, and allocate annual logistics budget.
+  outcome: >-
+    Reduced COGS, improved OTIF, accelerated payback, and optimized logistics
+    infrastructure investments.
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - Remote Functions
+    - CWB Lifecycle
+    - Notification
+    - Dashboard
+rationale: >-
+  Leverage Aeterra's deterministic optimization and agentic orchestration to
+  make informed logistics capital planning decisions that balance cost,
+  capacity, and service levels.

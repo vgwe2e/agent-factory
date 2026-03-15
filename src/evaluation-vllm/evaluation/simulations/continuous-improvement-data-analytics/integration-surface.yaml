@@ -1,0 +1,43 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-schedule
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: order-fulfillment-status
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: logistics-incident-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: process-improvement-metrics
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Optimize inventory and align production capacity.
+  - component: RCA Service
+    type: cortex
+    function: Identify and address root causes of logistics delays.
+  - component: Remote Functions
+    type: process_builder
+    function: Balance deployment effort against expected COGS improvements.
+  - component: Process Builder
+    type: process_builder
+    function: Implement autonomous workflows.
+  - component: UI Screens
+    type: process_builder
+    function: Provide visibility into performance and progress.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review harmonize five l4 processes into an autonomous decision engine for
+      continuous improvement and data analytics in ford's automotive supply
+      chain. and approve the recommended action.

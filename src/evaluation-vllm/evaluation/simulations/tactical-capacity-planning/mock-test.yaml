@@ -1,0 +1,43 @@
+decision: >-
+  Allocate available plant and line capacity to vehicle programs based on demand
+  forecasts, validate quarterly build plans against internal and supplier
+  capacity constraints, review and formalize supplier capacity commitments,
+  review and update tactical capacity plan assumptions, adjust upcoming build
+  plans due to capacity shortfalls.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Monthly, quarterly, and mid-term capacity planning cycles.
+  parameters:
+    objective: >-
+      Orchestrating deterministic, semi-autonomous capacity decisions across
+      monthly, quarterly, and mid-term horizons to optimize production volumes,
+      balance line capacities, and prevent capacity shortfalls.
+    key_inputs:
+      - Demand Forecasts
+      - Internal Capacity Constraints
+      - Supplier Capacity Commitments
+      - Tactical Capacity Plan Assumptions
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate capacity allocation and validation processes, generate reports for
+    capacity gap analysis and assumption reviews, provide recommendations for
+    build plan adjustments.
+  outcome: >-
+    Reduced COGS, improved OTIF, synchronized cross-plant and cross-supplier
+    capacity planning.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Unify capacity allocation, validation, gap analysis, and plan adjustments to
+  optimize production and reduce costs.

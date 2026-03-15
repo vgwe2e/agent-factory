@@ -1,0 +1,57 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Yard Management System
+    type: YMS
+    status: tbd
+  - name: Warehouse Management System
+    type: WMS
+    status: tbd
+  - name: Mobile Inspection / Scanner Devices
+    type: IoT
+    status: tbd
+aera_ingestion:
+  - stream_name: advance-shipping-notice-asn-edi-inbound
+    stream_type: API
+    source: SAP S/4HANA / Carrier EDI
+  - stream_name: dock-yard-arrival-events
+    stream_type: API
+    source: Yard Management System / Gate sensors
+  - stream_name: receiving-inspection-results-qc-scans-photos-operator-notes
+    stream_type: Event Stream
+    source: Mobile Inspection / Scanner Devices
+  - stream_name: wms-inventory-putaway-maps
+    stream_type: API
+    source: Warehouse Management System
+  - stream_name: labor-availability-skills
+    stream_type: Event Stream
+    source: Workforce Management / Scheduling
+  - stream_name: quality-rules-cost-impact-policies
+    stream_type: Event Stream
+    source: Quality Management / Business Rules
+processing:
+  - component: Agent Team
+    type: process_builder
+    function: >-
+      Classify items (accept/quarantine/return), score risk, and generate
+      actionable plan
+  - component: Process Builder + Remote Functions
+    type: process_builder
+    function: >-
+      Reserve quarantine slots, assign labor, schedule putaway, and update SAP
+      S/4HANA/WMS
+  - component: UI Screen + Notification
+    type: process_builder
+    function: >-
+      Provide operators with pick/put instructions, quarantine labels, and
+      exception CWB items
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end receiving and putaway orchestration with
+      immediate exception handling for non-conforming materials across yard,
+      inbound unloading, inspection, and segregation to reduce receiving cogs,
+      improve otif, and accelerate downstream throughput. and approve the
+      recommended action.

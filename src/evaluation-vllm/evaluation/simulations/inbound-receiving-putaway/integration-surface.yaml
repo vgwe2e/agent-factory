@@ -1,0 +1,43 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: shipment-manifest
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: purchase-orders
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-types
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: storage-locations
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: discrepancy-records
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: hazardous-materials-list
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: Validate shipment accuracy
+  - component: Process Builder
+    type: process_builder
+    function: Initiate inspection process
+  - component: Remote Functions
+    type: process_builder
+    function: Optimize storage
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Address discrepancies
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review enable end-to-end automation for inbound receiving, quality
+      inspection triggers, putaway optimization, discrepancy resolution, and
+      hazardous material segregation. and approve the recommended action.

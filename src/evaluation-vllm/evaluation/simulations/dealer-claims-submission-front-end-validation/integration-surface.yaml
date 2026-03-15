@@ -1,0 +1,29 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: warranty-claim-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: repair-order-documentation
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: pre-authorization-requests
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Process Builder
+    type: process_builder
+    function: Ensure all necessary documentation is included.
+  - component: Notification
+    type: process_builder
+    function: Inform the dealer about the claim's status.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate and coordinate end-to-end dealer claim data entry,
+      validation, and pre-authorization processing to reduce manual handling,
+      accelerate claim cash-flows, and improve otif metrics. and approve the
+      recommended action.

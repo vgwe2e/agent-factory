@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Supplier shipment arrival notification.]
+  A --> N1[Stream: DDM/Crawlers - Receive shipment notification]
+  N1 --> N2[Cortex: Remote Functions - Verify shipment against manifest and PO]
+  N2 --> N3{PB: Process Builder - Trigger quality inspection based on material type}
+  N3 -->|Primary| N4{PB: Remote Functions - Assign optimal putaway location}
+  N4 --> N5{PB: CWB Lifecycle - Resolve discrepancies}
+  N5 --> N6[PB: Remote Functions - Segregate high-value/hazardous materials]
+  N6 --> Z1[Outcome: Reduced COGS, improved OTIF, and enhanced inventory accuracy.]
+  N3 -->|Shipment does not match manifest| B1[Reject shipment]
+  B1 --> O1[Outcome: Notify supplier for correction]
+  O1 --> End[End]
+  N3 -->|Quality inspection fails| B2[Quarantine materials]
+  B2 --> O2[Outcome: Initiate re-inspection or return process]
+  O2 --> End[End]
+  N3 -->|No available storage location| B3[Hold shipment]
+  B3 --> O3[Outcome: Re-evaluate storage options]
+  O3 --> End[End]
+  Z1 --> End[End]

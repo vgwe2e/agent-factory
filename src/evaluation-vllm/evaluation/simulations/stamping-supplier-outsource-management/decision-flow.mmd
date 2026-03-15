@@ -1,0 +1,20 @@
+flowchart TD
+  A[Trigger: Periodic supplier performance data update from SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve supplier performance data]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze supplier performance]
+  N2 --> N3{PB: CWB Lifecycle - Generate corrective actions}
+  N3 -->|Primary| N4[PB: Process Builder - Execute quality audits]
+  N4 --> N5{PB: CWB Lifecycle - Optimize tooling & die contracts}
+  N5 --> N6{PB: CWB Lifecycle - Negotiate pricing terms}
+  N6 --> N7[PB: Process Builder - Align production schedules]
+  N7 --> Z1[Outcome: Improved supplier performance, reduced COGS, minimized delays, and enhanced OTIF.]
+  N3 -->|Supplier performance below threshold| B1[Initiate corrective actions]
+  B1 --> O1[Outcome: Improve supplier performance]
+  O1 --> End[End]
+  N3 -->|Quality audit identifies significant ...| B2[Increase audit frequency]
+  B2 --> O2[Outcome: Enhance quality control]
+  O2 --> End[End]
+  N3 -->|Contract negotiation fails| B3[Escalate to human review]
+  B3 --> O3[Outcome: Manual intervention for resolution]
+  O3 --> End[End]
+  Z1 --> End[End]

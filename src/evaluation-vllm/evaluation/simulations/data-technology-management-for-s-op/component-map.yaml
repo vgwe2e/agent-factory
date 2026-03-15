@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect S&OP data from SAP S/4HANA
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Ensure seamless data flow
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Data Quality & Validation
+    purpose: Ensure data completeness, accuracy, and timeliness
+    confidence: inferred
+    capability: Ensure data completeness, accuracy, and timeliness
+process_builder:
+  - name: Cortex Auto Forecast
+    purpose: Improve S&OP forecasts
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: Balance short-term and long-term S&OP capabilities
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dimensions
+    purpose: Ensure consistency and accuracy across systems
+    confidence: inferred
+    component_type: display

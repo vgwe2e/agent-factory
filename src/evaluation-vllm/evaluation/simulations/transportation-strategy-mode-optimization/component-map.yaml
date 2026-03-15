@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for carrier strategy evaluation.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Balance cost, speed, and reliability for each SKU/location set.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict future performance and optimize total landed cost.
+    confidence: confirmed
+    capability: Predict future performance and optimize total landed cost.
+  - name: RCA Service
+    purpose: Maximize COGS savings while preserving service levels.
+    confidence: inferred
+    capability: Maximize COGS savings while preserving service levels.
+process_builder:
+  - name: Process Builder
+    purpose: Determine optimal transport configuration for each lane.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unify multimodal transport design, carrier strategy, lane
+      optimization, and flow analysis to minimize cogs and improve otif across
+      ford's automotive parts network. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

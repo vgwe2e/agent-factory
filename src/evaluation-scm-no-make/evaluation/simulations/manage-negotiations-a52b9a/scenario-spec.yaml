@@ -1,0 +1,146 @@
+objective: >-
+  Automate end-to-end spot buy orchestration to minimize COGS and protect EBITDA
+  by combining touchless demand signals, real-time supplier markets, and
+  contract terms to dynamically select suppliers, negotiate terms, and execute
+  purchases with minimal manual intervention.
+trigger: >-
+  Detected spot-buy demand signal: high-variance input category demand spike or
+  shortage alert from planning that exceeds configured threshold and is outside
+  covered contract capacity.
+decision: >-
+  Select an optimal execution strategy for the spot buy: (a) run aggregated
+  competitive spot auction, (b) execute targeted negotiated buy with preferred
+  suppliers, or (c) split buys across multiple suppliers — balancing expected
+  cost, supplier risk score, and contract constraints.
+expected_action: >-
+  Agentic workflow aggregates demand, evaluates real-time market offers and
+  contract terms, proposes a negotiation strategy, runs automated supplier
+  engagement (bids/requests), and executes purchase order writeback to S4 for
+  approved buys; human review only for high-risk or overridden cases.
+expected_outcome: >-
+  Touchless execution of spot buys where feasible, reduction in unit cost vs
+  baseline, preserved service levels, faster cash-to-invoice cycle, and audit
+  trail of decision rationale and supplier negotiations; exceptions routed to
+  procurement CWB for review.
+rationale: >-
+  Agentic AI can synthesize unstructured market signals, multi-source demand
+  inputs, and contractual rules to optimize supplier selection and negotiation
+  strategy. Using Process Builder orchestration with Agent Team agents + Remote
+  Functions enables secure ERP writeback and deterministic fallbacks for risk
+  control while minimizing manual cycles.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS)
+    type: TMS
+    status: identified
+key_inputs:
+  - name: spot_demand_signals
+    source: Kinaxis RapidResponse
+    purpose: >-
+      Identify demand spikes, shortages, and recommended expedite quantities for
+      candidate SKUs
+    preferred_stream_type: batch
+  - name: real_time_supplier_market_offers
+    source: DDM/Crawlers (external market APIs)
+    purpose: >-
+      Live price and lead-time offers from spot market and brokers to evaluate
+      competitive pricing
+    preferred_stream_type: stream
+  - name: contract_terms_and_NRCs
+    source: S4 (contract master) / legal repository
+    purpose: >-
+      Apply contractual constraints, rebates, minimums, and approved supplier
+      lists to negotiation logic
+    preferred_stream_type: batch
+  - name: inventory_positions_and_fg_safety
+    source: Blue Yonder WMS / Kinaxis
+    purpose: >-
+      Assess available inventory and safety stock impact to determine urgency
+      and acceptable risk
+    preferred_stream_type: batch
+  - name: pricing_benchmarks_and_historical_spot
+    source: SAS / Advanced Statistical Forecasting in SAS
+    purpose: >-
+      Price benchmarks, volatility models, and historical outcomes for cost/risk
+      scoring
+    preferred_stream_type: batch
+  - name: supplier_risk_profiles
+    source: S4 / Procurement master data
+    purpose: >-
+      Evaluate supplier reliability, compliance, and capacity constraints in
+      supplier scoring
+    preferred_stream_type: batch
+happy_path:
+  - step: Ingest demand spike and shortage signals
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Collect and normalize spot demand triggers, inventory positions, and
+      external market feeds into Subject Areas
+  - step: Analyze market and contract constraints
+    stage: analyze
+    component: Cortex (RCA Service + AutoML) + Remote Functions
+    purpose: >-
+      Score supplier market offers vs contract terms, forecast price impact, and
+      compute cost/risk tradeoffs
+  - step: Decide negotiation & sourcing strategy
+    stage: decide
+    component: Process Builder (IF, Rules) + Agent Team (agentic_ai)
+    purpose: >-
+      Agent proposes aggregated auction or targeted buys and shortlists
+      suppliers using rules and agent reasoning
+  - step: Execute supplier engagement and commit orders
+    stage: act
+    component: Process Builder (Action Item, Remote Functions) + Agent Team
+    purpose: >-
+      Trigger automated RFP/bid flows to suppliers, collect responses, and write
+      approved POs back to S4
+  - step: Review exceptions and finalize
+    stage: review
+    component: CWB Lifecycle + UI Screen
+    purpose: >-
+      Human-in-the-loop approval for high-risk or override cases and to capture
+      final negotiation terms
+  - step: Notify stakeholders and surface outcome
+    stage: notify
+    component: Process Builder (Notification) + Dashboard
+    purpose: >-
+      Inform procurement, finance, and logistics; surface cost savings, supplier
+      selections, and execution metrics
+branches:
+  - condition: Market volatility extremely high or insufficient supplier participation
+    response: >-
+      Agent shifts to conservative split buys among contracted suppliers and
+      raises approval threshold to CWB Lifecycle
+    outcome: >-
+      Protects service levels and reduces supplier risk at expense of potential
+      higher COGS; human approval required
+  - condition: >-
+      Aggregated auction yields a materially better price within
+      contract/compliance bounds
+    response: >-
+      Automated aggregation and competitive auction executed; winners selected
+      and POs auto-issued via Remote Functions
+    outcome: >-
+      Lowered COGS with audit trail; monitor supplier performance post-award
+      with Cortex Monitoring
+  - condition: >-
+      Human procurement override or exception flagged (credit, compliance,
+      capacity)
+    response: >-
+      Pause autonomous execution, route CWB to procurement team with decision
+      context and recommended alternatives
+    outcome: >-
+      Decision logged; manual negotiation or approval proceeds, preventing risky
+      automated commits

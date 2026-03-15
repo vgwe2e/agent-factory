@@ -1,0 +1,73 @@
+objective: >-
+  Autonomous monitoring, decision-making, and enforcement of compliance and risk
+  controls across customs, hazardous materials, transport security, and safety
+  audits to optimize carrier and route choices within safe and cost-effective
+  bounds.
+trigger: Periodic audit and real-time shipment events.
+decision: >-
+  Choose optimal customs routes, select compliant transport modes, implement
+  security measures, generate regulatory reports, and audit carrier safety.
+expected_action: >-
+  Automated selection of customs routes, transport modes, security protocols,
+  generation of regulatory reports, and initiation of carrier audits.
+expected_outcome: >-
+  Minimized delays and penalties, reduced risk and cost, enhanced security,
+  improved regulatory compliance, and optimized carrier choices.
+rationale: >-
+  Leverage multi-domain data and real-time decisioning to preempt
+  non-compliance, expedite corrective actions, and optimize operations within
+  safe and cost-effective bounds.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Shipment Details
+    source: SAP S/4HANA
+    purpose: To determine customs compliance and transport mode selection.
+  - name: Hazardous Material Information
+    source: SAP S/4HANA
+    purpose: To ensure compliance with hazardous material transport regulations.
+  - name: Security Measures
+    source: SAP S/4HANA
+    purpose: To implement appropriate security protocols.
+  - name: Carrier Safety Data
+    source: SAP S/4HANA
+    purpose: To conduct carrier safety audits and compliance checks.
+happy_path:
+  - step: >-
+      Ingest shipment details and hazardous material information from SAP
+      S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for compliance and risk management.
+  - step: >-
+      Analyze shipment details and hazardous material information using Cortex
+      Auto Forecast for compliance and risk assessment.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict potential compliance issues and risks.
+  - step: >-
+      Decide on optimal customs routes and transport modes based on analysis
+      results.
+    stage: decide
+    component: Agentic AI
+    purpose: Make informed decisions to minimize delays and costs.
+  - step: Implement security measures and generate regulatory reports.
+    stage: act
+    component: Process Builder
+    purpose: Ensure security and compliance with regulatory requirements.
+  - step: Audit carrier safety and compliance programs.
+    stage: review
+    component: Remote Functions
+    purpose: Verify carrier adherence to safety and regulatory standards.
+branches:
+  - condition: Non-compliant transport mode detected.
+    response: Initiate corrective actions and reroute shipment.
+    outcome: Ensures compliance and minimizes risk.
+  - condition: Security breach identified.
+    response: Enhance security measures and notify relevant stakeholders.
+    outcome: Protects shipment integrity and reduces theft risk.
+  - condition: Carrier fails safety audit.
+    response: Replace carrier and update shipment plan.
+    outcome: Maintains shipment reliability and safety standards.

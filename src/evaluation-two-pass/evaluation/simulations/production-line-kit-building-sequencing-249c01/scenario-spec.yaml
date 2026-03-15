@@ -1,0 +1,134 @@
+objective: >-
+  Orchestrate line-side material delivery (JIS, replenishment, waste reduction)
+  across production lines by coordinating multi-echelon inventory and dynamic
+  sequencing constraints to minimize COGS and improve OTIF.
+trigger: >-
+  Production schedule release or detected low/abnormal line inventory
+  consumption (periodic batch or event-based alert).
+decision: >-
+  Automatically approve and execute an optimized line-side delivery and kit
+  sequencing plan when constraints and supplier ETAs are satisfied; otherwise
+  route to human review/exception workflow.
+expected_action: >-
+  Ingest production schedule, inventory, BOMs, sequencing constraints and line
+  telemetry; generate optimized JIS delivery and kit-build sequence via agentic
+  AI + optimization; write optimized delivery instructions and pick/ship plan
+  back to SAP S/4HANA and notify logistics/suppliers; surface plan and
+  exceptions on dashboards and CWB when human review required.
+expected_outcome: >-
+  Reduced line stoppages and changeovers, improved OTIF for line-side
+  deliveries, lower material handling costs and COGS, improved sequence accuracy
+  and reduced line waste across plants and supplier nodes.
+rationale: >-
+  Combining agentic AI for adaptive sequencing with multi-echelon inventory
+  visibility and ERP writeback enables closed-loop JIS orchestration. Autonomous
+  optimization reduces manual coordination, minimizes sequence mismatches and
+  buffer levels, and accelerates corrective action for supplier or inventory
+  exceptions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    type: MES
+    status: tbd
+  - name: Warehouse Management System (WMS)
+    type: WMS
+    status: tbd
+  - name: Supplier Portal / TMS
+    type: Supplier Portal / TMS
+    status: tbd
+key_inputs:
+  - name: Production schedule (line-level sequence & takt)
+    source: SAP S/4HANA (Production Planning)
+    purpose: >-
+      Defines line build order, takt times and target sequences for JIS delivery
+      alignment.
+    preferred_stream_type: delta_batch
+  - name: Kit BOMs / Kit definitions
+    source: SAP S/4HANA / PLM
+    purpose: Specifies components required per kit and assembly rules for kit building.
+    preferred_stream_type: delta_batch
+  - name: Multi-echelon inventory levels (plant, DC, supplier buffers)
+    source: SAP S/4HANA / WMS
+    purpose: >-
+      Supply availability and buffer states to drive replenishment and sourcing
+      decisions.
+    preferred_stream_type: delta_batch
+  - name: Line consumption telemetry (consumption rates, anomalies)
+    source: MES
+    purpose: >-
+      Real-time (periodic) consumption signals to detect depletion, waste or
+      abnormal usage.
+  - name: Sequencing constraints & changeover costs
+    source: Production Planning / MES
+    purpose: >-
+      Business constraints for sequencing optimization to minimize changeovers
+      and mis-sequencing.
+  - name: Supplier ETAs and carrier schedules
+    source: Supplier Portal / TMS
+    purpose: Feasibility checks for JIS windows and expediting decisions.
+  - name: Material handling capacity and routing rules
+    source: WMS / Plant Operations
+    purpose: >-
+      Constraints for delivery cadence, vehicle/pallet limits, and line-side
+      staging capacity.
+happy_path:
+  - step: >-
+      Ingest schedule, inventory, BOMs, telemetry and supplier ETAs into the
+      data foundation
+    stage: ingest
+    component: STREAMS
+    purpose: Consolidate and validate source data for analysis and optimization.
+  - step: >-
+      Generate optimized JIS delivery windows and kit-build sequence accounting
+      for multi-echelon inventory and sequencing constraints
+    stage: analyze
+    component: Agentic AI (Multi-Agent Pipeline) + Remote Functions
+    purpose: >-
+      Produce optimized, constraint-aware delivery and kit sequences using
+      agentic reasoning and optimization logic.
+  - step: Evaluate optimization feasibility and decide execution path
+    stage: decide
+    component: Process Builder (IF)
+    purpose: >-
+      Apply business rules and thresholds to determine auto-execute vs. human
+      review.
+  - step: >-
+      Execute plan: write delivery/pick/kit instructions into SAP S/4HANA and
+      trigger carrier/supplier actions
+    stage: act
+    component: Remote Functions (ERP Writeback) + Process Builder (Action Item)
+    purpose: >-
+      Persist plan to ERP and initiate logistics/supplier workflows for JIS
+      execution.
+  - step: >-
+      Surface plan, KPIs, and exceptions to operators and planners; send
+      notifications for action items
+    stage: notify
+    component: UI Screen (dashboard) + Notification
+    purpose: >-
+      Provide visibility, monitor OTIF/COGS impacts and route exceptions into
+      CWB when needed.
+branches:
+  - condition: Optimization yields feasible plan and all supplier ETAs meet JIS windows
+    response: >-
+      Process Builder auto-executes plan and writes instructions to SAP S/4HANA;
+      notifications sent to logistics and suppliers.
+    outcome: Autonomous execution achieves target OTIF and reduced manual coordination.
+  - condition: >-
+      Constraint violations (capacity, sequencing conflicts, or missing
+      components) detected
+    response: >-
+      Route plan to CWB Lifecycle for human review/override with recommended
+      mitigation steps from Agentic AI.
+    outcome: >-
+      Planners adjudicate exceptions; manual adjustments prevent production
+      disruption while preserving audit trail.
+  - condition: Supplier ETA mismatch or expedited shortage persists
+    response: >-
+      Trigger expediting subprocess and alternative sourcing recommendations;
+      flag impacted line(s) and adjust sequence plan.
+    outcome: >-
+      Reduced stoppage risk via expediting or resequencing; updated plan pushed
+      when resolved.

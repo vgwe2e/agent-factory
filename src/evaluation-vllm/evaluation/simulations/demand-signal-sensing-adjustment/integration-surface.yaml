@@ -1,0 +1,31 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: real-time-sales-orders
+    stream_type: real-time
+    source: SAP S/4HANA
+  - stream_name: dealer-inventory-levels
+    stream_type: periodic
+    source: SAP S/4HANA
+  - stream_name: promotional-campaign-data
+    stream_type: periodic
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Detect variances and potential demand shifts
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Implement rapid adjustments to forecasts
+  - component: Process Builder
+    type: process_builder
+    function: Trigger necessary actions across the supply network
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review unified di solution for sensing real-time demand signals, adjusting
+      forecasts, and coordinating promotions, inventory, and order fulfillment
+      across the automotive supply network. and approve the recommended action.

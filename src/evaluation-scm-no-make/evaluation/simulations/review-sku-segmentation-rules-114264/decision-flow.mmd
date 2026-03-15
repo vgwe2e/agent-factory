@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled monthly review or ad-hoc when segment performance deviates beyond threshold or planned demand changes are detected.]
+  A --> N1[Stream: STREAMS - Extract SKU master, historical sales, forecasts and inventory data]
+  N1 --> N2[Cortex: Process Builder - Rules - Compute ABC value and XYZ variability metrics and apply current rule logic]
+  N2 --> N3{PB: CWB Lifecycle - Generate proposed rule adjustments and ranking of impacted SKUs; create approval CWB}
+  N3 -->|Primary| N4[PB: Remote Functions - On approver acceptance, execute writeback of updated segment tags and notes]
+  N4 --> N5[PB: Process Builder - Notification / UI Screen - Notify stakeholders and surface change details and expected downstream impacts]
+  N5 --> Z1[Outcome: Updated SKU segmentation rules applied to master data, improved alignment of stock/service levels with demand variability, audit trail of changes and approvals, and downstream systems updated (S4, RapidResponse, WMS) within the planning window.]
+  N3 -->|Proposed rule changes impact X% of ...| B1[Escalate to cross-functional review via Process Builder Subprocess and require extended approval (multi-stage CWB).]
+  B1 --> O1[Outcome: Delay automatic writeback; multi-stakeholder review conducted and a controlled rollout plan created.]
+  O1 --> End[End]
+  N3 -->|Insufficient historical data or high ...| B2[Flag SKU as 'insufficient data' and exclude from automatic reclassification; route to data enrichment task/agent.]
+  B2 --> O2[Outcome: No automatic change for low-confidence SKUs; tasks generated to collect more data or apply manual review.]
+  O2 --> End[End]
+  N3 -->|Business override requested by approv...| B3[Capture override reason in CWB, persist override metadata, and exclude SKU from automated reclassification for configured period.]
+  B3 --> O3[Outcome: Override recorded with audit trail; segmentation for SKU remains as manually specified until expiration.]
+  O3 --> End[End]
+  Z1 --> End[End]

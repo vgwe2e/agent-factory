@@ -1,0 +1,7 @@
+groundednessScore: 100
+integrationConfidenceScore: 85
+ambiguityRiskScore: 43
+implementationReadinessScore: 84
+verdict: REVIEW
+reasons:
+  - Decision flow failed Mermaid validation.

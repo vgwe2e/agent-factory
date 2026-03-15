@@ -1,0 +1,125 @@
+objective: >-
+  Provide a semi-autonomous profitability optimization engine that jointly
+  optimizes COGS, revenue/gross margin, and working capital across demand,
+  supply, production, and fulfillment to recommend and commit S&OP-aligned
+  budget and forecast options that maximize EBITDA and improve cash conversion.
+trigger: >-
+  Periodic S&OP cycle trigger or ad-hoc 'budget/forecast alignment' request
+  (monthly / quarterly) to evaluate candidate budget and forecast scenarios
+  against COGS, margin, and working capital constraints.
+decision: >-
+  Which budget and forecast option best balances COGS impact and financial
+  alignment with S&OP given scenario constraints, production capacity, and
+  working capital targets.
+expected_action: >-
+  Automatically evaluate candidate scenarios, rank recommended budget/forecast
+  option with quantified trade-offs (EBITDA, gross margin, cash conversion,
+  inventory days), surface the recommendation via CWB for finance/S&OP review,
+  and on approval writeback the committed scenario to SAP S/4HANA.
+expected_outcome: >-
+  Selected, S&OP-aligned budget and forecast committed in ERP; measurable uplift
+  in EBITDA and improved cash conversion metrics; auditable decision record and
+  retryable integration if writeback issues occur.
+rationale: >-
+  Coordinated trade-offs across cost, revenue, and working capital require
+  integrated data, deterministic business rules and optimization logic, and
+  human-in-the-loop approval to balance strategic and operational constraints.
+  Process Builder orchestrates robust, repeatable evaluation and Remote
+  Functions enable complex calculations and ERP writebacks while CWB Lifecycle
+  provides governance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Planning spreadsheets / S&OP tools
+    status: tbd
+  - name: Market pricing / competitor pricing feeds
+    status: tbd
+key_inputs:
+  - name: Product master & cost (COGS) ledger
+    source: SAP S/4HANA
+    purpose: >-
+      Provide authoritative COGS, BOM cost elements, and product cost roll-ups
+      for margin calculations
+    preferred_stream_type: STREAMS
+  - name: Current budgets and forecast scenarios
+    source: Planning spreadsheets / S&OP tools
+    purpose: Candidate budget/forecast options to be evaluated and ranked
+  - name: Demand plan (baseline & scenario variants)
+    source: S&OP tools / Subject Areas
+    purpose: Volume and mix inputs to estimate revenue and COGS impact per scenario
+    preferred_stream_type: Subject Areas
+  - name: Production capacity & lead times
+    source: SAP S/4HANA
+    purpose: >-
+      Feasibility constraints for scenario evaluation (capacity binding
+      conditions)
+    preferred_stream_type: STREAMS
+  - name: Working capital metrics (inventory days, AR, AP)
+    source: SAP S/4HANA
+    purpose: Compute cash conversion and working capital impact for each scenario
+    preferred_stream_type: STREAMS
+  - name: Pricing lists and promotional plans
+    source: Market pricing / competitor pricing feeds
+    purpose: Revenue / price impact modeling against scenarios
+  - name: Strategic financial targets (EBITDA, margin thresholds)
+    source: Finance governance
+    purpose: Decision constraints and objective weighting for ranking scenarios
+happy_path:
+  - step: >-
+      Ingest authoritative operational & financial data from SAP and external
+      sources
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Canonicalize product cost, inventory, AR/AP, capacity, and scenario inputs
+      into Subject Areas
+  - step: Assemble scenario P&L and working capital metrics into analytical layer
+    stage: analyze
+    component: Subject Areas
+    purpose: >-
+      Compute per-scenario EBITDA, gross margin, inventory days and cash
+      conversion metrics for comparison
+  - step: Run deterministic optimization and rule evaluation to rank scenarios
+    stage: decide
+    component: 'Process Builder: Rules + Remote Functions'
+    purpose: >-
+      Apply business rules and optimization logic to score trade-offs and
+      produce recommended option with sensitivity metrics
+  - step: Surface recommendation and trade-offs for finance & S&OP review
+    stage: review
+    component: CWB Lifecycle + UI Screens
+    purpose: >-
+      Present ranked scenarios, explain trade-offs, capture
+      accept/reject/override and rationale
+  - step: Commit approved scenario and notify stakeholders
+    stage: act
+    component: Remote Functions + Process Builder Notification
+    purpose: >-
+      Writeback approved budgets/forecasts to SAP S/4HANA, create audit trail,
+      and notify S&OP and Finance teams
+branches:
+  - condition: >-
+      Optimization identifies capacity constraint violations for top-ranked
+      scenarios
+    response: >-
+      Automatically generate a constrained-feasible alternative scenario
+      (reduced volumes / shifted production) and surface with explicit capacity
+      trade-offs
+    outcome: >-
+      Decision maker receives feasible options with clear capacity impact
+      enabling timely accept/override
+  - condition: Low confidence or high sensitivity in trade-off scores (unstable results)
+    response: >-
+      Escalate to multi-stakeholder CWB (Finance + S&OP + Manufacturing) and
+      attach detailed sensitivity analysis
+    outcome: >-
+      Human-in-the-loop negotiation produces agreed compromise scenario or
+      requests data refresh before commit
+  - condition: ERP writeback (SAP S/4HANA) fails or integration exceptions occur
+    response: >-
+      Queue transaction, create exception Action Item in Process Builder, notify
+      integration/ops team and retry per policy
+    outcome: >-
+      Writeback audited and retried; decision remains recorded and stakeholders
+      alerted until resolved

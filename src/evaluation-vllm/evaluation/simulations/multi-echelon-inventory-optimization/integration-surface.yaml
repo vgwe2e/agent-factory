@@ -1,0 +1,39 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: raw-material-inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: wip-inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: finished-goods-inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: plant-inventory-targets
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Safety Stock Service
+    type: cortex
+    function: Calculate optimal buffer stock levels.
+  - component: AutoML
+    type: cortex
+    function: Optimize WIP levels between production stages.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Human-in-the-loop review and approval of inventory recommendations.
+  - component: Remote Functions
+    type: process_builder
+    function: Writeback updated inventory levels to SAP S/4HANA.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review consolidate four l4 inventory decisions across raw material
+      buffers, wip balance, finished goods stocking, and plant-level targets
+      into a coordinated, semi-autonomous di engine to reduce working capital
+      tied to excess stock while preventing stockouts and elevating otif. and
+      approve the recommended action.

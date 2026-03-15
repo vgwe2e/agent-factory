@@ -1,0 +1,36 @@
+decision: >-
+  Plan and coordinate all NPI production activities including pre-production,
+  ramp-up, supplier readiness, pilot builds, and end-of-life phases.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New product introduction (NPI) initiation.
+  parameters:
+    objective: >-
+      Autonomous planning and coordination of NPI production activities across
+      multiple phases to reduce COGS, improve time-to-market, and enhance OTIF.
+    key_inputs:
+      - New Product Data
+      - Supplier Readiness Data
+      - Production Capacity Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate and optimize production planning activities using deterministic
+    optimization and agentic orchestration.
+  outcome: >-
+    Reduced COGS, faster time-to-market, improved OTIF, and better working
+    capital management during NPI cycles.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  The solution integrates deterministic optimization and agentic orchestration
+  to streamline NPI production planning, ensuring efficient resource allocation
+  and cost management.

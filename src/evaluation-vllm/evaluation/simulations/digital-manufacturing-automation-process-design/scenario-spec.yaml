@@ -1,0 +1,70 @@
+objective: >-
+  Develop a cohesive digital manufacturing and automation process design to
+  optimize production scheduling, network-wide safety stock, real-time data
+  integration, and autonomous line balancing across Ford's multi-site
+  manufacturing network.
+trigger: Monthly production planning cycle start.
+decision: >-
+  Develop long-term automation strategy and roadmap for manufacturing processes,
+  select prioritized automation initiatives with financial impact alignment.
+expected_action: >-
+  Create a detailed automation strategy and roadmap, integrate IoT sensors,
+  design data acquisition and analytics systems, and engineer robotics and
+  cobotics applications.
+expected_outcome: >-
+  Reduced COGS through optimized line sequencing and changeovers, decreased
+  working capital with better data acquisition and safety stock placement,
+  improved on-time delivery and OTIF through smarter plant/carrier
+  orchestration.
+rationale: >-
+  Uniting L4 activities into an autonomous decision loop will enhance production
+  efficiency, reduce costs, and improve overall supply chain performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Production Planning Data
+    source: SAP S/4HANA
+    purpose: To inform production scheduling and resource allocation.
+  - name: IoT Sensor Data
+    source: IoT Devices
+    purpose: To monitor process performance and drive real-time decision-making.
+  - name: Financial Impact Data
+    source: SAP S/4HANA
+    purpose: To align automation initiatives with financial goals.
+happy_path:
+  - step: Extract production planning data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To gather necessary data for production scheduling.
+  - step: Integrate IoT sensor data for real-time monitoring.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To collect real-time process performance data.
+  - step: Analyze data for process optimization and automation opportunities.
+    stage: analyze
+    component: AutoML
+    purpose: To identify areas for improvement and automation.
+  - step: Develop automation strategy and roadmap.
+    stage: decide
+    component: Process Builder
+    purpose: To create a detailed plan for automation initiatives.
+  - step: Implement IoT sensor deployment and data acquisition systems.
+    stage: act
+    component: Process Builder
+    purpose: To ensure real-time data integration and monitoring.
+  - step: Review and approve automation strategy and roadmap.
+    stage: review
+    component: CWB Lifecycle
+    purpose: To finalize and implement the automation plan.
+branches:
+  - condition: Insufficient financial impact data available.
+    response: Request additional financial data from SAP S/4HANA.
+    outcome: Delayed automation strategy development until data is available.
+  - condition: IoT sensor data integration fails.
+    response: Troubleshoot and reconfigure IoT sensor integration.
+    outcome: Resume data acquisition and analytics system design.
+  - condition: Automation strategy rejected by stakeholders.
+    response: Revise automation strategy based on feedback.
+    outcome: Resubmit revised strategy for approval.

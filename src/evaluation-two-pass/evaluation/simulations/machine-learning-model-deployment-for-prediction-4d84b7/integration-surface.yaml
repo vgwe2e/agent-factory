@@ -1,0 +1,55 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Enterprise Data Lake / Subject Areas
+    type: Data Warehouse
+    status: tbd
+  - name: External Market Signals (3rd-party APIs)
+    status: tbd
+aera_ingestion:
+  - stream_name: historical-sales-shipments-time-series
+    stream_type: STREAMS
+    source: SAP S/4HANA via STREAMS/DDM
+  - stream_name: product-location-master-data
+    stream_type: STREAMS
+    source: SAP S/4HANA Subject Areas
+  - stream_name: inventory-levels-in-transit-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: supplier-lead-times-capacity-constraints
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA / supplier feeds
+  - stream_name: promotions-events-calendar
+    stream_type: Event Stream
+    source: Marketing / planning inputs
+  - stream_name: external-demand-signals-e-g-market-index-seasonality-indicators
+    stream_type: DDM/Crawlers
+    source: 3rd-party APIs
+processing:
+  - component: Cortex Auto Forecast + RCA Service
+    type: cortex
+    function: >-
+      Generate forecasts, compute error metrics (MAPE), and surface feature
+      impacts for model explainability
+  - component: Process Builder (IF, Rules, Data Science)
+    type: process_builder
+    function: >-
+      Apply business rules and performance thresholds to determine deployment or
+      retraining actions
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Push forecasts to SAP S/4HANA and initiate downstream procurement or
+      production adjustments
+  - component: Cortex Monitoring + Process Builder Notification
+    type: process_builder
+    function: >-
+      Track forecast accuracy, KPI improvement, and automate retrain cadence or
+      alerts
+ui_surface:
+  - component: CWB Lifecycle + UI Screens
+    screen: Primary
+    purpose: >-
+      Allow planners to review, accept/override forecast changes and record
+      rationale

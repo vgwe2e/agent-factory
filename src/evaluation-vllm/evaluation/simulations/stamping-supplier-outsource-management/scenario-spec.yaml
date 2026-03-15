@@ -1,0 +1,75 @@
+objective: >-
+  Autonomous monitoring and management of stamping supplier performance, part
+  quality, tooling/die supplier governance, pricing negotiations, and production
+  schedule alignment to reduce COGS, prevent delays, and improve OTIF.
+trigger: Periodic supplier performance data update from SAP S/4HANA.
+decision: >-
+  Monitor stamping supplier performance and decide corrective actions or
+  supplier changes to ensure quality and cost targets are met.
+expected_action: Generate corrective actions or supplier change recommendations.
+expected_outcome: >-
+  Improved supplier performance, reduced COGS, minimized delays, and enhanced
+  OTIF.
+rationale: >-
+  Automate supplier performance monitoring, quality audits, contract management,
+  pricing negotiations, and production scheduling to streamline operations and
+  enhance supply chain efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Supplier Performance Data
+    source: SAP S/4HANA
+    purpose: Monitor supplier performance
+  - name: Quality Audit Data
+    source: SAP S/4HANA
+    purpose: Conduct quality audits
+  - name: Tooling & Die Contracts
+    source: SAP S/4HANA
+    purpose: Manage supplier contracts
+  - name: Pricing Terms
+    source: SAP S/4HANA
+    purpose: Negotiate pricing
+  - name: Production Schedules
+    source: SAP S/4HANA
+    purpose: Align production schedules
+happy_path:
+  - step: Retrieve supplier performance data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect supplier performance metrics
+  - step: Analyze supplier performance
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Identify performance trends and anomalies
+  - step: Generate corrective actions
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Recommend actions or supplier changes
+  - step: Execute quality audits
+    stage: act
+    component: Process Builder
+    purpose: Plan and conduct quality audits
+  - step: Optimize tooling & die contracts
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Manage supplier contracts
+  - step: Negotiate pricing terms
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Determine optimal pricing
+  - step: Align production schedules
+    stage: act
+    component: Process Builder
+    purpose: Coordinate supplier schedules with demand
+branches:
+  - condition: Supplier performance below threshold
+    response: Initiate corrective actions
+    outcome: Improve supplier performance
+  - condition: Quality audit identifies significant issues
+    response: Increase audit frequency
+    outcome: Enhance quality control
+  - condition: Contract negotiation fails
+    response: Escalate to human review
+    outcome: Manual intervention for resolution

@@ -1,0 +1,61 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Manufacturing Execution System (MES)
+    type: MES
+    status: tbd
+  - name: IIoT / PLC Event Stream
+    type: IIoT
+    status: tbd
+aera_ingestion:
+  - stream_name: daily-production-schedule-work-order-releases
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: real-time-production-events-cycle-counts-stops-rejects
+    stream_type: Event Stream
+    source: MES / IIoT
+  - stream_name: changeover-setup-time-profiles
+    stream_type: batch
+    source: MES / Engineering
+  - stream_name: line-capacity-configuration-line-speed-shifts-tooling
+    stream_type: batch
+    source: SAP S/4HANA / MES
+  - stream_name: inventory-on-hand-component-availability
+    stream_type: delta
+    source: SAP S/4HANA
+processing:
+  - component: RCA Service
+    type: cortex
+    function: >-
+      Identify whether deviation is due to machine stoppage, quality, material
+      shortfall, or changeover variance.
+  - component: Remote Functions + Transaction
+    type: process_builder
+    function: >-
+      Write updated work order releases to SAP S/4HANA and push work
+      instructions to MES or operators.
+  - component: UI Screen
+    type: process_builder
+    function: >-
+      Provide explainable recommendation, SHAP-like rationale from RCA, and
+      accept/override controls.
+  - component: Notification + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Alert shift leads, track exception lifecycle, and capture overrides for
+      audit and continuous improvement.
+  - component: Process (Process Builder) + Agent Team + Remote Functions
+    type: agent_teams
+    function: >-
+      Run optimizer, evaluate multi-plant impacts, and decide autonomous apply
+      vs. human approval.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review deliver an adaptive, end-to-end production scheduling engine that
+      auto-detects hourly deviations, re-optimizes line sequences and
+      changeovers, and executes corrective schedules across multi-plant
+      automotive production to reduce cogs, improve on-time delivery, and lower
+      working capital. and approve the recommended action.

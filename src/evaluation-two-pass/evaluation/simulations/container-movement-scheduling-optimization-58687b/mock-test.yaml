@@ -1,0 +1,56 @@
+decision: >-
+  Choose routes, frequencies, carrier assignments and move timing for returnable
+  containers that balance COGS vs. availability subject to capacity and
+  compliance constraints.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled planning run (e.g., daily/weekly) or event-trigger (container
+    shortage, overdue returns, inbound schedule change).
+  parameters:
+    objective: >-
+      Autonomously schedule and route returnable containers across multi-echelon
+      network to minimize transport cost and cycle time while meeting service
+      requirements and supplier receipt compliance.
+    key_inputs:
+      - Container inventory positions (loaded/empty/damaged)
+      - Location master / lead times / transit matrix
+      - Transport rates, carrier capacity and constraints
+      - Carrier performance history (OTD, reliability)
+      - Supplier receipt schedules and compliance records
+      - Production / Delivery schedules (demand for containers)
+      - Telematics location & in-transit status
+    source_systems:
+      - SAP S/4HANA
+      - Carrier TMS
+      - Warehouse Management System
+      - Supplier Portal
+      - Telematics / GPS
+expected_output:
+  action: >-
+    Ingest master and transaction data, run optimization solver to generate
+    movement plan, validate plan against business rules, write approved schedule
+    back to SAP S/4HANA, issue carrier instructions, and open exception CWBs for
+    non-compliant items.
+  outcome: >-
+    Reduced container transport COGS, faster container turnover (lower days
+    outstanding), improved OTIF and supplier receipt compliance, and fewer
+    manual planning interventions.
+  affected_components:
+    - STREAMS
+    - Subject Areas
+    - Remote Functions
+    - Process Builder
+    - Remote Functions
+    - UI Screen
+    - Dashboard
+rationale: >-
+  Deterministic, process-driven orchestration best suits rule-based scheduling
+  plus solver optimization. Use STREAMS for data consolidation, Remote Functions
+  for optimization and ERP writeback, and Process Builder to orchestrate
+  decision rules and exception routing (CWB Lifecycle) so the solution is
+  auditable, automatable, and integrates with SAP S/4HANA.

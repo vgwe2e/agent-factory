@@ -1,0 +1,63 @@
+objective: Strategic Demand Planning & Scenario Modeling
+trigger: Quarterly business review meeting
+decision: >-
+  Optimal multi-year demand plan for the entire vehicle portfolio, balancing
+  forecast accuracy, service levels, and working capital
+expected_action: >-
+  Generate and validate multi-year demand projections for the entire vehicle
+  portfolio, considering macroeconomic scenarios and technology shifts
+expected_outcome: >-
+  Reduced working capital, improved OIFF delivery, and tighter production/CAPEX
+  alignment with strategic product shifts
+rationale: >-
+  By integrating deterministic demand-shaping with agentic orchestration across
+  scenario inputs and capacity alignment, Ford can optimize its strategic
+  planning processes.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Historical Sales Data
+    source: SAP S/4HANA
+    purpose: To provide historical context for demand forecasting
+    preferred_stream_type: STREAMS
+  - name: Macroeconomic Indicators
+    source: External Data Feeds
+    purpose: To inform scenario-based demand modeling
+    preferred_stream_type: DDM/Crawlers
+  - name: Technology Adoption Rates
+    source: Market Research Reports
+    purpose: To assess technology shift impacts on demand
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: Extract historical sales data from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Gather historical sales data for demand forecasting
+  - step: Perform time-series forecasting using Cortex Auto Forecast
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Generate multi-year demand projections
+  - step: Integrate macroeconomic indicators and technology adoption rates
+    stage: analyze
+    component: STREAMS
+    purpose: Incorporate external factors into demand modeling
+  - step: Validate and refine demand projections
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure forecast accuracy and service levels
+  - step: Deliver validated demand forecasts to manufacturing and suppliers
+    stage: act
+    component: Remote Functions
+    purpose: Provide critical inputs for capacity planning
+branches:
+  - condition: High uncertainty in macroeconomic indicators
+    response: Engage CWB Lifecycle for manual review and adjustment
+    outcome: Adjusted demand plan with higher buffer for risk mitigation
+  - condition: Significant technology shift (e.g., EV adoption)
+    response: Trigger additional analysis using AutoML for technology impact assessment
+    outcome: Updated demand plan reflecting technology shift implications
+  - condition: Inaccurate historical sales data
+    response: Initiate data quality checks using Data Quality & Validation
+    outcome: Corrected historical data and re-run demand forecasting

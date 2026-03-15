@@ -1,0 +1,136 @@
+objective: >-
+  Orchestrate the monthly S&OP cycle to produce integrated demand-supply plans
+  that align production sequencing, multi-echelon inventory policies, and
+  contingency-aware capacity decisions across plants, suppliers, and
+  distribution to reduce COGS, improve on-time-in-full (OTIF), and increase
+  order capture.
+trigger: >-
+  Monthly S&OP cycle kickoff or event-driven re-run when demand/supply variance
+  or risk signal exceeds threshold.
+decision: >-
+  Run monthly S&OP to select demand-supply plan options, balancing forecast
+  demand, supply capacity, inventory, and financial targets.
+expected_action: >-
+  Agentic AI (Agent Team) generates ranked plan alternatives (production
+  schedules, multi-echelon inventory targets, contingency capacity allocations)
+  with rationale and KPI trade-offs; executives review via UI Screen/CWB
+  Lifecycle, select an option or override; Process Builder executes approved
+  plan and Remote Functions write back decisions to SAP S/4HANA and notify
+  stakeholders.
+expected_outcome: >-
+  Coordinated, policy-aligned production and inventory plan that lowers COGS,
+  improves on-time delivery, reduces stockouts/overstock, and increases order
+  capture while maintaining financial targets and documented executive
+  decisions.
+rationale: >-
+  Synchronizing S&OP policy definitions with end-to-end production sequencing
+  and capacity planning ensures decisions reflect operational constraints and
+  multi-echelon inventory realities. Agentic AI accelerates scenario generation
+  and trade-off explanation, while Process Builder and Remote Functions ensure
+  deterministic, auditable execution to SAP systems.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Manufacturing Execution System (MES)
+    type: MES
+    status: tbd
+  - name: Warehouse Management System (WMS)
+    type: WMS
+    status: tbd
+  - name: Supplier EDI / External Lead-time Feeds
+    status: tbd
+key_inputs:
+  - name: Demand forecast
+    source: >-
+      Cortex Auto Forecast (derived from Subject Areas + SAP S/4HANA historical
+      sales/orders)
+    purpose: Baseline demand signal for scenario generation and capacity matching
+  - name: Inventory on-hand & in-transit
+    source: SAP S/4HANA
+    purpose: >-
+      Current multi-echelon inventory state for positioning and replenishment
+      planning
+    preferred_stream_type: STREAMS
+  - name: Plant & supplier capacity profiles
+    source: SAP S/4HANA (master data) + MES (detailed rates)
+    purpose: Feasibility constraints for sequencing and capacity allocation
+    preferred_stream_type: STREAMS
+  - name: Production routing, changeover & sequencing constraints
+    source: MES / SAP S/4HANA
+    purpose: Constraint inputs for production sequencing and cost calculation
+  - name: Financial targets & cost parameters
+    source: SAP S/4HANA (finance)
+    purpose: Evaluate plan options against COGS, margin, and cash targets
+    preferred_stream_type: STREAMS
+  - name: S&OP policy definitions and contingency rules
+    source: User input via UI Screen / Process Builder configuration
+    purpose: >-
+      Govern inventory positioning, service levels, and prioritized SKUs under
+      risk scenarios
+  - name: Risk signals (supplier health, lead-time volatility)
+    source: Supplier EDI / External feeds
+    purpose: Drive contingency-aware capacity and inventory decisions
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: Ingest enterprise and external planning data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Collect SAP S/4HANA, MES, WMS and supplier feeds into the platform for
+      planning
+  - step: Harmonize and transform planning datasets
+    stage: analyze
+    component: STREAMS / Subject Areas
+    purpose: >-
+      Cleanse, join and store demand, inventory, capacity and cost facts for
+      scenario workbooks
+  - step: Generate demand and safety stock signals and run capacity feasibility
+    stage: analyze
+    component: Cortex Auto Forecast + Safety Stock Service + Remote Functions
+    purpose: >-
+      Produce baseline forecasts, safety stock recommendations and feasibility
+      checks for scenarios
+  - step: Agentic generation of ranked plan alternatives and trade-off explanations
+    stage: decide
+    component: Process Builder (Agent Team + Remote Functions)
+    purpose: >-
+      Agentic AI creates multiple demand-supply plan options (production
+      sequences, inventory positions, contingencies) with KPI impact and
+      recommended executive actions
+  - step: Executive review, selection/override, and writeback
+    stage: review
+    component: UI Screen / CWB Lifecycle
+    purpose: >-
+      Surface recommendations for selection/override; record decision and
+      trigger Process Builder Action Items to write approved plan to SAP S/4HANA
+branches:
+  - condition: >-
+      Significant data quality or missing source data detected during
+      ingest/transform
+    response: >-
+      Pause S&OP run, surface data quality exceptions via Notification and run
+      Data Quality & Validation rules; require remediation before plan selection
+    outcome: >-
+      Decision delayed until data is remediated; prevents execution on
+      unreliable inputs
+  - condition: >-
+      Capacity shortfall prevents meeting prioritized demand in all base
+      scenarios
+    response: >-
+      Agent Team proposes contingency plans (prioritized SKU allocation,
+      subcontracting, overtime costs) and safety-stock rebalancing; present
+      cost-impact trade-offs
+    outcome: >-
+      Executives select contingency that balances service vs cost; plan executed
+      with documented exception and increased procurement or cost where accepted
+  - condition: >-
+      Executive override requested that violates policy or increases risk
+      materially
+    response: >-
+      Process Builder triggers a rules check and Remote Functions generate
+      automated impact analysis (financial, OTIF, stockout risk); require
+      explicit attestation in CWB before writeback
+    outcome: >-
+      Override recorded with rationale and impact logged; writeback proceeds
+      only after attestation, maintaining auditability

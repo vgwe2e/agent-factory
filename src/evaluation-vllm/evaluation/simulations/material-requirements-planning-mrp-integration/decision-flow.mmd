@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Periodic MRP run initiated by SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawler - Fetch BOM data from SAP S/4HANA]
+  N1 --> N2[Stream: STREAMS - Calculate net component requirements]
+  N2 --> N3{PB: Process Builder - Generate supplier release schedules}
+  N3 -->|Primary| N4{PB: Safety Stock Service - Define optimal inventory policies}
+  N4 --> N5[Cortex: RCA Service - Assess parts shortage risks]
+  N5 --> N6[PB: Remote Functions - Transmit release schedules to suppliers]
+  N6 --> Z1[Outcome: Reduced COGS, improved OTIF, and optimized working capital through enhanced MRP processes.]
+  N3 -->|Insufficient inventory data| B1[Notify stakeholders]
+  B1 --> O1[Outcome: Manual intervention required]
+  O1 --> End[End]
+  N3 -->|Supplier delivery delays| B2[Expedite orders]
+  B2 --> O2[Outcome: Mitigate production impact]
+  O2 --> End[End]
+  N3 -->|High shortage risk| B3[Reorder materials]
+  B3 --> O3[Outcome: Avoid production disruptions]
+  O3 --> End[End]
+  Z1 --> End[End]

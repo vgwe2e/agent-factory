@@ -1,0 +1,51 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Collect SAP S/4HANA, MES, WMS and supplier feeds into the platform for
+      planning
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS / Subject Areas
+    purpose: >-
+      Cleanse, join and store demand, inventory, capacity and cost facts for
+      scenario workbooks
+    confidence: confirmed
+    type: STREAMS / Subject Areas
+cortex:
+  - name: Cortex Auto Forecast + Safety Stock Service + Remote Functions
+    purpose: >-
+      Produce baseline forecasts, safety stock recommendations and feasibility
+      checks for scenarios
+    confidence: confirmed
+    capability: >-
+      Produce baseline forecasts, safety stock recommendations and feasibility
+      checks for scenarios
+process_builder:
+  - name: UI Screen / CWB Lifecycle
+    purpose: >-
+      Surface recommendations for selection/override; record decision and
+      trigger Process Builder Action Items to write approved plan to SAP S/4HANA
+    confidence: confirmed
+    node_type: review
+agent_teams:
+  - name: Process Builder (Agent Team + Remote Functions)
+    purpose: >-
+      Agentic AI creates multiple demand-supply plan options (production
+      sequences, inventory positions, contingencies) with KPI impact and
+      recommended executive actions
+    confidence: confirmed
+    role: >-
+      Agentic AI creates multiple demand-supply plan options (production
+      sequences, inventory positions, contingencies) with KPI impact and
+      recommended executive actions
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review orchestrate the monthly s&op cycle to produce integrated
+      demand-supply plans that align production sequencing, multi-echelon
+      inventory policies, and contingency-aware capacity decisions across
+      plants, suppliers, and distribution to reduce cogs, improve
+      on-time-in-full (otif), and increase order capture. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,49 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Create unified, validated dataset for sequencing and allocation
+      calculations
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast + Data Science
+    purpose: >-
+      Estimate per-sequence material needs and identify multi-echelon allocation
+      plan
+    confidence: confirmed
+    capability: >-
+      Estimate per-sequence material needs and identify multi-echelon allocation
+      plan
+process_builder:
+  - name: Remote Functions
+    purpose: >-
+      Write orders to SAP S/4HANA, notify suppliers/warehouse, and dispatch
+      AGV/line conveyors
+    confidence: inferred
+    node_type: act
+agent_teams:
+  - name: Process Builder + Agent Team
+    purpose: >-
+      Resolve sequencing constraints, cost vs. OTIF tradeoffs, and finalize
+      execution plan
+    confidence: confirmed
+    role: >-
+      Resolve sequencing constraints, cost vs. OTIF tradeoffs, and finalize
+      execution plan
+  - name: CWB Lifecycle + UI Screen + Agent Team
+    purpose: >-
+      Human-in-the-loop review for exceptions and continuous monitoring of
+      OTIF/COGS impact
+    confidence: confirmed
+    role: >-
+      Human-in-the-loop review for exceptions and continuous monitoring of
+      OTIF/COGS impact
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review orchestrate just-in-sequence (jis) deliveries, pull-based
+      replenishment, and line-waste reduction across production lines by
+      dynamically allocating multi-echelon inventory and sequencing constraints
+      to minimize cogs and improve otif. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

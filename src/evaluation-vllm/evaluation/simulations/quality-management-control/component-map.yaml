@@ -1,0 +1,42 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Trigger additional checks
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Inspection scheduling
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Monitoring
+    purpose: Resource allocation
+    confidence: confirmed
+    capability: Resource allocation
+  - name: RCA Service
+    purpose: Countermeasure deployment
+    confidence: inferred
+    capability: Countermeasure deployment
+  - name: Cortex Auto Forecast
+    purpose: Process improvement selection
+    confidence: confirmed
+    capability: Process improvement selection
+  - name: Remote Functions
+    purpose: Compliance verification
+    confidence: inferred
+    capability: Compliance verification
+process_builder:
+  - name: Action Item
+    purpose: >-
+      Trigger additional quality checks, allocate resources for audits, deploy
+      defect countermeasures, implement process improvements, schedule supplier
+      part inspections, verify regulatory compliance.
+    confidence: confirmed
+    node_type: transaction
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce cogs and improve yield through cohesive quality management
+      and control. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

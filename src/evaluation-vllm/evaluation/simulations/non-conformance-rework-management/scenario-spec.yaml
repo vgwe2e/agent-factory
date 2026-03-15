@@ -1,0 +1,68 @@
+objective: >-
+  Reduce COGS linked to rework, scrap, and delays while improving OTIF and line
+  efficiency through coherent orchestration of non-conformance handling.
+trigger: Detection of BIW defects.
+decision: >-
+  Prioritize non-conformances for rework, allocate rework stations, make MRB
+  dispositions, identify corrective actions, and escalate critical quality
+  issues.
+expected_action: >-
+  Efficiently manage non-conformances, optimize rework station operations, make
+  informed MRB decisions, and escalate critical issues.
+expected_outcome: Reduced COGS, improved OTIF, and enhanced line efficiency.
+rationale: >-
+  Leveraging Aera's agentic AI capabilities to optimize non-conformance handling
+  across multiple plants and suppliers, reducing waste and improving overall
+  quality.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: BIW Defect Data
+    source: SAP S/4HANA
+    purpose: Identify and tag non-conformances for rework.
+  - name: Rework Station Data
+    source: SAP S/4HANA
+    purpose: Allocate and sequence repairs at rework stations.
+  - name: MRB Disposition Data
+    source: SAP S/4HANA
+    purpose: Make informed decisions on part disposition.
+  - name: Rework Loop Data
+    source: SAP S/4HANA
+    purpose: Identify trends and implement corrective actions.
+happy_path:
+  - step: Detect BIW defects and tag non-conformances.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect defect data from SAP S/4HANA.
+  - step: Prioritize non-conformances for rework.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict optimal rework prioritization.
+  - step: Allocate and sequence repairs at rework stations.
+    stage: decide
+    component: Agentic AI
+    purpose: Optimize rework station operations.
+  - step: Convene MRB to decide part disposition.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Make informed MRB decisions.
+  - step: Analyze rework data to identify trends.
+    stage: analyze
+    component: RCA Service
+    purpose: Identify recurring issues and corrective actions.
+  - step: Escalate critical quality issues.
+    stage: act
+    component: Notification
+    purpose: Ensure swift resolution of critical issues.
+branches:
+  - condition: High volume of non-conformances detected.
+    response: Increase rework station capacity.
+    outcome: Improved throughput and reduced delays.
+  - condition: Severe non-conformances requiring immediate attention.
+    response: Expedite MRB decision-making process.
+    outcome: Faster resolution and minimized impact on production.
+  - condition: Recurring defects identified.
+    response: Implement corrective actions and update procedures.
+    outcome: Reduced future defects and optimized rework processes.

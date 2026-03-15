@@ -1,0 +1,28 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for simulation.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Identify optimal network designs.
+    confidence: inferred
+    capability: Identify optimal network designs.
+  - name: Remote Functions
+    purpose: Determine best carrier strategy.
+    confidence: inferred
+    capability: Determine best carrier strategy.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Ensure human-in-the-loop review and acceptance.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize inbound logistics network design, carrier strategy,
+      mode/lanes, and warehouse footprint to reduce cogs, lower working capital,
+      and improve on-time delivery. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

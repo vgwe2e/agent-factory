@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Monthly production cycle start.]
+  A --> N1[Stream: DDM/Crawlers - Ingest production and resource data from SAP S/4HANA]
+  N1 --> N2[Cortex: AutoML - Analyze production data to identify waste and inefficiencies]
+  N2 --> N3{PB: Process Builder - Plan and schedule Kaizen events and process improvements}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute process cycle time reduction initiatives and resource allocation]
+  N4 --> N5[PB: UI Screens - Review progress and results of implemented improvements]
+  N5 --> Z1[Outcome: Reduced COGS, improved OTIF, optimized working capital, and streamlined manufacturing processes.]
+  N3 -->|Insufficient resources for Kaizen events| B1[Adjust resource allocation]
+  B1 --> O1[Outcome: Ensure successful execution of Kaizen events.]
+  O1 --> End[End]
+  N3 -->|Unexpected production delays| B2[Reschedule process improvements]
+  B2 --> O2[Outcome: Maintain delivery targets.]
+  O2 --> End[End]
+  N3 -->|Significant waste identified| B3[Initiate additional lean initiatives]
+  B3 --> O3[Outcome: Further reduce COGS and improve efficiency.]
+  O3 --> End[End]
+  Z1 --> End[End]

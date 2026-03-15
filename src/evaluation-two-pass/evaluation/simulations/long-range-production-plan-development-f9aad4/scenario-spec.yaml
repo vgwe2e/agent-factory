@@ -1,0 +1,117 @@
+objective: >-
+  Autonomously generate conflict-free, multi-horizon MPS schedules that minimize
+  COGS while honoring multi-echelon constraints (capacity, supplier lead times,
+  inventory targets) across Ford vehicle platforms and components.
+trigger: >-
+  Weekly MPS run (scheduled) or event-driven when demand forecast, capacity, or
+  supplier lead-time data changes beyond thresholds.
+decision: >-
+  Produce a cost-optimized, conflict-free production schedule for 12-24 month
+  horizon and weekly rolling MPS that balances demand, capacity, supplier
+  constraints, inventory targets, and capital limits.
+expected_action: >-
+  Process Builder orchestrates ingestion (DDM/Crawlers), data transformations
+  (STREAMS -> Subject Areas), calls Remote Functions optimization solver to
+  generate schedules, validates outputs, and writes approved schedules back to
+  SAP S/4HANA via Remote Functions; surfaces results on UI Screens and updates
+  monitoring.
+expected_outcome: >-
+  Automatically generated, executable production schedules that reduce COGS,
+  eliminate schedule conflicts, increase line efficiency, and improve on-time
+  delivery; measurable reductions in production cost and inventory carrying,
+  with KPIs tracked in Cortex Monitoring.
+rationale: >-
+  Deterministic, process-driven orchestration ensures repeatable optimization
+  across planning horizons. Combining robust ETL (DDM/STREAMS), a solver via
+  Remote Functions, and ERP writeback to SAP S/4HANA enables end-to-end
+  coordination across echelons to realize COGS and service improvements while
+  preserving auditability and manual override paths.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Demand forecasts (12-24 months, weekly roll)
+    source: Cortex Auto Forecast / Subject Areas
+    purpose: Primary demand signal to size production across horizons
+    preferred_stream_type: batch
+  - name: Current orders & sales confirmations
+    source: SAP S/4HANA
+    purpose: Firm demand and ATP commitments used for sequencing and allocation
+    preferred_stream_type: batch
+  - name: Capacity & routing constraints (work centers, line rates)
+    source: SAP S/4HANA
+    purpose: Define production capacities, shift patterns, and sequencing constraints
+    preferred_stream_type: batch
+  - name: Supplier lead times & lot constraints
+    source: SAP S/4HANA
+    purpose: >-
+      Multi-echelon supply constraints for feasible schedules and component
+      availability
+    preferred_stream_type: batch
+  - name: Cost parameters (material, labor, changeover, inventory carrying)
+    source: SAP S/4HANA / Subject Areas
+    purpose: Objective function inputs for COGS optimization
+    preferred_stream_type: batch
+happy_path:
+  - step: >-
+      Ingest master data, orders, forecasts, capacities, and supplier lead-times
+      from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect canonical source data for planning
+  - step: >-
+      Transform, validate, and store planning datasets into Subject Areas; run
+      data quality checks
+    stage: analyze
+    component: STREAMS
+    purpose: Cleanse and shape inputs for optimization
+  - step: >-
+      Orchestrate optimization run that solves multi-horizon, multi-echelon
+      scheduling and allocations
+    stage: decide
+    component: Remote Functions (optimization solver)
+    purpose: Generate cost-minimized, constraint-compliant production schedule
+  - step: >-
+      Write optimized schedules and allocation decisions back to SAP S/4HANA and
+      publish Subject Area outputs
+    stage: act
+    component: Remote Functions
+    purpose: Execute plan in ERP and persist planning artifacts
+  - step: >-
+      Surface schedule, KPIs, and exception flags to planners; monitor
+      performance and COGS impact
+    stage: surface
+    component: UI Screen
+    purpose: Enable visibility, audit, and optional manual overrides
+  - step: >-
+      Track forecast accuracy, schedule adherence, and optimization metrics over
+      time
+    stage: review
+    component: Cortex Monitoring
+    purpose: Measure outcomes, detect drift, and trigger continuous improvement
+branches:
+  - condition: Solver returns infeasible solution due to conflicting hard constraints
+    response: >-
+      Process Builder triggers Branch -> Rules to relax non-critical constraints
+      or kick-off CWB Lifecycle exception for planner intervention with
+      suggested relaxations
+    outcome: >-
+      Manual or rule-driven constraint relaxation produces a feasible schedule;
+      exception logged and escalated if unresolved
+  - condition: >-
+      Optimized schedule increases projected COGS beyond acceptable delta
+      threshold
+    response: >-
+      Route to CWB Lifecycle for planner review with cost/compliance trade-off
+      report and alternative candidate schedules
+    outcome: >-
+      Planner accepts alternative or approves optimized plan with justification;
+      decision recorded for governance
+  - condition: Data quality checks fail (missing or inconsistent master data)
+    response: >-
+      Process Builder invokes Notification + Data View report to data steward
+      and pauses downstream optimization until remediation
+    outcome: >-
+      Data corrected and re-ingested; optimization re-run once integrity is
+      restored

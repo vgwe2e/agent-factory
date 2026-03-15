@@ -1,0 +1,57 @@
+decision: >-
+  Direct machining production decisions for engine block fabrication sequence
+  and process routing to optimize COGS.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New or updated production order for engine block machining received from SAP
+    S/4HANA (quantity, due date, and routing constraints).
+  parameters:
+    objective: >-
+      Orchestrate precision machining of engine blocks (boring, honing, deck
+      surfacing) to determine optimal fabrication sequence and process routing
+      that minimizes COGS while meeting quality tolerances and delivery dates.
+    key_inputs:
+      - Production Order (engine block)
+      - Machine Availability & Capacity
+      - Tooling Status & Inventory
+      - Material Lot & Traceability
+      - Process Parameters & Standard Work
+      - Quality Tolerances and QC Rules
+    source_systems:
+      - SAP S/4HANA
+      - MES
+      - Tooling Database
+      - Machine Sensors / PLCs
+      - QMS
+expected_output:
+  action: >-
+    Process Builder evaluates production order, machine/tooling availability,
+    and quality constraints; applies rules to select machining sequence and
+    feeds optimized routing and work instructions back to SAP S/4HANA and the
+    shop-floor UI (dispatch work order, reserve tooling, schedule machines, and
+    create QC checkpoints).
+  outcome: >-
+    Optimized machining routes dispatched to shop floor, updated production
+    orders in SAP S/4HANA, reduced COGS via improved machine utilization and
+    reduced rework, and traceable QC checkpoints for each lot.
+  affected_components:
+    - STREAMS
+    - Rules
+    - IF
+    - Transaction
+    - UI Screen
+    - Notification
+    - Dashboard
+rationale: >-
+  Deterministic, rule-driven decisioning suits Process Builder orchestration.
+  Use STREAMS/DDM for ingest from SAP and peripheral systems, Rules and IF nodes
+  for deterministic routing and sequencing logic, and Transaction nodes for
+  controlled writeback to SAP S/4HANA. UI Screen and Notification components
+  provide shop-floor instructions and exceptions. Medium complexity driven by
+  multi-source inputs (production, tooling, machine availability) and SAP
+  writeback needs.

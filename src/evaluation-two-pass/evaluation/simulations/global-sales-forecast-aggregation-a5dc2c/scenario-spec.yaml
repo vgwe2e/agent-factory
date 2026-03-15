@@ -1,0 +1,135 @@
+objective: >-
+  Automate end-to-end demand forecasting, market-intelligent mix planning, and
+  model-launch volume alignment to produce an approved global production volume
+  & mix plan that reduces forecast error, working capital, and COGS exposure.
+trigger: >-
+  Weekly global forecast aggregation cycle or an event trigger (new-model launch
+  milestone or significant market intelligence signal)
+decision: >-
+  Approve a unified global sales forecast and corresponding vehicle
+  configuration mix that determines production volume allocation and launch ramp
+  plans
+expected_action: >-
+  Automatically ingest regional forecasts, vehicle configuration mix inputs,
+  market signals and launch plans; generate consolidated forecasts and optimized
+  mix recommendations via Cortex Auto Forecast + rules; surface recommendations
+  via CWB Lifecycle for exception review; write approved volumes and allocation
+  instructions back to SAP S/4HANA using Remote Functions; notify
+  cross-functional teams.
+expected_outcome: >-
+  Aligned global production volumes and mix per model/market, improved revenue
+  capture from better demand alignment, reduced working capital tied to forecast
+  error, and optimized COGS and launch execution through earlier, coordinated
+  decisions.
+rationale: >-
+  Consolidating regional forecasts, mix constraints, market intelligence and
+  launch plans into a single deterministic orchestration reduces fragmentation
+  and manual reconciliation. Using Process Builder to orchestrate data flows,
+  Cortex Auto Forecast for time-series consolidation, and CWB Lifecycle for
+  controlled human-in-the-loop exceptions creates a repeatable, auditable route
+  for high-impact planning decisions despite implementation complexity.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: >-
+      Market Intelligence Feeds (3rd-party registrations/pricing/competitive
+      data)
+    status: tbd
+  - name: Product Launch / Portfolio Planning System
+    status: tbd
+  - name: Regional Forecast Portals / Spreadsheets
+    status: tbd
+key_inputs:
+  - name: Regional sales forecasts (by SKU/market/time bucket)
+    source: SAP S/4HANA / Regional Forecast Portals
+    purpose: Primary demand inputs to be consolidated into global view
+    preferred_stream_type: DDM/Crawlers
+  - name: Vehicle configuration mix (trim/options by market)
+    source: Product Launch / Configuration system (tbd)
+    purpose: >-
+      Apply mix constraints and translate model-level volumes to SKU-level
+      production requirements
+  - name: >-
+      Market intelligence signals (registrations, macro indicators, competitor
+      actions)
+    source: Market Intelligence Feeds (3rd-party)
+    purpose: >-
+      Adjust demand forecast for market trends, promotions, and competitive
+      shifts
+  - name: >-
+      New model launch plans & constraints (ramp schedules, capacity, incentive
+      spend)
+    source: Product Launch / Portfolio Planning System
+    purpose: >-
+      Align launch volume targets and constraints with forecasted demand and
+      production capability
+  - name: Historical sales & forecast accuracy metrics
+    source: SAP S/4HANA / Subject Areas
+    purpose: Drive model weighting, confidence scoring, and trigger exception rules
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: >-
+      Ingest regional forecasts, historical sales, mix rules, launch plans, and
+      market feeds into the DI platform
+    stage: ingest
+    component: Process Builder - Stream
+    purpose: >-
+      Consolidate heterogeneous inputs into a canonical subject area for
+      analysis
+  - step: >-
+      Run consolidation and forecasting to produce unified global demand and mix
+      forecasts with confidence scores
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Generate time-series forecasts, blend regional signals, and produce
+      explainability metrics
+  - step: >-
+      Apply business rules and exception detection; surface recommended approved
+      volumes and flagged anomalies
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      Present recommendations for auto-approval or human review based on
+      confidence and business rules
+  - step: >-
+      Write approved volumes and allocation instructions to SAP S/4HANA and
+      trigger downstream planning processes
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Execute authorized writebacks and handoffs to ERP and production planning
+      systems
+  - step: >-
+      Monitor forecast accuracy, launch execution KPIs and notify stakeholders
+      of adjustments or issues
+    stage: review
+    component: Cortex Monitoring
+    purpose: >-
+      Track performance, drive continuous improvement and surface remediation
+      actions
+branches:
+  - condition: High confidence consensus across regions and no business-rule exceptions
+    response: >-
+      Auto-approve recommended global volumes and perform automated writeback to
+      SAP S/4HANA
+    outcome: >-
+      Immediate allocation and production planning updates; reduced manual
+      review latency
+  - condition: Low confidence or large inter-regional variance detected
+    response: >-
+      Open CWB Lifecycle exception routed to regional planners and product
+      launch owners for reconciliation
+    outcome: >-
+      Human-in-the-loop adjustment of forecasts/mix and deferred writeback until
+      consensus is reached
+  - condition: >-
+      New-model launch impacts cross-functional constraints (capacity or budget
+      conflicts)
+    response: >-
+      Trigger Process Builder Dynamic Subprocess to coordinate manufacturing,
+      finance and product teams before approval
+    outcome: >-
+      Aligned launch volumes with capacity and cost constraints; formalized
+      cross-functional sign-off

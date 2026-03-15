@@ -1,0 +1,43 @@
+decision: >-
+  Adopt global sales forecast scenario for IBP planning, integrating market
+  indicators and trends, setting initial demand plan for new product launches,
+  improving forecast accuracy, and managing demand exceptions.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Monthly sales data update and new product launch announcements.
+  parameters:
+    objective: >-
+      Augment demand planning across global IBP alignment, new product launch
+      sensing, and demand exception management using AI/ML and rule-based
+      systems.
+    key_inputs:
+      - Monthly Sales Data
+      - Market Trends
+      - New Product Launch Data
+      - Forecast Error Metrics
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Generate and adopt a global sales forecast scenario, incorporate market
+    trends into demand planning, forecast initial demand for new product
+    launches, analyze and improve forecast accuracy, identify and manage demand
+    deviations.
+  outcome: >-
+    Improved revenue capture, better availability, faster adaptation to demand
+    shifts, and reduced working capital tied to forecast errors.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - RCA Service
+    - AutoML
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Leveraging AI/ML for accurate forecasting and exception management enhances
+  decision-making and operational efficiency.

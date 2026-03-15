@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: To gather necessary data for production scheduling.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: To identify areas for improvement and automation.
+    confidence: inferred
+    capability: To identify areas for improvement and automation.
+process_builder:
+  - name: Process Builder
+    purpose: To create a detailed plan for automation initiatives.
+    confidence: confirmed
+    node_type: decide
+  - name: CWB Lifecycle
+    purpose: To finalize and implement the automation plan.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review develop a cohesive digital manufacturing and automation process
+      design to optimize production scheduling, network-wide safety stock,
+      real-time data integration, and autonomous line balancing across ford's
+      multi-site manufacturing network. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

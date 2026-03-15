@@ -1,0 +1,73 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis
+    type: APS
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: Logistics Provider
+    status: identified
+aera_ingestion:
+  - stream_name: po-change-request-fields-and-delta
+    stream_type: DDM/Crawlers
+    source: Supplier Portal / Procurement UI / S4 change note
+  - stream_name: current-po-master-data
+    stream_type: DDM/Crawlers
+    source: S4 (PO header/line, payment terms, contract references)
+  - stream_name: contract-terms-approved-pricing
+    stream_type: DDM/Crawlers
+    source: S4 / Contract Management (if available)
+  - stream_name: supplier-performance-signals
+    stream_type: STREAMS
+    source: >-
+      SAS / Kinaxis (delivery reliability, lead-time variance, quality
+      incidents)
+  - stream_name: shortage-inventory-impact
+    stream_type: STREAMS
+    source: Kinaxis RapidResponse (shortage propagation / safety stock triggers)
+  - stream_name: budget-spend-availability
+    stream_type: DDM/Crawlers
+    source: S4 FI / Procurement budgets
+  - stream_name: forecast-demand-signal
+    stream_type: DDM/Crawlers
+    source: Advanced Statistical Forecasting in SAS
+processing:
+  - component: Agent Team
+    type: process_builder
+    function: >-
+      LLM agent compiles options (approve, escalate, reject), ranks by
+      risk/cost/contract fit, and selects approval route
+  - component: Process Builder / CWB Lifecycle
+    type: process_builder
+    function: >-
+      Automate approvals (auto-approve thresholds) or create CWB for human
+      review and record decision
+  - component: Remote Functions / Notification
+    type: process_builder
+    function: >-
+      Write updates to S4, send notifications to procurement, supplier, and
+      impacted planners
+  - component: UI Screen / Subject Areas
+    type: process_builder
+    function: Provide a decision log, change history, and KPIs for post-change review
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review manage purchase order (po) changes — quantity, cost, dates,
+      amounts, descriptions, cost objects — and orchestrate approvals and
+      writebacks while balancing immediate spend, delivery risk, and contract
+      terms. and approve the recommended action.

@@ -1,0 +1,56 @@
+decision: >-
+  Where to place buffer stock and how to re-route procurement, production, and
+  logistics across constrained nodes so that capacity constraints are not
+  violated while minimizing COGS and meeting target on-time delivery (OTD)
+  service levels
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Daily scheduled snapshot or exception event (capacity breach, supplier
+    delay, demand spike) detected in SAP S/4HANA
+  parameters:
+    objective: >-
+      Autonomously identify multi-plant and supplier-driven bottlenecks,
+      simulate constraint mitigation options, and execute coordinated
+      procurement, production scheduling, and logistics actions to minimize COGS
+      while improving on-time delivery and measurable P&L impact.
+    key_inputs:
+      - Plant capacity & work center calendars
+      - Current inventory on-hand & in-transit
+      - Open purchase orders and supplier lead times
+      - Demand forecast
+      - Routing times, changeover and cycle times
+      - Cost inputs (material cost, production cost, expedite cost)
+    source_systems:
+      - SAP S/4HANA
+      - Cortex Auto Forecast
+      - Supplier Portal / EDI
+expected_output:
+  action: >-
+    Automatically ingest cross-domain data, run deterministic constraint
+    simulations, select the cost/service-optimal mitigation plan, execute
+    adjustments via Remote Functions to SAP S/4HANA (POs, production orders,
+    schedule shifts), and surface results; escalate to CWB Lifecycle when manual
+    approval or trade-off negotiation is required.
+  outcome: >-
+    Coordinated reduction in constraint-driven stockouts and expedited actions,
+    measurable decrease in COGS from optimized buffer placement, improved OTD
+    percentages, and traceable P&L impact from executed actions and simulations.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex Auto Forecast + Safety Stock Service + Subject Areas
+    - Process Builder (Process + Rules + Data View)
+    - Remote Functions + Process Builder (Action Item)
+    - UI Screens + Notification
+rationale: >-
+  Deterministic, rule-driven orchestration (Process route) is appropriate
+  because constraint logic and buffer-placement policies must be repeatable,
+  auditable, and tightly integrated with ERP writebacks. Process Builder
+  provides cross-component orchestration; STREAMS/DDM ensure data integrity;
+  Safety Stock Service and rule engines compute recommended buffers; Remote
+  Functions enable safe ERP writebacks. High implementation complexity is
+  justified by cross-domain P&L impact.

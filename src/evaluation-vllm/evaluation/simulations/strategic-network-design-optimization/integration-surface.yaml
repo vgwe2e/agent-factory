@@ -1,0 +1,37 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: demand-forecast
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: cost-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: market-changes
+    stream_type: Event Stream
+    source: External Data Feeds
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Predict future demand patterns.
+  - component: AutoML
+    type: cortex
+    function: Determine optimal network design.
+  - component: Remote Functions
+    type: process_builder
+    function: Quantify financial impacts of proposed network changes.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure human-in-the-loop review and approval.
+  - component: Process Builder
+    type: process_builder
+    function: Automate the execution of the network redesign plan.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous design and optimization of ford's global and regional
+      network footprint, hub/spoke configurations, and post-merger integration
+      plans. and approve the recommended action.

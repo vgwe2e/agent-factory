@@ -1,0 +1,58 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (general)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+aera_ingestion:
+  - stream_name: n-tier-supplier-registry-ids-relationships-roles
+    stream_type: DDM/Crawlers
+    source: DDM/Crawlers + Kinaxis supplier feeds
+  - stream_name: >-
+      supplier-attributes-and-risk-indicators-capacity-lead-time-financial-quality-scores
+    stream_type: STREAMS
+    source: S4 + Kinaxis + external risk feeds
+  - stream_name: demand-forecast-promotional-schedule
+    stream_type: Subject Areas
+    source: SAS Advanced Statistical Forecasting
+  - stream_name: inventory-positions-and-fg-safety-stock
+    stream_type: Subject Areas
+    source: Kinaxis + Blue Yonder WMS
+  - stream_name: transport-shipment-status
+    stream_type: STREAMS
+    source: Uber Freight TMS
+  - stream_name: contract-terms-and-unit-costs
+    stream_type: STREAMS
+    source: S4 (Contracts/Procurement)
+processing:
+  - component: Process Builder + Remote Functions + CWB Lifecycle
+    type: process_builder
+    function: Implement mitigation while preserving audit trail and approvals
+  - component: Subject Areas + Cortex Monitoring
+    type: process_builder
+    function: Track performance, update risk models, and improve future recommendations
+  - component: Agent Team + Cortex (Agentic AI)
+    type: agent_teams
+    function: >-
+      Explore multi-node failure modes and surface prioritized continuity
+      actions
+ui_surface:
+  - component: UI Screens (dashboard, report) + CWB Lifecycle
+    screen: Primary
+    purpose: Enable human review, accept/override, and document rationale

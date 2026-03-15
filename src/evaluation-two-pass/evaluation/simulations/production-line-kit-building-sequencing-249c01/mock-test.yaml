@@ -1,0 +1,55 @@
+decision: >-
+  Automatically approve and execute an optimized line-side delivery and kit
+  sequencing plan when constraints and supplier ETAs are satisfied; otherwise
+  route to human review/exception workflow.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Production schedule release or detected low/abnormal line inventory
+    consumption (periodic batch or event-based alert).
+  parameters:
+    objective: >-
+      Orchestrate line-side material delivery (JIS, replenishment, waste
+      reduction) across production lines by coordinating multi-echelon inventory
+      and dynamic sequencing constraints to minimize COGS and improve OTIF.
+    key_inputs:
+      - Production schedule (line-level sequence & takt)
+      - Kit BOMs / Kit definitions
+      - Multi-echelon inventory levels (plant, DC, supplier buffers)
+      - Line consumption telemetry (consumption rates, anomalies)
+      - Sequencing constraints & changeover costs
+      - Supplier ETAs and carrier schedules
+      - Material handling capacity and routing rules
+    source_systems:
+      - SAP S/4HANA
+      - MES
+      - Warehouse Management System (WMS)
+      - Supplier Portal / TMS
+expected_output:
+  action: >-
+    Ingest production schedule, inventory, BOMs, sequencing constraints and line
+    telemetry; generate optimized JIS delivery and kit-build sequence via
+    agentic AI + optimization; write optimized delivery instructions and
+    pick/ship plan back to SAP S/4HANA and notify logistics/suppliers; surface
+    plan and exceptions on dashboards and CWB when human review required.
+  outcome: >-
+    Reduced line stoppages and changeovers, improved OTIF for line-side
+    deliveries, lower material handling costs and COGS, improved sequence
+    accuracy and reduced line waste across plants and supplier nodes.
+  affected_components:
+    - STREAMS
+    - Process Builder (IF)
+    - Remote Functions (ERP Writeback) + Process Builder (Action Item)
+    - UI Screen (dashboard) + Notification
+    - Agentic AI (Multi-Agent Pipeline) + Remote Functions
+    - Dashboard
+rationale: >-
+  Combining agentic AI for adaptive sequencing with multi-echelon inventory
+  visibility and ERP writeback enables closed-loop JIS orchestration. Autonomous
+  optimization reduces manual coordination, minimizes sequence mismatches and
+  buffer levels, and accelerates corrective action for supplier or inventory
+  exceptions.

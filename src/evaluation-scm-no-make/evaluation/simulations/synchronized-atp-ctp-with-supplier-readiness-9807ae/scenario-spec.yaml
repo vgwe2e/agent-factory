@@ -1,0 +1,164 @@
+objective: >-
+  Automatically align customer delivery promises with supplier inbound readiness
+  by coordinating Fulfill and Source domains to reduce backorders, expedite
+  where value-positive, and protect revenue and margins across SKU/location
+  matrices.
+trigger: >-
+  New customer order, order change, or supplier inbound readiness update
+  (ETA/ASN) ingested into the platform.
+decision: >-
+  Dynamically adjust customer delivery promises and order commitments based on
+  live ATP/CTP data augmented by supplier inbound readiness signals, balancing
+  revenue capture with supplier capacity and inbound material availability.
+expected_action: >-
+  Process Builder orchestrates data ingestion and rules evaluation, Remote
+  Functions compute revised promises and write updates to S4/Kinaxis, and CWB
+  Lifecycle surfaces recommendations for exception handling and manual
+  overrides.
+expected_outcome: >-
+  Reduced backorders and expedited delays for high-value demand, improved OTIF,
+  prioritized expediting where margins justify it, and synchronized commitments
+  between Fulfill and Source domains with auditable writebacks.
+rationale: >-
+  Using deterministic process orchestration ensures repeatable, auditable
+  alignment of customer promises to supplier reality. Combining ATP/CTP with
+  supplier readiness signals prevents overcommitment, enables targeted
+  expediting for revenue-protecting orders, and minimizes margin erosion from
+  unnecessary rush actions.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: >-
+      Kinaxis (Order Expediting / Shortage Propagation / Rebalancing / FG Safety
+      Stock Modeling)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: Uber Freight (3PL)
+    type: 3PL
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+key_inputs:
+  - name: Customer Orders / Order Changes
+    source: S4 (Sales Order module)
+    purpose: >-
+      Trigger and baseline demand & committed order lines to reconcile with
+      ATP/CTP and inbound availability.
+    preferred_stream_type: Stream
+  - name: ATP / Advanced CTP Availability
+    source: S4 (Advanced ATP)
+    purpose: >-
+      Current promiseable inventory and planned commitments per SKU/location
+      used to compute feasible delivery dates.
+    preferred_stream_type: Stream
+  - name: Supplier Inbound Readiness (ETA, ASN, readiness flags)
+    source: Kinaxis RapidResponse / supplier EDI integrated via S4 or DDM
+    purpose: >-
+      Signal supplier confirmed inbound material availability and readiness to
+      support CTP adjustments.
+    preferred_stream_type: Stream
+  - name: Supplier Capacity / Shortage Propagation
+    source: Kinaxis (Shortage Propagation / Order Expediting)
+    purpose: >-
+      Capacity constraints and propagated shortages to determine feasibility and
+      lead-time variability for promises.
+    preferred_stream_type: Stream
+  - name: Forecast & Safety Stock Targets
+    source: SAS Advanced Forecasting / Kinaxis FG Safety Stock Modeling
+    purpose: >-
+      Demand baseline and safety stock constraints used to protect inventory
+      buffers and avoid margin-damaging decisions.
+    preferred_stream_type: Report Data
+  - name: Inventory on Hand & Location Availability
+    source: Blue Yonder WMS
+    purpose: >-
+      Real-time on-hand by location to inform immediate ATP and possible fulfill
+      sources.
+    preferred_stream_type: Stream
+  - name: Transportation ETAs & Carrier Status
+    source: Uber Freight TMS / 3PL feeds
+    purpose: >-
+      Inbound transit reliability and ETA updates affecting supplier readiness
+      and expected receipt dates.
+    preferred_stream_type: Stream
+happy_path:
+  - step: >-
+      Consolidate order, ATP/CTP, inbound readiness, inventory and forecast
+      feeds into a unified subject area.
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Create validated, joined dataset of demand, supply, and supplier readiness
+      for decision logic.
+  - step: >-
+      Evaluate viability of existing promises against supplier inbound readiness
+      and shortage propagation rules.
+    stage: analyze
+    component: Process Builder - Rules
+    purpose: >-
+      Detect over-commits, likely backorders, high-value orders at risk, and
+      candidate orders for expediting or split shipments.
+  - step: >-
+      Compute revised promises and recommended actions (hold, delay, split,
+      expedite) using margin and SLA heuristics.
+    stage: decide
+    component: Remote Functions
+    purpose: >-
+      Apply deterministic decision logic (cost/margin thresholds, supplier
+      capacity) and produce writeback-ready recommendations.
+  - step: >-
+      Execute automated writebacks for approved adjustments and trigger
+      downstream expediting actions where allowed.
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Write updated promises to S4, create expediting requests in Kinaxis, and
+      reserve inventory changes as required.
+  - step: >-
+      Surface recommendations and exceptions for human review and capture
+      override decisions.
+    stage: surface
+    component: CWB Lifecycle
+    purpose: >-
+      Present recommended promise changes, allow accept/override, and record
+      audit trail for exceptions.
+branches:
+  - condition: >-
+      Supplier inbound readiness is 'not ready' for affected SKUs and no
+      alternate supply exists
+    response: >-
+      Demote promises to later feasible dates, flag orders for backorder
+      processing, and notify Sales/Customer Service via CWB and Notification
+      nodes.
+    outcome: >-
+      Orders are decommitted to realistic dates, backorders reduced from
+      surprise shortages; potential revenue at risk is clearly flagged for
+      follow-up.
+  - condition: >-
+      Partial supplier readiness with limited capacity and high-margin orders
+      present
+    response: >-
+      Prioritize high-margin/high-service-level orders for expediting via
+      Kinaxis order expediting and update promises for lower-priority orders.
+    outcome: >-
+      Revenue-protecting orders fulfilled sooner at controlled expedite cost;
+      lower-priority orders delayed with communicated expectations.
+  - condition: Sales or customer-facing user overrides recommended adjustments in the CWB
+    response: >-
+      Persist override, trigger targeted contingency actions (expedite, split
+      shipments, or absorb margin impact) via Remote Functions and log
+      rationale.
+    outcome: >-
+      Customer commitments honored per business decision, with expedited costs
+      and margin impacts recorded for review.

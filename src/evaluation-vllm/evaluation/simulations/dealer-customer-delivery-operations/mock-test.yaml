@@ -1,0 +1,39 @@
+decision: >-
+  Optimize final mile delivery window, carrier/route assignment, POD
+  verification, damage inspection, and direct-to-customer delivery coordination.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Order placement and delivery readiness notification from SAP S/4HANA.
+  parameters:
+    objective: >-
+      Automate final mile scheduling, direct-to-customer delivery coordination,
+      and order fulfillment orchestration to optimize delivery times, reduce
+      costs, and improve service levels.
+    key_inputs:
+      - Order Details
+      - Carrier Availability
+      - Delivery Windows
+      - POD Data
+      - Damage Claims
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Schedule optimal delivery appointments, verify POD, manage damage claims,
+    coordinate direct deliveries, and resolve dealer feedback.
+  outcome: >-
+    Improved order capture, increased OTIF, reduced last-mile costs, and
+    enhanced customer satisfaction.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Unify decision-making for delivery routing, plant/carrier selection, and
+  real-time exception handling to optimize revenue, COGS, and working capital.

@@ -1,0 +1,39 @@
+decision: >-
+  Should a requisition for indirect goods/services be created and approved,
+  selecting quantities, scopes, and approval routing to optimize indirect spend
+  and reduce lead times.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Requisition creation by internal stakeholders.
+  parameters:
+    objective: >-
+      Reduce COGS, accelerate PO lifecycle, and improve working capital through
+      touchless, compliant, and optimized PO creation, amendment, and goods
+      receipt workflows.
+    key_inputs:
+      - Requisition Details
+      - Supplier Information
+      - Catalog Data
+      - Goods Receipt Data
+      - PO Amendment Requests
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automatically create and approve requisitions, issue POs, manage catalogs,
+    process goods receipts, and handle PO amendments/cancellations.
+  outcome: >-
+    Reduced manual touchpoints, accelerated cash-to-cargo cycle, and optimized
+    indirect spend.
+  affected_components:
+    - DDM/Crawlers
+    - Action Item
+    - Agentic AI
+    - Dashboard
+rationale: >-
+  Automate end-to-end requisition-to-order processing to minimize human
+  intervention, ensure compliance, and enhance operational efficiency.

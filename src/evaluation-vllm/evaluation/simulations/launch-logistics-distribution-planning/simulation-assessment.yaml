@@ -1,0 +1,7 @@
+groundednessScore: 38
+integrationConfidenceScore: 100
+ambiguityRiskScore: 31
+implementationReadinessScore: 72
+verdict: REVIEW
+reasons:
+  - Low groundedness (38) from confirmed vs inferred component references.

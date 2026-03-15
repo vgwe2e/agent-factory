@@ -1,0 +1,42 @@
+decision: >-
+  Generate daily production schedules, manage material releases, monitor order
+  execution, adjust capacity utilization, and coordinate rework/reschedule
+  activities.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Daily production planning cycle initiation.
+  parameters:
+    objective: >-
+      Automate end-to-end production planning and control decisions to maximize
+      EBITDA, minimize COGS, and optimize working capital.
+    key_inputs:
+      - Demand Forecast
+      - Inventory Levels
+      - Production Orders
+      - Capacity Utilization Data
+      - Rework Requirements
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automated generation of optimized production schedules, timely material
+    releases, proactive order execution monitoring, dynamic capacity
+    adjustments, and efficient rework coordination.
+  outcome: >-
+    Improved EBITDA, reduced COGS, optimized working capital, and enhanced
+    production efficiency across multi-plant networks.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Exception Management
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Automating production planning and control decisions ensures alignment with
+  demand, optimizes resource utilization, and minimizes costs, leading to better
+  financial performance.

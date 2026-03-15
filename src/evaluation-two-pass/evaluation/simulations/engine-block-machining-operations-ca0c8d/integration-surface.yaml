@@ -1,0 +1,70 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    type: Manufacturing Execution System
+    status: tbd
+  - name: Tooling Database
+    type: CMMS/Asset DB
+    status: tbd
+  - name: Machine Sensors / PLCs
+    type: IoT
+    status: tbd
+  - name: QMS
+    type: Quality Management System
+    status: tbd
+aera_ingestion:
+  - stream_name: production-order-engine-block
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: machine-availability-capacity
+    stream_type: STREAMS
+    source: MES / Machine Sensors
+  - stream_name: tooling-status-inventory
+    stream_type: STREAMS
+    source: Tooling Database
+  - stream_name: material-lot-traceability
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA / MES
+  - stream_name: process-parameters-standard-work
+    stream_type: Event Stream
+    source: Engineering / Process Docs
+  - stream_name: quality-tolerances-and-qc-rules
+    stream_type: Event Stream
+    source: QMS
+processing:
+  - component: Rules
+    type: process_builder
+    function: >-
+      Deterministically select machining sequence (boring → honing → deck
+      surfacing or merged operations) based on availability, cost, and tolerance
+      requirements
+  - component: IF
+    type: process_builder
+    function: >-
+      Choose final routing: standard cell, alternate cell, or deferred
+      scheduling based on rules and capacity
+  - component: Transaction
+    type: process_builder
+    function: >-
+      Write optimized routing/schedule and tooling reservations back to SAP
+      S/4HANA and MES
+  - component: UI Screen
+    type: process_builder
+    function: >-
+      Present step-by-step machining instructions, tooling attachments, and QC
+      checks on shop-floor terminals
+  - component: Notification
+    type: process_builder
+    function: >-
+      Alert production planner of schedule commit and generate Report Data for
+      post-run review
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review orchestrate precision machining of engine blocks (boring, honing,
+      deck surfacing) to determine optimal fabrication sequence and process
+      routing that minimizes cogs while meeting quality tolerances and delivery
+      dates. and approve the recommended action.

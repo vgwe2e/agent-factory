@@ -1,0 +1,61 @@
+decision: >-
+  Agentic process decides whether to auto-execute requirement/inventory/supply
+  adjustments for SKU-location pairs or route recommendations for human approval
+  based on confidence, business-impact thresholds, and conflict checks.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Daily scheduled run + event-trigger on promotional change or forecast
+    deviation (>15% vs baseline) detected from Advanced Statistical Forecasting
+    or SAS
+  parameters:
+    objective: >-
+      Automate end-to-end data orchestration for SKU x location across Hershey
+      to harmonize forecasts, inventory, and supplier requirements so autonomous
+      recommendations and actions reduce waste, improve COGS, and protect
+      revenue during promotional and demand variability.
+    key_inputs:
+      - SKU Master & BOM
+      - Location/Network Master
+      - Baseline & Promotional Forecasts
+      - Inventory On-hand & Commitments
+      - Shortage & Constraint Alerts
+      - Promotions & Marketing Change Events
+      - Supplier Lead Time / Capacity
+      - Transportation ETAs and Cost Signals
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Advanced Statistical Forecasting in SAS
+      - Kinaxis RapidResponse
+      - Kinaxis (General)
+      - Blue Yonder WMS
+      - Uber Freight (3PL / TMS)
+expected_output:
+  action: >-
+    Agentic AI (Process Builder + Agent Team + Cortex) ingests master and
+    operational feeds, harmonizes data, scores recommended changes,
+    auto-executes high-confidence changes via Remote Functions to S4/Kinaxis and
+    schedules follow-up rechecks; medium/low-confidence items create CWB
+    Lifecycle tasks for human review and notify stakeholders.
+  outcome: >-
+    Timely SKU/location adjustments (demand alignment, replenishment,
+    rebalancing, supplier alerts, promotional tactics) with measurable reduction
+    in overstocks/waste, improved COGS, maintained service level, and auditable
+    change tracking and stakeholder communication.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex Auto Forecast + RCA Service
+    - Remote Functions + Process Builder (Action Item)
+    - CWB Lifecycle + Notification + UI Screen
+    - Process Builder (IF, Rules) + Agent Team
+    - Dashboard
+rationale: >-
+  Combining harmonized master/transactional feeds with agentic reasoning and
+  rule-based governance enables scalable, repeatable, and auditable execution
+  across complex SKU/location matrices while preserving human-in-the-loop
+  controls for ambiguous or high-risk changes.

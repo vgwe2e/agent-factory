@@ -1,0 +1,26 @@
+streams:
+  - name: DDM/Crawler
+    purpose: Ingest module integration data.
+    confidence: inferred
+    type: DDM/Crawler
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Optimize module integration plan.
+    confidence: confirmed
+    capability: Optimize module integration plan.
+process_builder:
+  - name: Action Item
+    purpose: >-
+      Automate and coordinate the assembly process across multiple activities
+      using Aera's orchestration capabilities.
+    confidence: confirmed
+    node_type: transaction
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomous orchestration of end-to-end battery pack assembly
+      decisions to reduce cogs, improve otif, and enhance supplier/manufacturing
+      synchronization. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

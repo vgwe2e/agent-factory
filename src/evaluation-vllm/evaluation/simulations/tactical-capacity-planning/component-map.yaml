@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect demand data
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Optimize capacity allocation
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Identify mismatches
+    confidence: confirmed
+    capability: Identify mismatches
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Reflect new realities
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Protect COGS and delivery commitments
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review orchestrating deterministic, semi-autonomous capacity decisions
+      across monthly, quarterly, and mid-term horizons to optimize production
+      volumes, balance line capacities, and prevent capacity shortfalls. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

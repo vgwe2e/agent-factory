@@ -1,0 +1,39 @@
+decision: >-
+  Optimize commodity procurement spend and supplier performance based on market
+  intelligence and historical spend analysis.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic data refresh from SAP S/4HANA and external market data sources.
+  parameters:
+    objective: >-
+      Reduce working capital tied to commodities, minimize supply risk exposure,
+      and improve EBITDA by aligning spend with strategic sourcing, supplier
+      risk flags, and market dynamics.
+    key_inputs:
+      - Commodity Spend Data
+      - Supplier Performance Data
+      - Market Intelligence Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate monitoring, forecasting, and decision-making for
+    procurement-related activities.
+  outcome: >-
+    Reduced working capital, minimized supply risk, and improved EBITDA through
+    optimized procurement decisions.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - AutoML
+    - Report Data
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Leveraging deterministic and agentic decisioning to provide actionable
+  insights and automate decision-making processes.

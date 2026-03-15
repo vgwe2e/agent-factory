@@ -1,0 +1,61 @@
+objective: >-
+  Optimize service parts distribution, transportation, and fulfillment planning
+  to reduce working capital, lower COGS, and improve OTIF.
+trigger: Monthly inventory review and quarterly logistics planning cycle.
+decision: >-
+  Jointly optimize service parts distribution, transportation modes/lanes, and
+  end-to-end fulfillment planning.
+expected_action: >-
+  Automate the selection of optimal DC locations, transportation modes, and
+  carrier routes using deterministic models.
+expected_outcome: >-
+  Reduced working capital, lower COGS, improved OTIF, and enhanced service part
+  network resilience.
+rationale: >-
+  Leveraging deterministic models and real-time data to optimize service parts
+  logistics will lead to significant cost savings and improved service levels.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Determine current stock positions for service parts.
+  - name: Historical Order Data
+    source: SAP S/4HANA
+    purpose: Analyze past order patterns for forecasting.
+  - name: Carrier Costs
+    source: SAP S/4HANA
+    purpose: Evaluate different transportation modes and lanes.
+happy_path:
+  - step: Extract inventory and order data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+  - step: Perform capacity planning and network design analysis.
+    stage: analyze
+    component: AutoML
+    purpose: Forecast capacity needs and optimize DC locations.
+  - step: Optimize transportation modes and lanes.
+    stage: analyze
+    component: AutoML
+    purpose: Minimize COGS while meeting service levels.
+  - step: Present optimized network design and transportation strategy.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Allow human review and approval of recommendations.
+  - step: Implement approved changes in SAP S/4HANA.
+    stage: act
+    component: Remote Functions
+    purpose: Update inventory and transportation plans in ERP.
+branches:
+  - condition: Insufficient data for accurate forecasting.
+    response: Request additional historical data from SAP S/4HANA.
+    outcome: Delayed implementation until data is available.
+  - condition: Human rejects network design recommendations.
+    response: Revise and resubmit recommendations for review.
+    outcome: Iterative improvement of network design.
+  - condition: Unexpected disruption in service parts flow.
+    response: Activate disaster recovery plan.
+    outcome: Maintain service levels during disruptions.

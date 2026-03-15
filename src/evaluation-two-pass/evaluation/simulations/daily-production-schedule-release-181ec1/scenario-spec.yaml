@@ -1,0 +1,133 @@
+objective: >-
+  Deliver an adaptive, end-to-end deterministic production scheduling engine
+  that auto-synchronizes line sequencing, changeovers, and capacity across
+  multi-plant automotive platforms to reduce COGS, improve on-time delivery, and
+  lower working capital.
+trigger: >-
+  Daily schedule horizon (nightly/early-morning) or an exception event from
+  execution (material short, machine downtime, large deviation).
+decision: >-
+  Release the final daily production schedule to operations (auto-release when
+  constraints satisfied; route exceptions for planner approval when violations
+  exist).
+expected_action: >-
+  Automatically generate and publish the plant-level production schedule into
+  SAP S/4HANA and downstream MES, including sequence, start/stop times,
+  changeover activities, and hold/rework tasks. Route exceptions into CWB for
+  planner review when required.
+expected_outcome: >-
+  Consistent, capacity‑aware daily schedules released on time; minimized
+  changeover time and sequence-driven efficiency; fewer manual adjustments on
+  the shop floor; improved on-time delivery and reduced inventory/working
+  capital.
+rationale: >-
+  Deterministic optimization that unifies scheduling, changeover coordination,
+  and real‑time execution feedback closes the loop between planning and
+  operations. Orchestrating ingestion, optimization, rule-based gating
+  (auto-release vs. exceptions), and automated writeback drives faster, more
+  consistent schedule releases and reduces manual rework and COGS.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    status: tbd
+  - name: PLM / Changeover DB
+    status: tbd
+  - name: Plant SCADA / OT
+    status: tbd
+  - name: Planner Spreadsheets (local)
+    status: tbd
+key_inputs:
+  - name: Master Production Schedule & Planned Orders
+    source: SAP S/4HANA
+    purpose: >-
+      Defines demand, planned order quantities and timeline baseline for daily
+      schedule
+    preferred_stream_type: STREAMS
+  - name: Material Availability / Inventory & MRP Results
+    source: SAP S/4HANA
+    purpose: Validate availability and flag shortages that block release
+    preferred_stream_type: STREAMS
+  - name: Plant Capacity, Shift Patterns, Machine Calendars
+    source: SAP S/4HANA
+    purpose: Ensure schedule respects capacity, labor and planned downtime
+    preferred_stream_type: STREAMS
+  - name: Work Order Status & Actuals (throughput, OEE)
+    source: MES
+    purpose: Execution feedback for adherence analysis and dynamic rescheduling
+  - name: Changeover Matrix (sequence-dependent setup times)
+    source: PLM / Changeover DB
+    purpose: Accurately model sequence-dependent changeover durations and constraints
+  - name: Historical run-rates and changeover distributions
+    source: Subject Areas / DDM
+    purpose: Calibrate deterministic run-time estimates and guardrails for optimizer
+happy_path:
+  - step: >-
+      Ingest master orders, inventory, capacity, changeover matrix and latest
+      work-order actuals.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and normalize SAP, MES and PLM inputs for scheduling
+  - step: >-
+      Validate data quality and assemble planning subject area; compute derived
+      metrics (available material, effective capacity).
+    stage: analyze
+    component: STREAMS + Data Quality & Validation
+    purpose: Create a validated data foundation for deterministic scheduling
+  - step: >-
+      Run deterministic scheduling optimizer (sequence-aware,
+      changeover-minimizing) and generate candidate schedule scenarios.
+    stage: analyze
+    component: Process (Process Builder) + Remote Functions (optimizer)
+    purpose: Produce feasible, capacity- and changeover-aware schedules
+  - step: >-
+      Evaluate candidate against release rules; auto-approve if no hard
+      violations, else create CWB exception with recommended mitigation.
+    stage: decide
+    component: CWB Lifecycle + Process IF (Rules)
+    purpose: Gate final release and surface exceptions for human-in-the-loop
+  - step: >-
+      Write final approved schedule back to SAP S/4HANA and publish to MES; log
+      transactions and create audit trail.
+    stage: act
+    component: Process Transaction node + Remote Functions
+    purpose: Execute schedule release into enterprise systems and downstream execution
+  - step: >-
+      Surface schedule, KPIs (adherence, changeover minutes, capacity
+      utilization) and exception list to planners/operators and notify
+      stakeholders.
+    stage: surface
+    component: UI Screens (dashboard) + Notification (Process Builder)
+    purpose: >-
+      Provide visibility, enable manual adjustments, and close the communication
+      loop
+branches:
+  - condition: Material shortages or critical MRP violation detected during gating
+    response: >-
+      Hold schedule release, open CWB exception with suggested replan (shift
+      production or substitute parts), trigger procurement alerts and a re-run
+      of optimizer with constrained inputs.
+    outcome: >-
+      Schedule withheld until mitigation or approved exception; procurement and
+      planners aligned to resolve shortages to avoid execution failures.
+  - condition: >-
+      Hard capacity or sequencing constraint cannot be resolved automatically
+      (e.g., tool qualification/line change conflicts)
+    response: >-
+      Present alternative schedule scenarios that minimize changeover impact,
+      route to planner/engineer via CWB for approval, and await human decision
+      before writeback.
+    outcome: >-
+      Prevents infeasible releases; planners choose the preferred compromise
+      minimizing COGS and delivery impact.
+  - condition: >-
+      Execution deviation (machine downtime, extended changeover) detected
+      during run
+    response: >-
+      Trigger asynchronous reschedule subprocess (short-horizon deterministic
+      re-optimization) and push updated sequence/times to MES; notify operations
+      and planners.
+    outcome: >-
+      Autonomous containment and re-sequencing minimize ripple effects, maintain
+      OTIF and reduce WIP buildup.

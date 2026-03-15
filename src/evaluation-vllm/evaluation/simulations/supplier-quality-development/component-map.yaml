@@ -1,0 +1,28 @@
+streams:
+  - name: DDM/Crawler
+    purpose: To fetch the audit schedule for planning.
+    confidence: inferred
+    type: DDM/Crawler
+cortex: []
+process_builder:
+  - name: Action Item
+    purpose: >-
+      Automate audit scheduling and validation, track CAPA closure progress,
+      prioritize process improvement initiatives, review NPI quality gates,
+      initiate training programs.
+    confidence: confirmed
+    node_type: transaction
+agent_teams:
+  - name: Agentic AI
+    purpose: To provide insights and recommendations based on audit findings.
+    confidence: inferred
+    role: To provide insights and recommendations based on audit findings.
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomous management of supplier quality audits, capa cycles,
+      process capability improvements, npi quality gating, and supplier training
+      to reduce cogs, accelerate time-to-market, and improve otif with
+      suppliers. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for safety stock recalculation.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Safety Stock Service
+    purpose: Determine new safety stock levels.
+    confidence: inferred
+    capability: Determine new safety stock levels.
+  - name: AutoML
+    purpose: Apply differentiated inventory policies.
+    confidence: inferred
+    capability: Apply differentiated inventory policies.
+process_builder:
+  - name: Process Builder
+    purpose: Establish VMI policies.
+    confidence: confirmed
+    node_type: decide
+  - name: CWB Lifecycle
+    purpose: Ensure human-in-the-loop validation.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize inventory strategy and policy definition across the
+      automotive supply network to reduce working capital, lower cogs, and
+      improve otif. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

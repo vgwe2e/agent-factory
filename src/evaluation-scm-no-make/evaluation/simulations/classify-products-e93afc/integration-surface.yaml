@@ -1,0 +1,63 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+  - name: Tariff Reference (external API / government tariff database)
+    type: API
+    status: tbd
+  - name: Customs/Compliance Team (CWB)
+    type: People/Process
+    status: tbd
+aera_ingestion:
+  - stream_name: product-master-sku-descriptions-dimensions
+    stream_type: batch
+    source: S4 (SAP S/4HANA)
+  - stream_name: packaging-and-composition-details-materials-weights
+    stream_type: batch
+    source: S4 / Blue Yonder WMS
+  - stream_name: country-of-origin-trade-lane
+    stream_type: batch
+    source: S4
+  - stream_name: authoritative-tariff-lookup-table-api
+    stream_type: Event Stream
+    source: Tariff Reference (external API / government)
+  - stream_name: classification-ruleset-and-mapping-table
+    stream_type: batch
+    source: Aera STREAMS / Subject Area (managed rules)
+  - stream_name: historical-classification-mappings-and-audit-log
+    stream_type: batch
+    source: Subject Area / S4 history
+processing:
+  - component: Process Builder - Rules node
+    type: cortex
+    function: Run rule-based classification logic and calculate confidence/risk score
+  - component: Remote Functions (tariff API lookup)
+    type: process_builder
+    function: Confirm official HS metadata and detect conflicts or disallowed mappings
+  - component: Remote Functions (S4 writeback) + Process Builder Transaction
+    type: process_builder
+    function: >-
+      Persist HS code and audit metadata to S4 or create an exception when
+      escalation needed
+  - component: CWB Lifecycle (Action Item) + UI Screen
+    type: process_builder
+    function: >-
+      Customs team reviews ambiguous/high-risk cases, accepts/overrides
+      classification
+  - component: Process Builder - Notification / UI Screen (report)
+    type: process_builder
+    function: Alert customs/compliance, update dashboards and finalize audit trail
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automatically assign the appropriate customs (hs) classification to
+      imported and exported products using deterministic rules, minimize manual
+      review and audit risk, and write validated classifications back to the
+      product master. and approve the recommended action.

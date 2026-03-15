@@ -1,0 +1,59 @@
+decision: >-
+  Choose whether to auto-apply prescriptive mitigations (reallocate inventory,
+  expedite orders, reroute shipments, adjust production/sourcing) within defined
+  guardrails or escalate to human review when guardrails/exceptions require
+  approval (balance COGS impact vs service levels).
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled hourly data refresh (or on ingestion of new order/shipment/supply
+    status events) where demand vs supply KPIs breach configured thresholds or
+    predicted shortfall/overage is detected.
+  parameters:
+    objective: >-
+      Provide a unified Exception Control Tower that continuously monitors
+      demand and supply KPIs, autonomously detects deviations (unfulfilled
+      demand and supply exceptions), and prescriptively executes guard-railed
+      adjustments to allocations, sourcing, and production to minimize
+      stockouts, reduce waste, and protect margins.
+    key_inputs:
+      - Demand signals (statistical forecasts + recent orders)
+      - Inventory position and location-level availability
+      - Supply status and constraints (POs, shipments, supplier allocations)
+      - Shipment/transport status and ETA
+      - Safety stock & allocation policy parameters
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Kinaxis RapidResponse
+      - Kinaxis (Order Expediting / Rebalancing / FG Safety Stock)
+      - SAS / Advanced Statistical Forecasting in SAS
+      - Blue Yonder WMS
+      - Uber Freight / 3PL (carrier events)
+      - Kinaxis Rapid Response for APS supply chain planning
+expected_output:
+  action: >-
+    Automatically detect exceptions via rule-based checks, generate ranked
+    prescriptive actions, execute touchless actions when within guardrails via
+    Remote Functions (writebacks to S4/Kinaxis/3PL/TMS), and open CWB Lifecycle
+    review items when human override or approval is required.
+  outcome: >-
+    Reduced stockouts and expedited fulfillment for prioritized demand,
+    minimized waste through proactive rebalancing, controlled COGS impact via
+    guardrails, faster exception resolution, and auditable decision trail for
+    all automated and manual interventions.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Subject Areas + Data Quality & Validation (STREAMS rules)
+    - Process Builder (Rules + IF) + CWB Lifecycle
+    - Remote Functions + Process Builder (Action Item / Transaction)
+    - UI Screens (Control Tower dashboard) + Notification
+rationale: >-
+  Deterministic rule-based detection and prescriptive actions allow scalable,
+  auditable control over frequent demand-supply deviations. Integrating ETL,
+  subject areas, Process Builder rules, Remote Functions and CWB Lifecycle
+  enables touchless resolution where safe and human-in-the-loop when required,
+  leveraging existing ERP/APS/WMS/TMS investments.

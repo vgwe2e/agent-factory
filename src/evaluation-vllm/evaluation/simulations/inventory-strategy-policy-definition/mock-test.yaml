@@ -1,0 +1,43 @@
+decision: >-
+  Recalibrate safety stock levels, classify inventory, establish VMI policies,
+  and design consignment programs.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic review of inventory levels and policies.
+  parameters:
+    objective: >-
+      Optimize inventory strategy and policy definition across the automotive
+      supply network to reduce working capital, lower COGS, and improve OTIF.
+    key_inputs:
+      - Inventory Levels
+      - Demand Variability
+      - Lead Times
+      - Service Targets
+      - Inventory Value
+      - Inventory Volatility
+      - Strategic Suppliers
+      - Consignment Items
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Adjust safety stock levels, apply differentiated inventory policies, define
+    VMI policies, and design consignment programs.
+  outcome: >-
+    Reduced working capital, lower COGS, improved OTIF, and optimized inventory
+    management.
+  affected_components:
+    - DDM/Crawlers
+    - Safety Stock Service
+    - AutoML
+    - Process Builder
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  Jointly governing stock levels, segmentation-driven replenishment, and
+  supplier/partner inventory programs will enhance overall supply chain
+  efficiency and financial performance.

@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: New product introduction (NPI) initiation.]
+  A --> N1[Stream: DDM/Crawlers - Initiate NPI planning]
+  N1 --> N2[Stream: STREAMS - Pre-production build planning]
+  N2 --> N3[Stream: STREAMS - Ramp-up volume planning]
+  N3 --> N4[Stream: STREAMS - Supplier readiness assessment]
+  N4 --> N5{PB: CWB Lifecycle - Pilot build schedule management}
+  N5 -->|Primary| N6{PB: CWB Lifecycle - End-of-life production planning}
+  N6 --> Z1[Outcome: Reduced COGS, faster time-to-market, improved OTIF, and better working capital management during NPI cycles.]
+  N5 -->|Insufficient supplier readiness| B1[Delay NPI launch]
+  B1 --> O1[Outcome: Adjust production timelines to ensure supplier readiness.]
+  O1 --> End[End]
+  N5 -->|Excess production capacity| B2[Allocate excess capacity to other projects]
+  B2 --> O2[Outcome: Optimize resource utilization and reduce costs.]
+  O2 --> End[End]
+  N5 -->|High demand for EOL models| B3[Extend production phase]
+  B3 --> O3[Outcome: Balance demand with production capability and cost.]
+  O3 --> End[End]
+  Z1 --> End[End]

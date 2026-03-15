@@ -1,0 +1,71 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting in SAS
+    type: Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL / Uber Freight (carrier)
+    status: identified
+  - name: Supplier portals / direct supplier feeds
+    status: tbd
+aera_ingestion:
+  - stream_name: baseline-demand-forecast
+    stream_type: Subject Area
+    source: SAS / Advanced Statistical Forecasting in SAS
+  - stream_name: inventory-open-orders-historical-shipments
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA) / Blue Yonder WMS / Kinaxis RapidResponse
+  - stream_name: supplier-capacity-lead-times-and-readiness
+    stream_type: DDM/Crawlers
+    source: Supplier portals / DDM/Crawlers / direct supplier feeds
+  - stream_name: should-cost-estimates-and-contract-terms
+    stream_type: Event Stream
+    source: SAS models and sourcing master data (S4)
+  - stream_name: aps-scenario-results-and-shortage-propagation
+    stream_type: Event Stream
+    source: Kinaxis RapidResponse
+processing:
+  - component: Process Builder
+    type: cortex
+    function: >-
+      Call Remote Functions and Kinaxis RapidResponse to run supply/capacity
+      scenarios and should-cost calculations with supplier-provided constraints
+  - component: Data Science / Remote Functions
+    type: cortex
+    function: >-
+      Score alternatives by total cost, margin impact, delivery risk and
+      capacity feasibility
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Surface ranked plan + supplier shortlist to planners and sourcing for
+      approval or override
+  - component: Process Builder
+    type: process_builder
+    function: >-
+      Writeback approved allocations and sourcing decisions to S4 and Kinaxis
+      via Remote Functions
+  - component: Notification / UI Screen
+    type: process_builder
+    function: >-
+      Send contract / PO intents to suppliers and display finalized plan and
+      rationale to stakeholders
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automatically coordinate cross-functional demand planning and
+      supplier readiness by running integrated should-cost and capacity
+      scenarios with suppliers, then finalize an integrated demand plan and
+      supplier shortlist that satisfies cost and capacity constraints across
+      plan and source. and approve the recommended action.

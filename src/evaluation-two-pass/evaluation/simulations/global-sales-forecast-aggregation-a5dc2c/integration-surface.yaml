@@ -1,0 +1,58 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: >-
+      Market Intelligence Feeds (3rd-party registrations/pricing/competitive
+      data)
+    status: tbd
+  - name: Product Launch / Portfolio Planning System
+    status: tbd
+  - name: Regional Forecast Portals / Spreadsheets
+    status: tbd
+aera_ingestion:
+  - stream_name: regional-sales-forecasts-by-sku-market-time-bucket
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA / Regional Forecast Portals
+  - stream_name: vehicle-configuration-mix-trim-options-by-market
+    stream_type: Event Stream
+    source: Product Launch / Configuration system (tbd)
+  - stream_name: >-
+      market-intelligence-signals-registrations-macro-indicators-competitor-actions
+    stream_type: Event Stream
+    source: Market Intelligence Feeds (3rd-party)
+  - stream_name: new-model-launch-plans-constraints-ramp-schedules-capacity-incentive-spend
+    stream_type: Event Stream
+    source: Product Launch / Portfolio Planning System
+  - stream_name: historical-sales-forecast-accuracy-metrics
+    stream_type: STREAMS
+    source: SAP S/4HANA / Subject Areas
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Generate time-series forecasts, blend regional signals, and produce
+      explainability metrics
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Present recommendations for auto-approval or human review based on
+      confidence and business rules
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Execute authorized writebacks and handoffs to ERP and production planning
+      systems
+  - component: Cortex Monitoring
+    type: process_builder
+    function: >-
+      Track performance, drive continuous improvement and surface remediation
+      actions
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end demand forecasting, market-intelligent mix
+      planning, and model-launch volume alignment to produce an approved global
+      production volume & mix plan that reduces forecast error, working capital,
+      and cogs exposure. and approve the recommended action.

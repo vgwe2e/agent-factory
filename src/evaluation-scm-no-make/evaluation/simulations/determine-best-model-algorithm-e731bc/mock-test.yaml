@@ -1,0 +1,67 @@
+decision: >-
+  Determine Best Model & Algorithm: choose best model type and parameters per
+  SKU/group balancing fit quality vs computational complexity (triggered during
+  model selection phase).
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Daily or event-driven ingest of updated market signals (POS, promotions,
+    pricing, macro indicators) or weekly scheduled model-selection cycle.
+  parameters:
+    objective: >-
+      Automate end-to-end top-line demand forecasting with continuous demand
+      sensing, automated model selection and parameterization, and
+      EBITDA-aligned tuning to reduce stockouts, waste, and promo volatility
+      while improving revenue and margin.
+    key_inputs:
+      - Historical sales (SKU-level time series)
+      - POS and demand signals (store/region)
+      - Promotions & pricing calendar
+      - Inventory & on-hand levels
+      - Supply status & lead times
+      - Macro & market indicators (pricing elasticity, seasonality drivers)
+      - Forecast performance metrics (MAPE, bias, service level)
+      - EBITDA targets and margin constraints
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Advanced Statistical Forecasting in SAS
+      - Kinaxis RapidResponse
+      - Kinaxis (generic)
+      - Kinaxis for FG Safety Stock Modeling
+      - Kinaxis for Rebalancing
+      - Kinaxis for Order Expediting
+      - Kinaxis Rapid Response for APS supply chain planning
+      - Blue Yonder WMS
+      - Uber Freight (3PL)
+      - Uber Freight TMS
+expected_output:
+  action: >-
+    Automatically evaluate candidate forecasting algorithms, select best-fit
+    model per SKU/group, tune parameters to incorporate promotions, seasonality
+    and EBITDA constraints, persist parameters and forecasts to Subject Areas,
+    and write final forecasts/parameters back to S4 and Kinaxis; surface
+    exceptions and borderline cases via CWB Lifecycle for human review.
+  outcome: >-
+    Continuous improvement in forecast accuracy (lower MAPE), fewer stockouts
+    and overstocks, reduced promo-driven volatility, faster propagation of
+    demand signal into supply plans (Kinaxis), and measurable EBITDA-aligned
+    tradeoffs in forecast bias and service levels.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast
+    - Process Builder (Process, Rules)
+    - Remote Functions
+    - CWB Lifecycle / UI Screens
+    - Dashboard
+rationale: >-
+  A closed-loop process that continuously ingests market signals and automates
+  model selection and parameter tuning enables responsive, scalable forecasting.
+  Cortex Auto Forecast provides robust algorithm selection; Process Builder
+  orchestrates rules and gates; Remote Functions handle complex calculations and
+  ERP writebacks; CWB Lifecycle manages exceptions and human overrides—together
+  aligning forecasts with EBITDA and operational constraints.

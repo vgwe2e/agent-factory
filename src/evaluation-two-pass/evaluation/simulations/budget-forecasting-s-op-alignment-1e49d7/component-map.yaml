@@ -1,0 +1,46 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Canonicalize product cost, inventory, AR/AP, capacity, and scenario inputs
+      into Subject Areas
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Subject Areas
+    purpose: >-
+      Compute per-scenario EBITDA, gross margin, inventory days and cash
+      conversion metrics for comparison
+    confidence: confirmed
+    capability: >-
+      Compute per-scenario EBITDA, gross margin, inventory days and cash
+      conversion metrics for comparison
+process_builder:
+  - name: 'Process Builder: Rules + Remote Functions'
+    purpose: >-
+      Apply business rules and optimization logic to score trade-offs and
+      produce recommended option with sensitivity metrics
+    confidence: confirmed
+    node_type: decide
+  - name: CWB Lifecycle + UI Screens
+    purpose: >-
+      Present ranked scenarios, explain trade-offs, capture
+      accept/reject/override and rationale
+    confidence: confirmed
+    node_type: review
+  - name: Remote Functions + Process Builder Notification
+    purpose: >-
+      Writeback approved budgets/forecasts to SAP S/4HANA, create audit trail,
+      and notify S&OP and Finance teams
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review provide a semi-autonomous profitability optimization engine that
+      jointly optimizes cogs, revenue/gross margin, and working capital across
+      demand, supply, production, and fulfillment to recommend and commit
+      s&op-aligned budget and forecast options that maximize ebitda and improve
+      cash conversion. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

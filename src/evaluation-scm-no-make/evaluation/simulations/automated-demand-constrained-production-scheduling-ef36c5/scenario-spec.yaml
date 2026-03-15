@@ -1,0 +1,147 @@
+objective: >-
+  Automatically coordinate demand-informed production scheduling with inbound
+  material readiness and supplier lead times to produce executable,
+  conflict-free production plans that minimize stockouts and obsolescence while
+  protecting revenue and margins across SKU/location.
+trigger: >-
+  New daily touchless demand forecast run or material/inbound change (daily
+  cadence) that materially changes demand or inbound availability for planable
+  SKUs.
+decision: >-
+  Dynamically reallocate production load across planable SKUs and locations to
+  meet demand subject to inbound material readiness, supplier lead times,
+  production capacity, and business priority rules.
+expected_action: >-
+  Process Builder evaluates consolidated inputs and runs deterministic
+  scheduling rules to produce an optimized production allocation; Remote
+  Functions write executable production orders to S4 and push plans/shortages to
+  Kinaxis RapidResponse; expedite or transfer orders created when required;
+  exceptions surfaced via CWB Lifecycle for planner override.
+expected_outcome: >-
+  Conflict-free, executable production schedule aligned to inbound materials and
+  supplier lead times; reduced stockouts and obsolescence; minimized expediting
+  costs where possible; prioritized fulfillment of high-margin SKUs; clear
+  exceptions for planner review.
+rationale: >-
+  A deterministic, process-driven approach coordinates forecasts, inventory,
+  supplier readiness and capacity to create actionable schedules. Automating
+  minimizes manual rework and reactionary expediting, preserves service levels
+  and margins, and provides auditable writebacks to S4/Kinaxis while routing
+  only true exceptions to planners.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Statistical Forecasting Platform
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Kinaxis (Order Expediting / Rebalancing / FG Safety Stock Modeling)
+    type: APS/Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+key_inputs:
+  - name: Touchless demand forecast
+    source: Cortex Auto Forecast / SAS advanced statistical forecasting
+    purpose: Primary demand signal for scheduling and allocation
+    preferred_stream_type: Data View
+  - name: Inventory on hand and reserved
+    source: Blue Yonder WMS / S4
+    purpose: Determine available supply and allocation constraints
+    preferred_stream_type: Report Data
+  - name: Inbound receipts / PO ETA
+    source: S4 (PO receipts) / Kinaxis inbound feeds
+    purpose: Assess material readiness and timing for production
+    preferred_stream_type: Report Data
+  - name: Supplier lead times & expedite capability
+    source: S4 supplier master / Kinaxis order expediting
+    purpose: Incorporate supplier constraints and expediting options into schedule
+  - name: Production capacity & constraints
+    source: Kinaxis RapidResponse / S4 capacity data
+    purpose: Ensure schedule respects physical capacity and constraints
+    preferred_stream_type: Data View
+  - name: Safety stock & FG availability targets
+    source: Kinaxis FG Safety Stock Modeling
+    purpose: Drive prioritization to minimize stockouts and obsolescence
+  - name: Cost & margin rules (expedite and obsolescence cost)
+    source: S4 cost master / Finance rules
+    purpose: >-
+      Optimize trade-offs between expediting cost, obsolescence, and margin
+      protection
+    preferred_stream_type: Report Data
+happy_path:
+  - step: >-
+      Consolidate inputs (forecasts, inventory, inbound, capacity, supplier lead
+      times) into a canonical view
+    stage: ingest
+    component: STREAMS
+    purpose: Aggregate and validate all source system inputs for scheduling logic
+  - step: Compute touchless demand signal and supply readiness adjustments
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Produce demand forecast and identify variance/near-term spikes affecting
+      schedule
+  - step: >-
+      Run deterministic scheduling rules to produce demand-constrained
+      production allocations
+    stage: decide
+    component: Process Builder (Rules + IF + Branch)
+    purpose: >-
+      Apply business priorities, capacity limits, inbound readiness and lead
+      times to create an optimized plan
+  - step: Commit executable orders and exception actions to downstream systems
+    stage: act
+    component: Remote Function
+    purpose: >-
+      Write production orders to S4, push plan and shortage information to
+      Kinaxis RapidResponse, and trigger supplier expediting where required
+  - step: Surface exceptions and planned changes to planners for review-only
+    stage: notify
+    component: CWB Lifecycle
+    purpose: >-
+      Present prioritized exceptions for human review/override and provide audit
+      trail
+branches:
+  - condition: >-
+      Inbound material availability is insufficient within required lead time
+      for the adjusted schedule
+    response: >-
+      Process triggers Kinaxis Order Expediting via Remote Function and creates
+      Action Item(s) in CWB; if expediting not possible, reallocate production
+      to alternate locations or lower-risk SKUs per rules.
+    outcome: >-
+      Expedite requests generated; schedule adjusted to maintain service for
+      prioritized SKUs; remaining shortages flagged for planner intervention.
+  - condition: >-
+      Production capacity at all sites is constrained and cannot meet
+      prioritized demand
+    response: >-
+      Process Builder reassigns load to alternate capable locations (Kinaxis
+      Rebalancing) or sequences high-margin SKUs first; generates
+      transfer/outsource recommendations and creates notifications for
+      procurement/planning.
+    outcome: >-
+      Capacity-aware redistribution reduces critical stockouts for prioritized
+      SKUs; lower-priority items queued or flagged for CWB review.
+  - condition: >-
+      Forecast spike exceeds safety stock and supplier cannot expedite or
+      capacity cannot be added quickly
+    response: >-
+      Trigger transfer proposals to 3PL/contract manufacturers via Remote
+      Function and Uber Freight integrations; create procurement/expedite action
+      items for planners.
+    outcome: >-
+      Short-term fulfillment maintained through transfers/outsourcing at higher
+      cost, protecting revenue while preserving traceability and capturing cost
+      impacts.

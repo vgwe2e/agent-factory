@@ -1,0 +1,138 @@
+objective: >-
+  Automatically coordinate safety stock levels and SKU sequencing across PLAN
+  and FULFILL domains on a weekly cadence to align inventory with shifting
+  demand patterns and network constraints.
+trigger: >-
+  Weekly pipeline run or detection of statistically significant demand pattern
+  shift from Cortex Auto Forecast; or network constraint event from Kinaxis.
+decision: >-
+  Dynamically adjust safety stock parameters and SKU sequencing across planning
+  and fulfillment domains in response to weekly demand pattern shifts and
+  network constraints, updating forecast inputs, safety stock settings, and
+  pushing sequencing/rebalancing updates to planning and execution systems.
+expected_action: >-
+  Orchestrate an automated Process Builder workflow that ingests sales,
+  forecast, inventory, lead-time and network constraint data (DDM/Crawlers +
+  STREAMS), runs Cortex Auto Forecast and Safety Stock Service to compute
+  updated safety stock and sequencing recommendations, applies deterministic
+  business rules, uses Remote Functions to write approved parameter updates to
+  SAP S/4HANA and Kinaxis, and notifies planners/CWB for exceptions or
+  high-impact changes.
+expected_outcome: >-
+  Weekly aligned safety stock and sequencing across PLAN and FULFILL: improved
+  service levels, reduced excess working capital from misallocated stock, faster
+  response to demand volatility, and operationalized updates in S4, Kinaxis, and
+  WMS/TMS with human-in-the-loop for high-risk changes.
+rationale: >-
+  Quarterly, siloed safety stock positioning leads to misallocation as demand
+  patterns shift. Automating a weekly cross-domain process combining forecast
+  signal detection, ML-driven safety stock optimization, and deterministic
+  writebacks reduces manual lag, aligns inventory to current demand and network
+  constraints, and preserves revenue while lowering inventory carrying cost.
+  Process Builder orchestrates predictable deterministic flows while Cortex Auto
+  Forecast and Safety Stock Service provide the demand and inventory
+  optimization signals; Remote Functions ensure safe, auditable writebacks.
+source_systems:
+  - name: SAP S/4HANA (S4)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Kinaxis (Rebalancing / FG Safety Stock Modeling)
+    type: Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS/Logistics
+    status: identified
+key_inputs:
+  - name: Historical sales & shipments
+    source: SAP S/4HANA / Blue Yonder WMS
+    purpose: Baseline demand history for forecasting and service level calculations
+    preferred_stream_type: Subject Areas
+  - name: Advanced statistical forecasts & demand signals
+    source: SAS (Advanced Statistical Forecasting) and Cortex Auto Forecast outputs
+    purpose: Detect weekly demand pattern shifts and provide updated baseline forecasts
+    preferred_stream_type: Subject Areas
+  - name: Current inventory on-hand & in-transit
+    source: SAP S/4HANA and Blue Yonder WMS
+    purpose: Calculate available safety stock coverage and rebalance needs
+    preferred_stream_type: STREAMS
+  - name: >-
+      Network constraints & capacity (lead times, node limits, shipment
+      capacity)
+    source: Kinaxis RapidResponse / Uber Freight
+    purpose: >-
+      Constrain safety stock and sequencing recommendations to feasible network
+      execution
+    preferred_stream_type: Subject Areas
+  - name: Existing safety stock parameters and policy thresholds
+    source: Subject Areas / S4 parameter extracts
+    purpose: >-
+      Baseline policy and guardrails for deterministic update rules and approval
+      thresholds
+    preferred_stream_type: Subject Areas
+happy_path:
+  - step: >-
+      Collect and consolidate data (sales, forecasts, inventory, network
+      constraints)
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Pull and normalize inputs from S4, SAS, Kinaxis, WMS/TMS into Subject
+      Areas for analysis
+  - step: Detect demand pattern shifts and generate weekly forecast
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Produce updated demand forecast and flag statistically significant pattern
+      changes
+  - step: Compute safety stock and sequencing recommendations constrained by network
+    stage: decide
+    component: Safety Stock Service
+    purpose: >-
+      Generate optimized safety stock levels and SKU sequencing/rebalancing
+      plans given forecast and network constraints
+  - step: Orchestrate deterministic business rules and apply updates
+    stage: act
+    component: Process Builder + Remote Functions
+    purpose: >-
+      Apply business-rule filters, route high-impact changes to CWB if needed,
+      and write approved parameter updates to S4 and Kinaxis; push pick/sequence
+      priorities to WMS/TMS
+  - step: Surface results and notify planners for exceptions or review
+    stage: notify
+    component: CWB Lifecycle + UI Screens (dashboard/notification)
+    purpose: >-
+      Show changes, collect approvals for high-risk adjustments, and notify
+      planner/operations teams of applied updates
+branches:
+  - condition: Forecast signal shows no statistically significant change
+    response: >-
+      Skip parameter writebacks; log decision and schedule next weekly
+      evaluation
+    outcome: >-
+      Maintain current safety stock and sequencing; avoid unnecessary
+      perturbation
+  - condition: >-
+      Safety Stock Service recommends change exceeding configured impact
+      threshold or writeback guardrail
+    response: >-
+      Create CWB Lifecycle for human review/approval and pause automatic
+      writeback until approval
+    outcome: >-
+      Human-in-the-loop for high-risk updates; audit trail preserved and changes
+      applied only after approval
+  - condition: Data quality issues detected (missing/stale inventory or lead-time data)
+    response: >-
+      Pause automation, generate exception via Process Builder, and notify data
+      steward/team to remediate
+    outcome: >-
+      Prevent unsafe automated updates; resume run after data is corrected and
+      validated

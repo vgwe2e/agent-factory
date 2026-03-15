@@ -1,0 +1,42 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect ASN, gate events, WMS state, and inspection data for processing
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Build subject-area view of inbound load, available locations, and
+      constraints
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Agent Team
+    purpose: >-
+      Classify items (accept/quarantine/return), score risk, and generate
+      actionable plan
+    confidence: confirmed
+    node_type: integration
+  - name: Process Builder + Remote Functions
+    purpose: >-
+      Reserve quarantine slots, assign labor, schedule putaway, and update SAP
+      S/4HANA/WMS
+    confidence: confirmed
+    node_type: act
+  - name: UI Screen + Notification
+    purpose: >-
+      Provide operators with pick/put instructions, quarantine labels, and
+      exception CWB items
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end receiving and putaway orchestration with
+      immediate exception handling for non-conforming materials across yard,
+      inbound unloading, inspection, and segregation to reduce receiving cogs,
+      improve otif, and accelerate downstream throughput. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

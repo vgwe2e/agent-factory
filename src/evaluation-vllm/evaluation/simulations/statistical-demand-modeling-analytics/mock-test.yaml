@@ -1,0 +1,39 @@
+decision: >-
+  Develop, refine, and deploy demand forecasting models to improve forecast
+  accuracy and inform production and procurement decisions.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Historical sales data availability in SAP S/4HANA.
+  parameters:
+    objective: >-
+      Develop and deploy statistical and ML-based demand forecasting models to
+      improve production planning and inventory decisions, reducing stockouts
+      and excess inventory.
+    key_inputs:
+      - Historical Sales Data
+      - Key Influencing Variables
+      - Forecast Accuracy Metrics
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate the development, deployment, and maintenance of time-series
+    forecasting and ML models, including regression analysis for demand drivers.
+  outcome: >-
+    Improved forecast accuracy leading to reduced COGS and working capital,
+    aligned production and procurement with real-time demand signals.
+  affected_components:
+    - DDM/Crawlers
+    - Data Quality & Validation
+    - Cortex Auto Forecast
+    - AutoML
+    - Remote Functions
+    - Cortex Monitoring
+    - Dashboard
+rationale: >-
+  Tighter alignment of production and procurement with actual demand reduces
+  waste and improves financial performance.

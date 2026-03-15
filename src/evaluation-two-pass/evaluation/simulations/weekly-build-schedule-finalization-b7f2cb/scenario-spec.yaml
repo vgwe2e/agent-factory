@@ -1,0 +1,157 @@
+objective: >-
+  Autonomously generate conflict-free, cost-optimized weekly production
+  schedules (by plant & shift) that coordinate multi-echelon constraints to
+  minimize COGS while preserving OTIF targets across vehicle platforms and
+  components.
+trigger: >-
+  Weekly planning cadence start (scheduled job) or updated demand / supplier
+  readiness feed for the upcoming weekly horizon.
+decision: >-
+  Finalize weekly build schedule by plant and shift by evaluating production
+  constraints, supplier readiness, capacity, inventory, sequencing rules, and
+  cost trade-offs to produce a conflict-free schedule that optimizes COGS while
+  meeting OTIF service targets.
+expected_action: >-
+  Run deterministic scheduling process that (1) ingests ERP and supplier
+  readiness data, (2) evaluates multi-echelon constraints and cost implications,
+  (3) generates one or more conflict-free, cost-ranked weekly schedules, (4)
+  auto-commits the approved schedule to SAP S/4HANA for supplier release and
+  work orders, and (5) route flagged exceptions to CWB for human review and
+  resolution.
+expected_outcome: >-
+  Lowered COGS through optimized sequencing and allocation, improved line
+  efficiency (reduced changeover / downtime), higher on-time delivery rates,
+  fewer supplier release errors, and reduced manual schedule rework.
+rationale: >-
+  Coordinating weekly build schedules end-to-end across plants, suppliers,
+  inventory and capacity reduces cascading conflicts and enables cost-aware
+  trade-offs. A deterministic, process-driven engine using Aera Process Builder,
+  STREAMS for data integration, and Remote Functions for ERP writeback enforces
+  rules and ensures repeatable, auditable schedule finalization while routing
+  exceptions for human-in-the-loop resolution.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Readiness Portal / EDI
+    status: tbd
+  - name: Factory Execution / Capacity Planner
+    status: tbd
+  - name: Warehouse / Inventory System
+    status: tbd
+key_inputs:
+  - name: Master Demand / Build Orders
+    source: SAP S/4HANA
+    purpose: >-
+      Defines vehicle volumes and target delivery dates per platform and region
+      for weekly horizon.
+    preferred_stream_type: batch
+  - name: Plant Capacity & Shift Templates
+    source: Factory Execution / Capacity Planner
+    purpose: >-
+      Available lines, shifts, throughput constraints and changeover durations
+      used for scheduling feasibility and efficiency calculation.
+    preferred_stream_type: batch
+  - name: BOM & Routing (Parts to Vehicle Mapping)
+    source: SAP S/4HANA
+    purpose: >-
+      Maps components to vehicle builds to enforce multi-echelon constraints and
+      supplier-specific allocation rules.
+    preferred_stream_type: batch
+  - name: Supplier Readiness & Lead-times
+    source: Supplier Readiness Portal / EDI
+    purpose: >-
+      Indicates supplier capacity, confirmed pull windows, and potential
+      shortages to avoid infeasible schedules.
+  - name: On-hand & In-transit Inventory
+    source: Warehouse / Inventory System
+    purpose: >-
+      Supports feasibility checks and enables alternate sourcing or sequencing
+      to reduce expedited costs.
+  - name: 'Cost Rates (COGS drivers: material, changeover, expedite, penalty)'
+    source: Finance / SAP S/4HANA
+    purpose: >-
+      Enables cost-based trade-off evaluation and ranking of candidate
+      schedules.
+    preferred_stream_type: batch
+  - name: Sequencing Rules & Constraints (quality, tooling, regulatory)
+    source: Planning Rules Repository
+    purpose: >-
+      Enforces deterministic business rules during schedule generation to ensure
+      compliance and manufacturability.
+happy_path:
+  - step: >-
+      Ingest master orders, BOM, capacity, inventory, and supplier readiness
+      into Subject Areas and STREAMS
+    stage: ingest
+    component: STREAMS / Subject Areas
+    purpose: >-
+      Create unified, validated subject-area tables for scheduling inputs and
+      master constraints.
+  - step: >-
+      Run deterministic constraint evaluation and cost model to generate
+      feasible schedule candidates
+    stage: analyze
+    component: Process Builder -> Rules + Data View
+    purpose: >-
+      Apply sequencing rules, multi-echelon capacity checks, and COGS drivers to
+      produce conflict-free candidate schedules.
+  - step: >-
+      Execute optimizer transaction (Remote Function) to pick cost-ranked
+      schedule and lock resources
+    stage: decide
+    component: Process Builder -> Remote Functions -> Transaction
+    purpose: >-
+      Select final schedule that minimizes COGS while meeting OTIF and lock plan
+      for writeback.
+  - step: >-
+      Commit finalized schedule and supplier releases to SAP S/4HANA and create
+      work orders
+    stage: act
+    component: Remote Functions (ERP writeback)
+    purpose: Push schedule to ERP for supplier release and shop-floor execution.
+  - step: >-
+      Surface schedule summary and KPIs; route any flagged exceptions to CWB
+      Lifecycle for planner review
+    stage: surface
+    component: UI Screens + CWB Lifecycle (Notification)
+    purpose: >-
+      Provide planners with rationale, cost delta, and action items for
+      overrides or manual adjustments.
+  - step: Post-execution review and monitoring of realized COGS and OTIF metrics
+    stage: review
+    component: Subject Areas -> Dashboard (UI Screens)
+    purpose: >-
+      Close the loop: measure outcomes and feed variance signals into next
+      weekly cycle.
+branches:
+  - condition: >-
+      Critical supplier shortfall or confirmed part shortage that invalidates
+      all candidate schedules
+    response: >-
+      Generate exception CWB with prioritized mitigation options (alternate
+      supplier, re-allocation, defer builds) and invoke dynamic subprocess to
+      simulate contingency schedules.
+    outcome: >-
+      Planners receive structured options for manual decision; system retains
+      the best contingency plan to minimize COGS impact and maintain OTIF where
+      possible.
+  - condition: Optimizer/Remote Function fails or returns infeasible solution set
+    response: >-
+      Fallback to deterministic rule-based reserve schedule generated by Process
+      Builder Rules and notify planners with error details and suggested manual
+      schedule.
+    outcome: >-
+      A safe, rule-compliant schedule is available to commit to ERP to avoid
+      missing supplier release windows while engineering resolves optimizer
+      issue.
+  - condition: >-
+      Multiple near-equal cost schedules with different risk profiles (e.g.,
+      lower cost vs. higher on-time confidence)
+    response: >-
+      Surface top-ranked alternatives with cost vs. OTIF trade-offs in UI Screen
+      and create Action Item for planner sign-off; allow automated tie-breaker
+      policy if SLA allows.
+    outcome: >-
+      Planner selects preferred trade-off quickly; chosen schedule is committed
+      and lower-impact alternatives are saved for rapid rollback if needed.

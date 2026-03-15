@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Parts order creation, urgent request, inventory imbalance, core return initiation.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve parts orders and urgent requests from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze inventory levels and order details using Cortex Auto Forecast.]
+  N2 --> N3{PB: Process Builder - Determine expedited shipping options and cross-DC transfers.}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute optimized fulfillment and transfer decisions.]
+  N4 --> N5[PB: Cortex Monitoring - Monitor and adjust decisions based on real-time data.]
+  N5 --> Z1[Outcome: Reduced working capital, minimized stockouts, improved on-time in-full (OTIF) delivery rates.]
+  N3 -->|Insufficient inventory for urgent req...| B1[Expedite shipping and reallocate inventory.]
+  B1 --> O1[Outcome: Minimized delays and ensured on-time delivery.]
+  O1 --> End[End]
+  N3 -->|High holding costs in certain DCs.| B2[Initiate cross-DC transfers.]
+  B2 --> O2[Outcome: Balanced inventory levels and reduced holding costs.]
+  O2 --> End[End]
+  N3 -->|Excess core returns.| B3[Allocate cores to remanufacturing programs.]
+  B3 --> O3[Outcome: Optimized working capital and throughput.]
+  O3 --> End[End]
+  Z1 --> End[End]

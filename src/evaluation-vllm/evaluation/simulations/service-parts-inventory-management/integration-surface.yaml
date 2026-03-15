@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: historical-sales-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: inventory-levels
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: parts-supercession-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: warranty-and-recall-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Predict future demand for service parts
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure optimal inventory levels across the network
+  - component: UI Screens
+    type: process_builder
+    function: Offer actionable insights for local inventory management
+  - component: Remote Functions
+    type: process_builder
+    function: Prevent inventory waste and maintain part availability
+  - component: Safety Stock Service
+    type: process_builder
+    function: Balance service risk and cost of goods sold
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize service parts inventory across dealer, distributor, and
+      service network by forecasting demand, replenishing high-risk parts,
+      optimizing inventory, managing obsolescence, and ensuring recall/warranty
+      parts are stocked. and approve the recommended action.

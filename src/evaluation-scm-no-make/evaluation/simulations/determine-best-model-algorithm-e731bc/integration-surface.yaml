@@ -1,0 +1,91 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Statistical Tool
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Statistical Tool
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (generic)
+    type: APS
+    status: identified
+  - name: Kinaxis for FG Safety Stock Modeling
+    type: APS
+    status: identified
+  - name: Kinaxis for Rebalancing
+    type: APS
+    status: identified
+  - name: Kinaxis for Order Expediting
+    type: APS
+    status: identified
+  - name: Kinaxis Rapid Response for APS supply chain planning
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL)
+    type: 3PL/TMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+aera_ingestion:
+  - stream_name: historical-sales-sku-level-time-series
+    stream_type: time_series
+    source: S4 / Subject Areas
+  - stream_name: pos-and-demand-signals-store-region
+    stream_type: time_series
+    source: S4 / downstream integrations
+  - stream_name: promotions-pricing-calendar
+    stream_type: batch
+    source: S4 / Marketing feeds
+  - stream_name: inventory-on-hand-levels
+    stream_type: batch
+    source: Blue Yonder WMS / S4
+  - stream_name: supply-status-lead-times
+    stream_type: batch
+    source: Kinaxis RapidResponse / S4
+  - stream_name: macro-market-indicators-pricing-elasticity-seasonality-drivers
+    stream_type: batch
+    source: External market feeds / DDM crawlers
+  - stream_name: forecast-performance-metrics-mape-bias-service-level
+    stream_type: time_series
+    source: Subject Areas / Cortex Monitoring
+  - stream_name: ebitda-targets-and-margin-constraints
+    stream_type: batch
+    source: Finance (S4 or planning inputs)
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Assess demand patterns, candidate algorithms, and produce baseline metrics
+      (MAPE, bias)
+  - component: Process Builder (Process, Rules)
+    type: process_builder
+    function: >-
+      Apply rules to balance fit vs complexity and adjust parameters to meet
+      EBITDA constraints
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Perform complex calculations, persist tuned parameters to Subject Areas,
+      write forecasts/params back to S4 and trigger Kinaxis
+  - component: CWB Lifecycle / UI Screens
+    type: process_builder
+    function: >-
+      Present borderline cases for human override, capture decisions, and
+      finalize writeback
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end top-line demand forecasting with continuous
+      demand sensing, automated model selection and parameterization, and
+      ebitda-aligned tuning to reduce stockouts, waste, and promo volatility
+      while improving revenue and margin. and approve the recommended action.

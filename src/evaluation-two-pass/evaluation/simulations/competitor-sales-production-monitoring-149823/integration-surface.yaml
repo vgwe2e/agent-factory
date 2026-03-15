@@ -1,0 +1,60 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Competitor data feeds (third-party / web-scrape)
+    type: External Feed
+    status: tbd
+  - name: Regional economic indicators (macro data provider)
+    type: External Feed
+    status: tbd
+  - name: Consumer preference signals (surveys/CRM insights)
+    type: External Feed
+    status: tbd
+  - name: Regulatory / policy updates feed
+    type: External Feed
+    status: tbd
+aera_ingestion:
+  - stream_name: current-sales-supply-commitments
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: competitor-sales-production-signals
+    stream_type: api
+    source: Competitor data feeds (third-party / web-scrape)
+  - stream_name: regional-economic-indicators
+    stream_type: batch
+    source: Regional economic indicators (macro data provider)
+  - stream_name: consumer-preference-channel-signals
+    stream_type: batch
+    source: Consumer preference signals (surveys/CRM insights)
+  - stream_name: regulatory-event-stream
+    stream_type: api
+    source: Regulatory / policy updates feed
+  - stream_name: operational-constraints
+    stream_type: batch
+    source: SAP S/4HANA
+processing:
+  - component: 'Cortex Auto Forecast + Process Builder: Rules'
+    type: cortex
+    function: >-
+      Combine forecasted demand shifts with rule-based business logic to compute
+      priority and expected ROI per region/segment
+  - component: 'Remote Functions + Process Builder: Notification + UI Screens'
+    type: process_builder
+    function: >-
+      Make authorized changes to ERP and surface recommendations and rationale
+      to commercial and supply teams
+  - component: 'Process Builder: IF + Process Builder: Agent Team'
+    type: agent_teams
+    function: >-
+      Apply confidence gating and human-in-the-loop only when required,
+      producing clear action items for execution
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously prioritize regions and customer segments and
+      orchestrate demand shaping, supply commitments, and pricing adjustments
+      using integrated market, competitor, economic, consumer, and regulatory
+      signals to reduce working capital and increase revenue capture. and
+      approve the recommended action.

@@ -1,0 +1,133 @@
+objective: >-
+  Continuously optimize LSP (Logistics Service Provider) spend and enforce
+  contract compliance by aligning demand signals with supplier performance to
+  reduce COGS, improve working capital, and protect EBITDA.
+trigger: >-
+  Daily scheduled ingest or detection of LSP performance deviation (KPIs breach
+  vs. contract SLAs) via STREAMS/monitoring job.
+decision: >-
+  Choose supplier usage mix (preferred LSP vs. alternatives, ramp-ups) and
+  contract enforcement actions that balance marginal COGS impact against
+  supplier performance risk and contractual terms.
+expected_action: >-
+  Automatically detect LSP performance deviations, surface root causes and
+  contract obligations, produce ranked corrective actions (auto-route shipments,
+  alternate LSP ramp-ups, claim/penalty initiation), and open CWB Lifecycle
+  recommendations for approvals or execute Remote Function writebacks to S4/TMS
+  when within auto-action thresholds.
+expected_outcome: >-
+  Tighter cost control and higher contract utilization leading to lower freight
+  COGS, fewer service exceptions, improved working capital through timely
+  dispute/claim handling, and measurable EBITDA uplift from optimized LSP mix
+  and penalty recovery.
+rationale: >-
+  Combining demand forecasts, contract content, real shipment costs, and
+  supplier KPIs in an agentic DI workflow enables proactive, explainable
+  trade-offs between cost and risk. Agentic AI (Agent Team + Process Builder
+  orchestration) handles unstructured contract parsing and adaptive decisions
+  while Cortex services provide demand alignment and RCA for deviations—enabling
+  automated actions or human-in-the-loop approvals where required.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / Supply Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS / 3PL
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+key_inputs:
+  - name: Contract terms & rate cards (LSP master contracts)
+    source: S4 (contract module, supplier master)
+    purpose: >-
+      Enforce negotiated rates, SLAs, penalty clauses and preferred routing
+      rules
+    preferred_stream_type: periodic batch
+  - name: Shipment events & freight invoices
+    source: Uber Freight (TMS) / 3PL
+    purpose: Measure actual carrier usage, cost, and invoice-to-contract compliance
+    preferred_stream_type: delta batch
+  - name: Operational KPIs (on-time, claims, dwell, detention)
+    source: Blue Yonder WMS / Kinaxis RapidResponse
+    purpose: Detect performance deviations vs. SLAs and feed RCA
+    preferred_stream_type: delta batch
+  - name: Demand forecast / consumption signals
+    source: SAS (Advanced Statistical Forecasting) / Kinaxis
+    purpose: Align supplier capacity and recommended routing to expected demand
+    preferred_stream_type: periodic batch
+  - name: Inventory & order shortage signals
+    source: Kinaxis (shortage propagation / order expediting)
+    purpose: >-
+      Prioritize LSP selection for expedited replenishment and cost-vs-service
+      trade-offs
+    preferred_stream_type: delta batch
+  - name: Historical spend and KPI trends
+    source: Subject Areas (Aera Data Foundation / STREAMS outputs)
+    purpose: >-
+      Baseline optimization models, contract utilization metrics and provide
+      inputs to RCA/forecast
+happy_path:
+  - step: Ingest consolidated contractual, shipment, KPI and forecast datasets
+    stage: ingest
+    component: STREAMS / DDM/Crawlers
+    purpose: >-
+      Create unified subject-area tables for LSP spend, contracts, events and
+      forecasts
+  - step: Analyze demand alignment and detect supplier performance deviations
+    stage: analyze
+    component: Cortex Auto Forecast + RCA Service
+    purpose: >-
+      Align demand signals to capacity and surface root causes of KPI
+      degradation
+  - step: Generate ranked corrective actions and contract compliance checks
+    stage: decide
+    component: Process Builder (Rules / IF) + Agent Team
+    purpose: >-
+      Apply business rules, agentic reasoning on unstructured contract text and
+      rank actions (auto-route, alternative LSP, claim)
+  - step: >-
+      Execute actions: auto-commit allowable changes or create CWB for
+      exceptions
+    stage: act
+    component: Remote Functions + CWB Lifecycle
+    purpose: >-
+      Write changes to S4/TMS when permitted; open CWB for human approvals when
+      thresholds or penalties apply
+  - step: Notify stakeholders and surface dashboards/recommendations
+    stage: notify
+    component: Notification + UI Screen (dashboard/report)
+    purpose: >-
+      Deliver recommended actions, financial impact, and next steps to
+      procurement/logistics/finance
+branches:
+  - condition: >-
+      Performance deviation within auto-action tolerance and no contract penalty
+      implications
+    response: >-
+      Automated routing change and carrier ramp executed via Remote Functions;
+      update spend and KPIs in Subject Areas
+    outcome: >-
+      Fast correction with no manual intervention; reduced service impact and
+      minimal cost delta
+  - condition: Deviation exceeds tolerance or contract language triggers penalties/claims
+    response: >-
+      Create CWB Lifecycle case with Agent Team summary, attach RCA and
+      financial impact; route to Procurement + Legal for approval
+    outcome: >-
+      Human-in-the-loop review, potential penalty recovery or negotiated
+      remediation; audit trail preserved
+  - condition: Key input data quality or missing contract metadata
+    response: >-
+      Process Builder triggers Data Quality & Validation rules in STREAMS,
+      pauses decision, notifies data stewards and queues Agent Team to
+      extract/interpret missing clauses
+    outcome: >-
+      Decision delayed until data remediated; prevents incorrect automated
+      actions and ensures compliance

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New production component introduction, annual review cycle, raw material index update, should-cost model update, tooling/capital equipment purchase request.]
+  A --> N1[Stream: DDM/Crawler - Retrieve new production component data]
+  N1 --> N2[Cortex: AutoML - Analyze cost structure and market conditions]
+  N2 --> N3{PB: CWB Lifecycle - Present initial piece price recommendation}
+  N3 -->|Primary| N4[PB: Remote Functions - Update SAP S/4HANA with approved price]
+  N4 --> N5[PB: UI Screens - Monitor and report on price changes]
+  N5 --> Z1[Outcome: Reduced COGS, improved EBITDA, and sustained margin integrity across platforms and regions.]
+  N3 -->|Market conditions deteriorate| B1[Trigger renegotiation workflow]
+  B1 --> O1[Outcome: Adjust pricing terms]
+  O1 --> End[End]
+  N3 -->|Supplier does not meet should-cost be...| B2[Initiate cost reduction actions]
+  B2 --> O2[Outcome: Reduce supplier costs]
+  O2 --> End[End]
+  N3 -->|Tooling payment exceeds budget| B3[Prioritize and delay payments]
+  B3 --> O3[Outcome: Manage cash flow effectively]
+  O3 --> End[End]
+  Z1 --> End[End]

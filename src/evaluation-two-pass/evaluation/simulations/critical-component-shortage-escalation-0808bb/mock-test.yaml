@@ -1,0 +1,59 @@
+decision: >-
+  Decide an optimal escalation & mitigation plan for critical component
+  shortages, selecting actions across procurement (expedite/alternate supplier),
+  production (reschedule/shift capacity), and logistics (priority
+  shipments/re-routing) balanced by cost and service-level impact.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Periodic planning run or detection of critical component shortage (from SAP
+    S/4HANA) that threatens committed production schedules or OTD targets.
+  parameters:
+    objective: >-
+      Autonomously identify multi-plant and supplier-driven bottlenecks,
+      simulate mitigation trade-offs, and execute coordinated procurement,
+      production scheduling, and logistics actions to reduce COGS and improve
+      on-time delivery (OTD) across automotive plants.
+    key_inputs:
+      - Planned production schedule (by plant & line)
+      - BOM & critical component requirements
+      - On-hand inventory and in-transit receipts
+      - Supplier capacity, lead times & delivery reliability
+      - Plant capacity profiles and constraints
+      - Logistics transit times and slot availability
+      - Escalation & cost policies (business rules)
+    source_systems:
+      - SAP S/4HANA
+      - Supplier Portal / EDI
+      - Transportation / 3PL System
+      - Ad-hoc uploads (spreadsheets, supplier notes)
+expected_output:
+  action: >-
+    Agentic orchestration evaluates shortage scenarios, recommends and (where
+    authorized) executes coordinated writebacks to SAP S/4HANA (PO updates,
+    production schedule changes, shipment priorities) and opens CWB approvals
+    for exceptions requiring human sign-off.
+  outcome: >-
+    Reduced stockouts and line-stops, improved OTD for affected orders,
+    measurable P&L impact (lower emergency procurement premium vs. lost
+    revenue), and an auditable decision trail of simulated scenarios, selected
+    mitigations, and execution outcomes.
+  affected_components:
+    - STREAMS
+    - Cortex RCA Service
+    - Process Builder (Data Science / Remote Functions)
+    - Agent Team
+    - Process Builder
+    - UI Screen
+    - Dashboard
+rationale: >-
+  Agentic AI (multi-agent + Process Builder) lets the platform reason across
+  domains (procurement, production, logistics) and run multi-scenario
+  simulations to trade off service vs. cost. Cortex RCA identifies root drivers;
+  Process Builder and Remote Functions enable safe, auditable execution and ERP
+  writebacks. CWB Lifecycle handles human-in-the-loop approvals for high-risk
+  actions.

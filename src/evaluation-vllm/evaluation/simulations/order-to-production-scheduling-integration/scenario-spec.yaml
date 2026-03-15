@@ -1,0 +1,63 @@
+objective: >-
+  Integrate order sequencing, release/execution monitoring, dynamic schedule
+  changes, and material availability resolution to optimize production
+  throughput, reduce COGS, and improve working capital.
+trigger: New confirmed vehicle order in SAP S/4HANA.
+decision: >-
+  Sequence confirmed vehicle orders for optimal line efficiency, minimize
+  changeovers, meet due dates, balance throughput vs. inventory; manage changes
+  to build schedule orders; resolve material availability constraints.
+expected_action: >-
+  Automate end-to-end sequencing, release timing, adaptive schedule changes, and
+  material constraints with real-time data and cross-system coordination.
+expected_outcome: >-
+  Optimized production throughput, reduced COGS, improved working capital,
+  synchronized decisions across Order and Production domains.
+rationale: >-
+  Leverage Aera's deterministic approach to streamline production scheduling and
+  material management, ensuring efficient and timely order fulfillment.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Confirmed Vehicle Orders
+    source: SAP S/4HANA
+    purpose: To sequence orders for optimal production line efficiency.
+  - name: Production Plan
+    source: SAP S/4HANA
+    purpose: To monitor and adjust manufacturing order releases.
+  - name: Material Availability
+    source: SAP S/4HANA
+    purpose: To resolve material constraints and avoid delays.
+happy_path:
+  - step: Retrieve confirmed vehicle orders from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest confirmed vehicle orders for sequencing.
+  - step: Sequence orders for optimal line efficiency using Cortex Auto Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Optimize order sequence based on due dates and resource utilization.
+  - step: Release manufacturing orders and monitor progression.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure on-time completion and alignment with production plan.
+  - step: Adjust build schedules based on constraints and priorities.
+    stage: act
+    component: Remote Functions
+    purpose: Balance throughput and due dates dynamically.
+  - step: Resolve material availability constraints.
+    stage: act
+    component: Remote Functions
+    purpose: Select alternative materials, suppliers, or production options.
+branches:
+  - condition: Material shortage detected
+    response: Trigger alternative sourcing options.
+    outcome: Avoid production delays by resolving material constraints.
+  - condition: Production delay identified
+    response: Escalate to production team for immediate action.
+    outcome: Minimize impact on overall production schedule.
+  - condition: Due date conflict
+    response: Adjust order sequence and notify stakeholders.
+    outcome: Maintain optimal production flow while meeting customer deadlines.

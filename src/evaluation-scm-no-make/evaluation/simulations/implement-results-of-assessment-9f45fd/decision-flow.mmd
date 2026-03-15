@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled daily segmentation assessment (or on-demand run) after nightly data refresh completes and promotion calendar updates are ingested.]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Ingest master and transactional data (SKU, location, sales history, promotions, inventory, capacity).]
+  N1 --> N2[Stream: STREAMS (Rules) + Data Science (deterministic rule set) - Run deterministic segmentation rules and transforms to assign ABC/XYZ labels and confidence scores.]
+  N2 --> N3{PB: Process Builder (IF/Rules) + CWB Lifecycle (recommendation view) - Evaluate segmentation results against business thresholds and constraints; surface recommendations.}
+  N3 -->|Primary| N4[PB: Process Builder (Transaction) + Remote Functions - Execute allocations and writebacks: update S4 (master/ATP), push plans to Kinaxis, create transfers/orders in WMS/TMS via Remote Functions.]
+  N4 --> N5[PB: Cortex Monitoring + Process Builder (Rollback Transaction) + UI Screen - Validate downstream acceptance and monitoring; enable rapid rollback if validation fails within window.]
+  N5 --> Z1[Outcome: Touchless, repeatable allocation flows that align inventory and production to revenue-driven demand segments, improved forecast stability and service, measurable reduction in stockouts/overstock at segment level, and ability to revert recent allocations within a defined validation window.]
+  N3 -->|Segmentation confidence below thresho...| B1[Route SKU-Location to CWB Lifecycle for manual review and override by demand planner.]
+  B1 --> O1[Outcome: Human-in-the-loop decision prevents inappropriate automatic reallocation; retains audit trail.]
+  O1 --> End[End]
+  N3 -->|Downstream system (S4/Kinaxis/WMS) re...| B2[Process Builder pauses execution, creates exception, and triggers notification to planner + automatic rollback of partial changes.]
+  B2 --> O2[Outcome: Partial changes are reverted; exception logged for corrective action and re-run.]
+  O2 --> End[End]
+  N3 -->|High business impact detected (top re...| B3[Override automatic touchless execution: require approver via UI Screen (CWB) before commit.]
+  B3 --> O3[Outcome: Additional control for high-risk items while preserving automated flows for the long tail.]
+  O3 --> End[End]
+  Z1 --> End[End]

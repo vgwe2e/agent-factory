@@ -1,0 +1,40 @@
+decision: >-
+  Whether to pass a material/component through dimensional verification,
+  schedule functional testing, determine torque audit frequency, inspect
+  material and finish quality, and perform sealing and leakage tests.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Start of production cycle or completion of a key build point.
+  parameters:
+    objective: >-
+      To autonomously decide and execute inspection actions, prioritize critical
+      checks, and route exceptions with predefined remediation for in-process
+      component and assembly verification.
+    key_inputs:
+      - Component Dimensions
+      - Functional Test Results
+      - Torque Audit Data
+      - Material & Finish Quality Data
+      - Sealing & Leakage Test Results
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Execute inspection actions, prioritize critical checks, and route exceptions
+    with predefined remediation.
+  outcome: >-
+    Reduced COGS impacts from rework and scrap, improved OTIF, and increased
+    line throughput.
+  affected_components:
+    - DDM/Crawler
+    - STREAMS
+    - Process Builder
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Automating and optimizing in-process verification steps reduces rework,
+  improves quality, and enhances overall production efficiency.

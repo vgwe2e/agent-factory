@@ -1,0 +1,62 @@
+decision: >-
+  Execute an automated cross-region inventory transfer (quantity, source DC,
+  destination DC, timing) versus escalate for manual intervention.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled detection job (e.g., hourly/batch) or incoming forecast update
+    where regional demand imbalance between Region A and Region B exceeds
+    configured threshold.
+  parameters:
+    objective: >-
+      Automatically detect regional demand mismatches and orchestrate
+      cross-region inventory repositioning to align supply with regional demand
+      signals, reducing emergency transfers and regional COGS while improving
+      service levels.
+    key_inputs:
+      - Regional demand forecasts (per SKU, per DC)
+      - Inventory on hand & available (per SKU, per DC)
+      - Open orders, allocations and safety stock targets
+      - Transfer lead times, transit cost and capacity
+      - DC capacity & storage constraints
+      - >-
+        Business rules and thresholds (imbalance % , min transfer qty, cost vs
+        benefit)
+      - Shortage propagation / planning consumption
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Kinaxis RapidResponse
+      - Kinaxis (Rebalancing / Shortage / Expediting)
+      - Blue Yonder WMS
+      - Uber Freight (TMS / 3PL)
+      - SAS (Advanced Statistical Forecasting)
+expected_output:
+  action: >-
+    Consolidate demand and inventory signals, evaluate transfer feasibility and
+    ROI using deterministic business rules and optimization, create transfer
+    orders in S4, book transport with Uber Freight TMS (or 3PL), and update
+    planning systems (Kinaxis) and WMS (Blue Yonder).
+  outcome: >-
+    Balanced regional inventories aligned to demand signals, fewer emergency
+    expedites, improved regional service levels, reduced inter-regional transfer
+    cost and COGS, and synchronized planning/fulfillment state across S4,
+    Kinaxis and WMS.
+  affected_components:
+    - STREAMS
+    - Process Builder (Rules + Data View)
+    - Process Builder (Remote Functions)
+    - Remote Functions
+    - Process Builder (Notification) + UI Screen / Dashboard
+    - Dashboard
+rationale: >-
+  Use Process Builder to orchestrate periodic detection and deterministic
+  rule-based decisioning (fast, auditable). STREAMS consolidates and validates
+  source data; Remote Functions perform non‑SQL calculations and API writebacks
+  to S4/TMS; integrating with Kinaxis ensures planning state and shortage
+  propagation are updated. This hybrid of deterministic rules + orchestrated
+  writebacks minimizes latency and human effort while preserving control for
+  exceptions.

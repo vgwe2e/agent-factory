@@ -1,0 +1,19 @@
+flowchart TD
+    A[UI: <component> Pricing Opportunity Initiated] --> B[PB: <Process> Initial Piece Price Determination]
+    B --> C[PB: <IF> Negotiation Stance Selected?]
+    C -->|Yes| D[PB: <Process> Annual Price Review Strategy]
+    C -->|No| E[PB: <Rules> Apply Default Stance]
+    D --> F[PB: <IF> Raw Material Index > Threshold?]
+    F -->|Yes| G[PB: <Process> Adjust Pricing Terms]
+    F -->|No| H[PB: <Process> Pass-Through Cost Calculation]
+    G --> I[PB: <IF> Should Cost Validation Required?]
+    H --> I
+    I -->|Yes| J[PB: <Process> Target Should-Cost vs Current Pricing]
+    I -->|No| K[PB: <Process> Cost-Reduction Actions]
+    J --> L[PB: <IF> Tooling Payment Schedule Needed?]
+    K --> L
+    L -->|Yes| M[PB: <Process> Manage Payment Prioritization]
+    L -->|No| N[PB: <Process> Finalize Pricing Strategy]
+    M --> N
+    N --> O[Cortex: <capability> Pricing Strategy Optimized]
+    O --> End["End"]

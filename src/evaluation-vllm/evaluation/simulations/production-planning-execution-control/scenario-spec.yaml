@@ -1,0 +1,87 @@
+objective: >-
+  Reduce COGS through optimized production planning and execution control,
+  improving cost efficiency and on-time delivery.
+trigger: Daily production start or significant demand/capacity signal change.
+decision: >-
+  Determine optimal daily build schedule, line sequencing, change order
+  implementation, downtime recovery, OEE-driven improvements, and short-term
+  volume adjustments.
+expected_action: >-
+  Execute optimized production plans, adjust schedules, implement change orders,
+  recover from downtimes, and make short-term volume adjustments.
+expected_outcome: >-
+  Improved adherence to build schedules, minimized cycle times, controlled COGS
+  impact from change orders, reduced downtime impact, enhanced OEE, and balanced
+  production volumes.
+rationale: >-
+  By integrating production planning and execution control into a unified
+  decision engine, Ford can achieve better cost efficiency and on-time delivery
+  across its multi-plant vehicle platforms.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Daily Build Schedule
+    source: SAP S/4HANA
+    purpose: To define the target build plan for the day.
+  - name: Material Availability
+    source: SAP S/4HANA
+    purpose: To ensure materials are available for the planned builds.
+  - name: Line Capacity
+    source: SAP S/4HANA
+    purpose: To balance the build schedule with available line capacity.
+  - name: Change Orders
+    source: SAP S/4HANA
+    purpose: To incorporate approved engineering/content changes into production.
+  - name: Downtime Events
+    source: SAP S/4HANA
+    purpose: To detect and respond to production stoppages.
+  - name: OEE Metrics
+    source: SAP S/4HANA
+    purpose: To assess and improve equipment effectiveness.
+  - name: Demand/Capacity Signals
+    source: SAP S/4HANA
+    purpose: To make short-term production volume adjustments.
+happy_path:
+  - step: >-
+      Ingest daily build schedule, material availability, line capacity, change
+      orders, downtime events, OEE metrics, and demand/capacity signals from SAP
+      S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for production planning and execution.
+  - step: >-
+      Analyze data to determine optimal daily build schedule, line sequencing,
+      change order implementation, downtime recovery, OEE-driven improvements,
+      and short-term volume adjustments.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Generate optimized production plans and adjustments.
+  - step: Decide on the best course of action based on the analysis results.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Present recommendations for human review and approval.
+  - step: >-
+      Execute the approved production plans, including rescheduling,
+      resequencing, implementing change orders, and adjusting production
+      volumes.
+    stage: act
+    component: Remote Functions
+    purpose: Implement the optimized production plans.
+  - step: >-
+      Monitor and track adherence to the daily build schedule and production
+      performance.
+    stage: review
+    component: UI Screens
+    purpose: Provide visibility into production performance and adherence.
+branches:
+  - condition: Detected significant deviation from the daily build schedule.
+    response: Trigger rescheduling and resequencing actions.
+    outcome: Adjust production plans to align with the original targets.
+  - condition: Approved change orders require immediate implementation.
+    response: Prioritize change order execution and update production plans.
+    outcome: Minimize COGS impact from change orders.
+  - condition: Production downtime exceeds predefined thresholds.
+    response: Initiate recovery actions and reschedule affected builds.
+    outcome: Minimize downtime impact on COGS and production targets.

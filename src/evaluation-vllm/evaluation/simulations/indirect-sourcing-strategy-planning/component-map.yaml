@@ -1,0 +1,31 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Gather baseline data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Generate accurate forecasts and identify trends.
+    confidence: confirmed
+    capability: Generate accurate forecasts and identify trends.
+  - name: AutoML
+    purpose: Classify suppliers and assess internal capabilities.
+    confidence: inferred
+    capability: Classify suppliers and assess internal capabilities.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: >-
+      Balance budget constraints, forecast accuracy, and working capital
+      objectives.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Ensure alignment with business goals and market conditions.
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screens
+    purpose: Provide visibility and actionable insights.
+    confidence: confirmed
+    component_type: display

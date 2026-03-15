@@ -1,0 +1,37 @@
+decision: >-
+  Assemble comprehensive sourcing packages, distribute RFQs, manage supplier
+  communications, evaluate supplier proposals, and select optimal bids.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New BOM creation or update in SAP S/4HANA.
+  parameters:
+    objective: >-
+      Automate BOM sourcing, RFQ release, supplier clarification, bid analysis,
+      and cost breakdowns to optimize COGS and cash flow in automotive sourcing.
+    key_inputs:
+      - BOM Data
+      - Supplier List
+      - Supplier Responses
+      - Technical Proposals
+      - Commercial Bids
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Generate precise RFQs, evaluate supplier proposals, and select optimal bids
+    with end-to-end orchestration.
+  outcome: >-
+    Reduced cycle times, improved on-time delivery, optimized COGS, and enhanced
+    cash flow.
+  affected_components:
+    - DDM/Crawler
+    - Process Builder
+    - Process Builder
+    - Dashboard
+rationale: >-
+  Automating RFQ and bid management reduces manual effort, ensures consistency,
+  and improves decision-making through structured evaluation.

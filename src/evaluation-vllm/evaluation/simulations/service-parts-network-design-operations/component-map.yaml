@@ -1,0 +1,25 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Identify optimal inventory repositioning and fulfillment strategies.
+    confidence: inferred
+    capability: Identify optimal inventory repositioning and fulfillment strategies.
+process_builder:
+  - name: Remote Functions
+    purpose: Implement the optimized plans across the network.
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce working capital, lower cogs, and improve otif by
+      autonomously coordinating stock rebalancing, safety stock, and
+      production/fulfillment sequencing across warehouses, plants, and dcs. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

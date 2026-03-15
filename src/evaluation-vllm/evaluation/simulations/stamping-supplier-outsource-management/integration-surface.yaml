@@ -1,0 +1,38 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: supplier-performance-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: quality-audit-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: tooling-die-contracts
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: pricing-terms
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-schedules
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Identify performance trends and anomalies
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Recommend actions or supplier changes
+  - component: Process Builder
+    type: process_builder
+    function: Plan and conduct quality audits
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous monitoring and management of stamping supplier
+      performance, part quality, tooling/die supplier governance, pricing
+      negotiations, and production schedule alignment to reduce cogs, prevent
+      delays, and improve otif. and approve the recommended action.

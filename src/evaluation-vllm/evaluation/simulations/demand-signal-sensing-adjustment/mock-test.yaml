@@ -1,0 +1,37 @@
+decision: >-
+  Acceptance/adjustment of sales orders against forecasted demand, triggering
+  replanning actions.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Real-time sales order data from SAP S/4HANA.
+  parameters:
+    objective: >-
+      Unified DI solution for sensing real-time demand signals, adjusting
+      forecasts, and coordinating promotions, inventory, and order fulfillment
+      across the automotive supply network.
+    key_inputs:
+      - Real-time Sales Orders
+      - Dealer Inventory Levels
+      - Promotional Campaign Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Rapid adjustments to short-term demand forecasts, coordination of
+    promotions, inventory, and order fulfillment.
+  outcome: >-
+    Reduced stockouts, minimized excess, improved OTIF, and enhanced revenue
+    capture.
+  affected_components:
+    - DDM/Crawler
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Process Builder
+    - Dashboard
+rationale: >-
+  Automate demand signal sensing and adjustment to optimize inventory and order
+  fulfillment across the supply network.

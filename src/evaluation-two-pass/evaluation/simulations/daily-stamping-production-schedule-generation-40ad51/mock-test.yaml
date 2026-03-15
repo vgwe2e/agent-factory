@@ -1,0 +1,58 @@
+decision: >-
+  Produce an optimized daily stamping schedule selecting lines, time slots, and
+  sequence to meet demand while minimizing changeovers and idle time; if
+  capacity shortfalls or expedited orders are detected, generate supplier
+  expedited actions and exception CWB items.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Daily scheduled run (nightly planning window) plus event-driven triggers for
+    expedited orders or capacity-impacting incidents (e.g., high-priority sales
+    order, machine outage).
+  parameters:
+    objective: >-
+      Autonomously generate and synchronize daily stamping production schedules
+      across plants and suppliers to minimize changeovers and idle time,
+      maximize capacity utilization, and trigger expedited actions to meet
+      delivery commitments.
+    key_inputs:
+      - Demand Plan & Confirmed Orders
+      - On-hand Inventory & MRP Recommendations
+      - Line Capacity, Status & Downtime
+      - Changeover Times & Tooling Constraints
+      - Supplier Lead Time & Expedited Capacity
+    source_systems:
+      - SAP S/4HANA
+      - Plant MES
+      - Supplier Portal / APIs
+      - Plant Control / SCADA
+expected_output:
+  action: >-
+    Execute deterministic scheduling solver, write finalized schedule to MES and
+    SAP S/4HANA, create/adjust supplier expedited POs or ASN requests, and open
+    CWB exceptions for any manual approvals; notify plant planners and line
+    operators.
+  outcome: >-
+    Lower COGS via reduced changeovers and optimized runs, improved on-time
+    delivery, better capacity utilization, and reduced working capital through
+    synchronized MRP and targeted expedites.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Remote Functions
+    - Process Builder (Process + Rules)
+    - Remote Functions
+    - UI Screen
+    - Dashboard
+rationale: >-
+  A process-driven orchestration (Process Builder + deterministic solver via
+  Remote Functions) coordinates transformed master/data (STREAMS/DDM) and
+  short-term signals (Cortex Auto Forecast optional) to produce repeatable,
+  auditable daily schedules. Agentic components handle conversational/exceptions
+  routing; Remote Functions enable robust MES/ERP/supplier write-backs. This
+  hybrid ensures speed, determinism, and human-in-the-loop exception handling
+  where needed.

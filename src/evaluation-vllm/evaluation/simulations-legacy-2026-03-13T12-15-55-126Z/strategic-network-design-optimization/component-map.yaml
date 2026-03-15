@@ -1,0 +1,49 @@
+streams:
+  - name: demand_scenarios
+    purpose: Stream for input demand scenarios to drive network design decisions
+    confidence: inferred
+  - name: network_configuration
+    purpose: Stream for location, capacity, and hub/spoke configuration data
+    confidence: inferred
+  - name: financial_metrics
+    purpose: >-
+      Stream for EBITDA, working capital, and COGS metrics to quantify business
+      case impacts
+    confidence: inferred
+cortex: []
+process_builder:
+  - name: Process
+    purpose: >-
+      Main orchestration node for end-to-end network design and optimization
+      workflow
+    confidence: confirmed
+  - name: Data View
+    purpose: >-
+      To define and view input data for locations, capacities, demand scenarios,
+      and financial metrics
+    confidence: confirmed
+  - name: Rules
+    purpose: >-
+      To implement optimization logic for location selection, hub configuration,
+      and scenario evaluation
+    confidence: confirmed
+  - name: Report Data
+    purpose: To generate scenario-driven business cases and financial forecasts
+    confidence: confirmed
+agent_teams: []
+ui:
+  - name: report
+    purpose: >-
+      To display generated business cases with EBITDA, working capital, and COGS
+      impact analysis
+    confidence: confirmed
+  - name: table
+    purpose: >-
+      To present network configuration data including hub locations, flows, and
+      inventory levels
+    confidence: confirmed
+  - name: chart
+    purpose: >-
+      To visualize simulation results showing cost efficiency, resilience
+      metrics, and scenario comparisons
+    confidence: confirmed

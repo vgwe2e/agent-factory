@@ -1,0 +1,48 @@
+decision: >-
+  What logistics capacity to allocate across nodes and time to meet seasonal
+  demand, balancing service levels and transportation costs.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled pre-season planning run (monthly/quarterly) or automated detection
+    of sustained demand increase above threshold.
+  parameters:
+    objective: >-
+      Adjust logistics capacity plans to accommodate seasonal demand
+      fluctuations or peak periods.
+    key_inputs:
+      - Seasonal demand forecast (SKU x location x week)
+      - >-
+        Current logistics capacity (warehouse slots, dock capacity, vehicle
+        hours) by node
+      - Transportation cost rates (mode, lane, distance-based costs)
+      - Service level targets and business policies
+      - Operational constraints (labor schedules, vehicle/driver availability)
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Compute node- and time-specific capacity allocations using demand forecasts
+    and constraints; write approved capacity plans back to SAP S/4HANA and
+    surface plans to planners for review.
+  outcome: >-
+    Updated logistics capacity plans in SAP S/4HANA aligned to seasonal demand,
+    maintained service levels with minimized transportation cost impact, and a
+    prioritized exception list for manual review.
+  affected_components:
+    - STREAMS (ETL)
+    - Cortex Auto Forecast
+    - Process (Process Builder) - Rules + Remote Functions
+    - Remote Functions
+    - UI Screens (dashboard, report, action item)
+rationale: >-
+  A deterministic, process-driven flow uses consolidated demand forecasts,
+  operational constraints, and cost rules to produce repeatable capacity
+  allocations. Process Builder orchestrates data ingestion, rules-based
+  allocation and Remote Functions handle calculations and ERP writeback to SAP
+  S/4HANA. Cortex Auto Forecast (where used) provides consistent seasonality
+  signals; UI Screens surface results and exceptions for planner verification.

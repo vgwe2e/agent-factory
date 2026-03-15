@@ -1,0 +1,58 @@
+decision: >-
+  Determine whether an automated corrective schedule (re-sequencing, changeover
+  re-allocation, or capacity reassign) can be applied autonomously or requires
+  human approval, then produce and release updated work orders to SAP S/4HANA
+  and operations.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Hourly ingestion of actual production events and schedule reconciliation
+    showing deviation beyond configurable thresholds (e.g., yield loss,
+    throughput gap, or changeover delay).
+  parameters:
+    objective: >-
+      Deliver an adaptive, end-to-end production scheduling engine that
+      auto-detects hourly deviations, re-optimizes line sequences and
+      changeovers, and executes corrective schedules across multi-plant
+      automotive production to reduce COGS, improve on-time delivery, and lower
+      working capital.
+    key_inputs:
+      - Daily Production Schedule / Work Order Releases
+      - Real-time Production Events (cycle counts, stops, rejects)
+      - Changeover & Setup Time Profiles
+      - Line Capacity & Configuration (line speed, shifts, tooling)
+      - Inventory on Hand / Component Availability
+    source_systems:
+      - SAP S/4HANA
+      - Manufacturing Execution System (MES)
+      - IIoT / PLC Event Stream
+expected_output:
+  action: >-
+    Detect deviation -> run root-cause and constraint-aware scheduling optimizer
+    -> generate corrective schedule and changeover plan -> write updated
+    releases to SAP S/4HANA (or queue for approval) -> notify operations and
+    update dashboards.
+  outcome: >-
+    Faster recovery from disruptions, reduced unplanned changeover time and line
+    idle, improved on-time-in-full (OTIF), lower emergency inventory and WIP,
+    and measurable COGS reduction through higher throughput and less rework.
+  affected_components:
+    - STREAMS
+    - RCA Service
+    - Remote Functions + Transaction
+    - UI Screen
+    - Notification + CWB Lifecycle
+    - Process (Process Builder) + Agent Team + Remote Functions
+    - Dashboard
+rationale: >-
+  Combines deterministic optimization (for sequencing and changeover
+  minimization), hourly deviation detection and root-cause analysis, ERP
+  writeback, and agentic orchestration to enable safe autonomous actions with
+  human oversight for high-risk decisions. Agentic AI (Agent Team + Process
+  Builder + Remote Functions) accelerates cross-plant negotiation and exception
+  resolution while STREAMS and RCA Service ensure data quality and
+  explainability.

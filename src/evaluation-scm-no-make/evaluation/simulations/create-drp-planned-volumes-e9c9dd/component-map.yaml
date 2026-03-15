@@ -1,0 +1,53 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Collect and normalize inputs required for DRP analysis and scenario
+      modeling.
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: Cortex Auto Forecast + Safety Stock Service + Remote Functions
+    purpose: >-
+      Create candidate DRP planned volumes and score scenarios for COGS vs
+      service trade-offs.
+    confidence: confirmed
+    capability: >-
+      Create candidate DRP planned volumes and score scenarios for COGS vs
+      service trade-offs.
+process_builder:
+  - name: CWB Lifecycle + UI Screen
+    purpose: >-
+      Enable human-in-the-loop approvals, accept/override of DRP planned
+      volumes, and record rationale.
+    confidence: confirmed
+    node_type: review
+  - name: Remote Functions (ERP/Kinaxis writeback) + Process Builder
+    purpose: >-
+      Push STR releases to S4/Kinaxis, update planned volumes, and trigger
+      rebalancing/expediting workflows.
+    confidence: confirmed
+    node_type: act
+  - name: Notification + Data View
+    purpose: >-
+      Alert ops/planners of execution status, exceptions, and distribute plan
+      impact metrics for review.
+    confidence: confirmed
+    node_type: notify
+agent_teams:
+  - name: Process Builder + Agent Team (agentic_ai)
+    purpose: >-
+      Use agentic AI to synthesize scenarios, rank recommendations, and prepare
+      CWB lifecycle recommendations.
+    confidence: confirmed
+    role: >-
+      Use agentic AI to synthesize scenarios, rank recommendations, and prepare
+      CWB lifecycle recommendations.
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end drp decisions to generate, validate, and
+      execute multi-echelon planned volumes (drp) with autonomous str release
+      and closed-loop exception handling to reduce cogs, improve working
+      capital, and protect ebitda. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

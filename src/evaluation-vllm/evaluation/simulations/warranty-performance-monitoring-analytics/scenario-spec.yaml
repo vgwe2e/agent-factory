@@ -1,0 +1,72 @@
+objective: Warranty Performance Monitoring & Analytics
+trigger: Monthly warranty cost data update from SAP S/4HANA
+decision: >-
+  Select and schedule monthly warranty cost analysis actions and determine key
+  drivers to report for COGS impact and potential cost reductions
+expected_action: >-
+  Generate monthly warranty cost trend reports, prioritize quality improvements
+  for top warranty concerns, intervene with underperforming dealers, guide
+  comprehensive problem resolution decisions, proactively mitigate future
+  warranty costs
+expected_outcome: >-
+  Reduced COGS and improved profitability through cost containment and
+  supplier/part-level risk mitigation
+rationale: >-
+  Automate warranty cost trend analysis, component-level failure linkage, dealer
+  benchmarking, field issue linkage, and predictive warranty cost modeling to
+  reduce COGS and improve profitability.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Monthly Warranty Costs
+    source: SAP S/4HANA
+    purpose: Cost trend analysis
+  - name: Warranty Claims Data
+    source: SAP S/4HANA
+    purpose: Component-level failure linkage
+  - name: Dealer Claim Data
+    source: SAP S/4HANA
+    purpose: Dealer performance benchmarking
+  - name: Field Quality Reports
+    source: SAP S/4HANA
+    purpose: Field issue linkage
+  - name: Product and Market Data
+    source: SAP S/4HANA
+    purpose: Predictive cost modeling
+happy_path:
+  - step: Ingest monthly warranty cost data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Data collection
+  - step: Analyze monthly warranty cost trends
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Trend analysis
+  - step: Identify top warranty concerns by component/system
+    stage: analyze
+    component: RCA Service
+    purpose: Root cause analysis
+  - step: Benchmark dealer performance
+    stage: analyze
+    component: AutoML
+    purpose: Segmentation
+  - step: Link field quality reports to warranty claims
+    stage: analyze
+    component: STREAMS
+    purpose: Data linkage
+  - step: Forecast future warranty costs
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predictive modeling
+branches:
+  - condition: High variance in warranty costs
+    response: Initiate detailed RCA analysis
+    outcome: Identify underlying issues
+  - condition: Underperforming dealer identified
+    response: Schedule intervention meeting
+    outcome: Improve dealer performance
+  - condition: Significant increase in predicted warranty costs
+    response: Trigger cost containment measures
+    outcome: Reduce COGS

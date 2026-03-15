@@ -1,0 +1,65 @@
+decision: >-
+  Choose ML forecast model variant (Cortex Auto Forecast configuration) that
+  balances forecast accuracy vs model complexity, triggered by Gather Market
+  Inputs from market planners and market signals.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled demand planning cadence or arrival of updated market inputs
+    (promotions, competitor signals, COGS updates, planner adjustments).
+  parameters:
+    objective: >-
+      Deliver an end-to-end demand forecasting and forecast-driven inventory &
+      revenue optimization stack that unifies ML forecasts, autonomous data
+      validation, COGS-aware features, and lifecycle-driven review across
+      multi-SKU, multi-location CPG network to improve forecast accuracy, reduce
+      stockouts/waste, and protect revenue.
+    key_inputs:
+      - Historical sales / POS time-series
+      - Inventory on hand & movements
+      - Promotions and marketing events
+      - COGS and pricing
+      - Market signals (competitor price, weather, macro indicators)
+      - Planner adjustments & model selection input
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Kinaxis RapidResponse
+      - SAS (Advanced Statistical Forecasting)
+      - Blue Yonder WMS
+      - Uber Freight / 3PL integrations
+      - >-
+        Third-party Market Signals (promotions, competitor pricing, weather,
+        macro)
+      - Planner inputs (CWB / UI Screens)
+expected_output:
+  action: >-
+    Ingest and validate transactional, inventory, promotion and market-signal
+    data; generate Cortex Auto Forecast demand forecasts and explainability;
+    compute safety stock and inventory impact; route exceptions and
+    model-variant selection to CWB Lifecycle for planner review; write approved
+    forecast and replenishment recommendations back to S4 / Kinaxis via Remote
+    Functions.
+  outcome: >-
+    Higher forecast accuracy with explainability, optimized safety stock and
+    replenishment recommendations, reduced stockouts and waste, improved
+    promotional revenue protection, auditable planner overrides and automated
+    ERP/APS writebacks.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex Auto Forecast
+    - Process Builder (IF / Rules) + CWB Lifecycle
+    - Safety Stock Service + Remote Functions
+    - CWB Lifecycle + UI Screens + Process Builder Notification
+    - Dashboard
+rationale: >-
+  Uses Aera Data Foundation (DDM/STREAMS) to centralize and validate inputs,
+  Cortex Auto Forecast for robust time-series modeling and SHAP explainability,
+  Safety Stock Service for inventory optimization, Process Builder to
+  orchestrate model selection and exception routing, CWB Lifecycle for
+  human-in-the-loop approvals, and Remote Functions for safe ERP/APS
+  writeback—aligns with platform strengths for batch-oriented DI and hybrid
+  human+AI workflows.

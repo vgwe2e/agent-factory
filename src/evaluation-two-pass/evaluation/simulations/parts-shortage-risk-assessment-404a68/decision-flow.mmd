@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled daily MRP run OR immediate on BOM/ECO release or demand forecast deviation 10% (whichever occurs first).]
+  A --> N1[Stream: STREAMS - Consolidate BOMs, inventory, open POs, and production schedule into the data foundation.]
+  N1 --> N2[Cortex: Cortex Auto Forecast + Safety Stock Service + RCA Service - Generate demand signal and dynamic buffer requirements; compute shortage risk scores.]
+  N2 --> N3{Agent: Process Builder (Agent Team / agentic_ai) + Rules - Agentic orchestration evaluates costs, service targets, lead-time feasibility and selects actions (expedite/reschedule/re-source/adjust safety stock).}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute decided actions: update POs, release/expedite supplier orders, adjust planned production windows.]
+  N4 --> N5[UI: UI Screen / CWB Lifecycle / Notification - Surface decisions, exceptions, and KPIs to planners and suppliers; open CWB for required approvals.]
+  N5 --> Z1[Outcome: Fewer unplanned stockouts and expedited shipments, lower COGS through optimized BOM integrity and sourcing decisions, improved OTIF, reduced excess inventory and working capital, faster corrective actions for shortages, and measurable improvements in MAPE/stockout rate/working-capital-days.]
+  N3 -->|High confidence (risk score high and ...| B1[Agentic flow auto-executes Remote Functions to change POs and notify suppliers; logs actions to Subject Areas.]
+  B1 --> O1[Outcome: Rapid automated mitigation with minimal human intervention; reduced lead time to resolution.]
+  O1 --> End[End]
+  N3 -->|Medium confidence or cost above auto-...| B2[Process Builder creates a CWB Lifecycle approval task for supply planner with recommended actions and impact analysis.]
+  B2 --> O2[Outcome: Human-in-the-loop review ensures governance on higher-cost or higher-impact decisions.]
+  O2 --> End[End]
+  N3 -->|Supplier capacity constraint or no fe...| B3[Agent recommends alternate sourcing or production rescheduling and escalates to sourcing/planning teams via Agent Team collaboration and notifications.]
+  B3 --> O3[Outcome: Avoids futile auto-actions, surfaces alternatives to prevent production disruption, and records decision rationale for audit.]
+  O3 --> End[End]
+  Z1 --> End[End]

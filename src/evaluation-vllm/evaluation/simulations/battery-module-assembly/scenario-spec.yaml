@@ -1,0 +1,72 @@
+objective: >-
+  Autonomous optimization of the end-to-end battery module assembly line to
+  reduce COGS and improve on-time delivery while maintaining quality.
+trigger: Start of the module assembly process in SAP S/4HANA.
+decision: >-
+  Optimize the assembly line by applying deterministic optimization and
+  semi-autonomous orchestration across various sub-processes.
+expected_action: >-
+  Automate and optimize cell sorting, module structure allocation, cooling
+  routing, electrical testing, and line-cycle timing.
+expected_outcome: >-
+  Reduced COGS, improved on-time delivery, and maintained quality across
+  multiple plants, lines, and suppliers.
+rationale: >-
+  Jointly applying deterministic optimization and semi-autonomous orchestration
+  will streamline the assembly process, leading to cost savings and efficiency
+  gains.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Cell Performance Metrics
+    source: SAP S/4HANA
+    purpose: To sort cells into modules based on performance metrics.
+  - name: Module Assembly Data
+    source: SAP S/4HANA
+    purpose: To determine optimal assembly sequences and validate performance.
+  - name: Cooling System Components
+    source: SAP S/4HANA
+    purpose: To integrate and test cooling system components within the module.
+  - name: Electrical Test Results
+    source: SAP S/4HANA
+    purpose: To plan and execute electrical testing and quality gates.
+  - name: Production Line Data
+    source: SAP S/4HANA
+    purpose: To optimize cycle time for module production lines.
+happy_path:
+  - step: Retrieve cell performance metrics from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest cell performance data for sorting.
+  - step: Sort cells into modules based on performance metrics.
+    stage: analyze
+    component: AutoML
+    purpose: Apply deterministic optimization for cell grouping.
+  - step: Assemble module structures and weld busbars.
+    stage: decide
+    component: Process Builder
+    purpose: Determine optimal assembly sequences.
+  - step: Integrate cooling system components and validate performance.
+    stage: act
+    component: Process Builder
+    purpose: Ensure reliability and yield of cooling systems.
+  - step: Conduct electrical testing and quality gates.
+    stage: review
+    component: Process Builder
+    purpose: Minimize rework and ensure module readiness.
+  - step: Optimize module production line cycle times.
+    stage: notify
+    component: Process Builder
+    purpose: Reduce takt time while meeting quality requirements.
+branches:
+  - condition: Cell performance metrics are missing or incomplete.
+    response: Notify operators to manually inspect and sort cells.
+    outcome: Manual intervention to ensure quality.
+  - condition: Cooling system integration fails validation.
+    response: Trigger rework process for cooling system components.
+    outcome: Corrective actions taken to meet quality standards.
+  - condition: Electrical testing fails quality gates.
+    response: Initiate rework process for electrical components.
+    outcome: Ensures module readiness for final assembly.

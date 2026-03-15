@@ -1,0 +1,84 @@
+objective: >-
+  Reduce COGS, improve yield, and accelerate time-to-market for die-related
+  productions by coordinating deterministic and agentic decisions across design
+  approvals, sourcing, maintenance, and changeover.
+trigger: New die design submission or maintenance request.
+decision: >-
+  Approve die designs, manage fabrication & sourcing, plan maintenance, optimize
+  changeover, validate new dies, and analyze life cycle costs.
+expected_action: >-
+  Automate and optimize die design approval, sourcing, maintenance scheduling,
+  changeover, validation, and life cycle costing.
+expected_outcome: >-
+  Reduced COGS, improved yield, accelerated time-to-market, minimized downtime,
+  and optimized cost of ownership.
+rationale: >-
+  By leveraging agentic AI and deterministic workflows, Ford can streamline die
+  engineering and management processes, leading to significant cost savings and
+  efficiency improvements.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Die Design Submission
+    source: SAP S/4HANA
+    purpose: To initiate the design approval process.
+  - name: Maintenance Request
+    source: SAP S/4HANA
+    purpose: To trigger maintenance scheduling.
+  - name: Fabrication & Sourcing Data
+    source: SAP S/4HANA
+    purpose: To manage supplier selection and schedule alignment.
+  - name: Changeover Data
+    source: SAP S/4HANA
+    purpose: To optimize die changeover procedures.
+  - name: Validation Data
+    source: SAP S/4HANA
+    purpose: To conduct validation and tryout runs.
+  - name: Life Cycle Cost Data
+    source: SAP S/4HANA
+    purpose: To analyze total cost of ownership.
+happy_path:
+  - step: Receive die design submission
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest new die design data from SAP S/4HANA.
+  - step: Evaluate die design manufacturability
+    stage: analyze
+    component: AutoML
+    purpose: Classify design options based on manufacturability and cost.
+  - step: Approve die design
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Present recommendations for design approval.
+  - step: Manage fabrication & sourcing
+    stage: act
+    component: Process Builder
+    purpose: Coordinate supplier selection and schedule alignment.
+  - step: Plan maintenance and repairs
+    stage: decide
+    component: Exception Management
+    purpose: Schedule and allocate resources for maintenance.
+  - step: Optimize die changeover
+    stage: act
+    component: Process Builder
+    purpose: Implement optimized changeover procedures.
+  - step: Validate new dies
+    stage: act
+    component: Process Builder
+    purpose: Conduct validation and tryout runs.
+  - step: Analyze life cycle costs
+    stage: analyze
+    component: AutoML
+    purpose: Determine cost-optimal life cycle paths.
+branches:
+  - condition: Design does not meet manufacturability criteria
+    response: Reject design and request redesign
+    outcome: Design is returned for revision.
+  - condition: Supplier cannot meet production requirements
+    response: Select alternative supplier
+    outcome: Alternative supplier is chosen and scheduled.
+  - condition: Maintenance window conflicts with production schedule
+    response: Reschedule maintenance
+    outcome: Maintenance is rescheduled to avoid production disruption.

@@ -1,0 +1,136 @@
+objective: >-
+  Automatically coordinate pricing, rebate accruals, and inventory allocation
+  across Direct, Distributor, and Retail channels to minimize channel-driven
+  margin erosion and protect EBITDA while maintaining competitive channel
+  pricing in the automotive ecosystem.
+trigger: >-
+  Scheduled daily orchestration or real-time event: new promotion/price change,
+  rebate update, or inventory threshold breach detected for channel-relevant
+  SKUs.
+decision: >-
+  Dynamically determine and enforce a unified channel price, rebate accrual, and
+  stock-allocation policy across Direct, Distributor, and Retail
+  channels—adjusting promotional depth, rebate eligibility, and allocation
+  priorities to maximize EBITDA and comply with channel contractual rules.
+expected_action: >-
+  Aggregate ERP pricing, sales, rebate, and inventory data; compute demand and
+  promo impact; apply deterministic business rules to set unified channel
+  price/rebate/allocation; write approved updates back to SAP S/4HANA via Remote
+  Functions; surface exceptions via CWB Lifecycle for manual approval.
+expected_outcome: >-
+  Coordinated channel pricing and rebate accruals, reduced margin erosion from
+  channel conflicts, prioritized inventory allocation aligned to EBITDA impact,
+  auditable writebacks to SAP S/4HANA, and a manageable exceptions queue for
+  finance and commercial owners.
+rationale: >-
+  Deterministic, rule-based orchestration using Process Builder ensures
+  consistent enforcement of commercial and financial policies across channels.
+  Integrating SAP S/4HANA as the source of truth plus Cortex forecasts for
+  demand signals enables aligned pricing, rebate accruals, and allocation
+  decisions that protect margins without manual, error-prone coordination.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Promotions Management System
+    status: tbd
+  - name: Distributor Portal / Partner Systems
+    status: tbd
+  - name: Finance DW / GL
+    status: tbd
+key_inputs:
+  - name: Channel Price Lists & Catalogs
+    source: SAP S/4HANA
+    purpose: Establish current prices per channel and validate allowable price bands
+    preferred_stream_type: STREAMS
+  - name: Sales Orders & Shipments
+    source: SAP S/4HANA
+    purpose: >-
+      Measure channel sell-through, detect channel dumping or diverging
+      discounts
+    preferred_stream_type: STREAMS
+  - name: Rebate Agreements & Accrual Rules
+    source: SAP S/4HANA
+    purpose: Compute rebate eligibility, timing, and financial accruals
+    preferred_stream_type: STREAMS
+  - name: Inventory Levels & Allocation Rules
+    source: SAP S/4HANA
+    purpose: Drive stock allocation and prioritization across channels
+    preferred_stream_type: STREAMS
+  - name: Promotions Calendar & Tactic Inputs
+    source: Promotions Management System
+    purpose: Align promotional depth and timing with channel/financial objectives
+  - name: Demand Forecast & Elasticity Signals
+    source: Cortex Auto Forecast
+    purpose: >-
+      Predict uplift from promos, estimate channel demand shifts for
+      allocation/pricing decisions
+  - name: Financial Targets / EBITDA Rules
+    source: Finance DW / Finance Policy
+    purpose: Prioritize decisions that maximize EBITDA and meet margin constraints
+happy_path:
+  - step: >-
+      Ingest channel pricing, sales, rebate, inventory, and promotions data from
+      SAP S/4HANA and Promotions system into the platform
+    stage: ingest
+    component: STREAMS
+    purpose: Consolidate canonical channel and inventory data for analysis
+  - step: Generate demand and promo-impact signals for affected SKUs and channels
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Estimate demand uplift, elasticity, and confidence for promotional
+      scenarios
+  - step: >-
+      Apply deterministic business rules to compute unified channel price,
+      rebate accrual adjustments, and channel allocation priorities
+    stage: decide
+    component: Process Builder - Rules
+    purpose: >-
+      Translate financial targets and policies into executable
+      pricing/rebate/allocation decisions
+  - step: >-
+      Execute approved updates and create transactional writebacks for pricing,
+      rebate accruals, and allocations to SAP S/4HANA
+    stage: act
+    component: Remote Functions + Process Builder Transaction
+    purpose: Enforce decisions in source ERP and create an auditable change record
+  - step: >-
+      Surface exceptions and recommended overrides for commercial or finance
+      owners where rules flag risk or low-confidence forecasts
+    stage: review
+    component: CWB Lifecycle
+    purpose: >-
+      Enable human-in-the-loop approval, override, or escalation for flagged
+      cases
+branches:
+  - condition: >-
+      Severe inventory constraint that prevents fulfilling allocation for
+      prioritized high-EBITDA channel
+    response: >-
+      Re-prioritize allocation using EBITDA impact rules, reduce promotional
+      depth where necessary, and create a CWB exception for stakeholder approval
+      if revenue risk exceeds threshold
+    outcome: >-
+      Inventory allocated to maximize EBITDA; critical exceptions routed for
+      rapid manual resolution
+  - condition: >-
+      Forecast confidence below threshold or observed demand deviates >30% from
+      forecast
+    response: >-
+      Pause automated price/rebate enforcement for affected SKUs, generate
+      alternative scenarios in Cortex, and open CWB Lifecycle review for
+      commercial/finance sign-off
+    outcome: >-
+      Prevents erroneous automated changes; ensures human validation under
+      high-uncertainty conditions
+  - condition: >-
+      Rebate agreement conflict or vendor dispute detected during accrual
+      computation
+    response: >-
+      Hold accrual writeback, create Finance notification and a Process Builder
+      Subprocess to route dispute resolution tasks to finance and channel
+      managers
+    outcome: >-
+      Avoids incorrect financial postings and starts a traceable dispute
+      resolution workflow

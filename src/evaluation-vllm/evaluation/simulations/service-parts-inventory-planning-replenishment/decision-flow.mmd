@@ -1,0 +1,20 @@
+flowchart TD
+  A[Trigger: Periodic inventory review and demand signal update.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve historical service part sales data from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Generate and adjust service part demand forecasts using statistical models.]
+  N2 --> N3{PB: Remote Functions - Optimize inventory stocking levels based on demand forecasts and multi-echelon constraints.}
+  N3 -->|Primary| N4[PB: Remote Functions - Generate and release replenishment orders to suppliers or plants.]
+  N4 --> N5{PB: Remote Functions - Manage obsolescence and excess inventory by reallocating, delaying, or liquidating.}
+  N5 --> N6{PB: Remote Functions - Adjust service parts inventory for seasonal campaigns.}
+  N6 --> N7{PB: Remote Functions - Develop and implement critical part stocking strategies.}
+  N7 --> Z1[Outcome: Reduced working capital and COGS, improved availability and OTIF for Ford’s service parts ecosystem.]
+  N3 -->|Insufficient historical data availabl...| B1[Use default parameters or collaborate with domain experts.]
+  B1 --> O1[Outcome: Default demand forecasts generated.]
+  O1 --> End[End]
+  N3 -->|High variability in lead times or sup...| B2[Adjust replenishment order generation to account for variability.]
+  B2 --> O2[Outcome: More flexible replenishment orders generated.]
+  O2 --> End[End]
+  N3 -->|Significant obsolescence detected.| B3[Prioritize reallocation or liquidation actions.]
+  B3 --> O3[Outcome: Reduced carrying costs and minimized stockout risks.]
+  O3 --> End[End]
+  Z1 --> End[End]

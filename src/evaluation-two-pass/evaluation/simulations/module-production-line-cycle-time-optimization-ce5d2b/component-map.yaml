@@ -1,0 +1,43 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Collect production orders, BOM, resource master, telemetry snapshots and
+      recent quality results for the planning horizon.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS / Subject Areas
+    purpose: >-
+      Create canonical subject-area views and validated metrics for optimizer
+      inputs and reporting.
+    confidence: confirmed
+    type: STREAMS / Subject Areas
+cortex: []
+process_builder:
+  - name: Process Builder + Remote Functions
+    purpose: >-
+      Run solver with constraints (quality gates, changeovers, capacity,
+      supplier windows) and select feasible, cost-minimizing schedule.
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder (Transaction) + Remote Functions
+    purpose: >-
+      Implement schedule changes in ERP, update shop-floor instructions, and
+      persist audit trail for approvals.
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle + UI Screen
+    purpose: >-
+      Human-in-the-loop approval for risky or infeasible changes and capture
+      overrides for governance and learning.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously optimize battery module assembly line cycle times and
+      scheduling across plants, balancing takt reduction, quality gates,
+      changeover constraints, and supplier variability to reduce cogs and
+      improve on-time delivery. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,49 @@
+streams:
+  - name: STREAMS
+    purpose: Centralize and normalize data into subject areas for analysis
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Remote Functions
+    purpose: >-
+      Calculate if current run-rate meets demand, identify bottlenecks, compute
+      candidate actions (OT, shift, subcontract, rebalance)
+    confidence: inferred
+    capability: >-
+      Calculate if current run-rate meets demand, identify bottlenecks, compute
+      candidate actions (OT, shift, subcontract, rebalance)
+process_builder:
+  - name: CWB Lifecycle
+    purpose: >-
+      Human-in-the-loop approval for resource additions or rebalancing with
+      contextual metrics (COGS impact, service risk)
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: >-
+      Write approved changes back to S4/Kinaxis and generate work items for
+      operations/procurement
+    confidence: confirmed
+    node_type: act
+  - name: Notification / Subject Areas
+    purpose: >-
+      Ensure planners, ops, and finance are informed and the change is visible
+      in downstream reports
+    confidence: confirmed
+    node_type: notify
+  - name: UI Screen
+    purpose: >-
+      Provide planners with decision rationale, scenario comparisons, and
+      execution status
+    confidence: confirmed
+    node_type: integration
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end production feasibility checks and capacity
+      assurance across skus and plants to optimize run-rate, reduce waste, and
+      protect margins by aligning demand, inventory, and procurement with plant
+      capability. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

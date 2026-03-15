@@ -1,0 +1,60 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer POS / Retail Sales
+    status: tbd
+  - name: Market / Macroeconomic Indicators API
+    type: API
+    status: tbd
+aera_ingestion:
+  - stream_name: historical-shipments-sales-sku-location-time
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: material-lead-times-inventory-levels
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: promotions-incentives-and-launch-schedules
+    stream_type: DDM/Crawlers
+    source: Dealer POS / Marketing feeds
+  - stream_name: supplier-capacity-constraints
+    stream_type: Event Stream
+    source: Supplier reports / EDI
+  - stream_name: macro-market-indicators-fuel-prices-consumer-sentiment
+    stream_type: DDM/Crawlers
+    source: Market / Macroeconomic Indicators API
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Produce per-SKU-location baseline forecasts with algorithm selection and
+      SHAP explainability
+  - component: AutoML
+    type: cortex
+    function: >-
+      Identify and score causal drivers, producing recommended driver weightings
+      and sensitivity metrics
+  - component: Process Builder + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Reconcile forecasts and driver outputs, present recommendations for
+      accept/adjust/override and capture approvals
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Write optimized replenishment and production plans to SAP S/4HANA or
+      create exception transactions
+  - component: Cortex Monitoring + Subject Areas
+    type: process_builder
+    function: >-
+      Track forecast accuracy, stockouts/excess, and trigger retraining or
+      process adjustments
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review establish an autonomous pipeline that integrates time-series
+      forecasting and regression-based demand driver analysis to produce
+      optimized, deployable demand forecasts that reduce cogs and working
+      capital across ford's multi-echelon supplier-plant-dc network. and approve
+      the recommended action.

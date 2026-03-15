@@ -1,0 +1,73 @@
+objective: >-
+  Autonomous coordination of new product introduction and lifecycle planning,
+  including BOM/ECM impact assessment, launch readiness, EOL planning, and
+  technology transitions within IBP.
+trigger: New product pipeline data available in SAP S/4HANA.
+decision: >-
+  Select and integrate new product pipelines and lifecycle plans into IBP,
+  balancing production capacity, material availability, and obsolescence risk.
+expected_action: >-
+  Automate the integration of new products into IBP, manage BOM changes, assess
+  launch readiness, plan EOL, and strategize technology transitions.
+expected_outcome: >-
+  Reduced COGS and working capital through synchronized product launches,
+  lifecycle decisions, and obsolescence mitigation.
+rationale: >-
+  Leverage Aera's agentic AI capabilities to autonomously coordinate NPI and
+  lifecycle planning activities, ensuring optimal resource allocation and risk
+  management.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: New Product Pipeline Data
+    source: SAP S/4HANA
+    purpose: Identify new products for integration into IBP.
+  - name: BOM Changes
+    source: SAP S/4HANA
+    purpose: Incorporate BOM changes into long-term planning.
+  - name: Supply Readiness Data
+    source: SAP S/4HANA
+    purpose: Assess supply chain readiness for new product launches.
+  - name: EOL Plans
+    source: SAP S/4HANA
+    purpose: Plan end-of-life and obsolescence management.
+  - name: Technology Transition Data
+    source: SAP S/4HANA
+    purpose: Strategically plan ICE to EV transition.
+happy_path:
+  - step: Retrieve new product pipeline data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest new product pipeline data.
+  - step: Analyze BOM changes and engineering releases.
+    stage: analyze
+    component: AutoML
+    purpose: Evaluate BOM changes and engineering releases.
+  - step: Assess supply readiness for new product launches.
+    stage: analyze
+    component: Remote Functions
+    purpose: Determine supply chain readiness.
+  - step: Plan end-of-life and obsolescence management.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Minimize working capital and write-down risk.
+  - step: Strategically plan ICE to EV transition.
+    stage: decide
+    component: Agentic AI
+    purpose: Optimize transition strategy.
+  - step: Present recommendations for integration and planning.
+    stage: surface
+    component: UI Screens
+    purpose: Display recommendations for human review.
+branches:
+  - condition: Insufficient supply readiness for new product launch.
+    response: Trigger go/no-go decision review.
+    outcome: Delay or cancel new product launch.
+  - condition: High obsolescence risk detected.
+    response: Adjust EOL plans to mitigate risk.
+    outcome: Revised EOL plans to minimize write-downs.
+  - condition: Significant BOM changes impact long-term plans.
+    response: Reassess and update long-term plans.
+    outcome: Updated long-term plans incorporating BOM changes.

@@ -1,0 +1,30 @@
+streams:
+  - name: Process Builder
+    purpose: >-
+      Start the NPI process by assessing the impact on supply chain
+      infrastructure
+    confidence: confirmed
+    type: Process Builder
+cortex:
+  - name: Process Builder
+    purpose: Align sourcing, capacity, and ramp plans for pilot programs
+    confidence: confirmed
+    capability: Align sourcing, capacity, and ramp plans for pilot programs
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Ensure readiness for NPI ramp-up and allocate buffers
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: Identify and resolve emerging issues during ramp-up
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize the end-to-end npi network for ford by synchronizing
+      capacity validation, pilot build coordination, ramp-up monitoring, and
+      post-launch optimization. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

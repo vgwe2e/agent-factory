@@ -1,0 +1,57 @@
+decision: >-
+  Which budget and forecast option best balances COGS impact and financial
+  alignment with S&OP given scenario constraints, production capacity, and
+  working capital targets.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Periodic S&OP cycle trigger or ad-hoc 'budget/forecast alignment' request
+    (monthly / quarterly) to evaluate candidate budget and forecast scenarios
+    against COGS, margin, and working capital constraints.
+  parameters:
+    objective: >-
+      Provide a semi-autonomous profitability optimization engine that jointly
+      optimizes COGS, revenue/gross margin, and working capital across demand,
+      supply, production, and fulfillment to recommend and commit S&OP-aligned
+      budget and forecast options that maximize EBITDA and improve cash
+      conversion.
+    key_inputs:
+      - Product master & cost (COGS) ledger
+      - Current budgets and forecast scenarios
+      - Demand plan (baseline & scenario variants)
+      - Production capacity & lead times
+      - Working capital metrics (inventory days, AR, AP)
+      - Pricing lists and promotional plans
+      - Strategic financial targets (EBITDA, margin thresholds)
+    source_systems:
+      - SAP S/4HANA
+      - Planning spreadsheets / S&OP tools
+      - Market pricing / competitor pricing feeds
+expected_output:
+  action: >-
+    Automatically evaluate candidate scenarios, rank recommended budget/forecast
+    option with quantified trade-offs (EBITDA, gross margin, cash conversion,
+    inventory days), surface the recommendation via CWB for finance/S&OP review,
+    and on approval writeback the committed scenario to SAP S/4HANA.
+  outcome: >-
+    Selected, S&OP-aligned budget and forecast committed in ERP; measurable
+    uplift in EBITDA and improved cash conversion metrics; auditable decision
+    record and retryable integration if writeback issues occur.
+  affected_components:
+    - STREAMS
+    - Subject Areas
+    - 'Process Builder: Rules + Remote Functions'
+    - CWB Lifecycle + UI Screens
+    - Remote Functions + Process Builder Notification
+    - Dashboard
+rationale: >-
+  Coordinated trade-offs across cost, revenue, and working capital require
+  integrated data, deterministic business rules and optimization logic, and
+  human-in-the-loop approval to balance strategic and operational constraints.
+  Process Builder orchestrates robust, repeatable evaluation and Remote
+  Functions enable complex calculations and ERP writebacks while CWB Lifecycle
+  provides governance.

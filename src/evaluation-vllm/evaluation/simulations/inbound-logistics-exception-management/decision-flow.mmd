@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Supplier shipment delay notifications, damaged material incidents, non-compliance with shipping instructions, transportation disruptions, critical material shortages]
+  A --> N1[Stream: DDM/Crawlers - Receive shipment delay alerts]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze shipment delay data]
+  N2 --> N3{PB: CWB Lifecycle - Decide on mitigation actions}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute mitigation actions]
+  N4 --> N5[PB: UI Screens - Monitor and report outcomes]
+  N5 --> Z1[Outcome: Measurable reductions in working capital, COGS, and OTIF improvements]
+  N3 -->|High severity damage reported| B1[Initiate claims process]
+  B1 --> O1[Outcome: Recover costs and maintain supply integrity]
+  O1 --> End[End]
+  N3 -->|Non-compliance detected| B2[Issue corrective orders or penalties]
+  B2 --> O2[Outcome: Bring suppliers back to specification]
+  O2 --> End[End]
+  N3 -->|Major transportation disruption| B3[Activate contingency plan]
+  B3 --> O3[Outcome: Minimize COGS impact and ensure timely recovery]
+  O3 --> End[End]
+  Z1 --> End[End]

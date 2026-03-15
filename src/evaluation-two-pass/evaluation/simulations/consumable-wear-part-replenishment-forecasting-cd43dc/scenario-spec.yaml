@@ -1,0 +1,139 @@
+objective: >-
+  Unify six service-parts demand processes into a single end-to-end decision
+  engine that autonomously generates SKU-level forecasts, adapts inputs in near
+  real time, mitigates excess/obsolete inventory, plans for recalls/campaigns,
+  and models lifecycle-driven demand for EV components to align inventory and
+  procurement with demand signals.
+trigger: >-
+  Daily scheduled ingest (overnight batch) plus event-driven ingest for
+  recalls/campaigns or field failure signals.
+decision: >-
+  Approve system-generated SKU-level replenishment and procurement allocation
+  recommendations (auto-apply where rules allow; human-in-the-loop for
+  exceptions).
+expected_action: >-
+  Run STREAMS ETL to consolidate SAP S/4HANA transactional and master data; run
+  Cortex Auto Forecast to produce SKU-level demand & lifecycle signals; evaluate
+  replenishment rules in Process Builder; route exceptions to CWB Lifecycle;
+  write approved replenishment orders and allocation changes back to SAP S/4HANA
+  via Remote Functions; surface recommendations to planners via UI Screens and
+  notifications.
+expected_outcome: >-
+  Continuous alignment of inventory and procurement with demand signals: lower
+  working capital and excess/obsolete parts, improved on-time parts
+  availability, reduced emergency procurements for recalls/campaigns, and more
+  accurate COGS allocation across the service parts network.
+rationale: >-
+  Consolidating multiple fragmented processes into a single Process
+  Builder-driven decision engine with STREAMS for data foundation and Cortex
+  Auto Forecast for SKU/time-series accuracy enables deterministic, repeatable
+  replenishment decisions, faster response to recalls/campaigns, and
+  lifecycle-aware demand planning for EV parts while preserving human oversight
+  for exceptions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer Service Portal
+    status: tbd
+  - name: Field Service Management / Campaign Management
+    status: tbd
+key_inputs:
+  - name: Historical service parts demand (sales/service orders/returns)
+    source: SAP S/4HANA
+    purpose: Primary time-series for SKU-level forecasting and seasonality detection
+    preferred_stream_type: batch
+  - name: >-
+      Parts master & lifecycle metadata (SKU, substitute parts, BOM linkage, EV
+      component flags)
+    source: SAP S/4HANA
+    purpose: >-
+      Define SKU hierarchies, lifecycle stages, cross-references and EV-specific
+      attributes for model segmentation
+  - name: Recall/campaign schedules and severity signals
+    source: Field Service Management / Campaign Management
+    purpose: Trigger event-driven forecast uplift and prioritization for allocations
+    preferred_stream_type: event
+  - name: Dealer/repair-order failure rates and usage signals
+    source: Dealer Service Portal
+    purpose: >-
+      Near-term demand signals for short-horizon adjustments and anomaly
+      detection
+    preferred_stream_type: daily_batch
+  - name: Inventory on-hand, inbound receipts, open POs
+    source: SAP S/4HANA
+    purpose: >-
+      Constraint and supply-side inputs for replenishment recommendation and
+      allocation
+    preferred_stream_type: batch
+happy_path:
+  - step: >-
+      Consolidate nightly transactional and master data from SAP S/4HANA and
+      dealer portals using STREAMS
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Create clean subject-area fact/dimension tables for demand, inventory, and
+      parts master
+  - step: >-
+      Run SKU-level demand and lifecycle-aware forecasting with Cortex Auto
+      Forecast, including recall/campaign uplift and EV segment modeling
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Generate probabilistic forecasts, seasonality detection, and feature
+      explainability for each SKU
+  - step: >-
+      Apply replenishment rules, allocation logic and business policies in
+      Process Builder; surface recommendations and exceptions via CWB Lifecycle
+      where thresholds exceeded
+    stage: decide
+    component: Process Builder
+    purpose: >-
+      Translate forecasts into replenishment quantities, timing, and prioritized
+      allocations; flag exceptions for human review
+  - step: >-
+      Execute approved replenishment orders and allocation writes to SAP S/4HANA
+      via Remote Functions and trigger procurement workflows
+    stage: act
+    component: Remote Functions
+    purpose: Create/adjust POs, transfer reservations, and update supply plans in SAP
+  - step: >-
+      Notify planners and stakeholders of recommendations, exceptions, and
+      campaign-driven changes through UI Screens and Notifications
+    stage: notify
+    component: UI Screens
+    purpose: Enable human review, approvals, and audit trail for exception handling
+  - step: >-
+      Monitor forecast accuracy, exception patterns, and inventory KPIs via
+      Cortex Monitoring and dashboards; feed learnings back into rules and
+      models
+    stage: review
+    component: Cortex Monitoring
+    purpose: >-
+      Continuous improvement loop to reduce variance, excess inventory, and
+      improve OTIF
+branches:
+  - condition: Forecast variance or model confidence below threshold for a SKU
+    response: >-
+      Route to CWB Lifecycle for planner review and trigger Data Science
+      subprocess for additional feature enrichment
+    outcome: >-
+      Human-in-the-loop decision or model retrain request; prevent auto-apply to
+      avoid misallocation
+  - condition: Active recall/campaign with predicted high uplift for affected SKUs
+    response: >-
+      Override normal prioritization rules in Process Builder to allocate supply
+      to recall SKUs and accelerate procurement; notify logistics & field teams
+    outcome: >-
+      Rapid reallocation of inventory to support campaign, minimizing service
+      disruption
+  - condition: >-
+      Supplier constraint or inbound delay detected (inventory shortfall against
+      approved replenishment)
+    response: >-
+      Trigger alternative sourcing Remote Function, create backorder plan, and
+      escalate via Notification to procurement team
+    outcome: >-
+      Mitigate stockouts through alternate suppliers or prioritized allocation;
+      maintain service levels where possible

@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: New BOM creation or update in SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawler - Retrieve BOM data from SAP S/4HANA.]
+  N1 --> N2[Cortex: Process Builder - Assemble comprehensive sourcing packages.]
+  N2 --> N3[PB: Process Builder - Distribute RFQs to qualified suppliers.]
+  N3 --> N4{PB: Process Builder - Coordinate supplier questions and responses.}
+  N4 -->|Primary| N5[Cortex: Process Builder - Evaluate technical proposals.]
+  N5 --> N6{PB: Process Builder - Perform commercial bid analysis and cost breakdowns.}
+  N6 --> Z1[Outcome: Reduced cycle times, improved on-time delivery, optimized COGS, and enhanced cash flow.]
+  N4 -->|Supplier does not respond within spec...| B1[Send reminder notification to supplier.]
+  B1 --> O1[Outcome: Ensures timely responses from suppliers.]
+  O1 --> End[End]
+  N4 -->|Supplier proposal is deemed infeasible.| B2[Reject proposal and notify supplier.]
+  B2 --> O2[Outcome: Maintains high standards for supplier proposals.]
+  O2 --> End[End]
+  N4 -->|Multiple bids have similar financial ...| B3[Evaluate based on additional criteria such as lead time and reliability.]
+  B3 --> O3[Outcome: Selects the most reliable and cost-effective bid.]
+  O3 --> End[End]
+  Z1 --> End[End]

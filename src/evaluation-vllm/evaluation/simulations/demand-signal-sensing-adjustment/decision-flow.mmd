@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Real-time sales order data from SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawler - Ingest real-time sales order data from SAP S/4HANA]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze sales order data against existing forecasts]
+  N2 --> N3{PB: CWB Lifecycle - Adjust short-term demand forecasts based on real-time signals}
+  N3 -->|Primary| N4[PB: Process Builder - Coordinate promotions, inventory, and order fulfillment]
+  N4 --> N5[PB: CWB Lifecycle - Review and escalate significant demand deviations]
+  N5 --> Z1[Outcome: Reduced stockouts, minimized excess, improved OTIF, and enhanced revenue capture.]
+  N3 -->|Significant demand deviation detected| B1[Escalate to cross-functional teams with recommended actions]
+  B1 --> O1[Outcome: Cross-functional team reviews and resolves the issue]
+  O1 --> End[End]
+  N3 -->|No significant demand deviation detected| B2[Continue monitoring and analysis]
+  B2 --> O2[Outcome: Maintain current forecast and operations]
+  O2 --> End[End]
+  N3 -->|Promotional campaign impact exceeds t...| B3[Adjust promotional plans and forecasts accordingly]
+  B3 --> O3[Outcome: Updated promotional plans and adjusted forecasts]
+  O3 --> End[End]
+  Z1 --> End[End]

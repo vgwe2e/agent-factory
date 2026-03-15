@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Daily production start or significant upstream/downstream changes detected.]
+  A --> N1[Stream: DDM/Crawlers - Ingest daily build sequence data from SAP S/4HANA.]
+  N1 --> N2[Stream: STREAMS - Analyze production schedule changes and model mix data.]
+  N2 --> N3{PB: AutoML - Apply capacity-aware scheduling and model mix optimization.}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute adjusted production schedule and model mix.]
+  N4 --> N5[PB: Cortex Monitoring - Monitor and validate the effectiveness of the new plan.]
+  N5 --> Z1[Outcome: Reduced COGS, improved OTIF, and enhanced multi-plant alignment through optimized production planning and sequencing.]
+  N3 -->|Significant upstream/downstream chang...| B1[Trigger production schedule adjustment and rebalancing.]
+  B1 --> O1[Outcome: Adjusted production schedule to maintain throughput and on-time delivery.]
+  O1 --> End[End]
+  N3 -->|Insufficient capacity to meet product...| B2[Initiate capacity planning and utilization analysis.]
+  B2 --> O2[Outcome: Optimized capacity to meet future production demands.]
+  O2 --> End[End]
+  N3 -->|Model mix constraints not met.| B3[Rebalance line utilization with updated model mix.]
+  B3 --> O3[Outcome: Balanced workload and throughput with demand and constraints.]
+  O3 --> End[End]
+  Z1 --> End[End]

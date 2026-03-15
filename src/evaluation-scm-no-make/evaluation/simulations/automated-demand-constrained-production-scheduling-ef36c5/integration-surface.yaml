@@ -1,0 +1,74 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Statistical Forecasting Platform
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Kinaxis (Order Expediting / Rebalancing / FG Safety Stock Modeling)
+    type: APS/Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+aera_ingestion:
+  - stream_name: touchless-demand-forecast
+    stream_type: Data View
+    source: Cortex Auto Forecast / SAS advanced statistical forecasting
+  - stream_name: inventory-on-hand-and-reserved
+    stream_type: Report Data
+    source: Blue Yonder WMS / S4
+  - stream_name: inbound-receipts-po-eta
+    stream_type: Report Data
+    source: S4 (PO receipts) / Kinaxis inbound feeds
+  - stream_name: supplier-lead-times-expedite-capability
+    stream_type: Event Stream
+    source: S4 supplier master / Kinaxis order expediting
+  - stream_name: production-capacity-constraints
+    stream_type: Data View
+    source: Kinaxis RapidResponse / S4 capacity data
+  - stream_name: safety-stock-fg-availability-targets
+    stream_type: Event Stream
+    source: Kinaxis FG Safety Stock Modeling
+  - stream_name: cost-margin-rules-expedite-and-obsolescence-cost
+    stream_type: Report Data
+    source: S4 cost master / Finance rules
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Produce demand forecast and identify variance/near-term spikes affecting
+      schedule
+  - component: Process Builder (Rules + IF + Branch)
+    type: process_builder
+    function: >-
+      Apply business priorities, capacity limits, inbound readiness and lead
+      times to create an optimized plan
+  - component: Remote Function
+    type: process_builder
+    function: >-
+      Write production orders to S4, push plan and shortage information to
+      Kinaxis RapidResponse, and trigger supplier expediting where required
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Present prioritized exceptions for human review/override and provide audit
+      trail
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automatically coordinate demand-informed production scheduling with
+      inbound material readiness and supplier lead times to produce executable,
+      conflict-free production plans that minimize stockouts and obsolescence
+      while protecting revenue and margins across sku/location. and approve the
+      recommended action.

@@ -1,0 +1,37 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Immediate operational insights
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: UI Screens
+    purpose: Monitor critical production metrics
+    confidence: confirmed
+    capability: Monitor critical production metrics
+  - name: Cortex Auto Forecast
+    purpose: Predictive maintenance
+    confidence: confirmed
+    capability: Predictive maintenance
+  - name: AutoML
+    purpose: Cost-saving measures
+    confidence: inferred
+    capability: Cost-saving measures
+  - name: Digital Twin
+    purpose: Process optimization
+    confidence: inferred
+    capability: Process optimization
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Efficiency gains
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review link real-time production data, kpi orchestration, predictive
+      maintenance, cost-of-quality insights, and continuous improvement to
+      reduce cogs, improve ebitda, and strengthen working capital. and approve
+      the recommended action.
+    confidence: confirmed
+    component_type: display

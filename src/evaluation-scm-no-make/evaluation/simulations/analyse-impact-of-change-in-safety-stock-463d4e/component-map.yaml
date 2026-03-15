@@ -1,0 +1,35 @@
+streams:
+  - name: STREAMS
+    purpose: Consolidate inputs for consistent scenario and safety-stock analyses
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Process Builder (calls Safety Stock Service / Remote Functions)
+    purpose: Quantify service vs. working-capital trade-offs across SKUs and locations
+    confidence: confirmed
+    capability: Quantify service vs. working-capital trade-offs across SKUs and locations
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Surface recommendations with impact metrics for accept/reject/override
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder (Remote Functions)
+    purpose: Apply low-risk changes automatically and initiate system-level actions
+    confidence: confirmed
+    node_type: act
+  - name: Notification / Action Item (Process Builder)
+    purpose: >-
+      Ensure visibility, required approvals, and traceability of decisions and
+      system writes
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review orchestrate integrated demand-supply scenario analyses to generate
+      risk-adjusted demand scenarios, run safety stock sensitivity across skus
+      and locations, and execute semi-autonomous actions to protect revenue
+      while optimizing working capital. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

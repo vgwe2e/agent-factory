@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: New product launch initiation]
+  A --> N1[Stream: DDM/Crawlers - Extract supply chain strategy options from SAP S/4HANA]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze cost, capacity, and risk factors using Cortex Auto Forecast]
+  N2 --> N3{PB: CWB Lifecycle - Evaluate investment options and secure financial approval}
+  N3 -->|Primary| N4{PB: CWB Lifecycle - Assess program readiness and make Go/No-Go decision}
+  N4 --> N5[UI: UI Screens - Generate executive-level launch readiness reports]
+  N5 --> N6[PB: Remote Functions - Develop and enforce launch policies and SOPs]
+  N6 --> Z1[Outcome: Optimized COGS, accelerated time-to-market, improved OTIF through end-to-end, cross-functional decision automation]
+  N3 -->|Insufficient financial approval for s...| B1[Re-evaluate investment options and resubmit for approval]
+  B1 --> O1[Outcome: Delayed launch decision until financial approval is secured]
+  O1 --> End[End]
+  N3 -->|Program readiness metrics indicate hi...| B2[Initiate corrective actions and reassess program readiness]
+  B2 --> O2[Outcome: Potential delay in launch decision pending risk mitigation]
+  O2 --> End[End]
+  N3 -->|Incomplete or inaccurate policy/SOP r...| B3[Request additional information and re-evaluate requirements]
+  B3 --> O3[Outcome: Delayed policy/SOP development until requirements are complete]
+  O3 --> End[End]
+  Z1 --> End[End]

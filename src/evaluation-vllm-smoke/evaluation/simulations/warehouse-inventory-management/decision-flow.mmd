@@ -1,0 +1,23 @@
+flowchart TD
+    A[PB: Process] --> B[Cortex: Raw Material & Component Storage Optimization]
+    B --> C{Is storage optimization successful?}
+    C -- Yes --> D[Cortex: Inventory Cycle Counting & Reconciliation]
+    C -- No --> E[UI: Notification - Storage Optimization Failed]
+    E --> End
+    D --> F{Are cycle counts accurate?}
+    F -- Yes --> G[Cortex: Obsolete & Excess Inventory Disposition]
+    F -- No --> H[UI: Notification - Cycle Counting Failed]
+    H --> End
+    G --> I{Is disposition plan feasible?}
+    I -- Yes --> J[Cortex: Warehouse Slotting & Location Management]
+    I -- No --> K[UI: Notification - Disposition Plan Failed]
+    K --> End
+    J --> L{Is slotting strategy optimal?}
+    L -- Yes --> M[Cortex: Material Handling Equipment Maintenance]
+    L -- No --> N[UI: Notification - Slotting Strategy Failed]
+    N --> End
+    M --> O{Is maintenance schedule balanced?}
+    O -- Yes --> P[UI: Notification - Process Completed Successfully]
+    O -- No --> Q[UI: Notification - Maintenance Schedule Failed]
+    Q --> End
+    P --> End

@@ -1,0 +1,158 @@
+objective: >-
+  Automatically coordinate demand planning, ATP-based order promising, and
+  allocation across Planning, Fulfillment, and Customer Delivery to align
+  near-term promises with actual inventory and forecast drivers, reducing ATP
+  over-promising and improving on-time fulfillment.
+trigger: >-
+  Event: new or high-priority customer order created OR Scheduled: frequent
+  near-term promise recalculation (e.g., hourly/4-hour batch) to align promises
+  with updated inventory, forecasts, and shipment ETAs.
+decision: >-
+  Coordinate ATP-based order promising and allocation across Planning (forecast
+  inputs & demand sensing), Fulfillment (order allocation), and Delivery
+  (expedite/options) to determine confirmed promise date, allocation quantity,
+  and any required expedite or partial-ship action.
+expected_action: >-
+  Orchestrate data consolidation, reconcile demand signals with ATP, generate
+  recommended promise/allocation, write decisions to S4/Kinaxis (allocation &
+  promise), and surface exceptions for human review (CWB) with notifications to
+  Logistics/Sales when expediting or allocation changes are required.
+expected_outcome: >-
+  Reduced ATP over-promising, improved on-time fulfillment, fewer late
+  shipments, protected revenue, and reduced COGS variability through
+  synchronized near-term planning across Planning, Fulfillment, and Delivery.
+rationale: >-
+  Deterministic, process-driven coordination leverages Aera's ETL (STREAMS/DDM),
+  scheduled demand sensing, orchestration (Process Builder), deterministic
+  decision execution (Remote Functions), and human-in-the-loop exception
+  handling (CWB Lifecycle). Integrating enterprise forecasts (SAS), ERP ATP
+  (S4), APS signals (Kinaxis), WMS visibility (Blue Yonder), and carrier ETAs
+  (Uber Freight/TMS) enables accurate, repeatable promise decisions without
+  expecting sub-second real-time guarantees.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (Rebalancing / Order Expediting / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL (Uber Freight / carrier integrations)
+    type: 3PL
+    status: identified
+key_inputs:
+  - name: Open Sales Orders
+    source: S4 (orders module)
+    purpose: >-
+      Identify new/high-priority orders and order lines requiring promise
+      decisions
+    preferred_stream_type: event
+  - name: ATP / Available Inventory by Location
+    source: S4 (ATP calculations)
+    purpose: Determine on-hand and allocatable inventory for promising and allocation
+    preferred_stream_type: delta_batch
+  - name: Near-term Demand Signal / Short-term Forecast
+    source: >-
+      SAS (Advanced Statistical Forecasting) and Cortex short-term demand
+      sensing
+    purpose: Align promises to forecasted consumption and demand spikes
+    preferred_stream_type: batch
+  - name: Safety Stock / FG Targets
+    source: Kinaxis (FG safety stock modeling)
+    purpose: Protect safety stock constraints when allocating inventory
+    preferred_stream_type: batch
+  - name: Supply / Inbound ETA and Shortage Propagation
+    source: Kinaxis RapidResponse (shortage propagation) + S4 inbound receipts
+    purpose: Know incoming replenishment that affects near-term promise windows
+    preferred_stream_type: delta_batch
+  - name: Warehouse Availability & Reservations
+    source: Blue Yonder WMS
+    purpose: >-
+      Confirm physical availability and existing reservations prior to
+      allocation
+    preferred_stream_type: delta_batch
+  - name: Transportation ETAs & Expedite Options
+    source: Uber Freight TMS / 3PL feeds
+    purpose: Evaluate expedite viability and lead-time reduction options for promises
+    preferred_stream_type: api
+  - name: Allocation & Prioritization Rules / SLAs
+    source: Kinaxis / business rules repo
+    purpose: >-
+      Apply business prioritization (customer tier, due date, revenue impact)
+      during allocation
+happy_path:
+  - step: >-
+      Consolidate inputs (orders, ATP, forecasts, supply ETAs, WMS) into the
+      decision data layer
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Create a unified subject area with near-term inventory, open orders,
+      forecasts and ETAs for promise calculation
+  - step: >-
+      Generate reconciled near-term demand signal and detect variances vs.
+      published forecasts
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Produce short-horizon demand tendency and flag deviations that impact ATP
+      accuracy (integrate SAS outputs where applicable)
+  - step: >-
+      Evaluate ATP, allocation rules, safety stock, and expedite options to
+      produce a recommended promise and allocation plan
+    stage: decide
+    component: Process Builder (Rules + Remote Functions)
+    purpose: >-
+      Deterministically compute promise date/quantity and escalate exceptions
+      for CWB when thresholds are breached
+  - step: >-
+      Execute allocations and write promise/fulfillment instructions to
+      execution systems; trigger carrier options if expedite selected
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Writeback allocation/promise to S4 & Kinaxis and invoke TMS/3PL APIs for
+      expedited shipment or pickup
+  - step: >-
+      Surface recommendations and exceptions to planners/sales for review and
+      notify stakeholders of confirmed promise changes
+    stage: surface
+    component: CWB Lifecycle / UI Screen
+    purpose: >-
+      Present recommendations for accept/reject/override and notify
+      Sales/Logistics of final promises and any expedite actions
+branches:
+  - condition: ATP sufficient at requested promise date
+    response: >-
+      Automatically confirm full order promise, allocate inventory, writeback to
+      S4 and notify downstream systems/stakeholders
+    outcome: >-
+      Order confirmed; expected on-time fulfillment; no manual intervention
+      required
+  - condition: ATP short but expedite/transport option can meet customer window
+    response: >-
+      Recommend expedite (expedite cost vs. revenue tradeoff) and create
+      expedite request via Remote Function to TMS/3PL; surface to CWB for
+      approval if cost threshold exceeded
+    outcome: >-
+      Order promised with expedited delivery; higher fulfillment confidence;
+      additional logistics cost recorded
+  - condition: ATP short and no expedite feasible or cost-effective
+    response: >-
+      Recommend allocation alternatives (partial ship, downgrade date, or
+      reallocation from less-critical orders) and surface trade-offs in CWB for
+      planner/sales decision
+    outcome: >-
+      Partial or rescheduled promise issued, affected orders flagged for
+      follow-up, revenue/profit impact minimized and communicated

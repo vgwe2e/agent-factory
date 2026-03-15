@@ -1,0 +1,146 @@
+objective: >-
+  Automate end-to-end S&OP decisions across new vehicle launches and lifecycle
+  transitions to optimize ramp-up sequencing, capacity utilization, supplier
+  constraints, and marketing alignment, reducing COGS, protecting revenue, and
+  improving working capital.
+trigger: >-
+  New vehicle program kickoff, engineering change notification, or planned
+  end-of-life/parts transition enters S&OP planning horizon (initial program
+  phase defined).
+decision: >-
+  Select and approve a ramp-up production and capacity plan for the new vehicle
+  launch that balances sequencing, line utilization, supplier constraints, COGS,
+  and launch readiness among alternative scenarios.
+expected_action: >-
+  Agentic Process Builder invokes Cortex forecasts and RCA analyses, synthesizes
+  scenario trade-offs via Agent Team, recommends a preferred ramp plan, executes
+  ERP writeback (SAP S/4HANA) via Remote Functions, and launches CWB Lifecycle
+  for stakeholder approval and monitoring.
+expected_outcome: >-
+  Coordinated launch plan committed in SAP S/4HANA with minimized incremental
+  COGS, protected launch revenue targets, reduced working capital through staged
+  inventory and supplier commitments, and an auditable approval trail with
+  contingency scenarios.
+rationale: >-
+  Lifecycle events span multiple structured and unstructured inputs (engineering
+  changes, marketing pushes, supplier constraints) and require adaptive
+  reasoning across trade-offs. An agentic AI route (Process Builder + Agent Team
+  + Cortex services) enables multi-source synthesis, scenario generation,
+  human-in-loop decisions, and ERP writeback while preserving auditability and
+  traceability.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Marketing Automation / Campaign Planning
+    status: tbd
+  - name: Supplier Portal / APS
+    status: tbd
+  - name: PLM / Engineering Change System
+    status: tbd
+key_inputs:
+  - name: Bill of Materials (BOM) & Routings
+    source: SAP S/4HANA
+    purpose: >-
+      Identify parts, alternate sourcing, production routing and cost elements
+      for ramp planning
+    preferred_stream_type: batch
+  - name: Plant capacity & line utilization constraints
+    source: SAP S/4HANA
+    purpose: >-
+      Determine feasible production volumes and sequencing constraints during
+      ramp
+    preferred_stream_type: batch
+  - name: Supplier lead times, commitments, and capacity
+    source: Supplier Portal / APS
+    purpose: >-
+      Assess supply-side constraints and identify risk of shortages or needed
+      expedited actions
+    preferred_stream_type: batch
+  - name: Marketing campaign schedule and expected uplift
+    source: Marketing Automation / Campaign Planning
+    purpose: Align demand generation timing with production ramp and inventory staging
+  - name: Historical ramp performance & ramp-up learning curves
+    source: Subject Areas (historical data ingested via STREAMS)
+    purpose: >-
+      Inform ramp velocity assumptions, yield improvements, and expected
+      scrap/learning costs
+    preferred_stream_type: batch
+  - name: Engineering change notices (ECOs) and impact matrix
+    source: PLM / Engineering Change System
+    purpose: >-
+      Assess part obsolescence, new part introduction impacts on supply and
+      production
+  - name: Demand signal (dealer orders, forecast scenarios)
+    source: SAP S/4HANA
+    purpose: >-
+      Provide baseline and firm order data for scenario generation and commit
+      decisions
+    preferred_stream_type: batch
+happy_path:
+  - step: >-
+      Ingest program, BOM, capacity, orders, supplier and campaign data into
+      Subject Areas
+    stage: ingest
+    component: STREAMS
+    purpose: Consolidate and normalize structured inputs for analysis
+  - step: >-
+      Generate baseline and scenario demand forecasts and ramp curves for the
+      new program
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Create time-series demand scenarios and ramp velocity estimates
+  - step: Run RCA to surface engineering-change impacts and supplier risk vectors
+    stage: analyze
+    component: RCA Service
+    purpose: >-
+      Identify features, parts, and suppliers with highest impact on COGS and
+      availability
+  - step: >-
+      Orchestrate multi-scenario trade-off evaluation and recommendation via
+      agentic workflow
+    stage: decide
+    component: Process Builder + Agent Team
+    purpose: >-
+      Synthesize forecasts, constraints and business rules to propose an optimal
+      ramp plan
+  - step: >-
+      Execute approved plan: writeback production schedules & POs and create CWB
+      for exceptions
+    stage: act
+    component: Remote Functions + CWB Lifecycle
+    purpose: >-
+      Commit plan in SAP S/4HANA, surface exceptions for human approvals and
+      track audit
+  - step: Surface final plan and KPIs to S&OP stakeholders and schedule monitoring
+    stage: surface
+    component: UI Screen / dashboard
+    purpose: >-
+      Provide visibility, acceptance capture, and ongoing monitoring of ramp
+      performance
+branches:
+  - condition: Key supplier capacity shortfall discovered during decide step
+    response: >-
+      Process Builder triggers alternative sourcing and phased launch
+      subprocess; Agent Team evaluates cost vs. delay trade-offs and proposes
+      phased SKU sequencing or expedited logistics with higher COGS
+    outcome: >-
+      Revised ramp plan with mitigations (phased launch or higher-cost supply
+      path) and updated financial impact communicated to stakeholders
+  - condition: >-
+      Forecast scenario uncertainty above threshold (high variance across
+      scenarios)
+    response: >-
+      Agent Team generates multiple commit-level scenarios, increases buffer
+      recommendations, and requests interim marketing alignment to smooth demand
+    outcome: >-
+      Conservative commit adopted with contingency inventory and a plan to
+      re-plan at next cadence, reducing risk to revenue and minimizing overstock
+  - condition: Stakeholder overrides recommended plan during CWB review
+    response: >-
+      CWB Lifecycle captures override rationale, Process Builder runs impact
+      recalculation, and Remote Functions write approved changes to SAP S/4HANA
+      with audit trail
+    outcome: >-
+      Approved override applied operationally with documented business
+      justification and updated KPIs for post-launch review

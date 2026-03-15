@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for contract management.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Evaluate supplier performance and optimize contract terms.
+    confidence: inferred
+    capability: Evaluate supplier performance and optimize contract terms.
+process_builder:
+  - name: Process Builder
+    purpose: Automate the drafting and negotiation process.
+    confidence: confirmed
+    node_type: decide
+  - name: CWB Lifecycle
+    purpose: Ensure contract terms are enforced and monitored.
+    confidence: confirmed
+    node_type: act
+  - name: Notification
+    purpose: Provide stakeholders with updates on contract status and performance.
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end contract management across msas, po terms,
+      amendments, and supplier performance to optimize cogs, improve working
+      capital, and safeguard ebitda. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

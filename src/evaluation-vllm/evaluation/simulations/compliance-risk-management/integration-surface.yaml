@@ -1,0 +1,39 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: shipment-details
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: hazardous-material-information
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: security-measures
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: carrier-safety-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Predict potential compliance issues and risks.
+  - component: Process Builder
+    type: process_builder
+    function: Ensure security and compliance with regulatory requirements.
+  - component: Remote Functions
+    type: process_builder
+    function: Verify carrier adherence to safety and regulatory standards.
+  - component: Agentic AI
+    type: agent_teams
+    function: Make informed decisions to minimize delays and costs.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous monitoring, decision-making, and enforcement of
+      compliance and risk controls across customs, hazardous materials,
+      transport security, and safety audits to optimize carrier and route
+      choices within safe and cost-effective bounds. and approve the recommended
+      action.

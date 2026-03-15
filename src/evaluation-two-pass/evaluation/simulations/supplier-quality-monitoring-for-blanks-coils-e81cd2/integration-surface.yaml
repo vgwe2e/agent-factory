@@ -1,0 +1,56 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Quality Management System (QMS)
+    type: QMS
+    status: tbd
+  - name: Laboratory/Inspection System (LIMS)
+    type: LIMS
+    status: tbd
+  - name: Supplier Portal / Documents
+    type: Supplier Portal
+    status: tbd
+aera_ingestion:
+  - stream_name: incoming-inspection-results-iqc-quality-notifications
+    stream_type: STREAMS
+    source: SAP S/4HANA (QM)
+  - stream_name: supplier-master-contract-terms
+    stream_type: STREAMS
+    source: SAP S/4HANA (Vendor Master)
+  - stream_name: historical-defect-rates-trend-series
+    stream_type: STREAMS
+    source: Subject Areas / aggregated STREAMS tables
+  - stream_name: inspection-lot-metadata-batch-coil-blank-ids-material-spec
+    stream_type: STREAMS
+    source: SAP S/4HANA / LIMS
+  - stream_name: supplier-provided-evidence-certs-photos-corrective-action-reports
+    stream_type: DDM/Crawlers
+    source: Supplier Portal / Documents
+processing:
+  - component: RCA Service
+    type: cortex
+    function: >-
+      Identify drivers, correlated features, and compute supplier-material risk
+      scores
+  - component: Remote Functions + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Automate ERP writebacks and route decisions for human-in-the-loop
+      approvals where needed
+  - component: Notification
+    type: process_builder
+    function: >-
+      Alert stakeholders and provide CWB/UI links to recommendation details and
+      audit scheduling
+  - component: Process Builder + Agent Team
+    type: agent_teams
+    function: Generate explainable recommendations and confidence scores for actions
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review continuously monitor and audit quality performance of raw material
+      and blank/coil suppliers to determine audit frequency, sampling plans, and
+      remediation triggers that maintain incoming material quality. and approve
+      the recommended action.

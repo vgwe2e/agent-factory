@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and validate master data for IBP.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Ensure data quality and consistency.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Remote Functions
+    purpose: Optimize IBP settings for planning performance.
+    confidence: inferred
+    node_type: decide
+  - name: Process Builder
+    purpose: Ensure seamless data flow and interlocks.
+    confidence: confirmed
+    node_type: act
+  - name: Data Quality & Validation
+    purpose: Ensure data integrity and accuracy.
+    confidence: inferred
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review leverage deterministic ibp-ready data governance, inter-system data
+      interlocks, and optimized data flows to enable close coupling of demand,
+      supply, and financial plans, reducing cogs via improved data quality and
+      seamless planning inputs. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

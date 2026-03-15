@@ -1,0 +1,43 @@
+streams:
+  - name: STREAMS (DDM/Crawlers)
+    purpose: Consolidate data needed for evaluation into Subject Areas and data views
+    confidence: confirmed
+    type: STREAMS (DDM/Crawlers)
+cortex:
+  - name: Cortex Auto Forecast + RCA Service
+    purpose: >-
+      Produce quantified scenarios (revenue, margin, working capital, stock
+      risk) and surface root causes/risks
+    confidence: confirmed
+    capability: >-
+      Produce quantified scenarios (revenue, margin, working capital, stock
+      risk) and surface root causes/risks
+process_builder:
+  - name: Process Builder -> CWB Lifecycle (Rules + Notification)
+    purpose: >-
+      Present approve/pilot/defer recommendation and capture decision or
+      override
+    confidence: confirmed
+    node_type: decide
+  - name: 'Process Builder: Action Item + Remote Functions (ERP/TMS/WMS writeback)'
+    purpose: >-
+      Operationalize the approved initiative across S4, Kinaxis and
+      transport/WMS partners
+    confidence: confirmed
+    node_type: act
+  - name: UI Screens (dashboard) + Subject Areas
+    purpose: >-
+      Track revenue, EBITDA, working capital and supply performance; feed back
+      into future decision cycles
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end category innovation decisions to evaluate,
+      validate, and operationalize initiatives across demand, inventory and
+      procurement to drive revenue growth, ebitda uplift, and improved working
+      capital. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

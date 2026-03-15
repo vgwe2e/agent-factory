@@ -1,0 +1,64 @@
+decision: >-
+  Choose whether to add, keep, or remove a forecast feature (driver) by
+  balancing model performance uplift vs. data availability, operational cost,
+  and revenue/COGS impact.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled model refresh or detection of new candidate feature via 'Determine
+    New Features and Update Process' (periodic cadence or feature discovery
+    event).
+  parameters:
+    objective: >-
+      Unify demand forecasting, autonomous data validation, feature enrichment
+      (COGS & lifecycle), and forecast-driven inventory & revenue optimization
+      across multi-SKU, multi-location CPG network to improve forecast accuracy,
+      reduce stockouts/waste, and protect revenue.
+    key_inputs:
+      - Sales history (transactional)
+      - On-hand inventory & WMS transactions
+      - Promotions, pricing and markdowns
+      - COGS and product master (lifecycle, category)
+      - Shipment / TMS events (lead times)
+      - Shortage / constraint signals
+      - External demand signals (search, weather, events)
+      - Reference historical forecasts / SAS outputs
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Kinaxis RapidResponse
+      - Kinaxis
+      - Blue Yonder WMS
+      - Uber Freight (TMS / 3PL)
+      - SAS / Advanced Statistical Forecasting
+      - Enterprise Data Lake
+      - Retail POS / External Demand Feeds
+expected_output:
+  action: >-
+    Process Builder orchestrates STREAMS and DDM/Crawlers to enrich Subject
+    Areas, run Data Quality & Validation, invoke Cortex Auto Forecast for
+    retrain + SHAP explainability, present recommendation via CWB Lifecycle UI
+    Screen, and—if approved—execute writeback/update via Remote Functions to
+    S4/Kinaxis/Blue Yonder and trigger Safety Stock Service recalculation.
+  outcome: >-
+    Selected feature set applied to production forecasts resulting in measurable
+    MAPE improvement, reduced stockouts and overstocks, optimized safety stock
+    and replenishment signals, and verified neutral-or-positive revenue impact;
+    automated rollback/hold if negative impact detected.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Data Quality & Validation
+    - Cortex Auto Forecast
+    - Process Builder
+    - Remote Functions
+    - UI Screens
+    - Dashboard
+rationale: >-
+  A single DI stack that couples automated data ingestion/validation, COGS-aware
+  feature engineering, explainable ML forecasting, and lifecycle-driven
+  approvals ensures repeatable, auditable feature updates that improve forecast
+  accuracy and align inventory and revenue objectives while minimizing manual
+  toil.

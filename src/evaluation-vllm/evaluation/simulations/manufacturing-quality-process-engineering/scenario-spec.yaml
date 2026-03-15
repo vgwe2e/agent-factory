@@ -1,0 +1,82 @@
+objective: >-
+  Reduce scrap, rework, and warranty costs while improving first-pass yields and
+  on-time delivery by automating quality-related COGS driver detection,
+  prediction, and remediation.
+trigger: >-
+  Detection of potential quality issues through PFMEA, Control Plan, MSA,
+  Quality Gates, and Deviation/Non-Conformance processes.
+decision: >-
+  Select mitigation actions, determine remediation/control actions, integrate
+  MSA results, set up quality gates, and handle quality deviations based on
+  risk, cost, and throughput considerations.
+expected_action: >-
+  Automate the detection, prediction, and remediation of quality-related issues
+  using AI-driven insights and human-in-the-loop decision-making.
+expected_outcome: >-
+  Improved first-pass yields, reduced scrap and rework, lower warranty costs,
+  and enhanced on-time delivery performance.
+rationale: >-
+  Leveraging AI and automation to streamline quality processes will enable
+  proactive issue resolution and continuous improvement, leading to significant
+  cost savings and quality enhancements.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: PFMEA Outcomes
+    source: SAP S/4HANA
+    purpose: Identify potential process failures and mitigation strategies.
+  - name: Control Plan Parameters
+    source: SAP S/4HANA
+    purpose: Define acceptance criteria, sampling plans, and reaction to deviations.
+  - name: MSA Results
+    source: SAP S/4HANA
+    purpose: Ensure measurement reliability and trigger corrective actions.
+  - name: Quality Gate Status
+    source: SAP S/4HANA
+    purpose: Monitor and enforce quality gate checkpoints.
+  - name: Deviation Reports
+    source: SAP S/4HANA
+    purpose: Handle quality deviations and non-conformances.
+happy_path:
+  - step: >-
+      Ingest PFMEA outcomes, control plan parameters, MSA results, and quality
+      gate statuses.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and prepare data for analysis.
+  - step: >-
+      Analyze PFMEA outcomes and control plan parameters to predict potential
+      quality issues.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict quality risks and their impacts.
+  - step: Integrate MSA results and evaluate measurement uncertainty.
+    stage: analyze
+    component: Data Quality & Validation
+    purpose: Ensure measurement reliability and trigger corrective actions.
+  - step: Set up and enforce quality gates based on analysis results.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Implement quality gate checkpoints and enforce them.
+  - step: >-
+      Design and implement processes for handling quality deviations and
+      non-conformances.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Manage deviations and non-conformances effectively.
+  - step: Notify relevant stakeholders about quality issues and recommended actions.
+    stage: notify
+    component: Notification
+    purpose: Communicate findings and actions to stakeholders.
+branches:
+  - condition: High measurement uncertainty detected
+    response: Trigger corrective actions and re-evaluate MSA results.
+    outcome: Ensures measurement reliability and reduces false positives.
+  - condition: Quality gate fails
+    response: Initiate rework or scrap process.
+    outcome: Minimizes defects and optimizes throughput.
+  - condition: Significant deviation detected
+    response: Escalate to supplier or initiate containment and rework.
+    outcome: Balances cost and delivery impact while ensuring quality.

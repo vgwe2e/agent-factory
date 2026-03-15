@@ -1,0 +1,25 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Data Ingestion
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Financial Impact Analysis
+    confidence: inferred
+    capability: Financial Impact Analysis
+  - name: Remote Functions
+    purpose: CapEx Planning
+    confidence: inferred
+    capability: CapEx Planning
+process_builder:
+  - name: Rules
+    purpose: Gap Analysis
+    confidence: confirmed
+    node_type: control_flow
+agent_teams: []
+ui:
+  - name: UI Screens
+    purpose: Decision Support
+    confidence: confirmed
+    component_type: display

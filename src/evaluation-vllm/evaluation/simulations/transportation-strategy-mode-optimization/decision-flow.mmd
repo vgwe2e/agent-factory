@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Periodic review of transportation strategy and mode optimization needs.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve carrier performance data from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze carrier performance using Cortex Auto Forecast.]
+  N2 --> N3{PB: Process Builder - Design multimodal transport network leveraging rail, road, and ocean configurations.}
+  N3 -->|Primary| N4{Stream: STREAMS - Optimize freight lanes and routes using STREAMS.}
+  N4 --> N5[Cortex: RCA Service - Analyze inbound/outbound logistics flow to identify bottlenecks.]
+  N5 --> N6{PB: Process Builder - Plan and route special cargo to minimize risk and total cost.}
+  N6 --> Z1[Outcome: Reduced logistics costs, minimized stockouts, and improved on-time delivery metrics.]
+  N3 -->|Carrier performance data indicates si...| B1[Trigger CWB Lifecycle for carrier strategy adjustment.]
+  B1 --> O1[Outcome: Adjust long-term carrier strategy based on performance feedback.]
+  O1 --> End[End]
+  N3 -->|Special cargo requirements exceed cur...| B2[Engage Remote Functions for custom API calls to external logistics providers.]
+  B2 --> O2[Outcome: Secure additional capacity for special cargo shipments.]
+  O2 --> End[End]
+  N3 -->|Freight lane optimization identifies ...| B3[Use Remote Functions to reroute high-risk lanes to safer alternatives.]
+  B3 --> O3[Outcome: Minimize risk while maintaining cost and service level objectives.]
+  O3 --> End[End]
+  Z1 --> End[End]

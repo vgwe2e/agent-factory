@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Production schedule release or detected low/abnormal line inventory consumption (periodic batch or event-based alert).]
+  A --> N1[Stream: STREAMS - Ingest schedule, inventory, BOMs, telemetry and supplier ETAs into the data foundation]
+  N1 --> N2[Agent: Agentic AI (Multi-Agent Pipeline) + Remote Functions - Generate optimized JIS delivery windows and kit-build sequence accounting for multi-echelon inventory and sequencing constraints]
+  N2 --> N3{PB: Process Builder (IF) - Evaluate optimization feasibility and decide execution path}
+  N3 -->|Primary| N4[PB: Remote Functions (ERP Writeback) + Process Builder (Action Item) - Execute plan: write delivery/pick/kit instructions into SAP S/4HANA and trigger carrier/supplier actions]
+  N4 --> N5[PB: UI Screen (dashboard) + Notification - Surface plan, KPIs, and exceptions to operators and planners; send notifications for action items]
+  N5 --> Z1[Outcome: Reduced line stoppages and changeovers, improved OTIF for line-side deliveries, lower material handling costs and COGS, improved sequence accuracy and reduced line waste across plants and supplier nodes.]
+  N3 -->|Optimization yields feasible plan and...| B1[Process Builder auto-executes plan and writes instructions to SAP S/4HANA; notifications sent to logistics and suppliers.]
+  B1 --> O1[Outcome: Autonomous execution achieves target OTIF and reduced manual coordination.]
+  O1 --> End[End]
+  N3 -->|Constraint violations (capacity, sequ...| B2[Route plan to CWB Lifecycle for human review/override with recommended mitigation steps from Agentic AI.]
+  B2 --> O2[Outcome: Planners adjudicate exceptions; manual adjustments prevent production disruption while preserving audit trail.]
+  O2 --> End[End]
+  N3 -->|Supplier ETA mismatch or expedited sh...| B3[Trigger expediting subprocess and alternative sourcing recommendations; flag impacted line(s) and adjust sequence plan.]
+  B3 --> O3[Outcome: Reduced stoppage risk via expediting or resequencing; updated plan pushed when resolved.]
+  O3 --> End[End]
+  Z1 --> End[End]

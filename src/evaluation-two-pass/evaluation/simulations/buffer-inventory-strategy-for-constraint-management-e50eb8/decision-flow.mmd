@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Daily scheduled snapshot or exception event (capacity breach, supplier delay, demand spike) detected in SAP S/4HANA]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Ingest latest snapshots of capacity, inventory, POs, routings, and demand]
+  N1 --> N2[Cortex: Cortex Auto Forecast + Safety Stock Service + Subject Areas - Compute forecasts, safety stock baselines, and identify constrained nodes]
+  N2 --> N3{PB: Process Builder (Process + Rules + Data View) - Simulate mitigation options and rank plans by COGS impact and OTD attainment}
+  N3 -->|Primary| N4[PB: Remote Functions + Process Builder (Action Item) - Execute approved plan changes and ERP writebacks; create action items for exceptions]
+  N4 --> N5[UI: UI Screens + Notification - Surface results and notify stakeholders with KPIs and audit trail]
+  N5 --> Z1[Outcome: Coordinated reduction in constraint-driven stockouts and expedited actions, measurable decrease in COGS from optimized buffer placement, improved OTD percentages, and traceable P&L impact from executed actions and simulations.]
+  N3 -->|Top-ranked mitigation plan requires s...| B1[Process Builder flags plan; create CWB Lifecycle exception routed to Procurement team with recommended expedite or alternate suppliers]
+  B1 --> O1[Outcome: Procurement reviews and either approves alternate suppliers/expedites (through Remote Functions writeback) or the plan defaults to next-best scenario with longer lead times]
+  O1 --> End[End]
+  N3 -->|Calculated buffer cost uplift exceeds...| B2[Rules node rejects high-cost buffers and triggers constrained optimization mode prioritizing OTD or cost per business policy; notify finance for policy override]
+  B2 --> O2[Outcome: System applies a lower-cost mitigation plan and surfaces trade-off report; finance can approve temporary policy relaxation via CWB Lifecycle]
+  O2 --> End[End]
+  N3 -->|Forecast uncertainty / model confiden...| B3[Pause autonomous writeback for affected SKUs and create review Action Items assigned to planners (CWB Lifecycle) with scenario comparisons]
+  B3 --> O3[Outcome: Human-in-the-loop review required; autonomous execution proceeds only for high-confidence SKUs while others are handled manually]
+  O3 --> End[End]
+  Z1 --> End[End]

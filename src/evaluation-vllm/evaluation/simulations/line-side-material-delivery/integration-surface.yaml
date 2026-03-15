@@ -1,0 +1,35 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: replenishment-signal
+    stream_type: Event Stream
+    source: Production Line
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-requirements
+    stream_type: Event Stream
+    source: Production Line
+processing:
+  - component: Process Builder
+    type: process_builder
+    function: Optimize kit building and sequencing.
+  - component: Remote Functions
+    type: process_builder
+    function: Ensure timely and accurate material delivery.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Optimize material flow and reduce handling costs.
+  - component: Notification
+    type: process_builder
+    function: Ensure line-side cleanliness and resource availability.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize line-side material delivery to minimize cogs and improve
+      otif by orchestrating just-in-sequence (jis) deliveries, pull-based
+      replenishment, and waste-reducing line practices. and approve the
+      recommended action.

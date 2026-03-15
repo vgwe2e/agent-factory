@@ -1,0 +1,57 @@
+decision: >-
+  Select capacity allocation and bottleneck-driven production plan across plants
+  and lines that meets demand while minimizing changeovers, resolving
+  bottlenecks, and balancing utilization and cost.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Daily scheduled planning run or demand signal change (forecast update or
+    large confirmed order) from SAP S/4HANA / Cortex Auto Forecast.
+  parameters:
+    objective: >-
+      Autonomously model plant and line capacity across a multi-site
+      manufacturing network and generate bottleneck-driven production
+      allocations to minimize COGS, increase line throughput, and align capacity
+      with demand signals.
+    key_inputs:
+      - Sales Orders & Confirmed Demand
+      - Demand Forecast (time-series)
+      - Plant & Line Master Data (routing, capacities)
+      - Equipment capability, MTTR/MTBF, downtime logs
+      - Changeover times and sequence-dependent setup costs
+      - Shift calendars, labor availability & skill mappings
+      - Cost rates (variable machining, labor, OEE impact)
+      - Business constraints & policies (service levels, site preferences)
+    source_systems:
+      - SAP S/4HANA
+      - Plant MES
+      - HR / Workforce Management
+expected_output:
+  action: >-
+    Process Builder orchestrates data ingestion and demand forecasting, runs
+    capacity simulation via Remote Functions, applies rules to select
+    allocations and sequencing, writes optimized production schedules to SAP
+    S/4HANA, and issues action items/notifications for operations.
+  outcome: >-
+    Network-level production plan that reduces bottleneck impact, improves line
+    throughput, lowers unit COGS through optimized allocation and sequencing,
+    and better aligns capacity to demand with automated execution and clear
+    operator tasks.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast
+    - Process (Process Builder) + Remote Functions
+    - Process (Process Builder) - Rules / IF
+    - Remote Functions + Process (Process Builder) - Action Item / Notification
+    - UI Screen / Subject Areas / Dashboard
+rationale: >-
+  Deterministic process combines robust data ingestion (STREAMS), demand signals
+  (Cortex Auto Forecast), constraint-aware simulation (Remote Functions), and
+  Process Builder orchestration to produce repeatable, auditable production
+  allocations. High integration complexity (SAP S/4HANA, MES, HR) is warranted
+  by expected operational and cost benefits from automated bottleneck resolution
+  and cross-site optimization.

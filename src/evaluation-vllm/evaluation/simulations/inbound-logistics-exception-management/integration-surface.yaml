@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: shipment-delay-alerts
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: damaged-material-reports
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: non-compliance-reports
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: transportation-disruption-alerts
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-shortage-alerts
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: To predict potential impacts and recommend mitigation actions
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      To determine the best course of action (expedite, reroute, alternate
+      supplier)
+  - component: Remote Functions
+    type: process_builder
+    function: To implement the chosen mitigation actions
+  - component: UI Screens
+    type: process_builder
+    function: To track the effectiveness of the mitigation actions and report results
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review inbound logistics exception management and approve the recommended
+      action.

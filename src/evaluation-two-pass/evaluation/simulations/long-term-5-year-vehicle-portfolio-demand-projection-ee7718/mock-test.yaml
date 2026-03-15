@@ -1,0 +1,59 @@
+decision: >-
+  Decide the optimal multi-year vehicle portfolio demand plan that balances
+  forecast accuracy, service level targets (OIFF), working capital reduction,
+  and capacity/CAPEX alignment.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Periodic strategic planning cadence (quarterly) or material change in
+    macroeconomic/technology/capacity inputs (ad hoc trigger from Agentic AI or
+    system alert).
+  parameters:
+    objective: >-
+      Produce an autonomous, deterministic multi-year (5+ year) vehicle
+      portfolio demand and scenario engine that jointly optimizes demand
+      projections, macroeconomic scenarios, technology shift impacts, and
+      capacity constraints to align production and CAPEX with strategic product
+      shifts.
+    key_inputs:
+      - Historical sales, production, backlog, shipment records
+      - Macroeconomic scenario sets (GDP, unemployment, fuel/energy prices)
+      - Technology adoption curves & shift assumptions (EV uptake, autonomy)
+      - Manufacturing capacity & planned CAPEX / ramp schedules
+      - Market share and competitive dynamics
+    source_systems:
+      - SAP S/4HANA
+      - Macro Scenario Provider (e.g., economic data vendor)
+      - Engineering / Capacity Planning
+      - Dealer Orders / Order Backlog System
+expected_output:
+  action: >-
+    Orchestrate scenario generation, evaluate demand vs. capacity across
+    scenarios, recommend a single approved multi-year demand plan (with
+    documented alternatives and overrides) and write approved plan back to
+    planning subject areas / SAP S/4HANA.
+  outcome: >-
+    Tighter alignment of production and CAPEX to strategic product shifts,
+    reduced working capital, improved OIFF delivery, and documented scenario
+    rationale with auditable approvals.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Cortex Auto Forecast
+    - Remote Functions
+    - UI Screens / Notification (CWB Lifecycle)
+    - Process Builder (Process + Agentic AI + CWB Lifecycle)
+    - Dashboard
+rationale: >-
+  A deterministic process route couples robust ETL and subject-area modeling
+  (STREAMS + Subject Areas) with Cortex forecasting and agentic scenario
+  orchestration to produce repeatable, auditable multi-year demand plans.
+  Process Builder orchestrates scenario ensembles, Remote Functions handle
+  complex capacity/CAPEX calculations and SAP writebacks, and CWB Lifecycle
+  provides human-in-the-loop approvals and override tracking. This hybrid
+  approach balances automation and governance for strategic decisions while
+  enabling rapid re-runs when macro or capacity inputs change.

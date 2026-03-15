@@ -1,0 +1,51 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Pull historical sales, inventory, supplier, and production data from SAP
+      S/4HANA and external providers
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Cleanse, aggregate to SKU-location-time, and create Subject Areas for
+      forecasting and inventory metrics
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Auto-select algorithms, produce demand forecasts and SHAP driver
+      explanations across SKUs and tiers
+    confidence: confirmed
+    capability: >-
+      Auto-select algorithms, produce demand forecasts and SHAP driver
+      explanations across SKUs and tiers
+process_builder:
+  - name: Process Builder
+    purpose: >-
+      Apply business rules, safety-stock optimization, and select forecast
+      variants; flag exceptions for CWB
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Write accepted forecasts and replenishment plans back to SAP S/4HANA and
+      trigger PO creation or change notifications
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: >-
+      Present exception recommendations for planner approval/override with audit
+      trail; surface results in UI Screens dashboard
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously develop, deploy, and operate time-series demand models
+      and integrated forecast optimization across supplier-plant-dc network to
+      reduce stockouts and excess, tighten cogs, and lower working capital. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,36 @@
+decision: >-
+  Optimal multi-year demand plan for the entire vehicle portfolio, balancing
+  forecast accuracy, service levels, and working capital
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Quarterly business review meeting
+  parameters:
+    objective: Strategic Demand Planning & Scenario Modeling
+    key_inputs:
+      - Historical Sales Data
+      - Macroeconomic Indicators
+      - Technology Adoption Rates
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Generate and validate multi-year demand projections for the entire vehicle
+    portfolio, considering macroeconomic scenarios and technology shifts
+  outcome: >-
+    Reduced working capital, improved OIFF delivery, and tighter
+    production/CAPEX alignment with strategic product shifts
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  By integrating deterministic demand-shaping with agentic orchestration across
+  scenario inputs and capacity alignment, Ford can optimize its strategic
+  planning processes.

@@ -1,0 +1,36 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and prepare data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: >-
+      Prioritize logistics facility investments based on cost, capacity, and
+      service levels.
+    confidence: inferred
+    capability: >-
+      Prioritize logistics facility investments based on cost, capacity, and
+      service levels.
+  - name: Remote Functions
+    purpose: Determine which CAPEX projects to approve or defer.
+    confidence: inferred
+    capability: Determine which CAPEX projects to approve or defer.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Ensure budget allocation aligns with strategic goals and service levels.
+    confidence: confirmed
+    node_type: decide
+  - name: Notification
+    purpose: Communicate decisions and next steps.
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review combine deterministic optimization and agentic orchestration to
+      prioritize logistics capital planning and investment decisions. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

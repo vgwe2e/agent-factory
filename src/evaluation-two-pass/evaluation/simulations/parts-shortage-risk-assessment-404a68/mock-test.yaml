@@ -1,0 +1,63 @@
+decision: >-
+  Which materials are at risk of shortage and which preemptive actions
+  (expedite, reschedule, re-source, adjust safety stock, or defer production)
+  should be executed to avoid production impact while balancing cost vs.
+  service-level and working capital trade-offs.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled daily MRP run OR immediate on BOM/ECO release or demand forecast
+    deviation >10% (whichever occurs first).
+  parameters:
+    objective: >-
+      Automate end-to-end MRP decisions across BOM release, material
+      requirements calculation, supplier release, inventory policy, and shortage
+      risk assessment to minimize COGS, improve OTIF, and optimize working
+      capital across multi-echelon automotive networks.
+    key_inputs:
+      - BOMs & ECOs (released engineering bills)
+      - Material requirements / MRP outputs (planned orders, shortages)
+      - Inventory balances & multi-echelon positions
+      - Open POs and supplier confirmations
+      - Production schedule / planned orders
+      - Demand forecast and forecast deltas
+      - Supplier constraints, lead-time variability, capacity
+      - Historical usage, lead-time distribution, cost metrics
+    source_systems:
+      - SAP S/4HANA
+      - MES
+      - Supplier Portal / EDI / API
+      - WMS / Warehouse System
+expected_output:
+  action: >-
+    Execute an integrated pipeline: ingest SAP S/4HANA master/transactional data
+    via STREAMS, produce demand signals with Cortex Auto Forecast and run Safety
+    Stock Service for dynamic buffers, evaluate shortage risk with RCA-style
+    scoring, have a Process Builder flow (Agent Team/agentic_ai) select actions
+    via rules and cost-service optimization, then use Remote Functions to write
+    changes to SAP (PO changes/supplier releases) and notify suppliers/planners.
+    Create CWB Lifecycle items when confidence or cost thresholds require human
+    approval.
+  outcome: >-
+    Fewer unplanned stockouts and expedited shipments, lower COGS through
+    optimized BOM integrity and sourcing decisions, improved OTIF, reduced
+    excess inventory and working capital, faster corrective actions for
+    shortages, and measurable improvements in MAPE/stockout
+    rate/working-capital-days.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast + Safety Stock Service + RCA Service
+    - Remote Functions
+    - Process Builder (Agent Team / agentic_ai) + Rules
+    - UI Screen / CWB Lifecycle / Notification
+rationale: >-
+  Multi-echelon automotive MRP involves complex, interdependent signals (BOMs,
+  lead times, demand noise, supplier constraints). Combining STREAMS ingestion,
+  Cortex forecasting, Safety Stock Service, agentic Process Builder
+  orchestration, and Remote Functions enables adaptive, autonomous decisions
+  while preserving human-in-the-loop controls for higher-risk or low-confidence
+  cases.

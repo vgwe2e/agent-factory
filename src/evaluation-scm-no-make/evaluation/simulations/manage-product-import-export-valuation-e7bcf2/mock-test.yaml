@@ -1,0 +1,58 @@
+decision: >-
+  Select applicable landed-cost components (duties, taxes, fees, tariffs) per
+  product/shipment and decide whether to auto-apply calculated valuation updates
+  or route for manual approval.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    New shipment record, a tariff/rate change, a new trade agreement, or
+    scheduled periodic landed-cost recalculation.
+  parameters:
+    objective: >-
+      Determine and calculate customs duties and landed cost for
+      imported/exported products, and integrate duties/taxes into product
+      valuation and downstream cost balancing with transport and logistics
+      charges.
+    key_inputs:
+      - Product master (incl. HS codes, weights, valuation class)
+      - Shipment manifest and line-level shipment details
+      - Tariff & duty rates (HS-based rates + regional rules)
+      - Trade agreements and preferential rules (eligibility)
+      - Freight, insurance and logistics costs
+      - Historical landed cost and reconciliation records
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Advanced Statistical Forecasting in SAS
+      - Kinaxis RapidResponse
+      - Kinaxis
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Freight
+      - Customs Tariff Database
+      - Trade Agreements Repository
+expected_output:
+  action: >-
+    Ingest product, shipment, tariff and transport cost data; compute duties and
+    landed cost using deterministic rules; auto-apply when within thresholds or
+    create CWB exceptions for finance/commodity review; write approved
+    valuations back to S4 and update planning subject areas.
+  outcome: >-
+    Accurate landed cost recorded in product valuation and planning Subject
+    Areas, exceptions captured and routed for approval, audit trail of tariff
+    sources and computations, and downstream systems updated (ERP/WMS/TMS).
+  affected_components:
+    - STREAMS
+    - Remote Functions
+    - Process Builder (IF) + CWB Lifecycle
+    - Remote Functions + Subject Areas
+    - UI Screen + Notification
+rationale: >-
+  Use STREAMS/DDM to consolidate canonical inputs, Remote Functions for
+  deterministic tariff and landed-cost calculations, Process Builder + IF nodes
+  to evaluate thresholds, and CWB Lifecycle for human-in-the-loop approvals so
+  automated updates and auditability are balanced with required controls.

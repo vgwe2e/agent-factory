@@ -1,0 +1,128 @@
+objective: >-
+  Autonomously coordinate BIW closure panel mounting, gapping, welding-line
+  sequencing, and quality-release decisions to minimize changeovers, reduce
+  rework/scrap, and improve line efficiency while preserving on-time delivery
+  and OTIF.
+trigger: Scheduled daily planning run or production-order change event from SAP S/4HANA
+decision: >-
+  Assign and sequence closure panel mounting, gapping, door alignment,
+  welding-line jobs, and quality-release flags to produce a feasible,
+  constraint-compliant production release schedule across BIW platforms.
+expected_action: >-
+  Run a constraint-based scheduling optimization that ingests ERP, MES, PLM, and
+  quality signals, generate synchronized sequence and release orders, route
+  exceptions for operator review, and write approved schedules to execution
+  systems.
+expected_outcome: >-
+  Optimized, synchronized BIW schedule that reduces changeover time and rework,
+  lowers COGS, preserves OTIF targets, and produces exception tickets for
+  high-risk items requiring human review.
+rationale: >-
+  A deterministic, process-driven optimizer can enforce hard constraints
+  (capacity, changeover costs, tolerance windows) and coordinate scheduling +
+  quality-release decisions centrally. Using Process Builder + Remote Functions
+  for solver execution and SAP writeback provides reliable, auditable automation
+  while enabling operator oversight for infeasible or high-risk cases.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Manufacturing Execution System (MES)
+    type: MES
+    status: tbd
+  - name: Quality Management System (QMS)
+    type: QMS
+    status: tbd
+key_inputs:
+  - name: production_orders
+    source: SAP S/4HANA
+    purpose: >-
+      Active production orders, due dates, platform assignments, and order
+      priorities
+    preferred_stream_type: batch
+  - name: material_availability
+    source: SAP S/4HANA
+    purpose: >-
+      Part on-hand, reservations, and expected receipts to determine feasible
+      releases
+  - name: welding_line_capacities
+    source: MES
+    purpose: >-
+      Line cycle times, available shifts, changeover times, and tooling
+      constraints for sequencing
+  - name: biw_panel_specifications
+    source: PLM/CAD (tbd)
+    purpose: >-
+      Tolerance windows and mounting/gapping constraints used in sequencing and
+      quality checks
+  - name: quality_history
+    source: QMS
+    purpose: >-
+      Historical defect and rework rates to score quality-risk and influence
+      release/inspection decisions
+happy_path:
+  - step: >-
+      Ingest master inputs (orders, materials, capacities, specs, quality
+      history) and validate referential integrity
+    stage: ingest
+    component: STREAMS
+    purpose: Consolidate and validate data into Subject Areas for scheduling
+  - step: >-
+      Run constraint-based scheduler to generate synchronized mounting, gapping,
+      welding sequence, and quality-release recommendations
+    stage: analyze
+    component: Remote Functions (constraint solver)
+    purpose: >-
+      Produce an optimized, feasible production sequence minimizing changeovers
+      and rework risk
+  - step: >-
+      Evaluate optimizer output against business rules and thresholds; route
+      exceptions requiring human review
+    stage: decide
+    component: Process Builder - IF + Action Item
+    purpose: >-
+      Automatically accept low-risk schedules; create CWB/Action Items for
+      exceptions beyond thresholds
+  - step: >-
+      Commit approved schedule and release flags to execution systems and create
+      transactions for tracked changes
+    stage: act
+    component: Process Builder - Transaction + Remote Functions (SAP writeback)
+    purpose: >-
+      Write schedule and release decisions to SAP S/4HANA and notify MES for
+      execution
+  - step: >-
+      Surface schedule, changeover plan, risk flags and KPIs to
+      planners/operators; allow override where authorized
+    stage: surface
+    component: UI Screen (dashboard + CWB Lifecycle view)
+    purpose: >-
+      Provide visibility, enable targeted overrides, and capture operator
+      decisions
+branches:
+  - condition: >-
+      Optimizer cannot produce a feasible schedule within capacity or material
+      constraints
+    response: >-
+      Generate relaxed alternative schedules with trade-offs (deferred orders,
+      increased changeovers) and create Action Item for planner intervention
+    outcome: >-
+      Manual planner selects or adjusts alternatives; system records decision
+      and re-commits selected schedule
+  - condition: >-
+      High quality-risk flagged for specific BIW panels (predicted scrap or
+      rework > threshold)
+    response: >-
+      Hold release of affected panels, route to inspection/repair workflow, and
+      recommend adjusted sequencing to isolate risk
+    outcome: >-
+      Reduced scrap/rework for flagged panels; potential localized delay but
+      improved quality metrics
+  - condition: Material shortage for prioritized orders detected after scheduling
+    response: >-
+      Partially release schedule for available items, generate expedited
+      procurement suggestion via SAP S/4HANA update, and escalate to supply
+      planner
+    outcome: >-
+      Critical orders remain prioritized for OTIF; procurement is expedited at
+      potential incremental cost

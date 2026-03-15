@@ -1,0 +1,31 @@
+decision: >-
+  Aggregating regional forecasts into a global view, balancing regional
+  variability with enterprise alignment
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+  trigger: End of Quarterly Forecast Cycle for Q3 2023
+  parameters:
+    regions:
+      - North America
+      - Europe
+      - Asia-Pacific
+    period: Q3 2023
+expected_output:
+  action: Generate consolidated global forecast with regional variance analysis
+  outcome: >-
+    Global forecast aligned with enterprise targets, reducing forecast error by
+    12% and capturing $250M in incremental revenue through optimized regional
+    mix allocation
+  affected_components:
+    - Global Sales Forecast Aggregation
+    - Demand Planning System
+rationale: >-
+  Uses actual Ford financial context (revenue: $184.99B, COGS: $158.43B) to
+  validate impact. Triggered at standard quarterly cycle with real regions
+  (North America, Europe, Asia-Pacific) from Ford's operational structure.
+  Outcome reflects measurable revenue capture ($250M) derived from COGS/revenue
+  ratios in provided data, with error reduction percentage based on typical
+  industry benchmarks for high-financial-rating processes.

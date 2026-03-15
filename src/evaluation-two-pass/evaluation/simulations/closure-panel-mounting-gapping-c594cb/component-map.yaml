@@ -1,0 +1,35 @@
+streams:
+  - name: STREAMS
+    purpose: Consolidate and validate data into Subject Areas for scheduling
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Remote Functions (constraint solver)
+    purpose: >-
+      Produce an optimized, feasible production sequence minimizing changeovers
+      and rework risk
+    confidence: inferred
+    capability: >-
+      Produce an optimized, feasible production sequence minimizing changeovers
+      and rework risk
+process_builder:
+  - name: Process Builder - IF + Action Item
+    purpose: >-
+      Automatically accept low-risk schedules; create CWB/Action Items for
+      exceptions beyond thresholds
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder - Transaction + Remote Functions (SAP writeback)
+    purpose: >-
+      Write schedule and release decisions to SAP S/4HANA and notify MES for
+      execution
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screen (dashboard + CWB Lifecycle view)
+    purpose: >-
+      Provide visibility, enable targeted overrides, and capture operator
+      decisions
+    confidence: confirmed
+    component_type: display

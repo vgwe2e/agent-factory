@@ -1,0 +1,38 @@
+decision: >-
+  Allocate orders to production slots, reserve and allocate parts inventory,
+  define and optimize allocation rules, and expedite urgent orders.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New customer or dealer order creation in SAP S/4HANA.
+  parameters:
+    objective: >-
+      Reduce COGS and improve OTIF through optimized order allocation and
+      inventory reservation.
+    key_inputs:
+      - Customer/Dealer Orders
+      - Available Production Slots
+      - Parts Inventory Levels
+      - Allocation Rules
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Orders are allocated to optimal production slots, parts are reserved and
+    allocated efficiently, allocation rules are optimized, and urgent orders are
+    expedited.
+  outcome: >-
+    Reduced COGS, improved OTIF, optimized working capital, and enhanced order
+    capture.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Process Builder
+    - Dashboard
+rationale: >-
+  By integrating decision intelligence across production slot allocation,
+  inventory reservation, and priority expediting, Ford can achieve significant
+  cost savings and operational efficiency improvements.

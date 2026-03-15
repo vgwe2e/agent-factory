@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawler
+    purpose: Collect demand plan data for review.
+    confidence: inferred
+    type: DDM/Crawler
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Generate insights and forecasts for executive review.
+    confidence: confirmed
+    capability: Generate insights and forecasts for executive review.
+  - name: AutoML
+    purpose: Evaluate supply plan options and their financial impacts.
+    confidence: inferred
+    capability: Evaluate supply plan options and their financial impacts.
+  - name: Cortex Monitoring
+    purpose: Ensure financial alignment and accuracy.
+    confidence: confirmed
+    capability: Ensure financial alignment and accuracy.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Support executive decisions on strategic trade-offs.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: UI Screens
+    purpose: Facilitate executive review and alignment on the demand plan.
+    confidence: confirmed
+    component_type: display

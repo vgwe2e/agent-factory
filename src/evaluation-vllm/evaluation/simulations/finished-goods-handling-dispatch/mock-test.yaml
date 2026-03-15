@@ -1,0 +1,37 @@
+decision: >-
+  Approve or reject final inspections, determine storage locations,
+  packaging/labeling strategies, load planning, and shipment documentation.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Completion of battery/drive unit final inspection.
+  parameters:
+    objective: >-
+      Optimize finished goods handling and dispatch to reduce COGS, improve
+      on-time delivery, and accelerate order fulfillment.
+    key_inputs:
+      - Final Inspection Results
+      - Inventory Levels
+      - Logistics Specifications
+      - Delivery Windows
+      - Cross-Border Regulations
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Autonomous decision-making for final inspection approval, optimized storage,
+    efficient packaging, load scheduling, and compliant documentation.
+  outcome: >-
+    Reduced handling costs, minimized stockouts, improved on-time delivery, and
+    accelerated order fulfillment.
+  affected_components:
+    - DDM/Crawler
+    - Remote Functions
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Automate and optimize the entire finished goods handling process to enhance
+  efficiency and compliance.

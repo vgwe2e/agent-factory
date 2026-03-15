@@ -1,0 +1,72 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Forecasting / Analytics
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting Service
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / Planning
+    status: identified
+  - name: Kinaxis (Order Expediting / Rebalancing / Shortage Propagation)
+    type: Planning / Orchestration
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Frieght
+    type: Third-party transport
+    status: identified
+aera_ingestion:
+  - stream_name: demand-forecast-sku-location-time
+    stream_type: Report Data
+    source: Advanced Statistical Forecasting in SAS
+  - stream_name: open-purchase-orders-po-line-details
+    stream_type: Report Data
+    source: S4 (SAP S/4HANA)
+  - stream_name: inventory-position-on-hand-in-transit-reserved
+    stream_type: Report Data
+    source: Blue Yonder WMS / S4
+  - stream_name: supplier-capacity-delivery-certainty-performance-scores
+    stream_type: Report Data
+    source: Kinaxis (Order Expediting) / S4
+  - stream_name: transportation-capacity-cost-tms-3pl-rates
+    stream_type: Report Data
+    source: Uber Freight TMS / 3PL Uber Frieght
+  - stream_name: cost-pricing-unit-cost-landed-cost-components
+    stream_type: Report Data
+    source: S4 (SAP S/4HANA)
+  - stream_name: shortage-propagation-rebalancing-signals
+    stream_type: Event Stream
+    source: Kinaxis RapidResponse / Kinaxis for Rebalancing
+processing:
+  - component: 'Process Builder: Rules + Remote Functions'
+    type: cortex
+    function: >-
+      Apply deterministic business rules and run cost calculations to rank PO
+      adjustment candidates
+  - component: 'Process Builder: IF (decision) + Remote Functions'
+    type: process_builder
+    function: >-
+      Apply decision logic to pick the optimal supplier/PO action per
+      opportunity
+  - component: 'Remote Functions (ERP writeback to S4) + Process Builder: Transaction'
+    type: process_builder
+    function: Create/update/cancel PO call-offs in S4 and capture audit trail
+  - component: 'Process Builder: Notification'
+    type: process_builder
+    function: >-
+      Alert procurement, suppliers (via integrations), and logistics teams about
+      executed changes
+ui_surface:
+  - component: UI Screen (dashboard)
+    screen: Primary
+    purpose: >-
+      Provide stakeholders a dashboard view of results, metrics, and recent
+      changes

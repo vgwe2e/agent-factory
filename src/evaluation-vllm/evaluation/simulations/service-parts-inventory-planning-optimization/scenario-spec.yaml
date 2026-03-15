@@ -1,0 +1,87 @@
+objective: Service Parts Inventory Planning & Optimization
+trigger: Periodic inventory review and demand forecast update
+decision: >-
+  Determine optimal service parts inventory levels, replenishment orders,
+  write-offs, expediting, consignment, and dealer stocking recommendations.
+expected_action: >-
+  Generate optimized inventory levels, replenishment orders, write-off/disposal
+  plans, expedite decisions, consignment placements, and dealer stocking
+  recommendations.
+expected_outcome: >-
+  Reduced working capital, lower COGS from expedited replenishments, improved
+  OTIF, and increased service levels across the aftersales network.
+rationale: >-
+  Automate and optimize multi-echelon service parts decisions to enhance overall
+  service levels and financial performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Service Parts Demand Forecast
+    source: SAP S/4HANA
+    purpose: Input for inventory optimization and replenishment order generation.
+    preferred_stream_type: STREAMS
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Current inventory status for optimization and write-off decisions.
+    preferred_stream_type: STREAMS
+  - name: Supplier Lead Times
+    source: SAP S/4HANA
+    purpose: To balance stock availability and service levels.
+    preferred_stream_type: STREAMS
+  - name: Backorder Status
+    source: SAP S/4HANA
+    purpose: To determine which backorders to expedite.
+    preferred_stream_type: STREAMS
+  - name: Consignment Stock Levels
+    source: SAP S/4HANA
+    purpose: To manage consignment programs effectively.
+    preferred_stream_type: STREAMS
+  - name: Regional Demand Patterns
+    source: SAP S/4HANA
+    purpose: To provide stocking recommendations to dealerships and distributors.
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Fetch current inventory levels and demand forecast
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for inventory optimization.
+  - step: Optimize global service parts stocking levels
+    stage: analyze
+    component: AutoML
+    purpose: Balance availability and cost across regions.
+  - step: Generate replenishment orders
+    stage: decide
+    component: Remote Functions
+    purpose: Release orders to suppliers or internal manufacturing.
+  - step: Evaluate write-off and disposal options
+    stage: decide
+    component: Remote Functions
+    purpose: Minimize working capital impact and cost.
+  - step: Expedite critical backorders
+    stage: decide
+    component: Remote Functions
+    purpose: Minimize dealer and customer downtime.
+  - step: Manage consignment stock levels
+    stage: decide
+    component: Remote Functions
+    purpose: Optimize service levels and working capital.
+  - step: Provide dealer stocking recommendations
+    stage: decide
+    component: Remote Functions
+    purpose: Balance service and working capital.
+  - step: Execute and monitor decisions
+    stage: act
+    component: Process Builder
+    purpose: Ensure autonomous decision execution and dynamic policy-driven actions.
+branches:
+  - condition: Insufficient inventory levels detected
+    response: Trigger emergency replenishment orders
+    outcome: Immediate replenishment to avoid stockouts.
+  - condition: High number of backorders
+    response: Prioritize expediting critical parts
+    outcome: Minimized downtime for high-priority parts.
+  - condition: Obsolete parts identified
+    response: Initiate write-off and disposal process
+    outcome: Reduced working capital tied up in obsolete inventory.

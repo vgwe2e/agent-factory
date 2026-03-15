@@ -1,0 +1,54 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Portal
+    type: portal
+    status: tbd
+  - name: Demand Forecasting Service
+    type: internal_forecasting
+    status: tbd
+aera_ingestion:
+  - stream_name: bill-of-materials-routings
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: on-hand-and-wip-inventory
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: forecasted-demand-remaining-lifecycle
+    stream_type: Event Stream
+    source: Demand Forecasting Service
+  - stream_name: supplier-capacity-readiness
+    stream_type: Event Stream
+    source: Supplier Portal
+  - stream_name: cost-to-serve-and-unit-cogs
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: eol-policy-governance-rules
+    stream_type: Event Stream
+    source: Program Management / Policy
+processing:
+  - component: Subject Areas + Data Quality & Validation
+    type: cortex
+    function: >-
+      Ensure data completeness and enforce EOL policy constraints before
+      optimization.
+  - component: Remote Functions (optimization solver) invoked by Process Builder
+    type: cortex
+    function: >-
+      Produce candidate phase-out schedules, costs, supplier impact, and KPI
+      trade-offs.
+  - component: Process (Process Builder) + CWB Lifecycle
+    type: process_builder
+    function: Present recommendation with key trade-offs for accept/reject/override.
+  - component: Remote Functions (SAP writeback) + Notification
+    type: process_builder
+    function: >-
+      Write changes to SAP S/4HANA, push PO adjustments/cancellations, and
+      notify suppliers and internal teams.
+ui_surface:
+  - component: UI Screen (dashboard) + Cortex Monitoring
+    screen: Primary
+    purpose: >-
+      Track OTIF, COGS, inventory write-downs, and supplier compliance through
+      the phase-out.

@@ -1,0 +1,137 @@
+objective: >-
+  Unify six service-parts demand processes into a single end-to-end decision
+  engine that produces precise SKU-level forecasts, continuously aligns
+  inventory and procurement with demand signals (including recalls and EV
+  lifecycle effects), and minimizes excess/obsolete parts while improving
+  on-time availability and COGS efficiency for Ford Pro service parts.
+trigger: >-
+  Scheduled daily pipeline + event-driven triggers (recall/campaign
+  announcement, telematics uptime alerts, major sales/returns batch).
+decision: >-
+  Determine SKU-level service part demand for Ford Pro commercial vehicles and
+  allocate replenishment quantities and timing across the service-parts network,
+  applying recall priorities and lifecycle-driven adjustments for EV components.
+expected_action: >-
+  Automatically ingest and transform inventory, sales, telemetry, and campaign
+  data; generate SKU-level forecasts and safety-stock-adjusted replenishment
+  recommendations; write replenishment orders to SAP S/4HANA and surface
+  prioritized exceptions to planners for CWB review.
+expected_outcome: >-
+  Reduced working capital and obsolete inventory, improved on-time availability
+  for service parts, more efficient COGS through targeted replenishment and
+  recall handling, and lifecycle-aware planning for EV components.
+rationale: >-
+  Consolidating multiple parts-demand processes into a deterministic
+  process-driven engine enables repeatable, auditable decisions that combine
+  statistical forecasts with rule-based business policies (recalls, lifecycle,
+  warranty) to reduce excess stock and improve service levels for Ford Pro.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Ford Pro Telematics / Uptime
+    type: Telematics
+    status: tbd
+  - name: PLM / Engineering (EV lifecycle)
+    type: PLM
+    status: tbd
+  - name: Field Service / Recall Management
+    type: FSM
+    status: tbd
+key_inputs:
+  - name: Parts master & BOM
+    source: SAP S/4HANA
+    purpose: >-
+      SKU attributes, hierarchy, alternate/kit relationships for forecasting and
+      allocation
+    preferred_stream_type: Batch (daily)
+  - name: Historical parts sales & returns
+    source: SAP S/4HANA
+    purpose: >-
+      Time-series demand history per SKU/location for model training and
+      baseline forecasts
+    preferred_stream_type: Batch (daily)
+  - name: Ford Pro uptime & service contract telemetry
+    source: Ford Pro Telematics / Uptime
+    purpose: >-
+      Usage signals and exposure to drive condition-based demand uplift and
+      decay
+    preferred_stream_type: Event-driven
+  - name: Inventory & on-hand / inbound
+    source: SAP S/4HANA
+    purpose: Available-to-promise, allocation, and safety stock calculation
+    preferred_stream_type: Batch (intra-day)
+  - name: Recall / campaign schedule and priority
+    source: Field Service / Recall Management
+    purpose: Prioritize replenishment, reserve inventory, and drive exception workflows
+  - name: EV component lifecycle & obsolescence plan
+    source: PLM / Engineering
+    purpose: >-
+      Apply lifecycle adjustments (new introduction, ramp-down, end-of-life) to
+      demand models and obsolescence mitigation
+happy_path:
+  - step: >-
+      Ingest source datasets (parts master, historical sales, inventory,
+      telemetry, recall schedules)
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate, validate, and transform enterprise and telemetry data into
+      Subject Areas for downstream modeling
+  - step: Generate SKU-location time-series forecasts and explainability metrics
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Produce baseline demand forecasts with algorithm selection and SHAP
+      explainability for each SKU/location
+  - step: >-
+      Apply business rules (recall priority, lifecycle adjustments, safety
+      stock) and create replenishment recommendations
+    stage: decide
+    component: Process Builder (Rules, IF, Transaction) + Safety Stock Service
+    purpose: >-
+      Deterministically convert forecasts into order quantities and timing while
+      enforcing recall and lifecycle policies
+  - step: >-
+      Execute replenishment writebacks and raise exceptions for low-confidence
+      or constrained items
+    stage: act
+    component: Remote Functions (SAP S/4HANA writeback) + Process Builder (Notification)
+    purpose: >-
+      Push purchase/order transactions to SAP S/4HANA and generate exception CWB
+      items for human review
+  - step: Surface recommendations and exceptions to planners for review and override
+    stage: review
+    component: CWB Lifecycle + UI Screens
+    purpose: >-
+      Allow planners to accept, override, or split recommendations with audit
+      trail and action items
+  - step: Notify stakeholders and update downstream views/dashboards
+    stage: notify
+    component: Process Builder (Notification) + Subject Areas (report)
+    purpose: >-
+      Communicate confirmed orders, recall allocations, and KPI changes to
+      supply chain and finance
+branches:
+  - condition: Forecast confidence below threshold or sparse history for SKU
+    response: >-
+      Create CWB Lifecycle exception and surface forecast with supporting
+      telemetry/feature explainability for planner review; default to
+      conservative replenishment rule until resolved
+    outcome: >-
+      Human-in-the-loop decision prevents inappropriate automated ordering;
+      reduces risk of excess inventory for low-confidence SKUs
+  - condition: Active recall/campaign affecting SKU or region
+    response: >-
+      Override allocation rules to prioritize recall demand, reserve inventory,
+      and trigger expedited procurement where needed
+    outcome: >-
+      Recall fulfillment prioritized, traceability maintained, and customer
+      impact minimized while regular replenishment is adjusted
+  - condition: EV component enters ramp-down / obsolescence stage per PLM input
+    response: >-
+      Reduce forecast bias, tighten reorder points, and start obsolescence
+      mitigation workflow (stop new buys, plan disposal/return)
+    outcome: >-
+      Minimized obsolete stock and working capital exposure for end-of-life EV
+      components

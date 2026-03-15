@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: New mobile service request or equipment maintenance need detected in SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawlers - Capture new service requests and maintenance needs from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze service requests and technician availability to plan optimal routes.]
+  N2 --> N3{PB: CWB Lifecycle - Assign mobile service jobs to technicians based on skills and capacity.}
+  N3 -->|Primary| N4{PB: Safety Stock Service - Manage and optimize inventory on mobile service vehicles.}
+  N4 --> N5{PB: Remote Functions - Schedule maintenance actions for mobile service equipment.}
+  N5 --> N6[PB: Notification - Notify fleet customers about outages/delays proactively.]
+  N6 --> Z1[Outcome: Reduced working capital tied to service parts, improved COGS through efficient field operations, and enhanced OTIF for mobile service.]
+  N3 -->|Insufficient inventory on mobile serv...| B1[Trigger replenishment order]
+  B1 --> O1[Outcome: Ensure parts availability for upcoming service appointments.]
+  O1 --> End[End]
+  N3 -->|Technician unavailable due to unexpec...| B2[Reassign job to another technician]
+  B2 --> O2[Outcome: Maintain service commitment to customers.]
+  O2 --> End[End]
+  N3 -->|Equipment maintenance cannot be compl...| B3[Reschedule maintenance action]
+  B3 --> O3[Outcome: Ensure fleet readiness while minimizing disruption.]
+  O3 --> End[End]
+  Z1 --> End[End]

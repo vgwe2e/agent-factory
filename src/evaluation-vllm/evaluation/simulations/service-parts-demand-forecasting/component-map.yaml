@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for forecasting
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict demand for service parts
+    confidence: confirmed
+    capability: Predict demand for service parts
+process_builder:
+  - name: Remote Functions
+    purpose: Ensure forecasts reflect current conditions
+    confidence: inferred
+    node_type: decide
+  - name: CWB Lifecycle
+    purpose: Allow for manual overrides and adjustments
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unify six service-parts demand processes into a single, end-to-end
+      decision engine for precise sku-level forecasts, real-time input
+      adjustments, and lifecycle-driven demand modeling. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

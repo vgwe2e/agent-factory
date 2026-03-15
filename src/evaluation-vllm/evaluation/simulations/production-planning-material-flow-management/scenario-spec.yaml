@@ -1,0 +1,76 @@
+objective: >-
+  Optimize daily production scheduling, material replenishment, and capacity
+  utilization to reduce COGS, protect revenue, and improve working capital.
+trigger: Daily production planning cycle start.
+decision: >-
+  Generate and release daily production schedules, plan raw material
+  replenishment, manage internal logistics, monitor capacity utilization, and
+  identify/resolve bottlenecks.
+expected_action: >-
+  Generate and release daily production schedules, plan and execute raw material
+  replenishment, manage internal logistics and AGV movements, monitor and adjust
+  capacity utilization, identify and resolve production bottlenecks.
+expected_outcome: >-
+  Reduced COGS, improved on-time delivery, optimized working capital, and
+  enhanced production efficiency.
+rationale: >-
+  Jointly optimizing production scheduling, material flow, and capacity
+  utilization will lead to significant cross-domain gains in production cost,
+  inventory, and delivery performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Line Capacity Data
+    source: SAP S/4HANA
+    purpose: Determine available production capacity for scheduling.
+  - name: Material Availability Data
+    source: SAP S/4HANA
+    purpose: Ensure sufficient raw materials for production.
+  - name: Throughput Targets
+    source: SAP S/4HANA
+    purpose: Align production schedules with throughput goals.
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Plan raw material replenishment to avoid shortages.
+  - name: AGV Status
+    source: SAP S/4HANA
+    purpose: Optimize internal logistics and material movement.
+happy_path:
+  - step: Retrieve line capacity and material availability data.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Gather necessary data for production scheduling.
+  - step: Generate daily production schedules.
+    stage: analyze
+    component: Process Builder
+    purpose: >-
+      Create optimal production schedules based on capacity and material
+      availability.
+  - step: Plan raw material replenishment.
+    stage: decide
+    component: Process Builder
+    purpose: Ensure timely delivery of raw materials to support production.
+  - step: Manage internal logistics and AGV movements.
+    stage: act
+    component: Process Builder
+    purpose: Optimize material flow within the plant.
+  - step: Monitor capacity utilization.
+    stage: review
+    component: Process Builder
+    purpose: Track and adjust capacity usage to meet production goals.
+  - step: Identify and resolve production bottlenecks.
+    stage: act
+    component: Process Builder
+    purpose: Address any constraints to maintain efficient production.
+branches:
+  - condition: Insufficient raw materials detected.
+    response: Trigger emergency replenishment order.
+    outcome: Ensure continuous production by securing additional materials.
+  - condition: Capacity utilization below threshold.
+    response: Adjust production schedules to balance load.
+    outcome: Optimize resource usage and reduce idle time.
+  - condition: Bottleneck identified in production line.
+    response: Implement temporary rerouting of tasks.
+    outcome: Maintain throughput by reassigning tasks to less congested areas.

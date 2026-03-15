@@ -1,0 +1,35 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: indirect-supplier-invoice
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: purchase-order-po-details
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: goods-receipt-gr-details
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: payment-terms
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Remote Functions
+    type: process_builder
+    function: Determine if invoice matches PO and GR details.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Handle discrepancies through a structured workflow.
+  - component: Process Builder
+    type: process_builder
+    function: Execute payment runs based on cash flow and supplier terms.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review unify and automate core p2p decisions across invoice intake, 3-way
+      match, discrepancy handling, and payment term management to reduce cogs
+      and working capital while improving otif and supplier cash-flow terms. and
+      approve the recommended action.

@@ -1,0 +1,60 @@
+source_systems:
+  - name: S4
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+aera_ingestion:
+  - stream_name: pricing-rebate-master
+    stream_type: STREAMS
+    source: S4
+  - stream_name: demand-forecast-time-series
+    stream_type: Report Data
+    source: SAS (Advanced Statistical Forecasting)
+  - stream_name: network-constraints-availability
+    stream_type: Report Data
+    source: Kinaxis RapidResponse
+  - stream_name: channel-sales-commitments-orders
+    stream_type: STREAMS
+    source: S4
+  - stream_name: finance-margin-targets-floors
+    stream_type: Event Stream
+    source: Finance (manual / Data View)
+  - stream_name: historical-channel-performance
+    stream_type: Subject Areas
+    source: SAS / Subject Areas
+processing:
+  - component: Process Builder (IF + Rules)
+    type: process_builder
+    function: >-
+      Automatically decide approved actions or flag exceptions based on
+      thresholds and rules.
+  - component: Remote Functions (ERP writeback) / Transaction
+    type: process_builder
+    function: Persist decisions to ERP with transactional integrity and recordability.
+  - component: Notification + Data View
+    type: process_builder
+    function: >-
+      Provide visibility, audit trail, and routing of exceptions to
+      Sales/Finance/Planning via CWB if needed.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automatically synchronize pricing, rebates, and price-protection
+      actions across direct, distributor, and retail channels to prevent
+      channel-induced margin erosion while preserving channel integrity and
+      financial controls. and approve the recommended action.

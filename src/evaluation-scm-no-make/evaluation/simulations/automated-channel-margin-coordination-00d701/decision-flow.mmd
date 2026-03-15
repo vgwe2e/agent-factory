@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled orchestration (daily) or event-driven update when pricing/rebate contract, forecast, or network constraint data changes in source systems.]
+  A --> N1[Stream: STREAMS - Ingest authoritative pricing, rebate contracts, sales commitments, demand forecasts and network constraints into platform subject areas.]
+  N1 --> N2[Stream: Process Builder (Stream - Data View) - Normalize and compute baseline gross margin per SKU-channel and project margin delta for candidate price/rebate actions.]
+  N2 --> N3{PB: Process Builder (IF + Rules) - Evaluate deterministic rules (finance margin floors, contract constraints, availability) and select coordinated action set.}
+  N3 -->|Primary| N4[PB: Remote Functions (ERP writeback) / Transaction - Execute approved actions: write price/rebate updates to S4 and update rebate accruals; create audit transaction and send confirmations.]
+  N4 --> N5[PB: Notification + Data View - Notify stakeholders and surface updated margin dashboards and exception work items for manual review.]
+  N5 --> Z1[Outcome: Aligned cross-channel pricing and rebate decisions that maintain target gross margins, accurate rebate accruals, minimized channel margin erosion, automated ERP updates with audit trail, and timely stakeholder visibility for exceptions.]
+  N3 -->|Proposed coordinated actions violate ...| B1[Create a CWB Lifecycle exception and route to Finance + Sales for approval with recommended mitigations.]
+  B1 --> O1[Outcome: No automated writeback; manual approval or modified action applied after sign-off.]
+  O1 --> End[End]
+  N3 -->|Key data feeds (pricing, forecast, av...| B2[Pause automated decisioning, generate data-owner notification, and mark affected SKUs as 'data exception' in report.]
+  B2 --> O2[Outcome: Prevents incorrect automated changes until data is remediated; preserves auditability.]
+  O2 --> End[End]
+  N3 -->|ERP writeback failure or partial tran...| B3[Rollback Transaction, create an exception record, and notify IT/Operations with diagnostic payload for remediation.]
+  B3 --> O3[Outcome: System state remains consistent; manual intervention required to re-run or correct the change.]
+  O3 --> End[End]
+  Z1 --> End[End]

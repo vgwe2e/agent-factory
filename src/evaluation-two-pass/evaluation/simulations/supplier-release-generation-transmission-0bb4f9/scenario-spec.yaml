@@ -1,0 +1,145 @@
+objective: >-
+  Automate end-to-end MRP decisions to generate and transmit supplier material
+  release schedules that balance cost, supplier capacity, and production needs
+  across a multi-echelon automotive network to reduce COGS, improve OTIF, and
+  optimize working capital.
+trigger: >-
+  Scheduled MRP run completion or a BOM/production schedule change (new BOM
+  release, forecast update, or exception detection).
+decision: >-
+  Generate and transmit material release schedules to suppliers to ensure timely
+  deliveries while balancing cost, capacity, and production needs.
+expected_action: >-
+  Automatically compute material requirements (per released BOM and production
+  schedule), reconcile inventory and safety stock targets, select supplier
+  release quantities and dates, and write back release schedules to SAP S/4HANA
+  and supplier-facing channels (EDI/API or supplier portal). Escalate
+  constrained items to human review where needed.
+expected_outcome: >-
+  Timely supplier releases aligned to production needs with reduced expedited
+  buys and obsolescence, lower COGS through optimized sourcing and lot-sizing,
+  improved OTIF, and reduced working capital via dynamic safety stock and
+  prioritized releases.
+rationale: >-
+  Agentic AI plus Process Builder orchestrates complex, multi-source MRP logic
+  (BOM integrity, multi-echelon inventory, supplier capacity, and shortage
+  risk). Use Cortex forecasting and Safety Stock Service for demand and
+  inventory optimization, Remote Functions for SAP writeback and supplier
+  transmission, and CWB Lifecycle/Agent Team for human-in-the-loop exception
+  handling. This hybrid approach supports adaptive reasoning for
+  cross-functional tradeoffs while ensuring auditability and ERP integration.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier EDI/API Gateway
+    status: tbd
+  - name: Supplier Portal / Partner Systems
+    status: tbd
+key_inputs:
+  - name: BOM Release & ECO
+    source: SAP S/4HANA
+    purpose: >-
+      Ensure correct component structure and new part introductions that affect
+      material requirements and lead times.
+    preferred_stream_type: DDM/Crawlers
+  - name: Production Schedule (finite plan / confirmed orders)
+    source: SAP S/4HANA
+    purpose: Drive demand signal for MRP calculation and release timing.
+    preferred_stream_type: DDM/Crawlers
+  - name: On-hand Inventory & Reservations
+    source: SAP S/4HANA
+    purpose: >-
+      Reconcile available supply against requirements to compute net
+      requirements and avoid over-release.
+    preferred_stream_type: DDM/Crawlers
+  - name: Supplier Lead Times, Capacity & Constraints
+    source: Supplier Portal / Supplier EDI or SAP master data
+    purpose: >-
+      Constrain release schedules to realistic supplier capacity and lead times;
+      support split/expedite logic.
+  - name: Demand Forecast / Seasonality adjustments
+    source: Cortex Auto Forecast / Subject Areas
+    purpose: >-
+      Inform mid- to long-term requirements and dynamic safety stock
+      calculations.
+    preferred_stream_type: Subject Areas
+  - name: Safety Stock / Inventory Policy parameters
+    source: Planning policy tables (SAP S/4HANA) or Safety Stock Service
+    purpose: >-
+      Drive dynamic safety stock and reorder thresholds to balance service level
+      vs. working capital.
+  - name: Open POs and ASN status
+    source: SAP S/4HANA / Supplier EDI
+    purpose: >-
+      Prevent duplicate releases and reconcile expected receipts against new
+      releases.
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: >-
+      Ingest master and transactional data (BOM, production schedule, inventory,
+      open POs)
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Collect authoritative ERP and partner data for a consistent planning
+      dataset.
+  - step: >-
+      Compute demand signal and dynamic inventory targets (forecast + safety
+      stock)
+    stage: analyze
+    component: Cortex Auto Forecast / Safety Stock Service
+    purpose: Generate demand projections and target buffers to inform net requirements.
+  - step: >-
+      Assess shortage risk and supplier constraints; generate candidate release
+      plan
+    stage: decide
+    component: Agentic AI (Process Builder orchestrating Agent Team + RCA Service)
+    purpose: >-
+      Weigh cost, capacity, lead time, and risk to produce prioritized supplier
+      release schedules.
+  - step: 'Execute releases: write release schedules to SAP and transmit to suppliers'
+    stage: act
+    component: Remote Functions + Process Builder (Transaction)
+    purpose: >-
+      Persist release orders in ERP and send supplier-facing releases via
+      EDI/API or portal.
+  - step: Surface exceptions and recommended overrides for human review
+    stage: review
+    component: CWB Lifecycle / UI Screen
+    purpose: >-
+      Allow planners to approve, modify, or escalate constrained releases before
+      finalization.
+  - step: Notify suppliers and stakeholders of final releases and exceptions
+    stage: notify
+    component: Process Builder Notification / Agent Team
+    purpose: >-
+      Ensure suppliers and internal stakeholders receive timely release and
+      exception information.
+branches:
+  - condition: Supplier capacity < required quantity within lead time
+    response: >-
+      Agentic AI attempts alternative actions: split release across multiple
+      suppliers, reschedule deliveries, or propose production sequence
+      adjustments; if no feasible automation, create CWB for planner escalation.
+    outcome: >-
+      Minimized production disruption by using alternative suppliers or modified
+      schedules; constrained items routed to human approval when necessary.
+  - condition: >-
+      Significant BOM integrity issue detected (missing component or mismatched
+      unit of measure)
+    response: >-
+      Flag BOM error via Process Builder -> create Action Item and pause
+      automated release for affected items; notify engineering and planning
+      owners via CWB Lifecycle.
+    outcome: >-
+      Prevents incorrect releases and downstream scrap/expedite; accelerates
+      cross-functional resolution of BOM issues.
+  - condition: Forecast deviation or demand spike beyond threshold
+    response: >-
+      Trigger on-demand re-run of safety stock and release planning (Agentic AI
+      + Cortex); if risk persists, generate prioritized expedite list and
+      financial impact summary for management review.
+    outcome: >-
+      Rapid adaptation to demand shocks with prioritized releases and visibility
+      into cost/service tradeoffs.

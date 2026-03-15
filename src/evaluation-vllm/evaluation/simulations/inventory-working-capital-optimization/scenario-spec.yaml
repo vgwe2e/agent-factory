@@ -1,0 +1,68 @@
+objective: >-
+  Optimize global inventory targets, safety stock, excess/obsolete inventory
+  mitigation, deployment/rebalancing, and working capital impact analysis across
+  Ford’s multi-echelon network.
+trigger: Periodic inventory review and demand forecast update.
+decision: >-
+  Set and enforce inventory targets, compute safety stock levels, identify
+  excess/obsolete inventory, develop deployment/rebalancing strategies, and
+  evaluate working capital impact.
+expected_action: >-
+  Adjust inventory targets, safety stock levels, and deployment strategies to
+  optimize working capital while maintaining service levels.
+expected_outcome: >-
+  Reduced working capital and COGS with maintained or improved service levels
+  and OTIF.
+rationale: >-
+  Coordinating stock positioning, safety stock targets, and proactive
+  excess/obsolete reduction with finance-aligned decision metrics can
+  significantly improve overall efficiency and financial performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: To determine current stock positions and identify excess/obsolete items.
+  - name: Demand Forecasts
+    source: Cortex Auto Forecast
+    purpose: To predict future demand variability and inform safety stock calculations.
+  - name: Service Level Requirements
+    source: SAP S/4HANA
+    purpose: To ensure inventory policies align with service level commitments.
+happy_path:
+  - step: Retrieve current inventory levels and demand forecasts.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest data from SAP S/4HANA and Cortex Auto Forecast.
+  - step: Calculate optimal safety stock levels.
+    stage: analyze
+    component: Safety Stock Service
+    purpose: Determine safety stock levels based on demand variability.
+  - step: Identify excess and obsolete inventory.
+    stage: analyze
+    component: STREAMS
+    purpose: Analyze inventory levels to identify excess and obsolete items.
+  - step: Develop deployment and rebalancing strategies.
+    stage: decide
+    component: Process Builder
+    purpose: Create strategies to optimize inventory deployment and rebalancing.
+  - step: Evaluate working capital impact.
+    stage: analyze
+    component: Remote Functions
+    purpose: Assess the financial impact of proposed inventory strategies.
+  - step: Present recommendations for approval.
+    stage: act
+    component: CWB Lifecycle
+    purpose: Obtain approval for inventory adjustments and deployment strategies.
+branches:
+  - condition: Excess inventory exceeds threshold.
+    response: Trigger additional mitigation strategies.
+    outcome: Further reduce excess inventory through targeted actions.
+  - condition: Service level requirements not met.
+    response: Adjust safety stock levels and re-evaluate.
+    outcome: Ensure service levels are maintained while optimizing inventory.
+  - condition: Working capital impact exceeds budget.
+    response: Re-optimize inventory strategies.
+    outcome: Balance working capital constraints with service level requirements.

@@ -1,0 +1,37 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest new service requests and maintenance needs.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Generate optimized routes for mobile service appointments.
+    confidence: confirmed
+    capability: Generate optimized routes for mobile service appointments.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Ensure optimal job assignments to technicians.
+    confidence: confirmed
+    node_type: decide
+  - name: Safety Stock Service
+    purpose: Ensure parts availability while controlling vehicle stock levels.
+    confidence: inferred
+    node_type: decide
+  - name: Remote Functions
+    purpose: Minimize COGS while maintaining fleet readiness.
+    confidence: inferred
+    node_type: decide
+  - name: Notification
+    purpose: Minimize churn and revenue impact.
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate mobile service appointment routing, technician dispatch,
+      on-site diagnostics, mobile inventory management, equipment maintenance,
+      and outage communications to reduce working capital, improve cogs, and
+      enhance otif. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

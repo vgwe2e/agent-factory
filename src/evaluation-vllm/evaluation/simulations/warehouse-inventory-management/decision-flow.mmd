@@ -1,0 +1,26 @@
+flowchart TD
+  A[Trigger: Daily inventory update from SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawlers - Ingest inventory levels and material handling equipment status from SAP S/4HANA.]
+  N1 --> N2[Cortex: AutoML - Analyze historical inventory data to determine optimal storage locations and cycle counting plans.]
+  N2 --> N3{PB: CWB Lifecycle - Decide on optimal storage locations and cycle counting plans.}
+  N3 -->|Primary| N4[PB: Remote Functions - Act on approved storage and cycle counting plans by updating SAP S/4HANA.]
+  N4 --> N5[Cortex: AutoML - Analyze obsolete inventory data to determine disposition actions.]
+  N5 --> N6{PB: CWB Lifecycle - Decide on disposition actions for obsolete inventory.}
+  N6 --> N7[PB: Remote Functions - Act on approved disposition actions by updating SAP S/4HANA.]
+  N7 --> N8[Cortex: AutoML - Analyze warehouse layout data to determine optimal slotting strategy.]
+  N8 --> N9{PB: CWB Lifecycle - Decide on optimal slotting strategy.}
+  N9 --> N10[PB: Remote Functions - Act on approved slotting strategy by updating SAP S/4HANA.]
+  N10 --> N11[Cortex: AutoML - Analyze material handling equipment status to schedule maintenance.]
+  N11 --> N12{PB: CWB Lifecycle - Decide on maintenance schedule for material handling equipment.}
+  N12 --> N13[PB: Remote Functions - Act on approved maintenance schedule by updating SAP S/4HANA.]
+  N13 --> Z1[Outcome: Reduced COGS, improved working capital, and enhanced SG&A efficiency through optimized inventory and warehouse operations.]
+  N3 -->|Inventory levels exceed predefined th...| B1[Trigger additional cycle counting and reconciliation.]
+  B1 --> O1[Outcome: Ensures higher inventory accuracy and minimizes carrying costs.]
+  O1 --> End[End]
+  N3 -->|Material handling equipment requires ...| B2[Prioritize corrective maintenance over preventive maintenance.]
+  B2 --> O2[Outcome: Ensures uninterrupted warehouse operations.]
+  O2 --> End[End]
+  N3 -->|Obsolete inventory exceeds disposal l...| B3[Initiate bulk disposal or repurposing actions.]
+  B3 --> O3[Outcome: Reduces excess inventory and improves working capital.]
+  O3 --> End[End]
+  Z1 --> End[End]

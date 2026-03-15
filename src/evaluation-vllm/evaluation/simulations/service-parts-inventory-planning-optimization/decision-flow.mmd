@@ -1,0 +1,21 @@
+flowchart TD
+  A[Trigger: Periodic inventory review and demand forecast update]
+  A --> N1[Stream: DDM/Crawlers - Fetch current inventory levels and demand forecast]
+  N1 --> N2[Cortex: AutoML - Optimize global service parts stocking levels]
+  N2 --> N3{PB: Remote Functions - Generate replenishment orders}
+  N3 -->|Primary| N4{PB: Remote Functions - Evaluate write-off and disposal options}
+  N4 --> N5{PB: Remote Functions - Expedite critical backorders}
+  N5 --> N6{PB: Remote Functions - Manage consignment stock levels}
+  N6 --> N7{PB: Remote Functions - Provide dealer stocking recommendations}
+  N7 --> N8[PB: Process Builder - Execute and monitor decisions]
+  N8 --> Z1[Outcome: Reduced working capital, lower COGS from expedited replenishments, improved OTIF, and increased service levels across the aftersales network.]
+  N3 -->|Insufficient inventory levels detected| B1[Trigger emergency replenishment orders]
+  B1 --> O1[Outcome: Immediate replenishment to avoid stockouts.]
+  O1 --> End[End]
+  N3 -->|High number of backorders| B2[Prioritize expediting critical parts]
+  B2 --> O2[Outcome: Minimized downtime for high-priority parts.]
+  O2 --> End[End]
+  N3 -->|Obsolete parts identified| B3[Initiate write-off and disposal process]
+  B3 --> O3[Outcome: Reduced working capital tied up in obsolete inventory.]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,131 @@
+objective: >-
+  Automatically generate and release changeover-aware, multi-plant production
+  schedules that minimize total production cost while meeting demand and
+  operational constraints, with continuous execution monitoring and autonomous
+  exception handling.
+trigger: >-
+  Daily scheduled run (nightly master schedule) or ad-hoc production change
+  event (new urgent order, line outage, or demand revision).
+decision: >-
+  Which changeover plan minimizes total production cost while meeting demand and
+  violating minimal changeover time constraints
+expected_action: >-
+  Ingest master production data and runtime telemetry, run a deterministic
+  scheduling solver that optimizes sequencing and changeovers across platforms,
+  present recommended schedule for CWB review/auto-accept, write approved
+  schedule to SAP S/4HANA, and continuously monitor execution to auto-reschedule
+  or create exceptions.
+expected_outcome: >-
+  Synchronized multi-plant schedules with lower total COGS, improved on-time
+  delivery, reduced changeover overhead, and lower working capital through
+  reduced WIP and fewer emergency expedited actions.
+rationale: >-
+  Deterministic optimization (solver) yields globally optimal sequencing given
+  hard constraints (capacity, minimal changeover times). Process Builder
+  orchestrates end-to-end flows (data ingestion, optimization, writeback,
+  monitoring). STREAMS/Subject Areas ensure reliable data and adherence
+  analytics; CWB Lifecycle provides human-in-the-loop exception handling for
+  infeasible or high-impact changes.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES / Line Control
+    status: tbd
+  - name: Plant Historian / OEE
+    status: tbd
+key_inputs:
+  - name: Production Orders & MRP Results
+    source: SAP S/4HANA
+    purpose: Demand to satisfy, order priorities, planned start/finish windows
+    preferred_stream_type: delta
+  - name: Routing, BOM, Work Centers, Standard Times
+    source: SAP S/4HANA
+    purpose: Process steps, capacity definitions, machine/crew capabilities
+    preferred_stream_type: batch
+  - name: Line Capacity & Real-time Run State
+    source: MES / Line Control
+    purpose: >-
+      Current availability, active shifts, real-time throughput for execution
+      monitoring
+    preferred_stream_type: delta
+  - name: Changeover Time Matrix (model/variant pair)
+    source: Plant Historian / MES (historical + calibrated)
+    purpose: >-
+      Accurate setup durations and sequence-dependent changeover costs for
+      optimizer
+  - name: Demand Forecast & Prioritization Rules
+    source: SAP S/4HANA / Cortex Auto Forecast
+    purpose: >-
+      Input demand profile and SKU priorities used as optimization targets and
+      penalties
+    preferred_stream_type: batch
+  - name: Business Policies & Constraint Set
+    source: Business rules (Process Builder / Config)
+    purpose: >-
+      Service levels, minimal changeover times, plant-specific constraints for
+      solver
+happy_path:
+  - step: Ingest master production, capacity, and historical changeover data
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Consolidate SAP orders, routing/BOM, MES capacity and historical
+      changeover durations into Subject Areas
+  - step: Run deterministic scheduling optimization across platforms
+    stage: analyze
+    component: Remote Functions (solver) invoked by Process Builder
+    purpose: >-
+      Compute optimal sequences and changeover plans minimizing total production
+      cost subject to constraints
+  - step: Present recommended schedule and changeover plan for acceptance
+    stage: decide
+    component: CWB Lifecycle (recommendation view)
+    purpose: >-
+      Allow planners to accept, override, or request alternative scenarios
+      (human-in-the-loop)
+  - step: Release approved schedule and writeback to ERP/Execution systems
+    stage: act
+    component: Process (Process Builder) + Remote Functions (SAP writeback)
+    purpose: >-
+      Execute transactional writeback of order start times, line assignments,
+      and changeover instructions to SAP S/4HANA and MES
+  - step: >-
+      Monitor execution and surface adherence analytics; trigger automated
+      remediation
+    stage: review
+    component: Subject Areas + Process (Rules & Notifications)
+    purpose: >-
+      Detect deviations (e.g., extended changeovers), update schedule forecasts,
+      notify stakeholders, and auto-reschedule if within policy
+branches:
+  - condition: >-
+      Optimizer returns infeasible solution due to conflicting hard constraints
+      (e.g., minimal changeover times vs. demand windows)
+    response: >-
+      Process Builder invokes constraint-relaxation policy to generate ranked
+      alternatives, surface options via CWB for manual approval, or defer
+      low-priority demand.
+    outcome: >-
+      A feasible, policy-compliant plan is selected with explicit trade-offs
+      recorded; urgent items flagged for escalation.
+  - condition: >-
+      During execution, actual changeover time exceeds planned threshold
+      (unexpected delay)
+    response: >-
+      Automatic rescheduling subprocess recalculates impacted downstream
+      sequences, issues notifications to plant leads, and creates CWB exception
+      if manual decision required.
+    outcome: >-
+      Minimized downstream disruption with either automated recovery actions or
+      prioritized manual intervention.
+  - condition: >-
+      Cross-plant component or capacity contention is detected (shared tools,
+      constrained upstream supply)
+    response: >-
+      Trigger multi-plant coordination subprocess (Process Builder Subprocess)
+      to reallocate production windows and escalate to supply planner via Action
+      Item.
+    outcome: >-
+      Conflict is resolved via reallocation or approved trade-off; global
+      schedule remains aligned with prioritized demand.

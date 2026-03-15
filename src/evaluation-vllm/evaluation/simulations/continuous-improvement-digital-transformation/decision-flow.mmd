@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Quarterly planning cycle initiation.]
+  A --> N1[Stream: DDM/Crawlers - Extract production planning data from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze historical data using Cortex Auto Forecast for demand forecasting.]
+  N2 --> N3{PB: Process Builder - Standardize planning processes across plants using Process Builder.}
+  N3 -->|Primary| N4[PB: Remote Functions - Deploy AI models for predictive planning and optimization.]
+  N4 --> N5[PB: RCA Service - Conduct post-mortem analysis on major disruptions using RCA Service.]
+  N5 --> Z1[Outcome: Reduced COGS, improved OTIF, optimized working capital, and minimized disruptions.]
+  N3 -->|High variance in demand forecast accu...| B1[Adjust AI model parameters and retrain.]
+  B1 --> O1[Outcome: Improved forecast accuracy.]
+  O1 --> End[End]
+  N3 -->|Significant local resistance to proce...| B2[Engage local teams for feedback and adjustments.]
+  B2 --> O2[Outcome: Increased adoption and compliance.]
+  O2 --> End[End]
+  N3 -->|Lack of historical disruption data| B3[Manually collect and input disruption records.]
+  B3 --> O3[Outcome: Enhanced post-mortem analysis capability.]
+  O3 --> End[End]
+  Z1 --> End[End]

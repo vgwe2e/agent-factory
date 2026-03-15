@@ -1,0 +1,27 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect supplier performance data
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Monitoring
+    purpose: Ensure optimal inventory levels
+    confidence: confirmed
+    capability: Ensure optimal inventory levels
+process_builder:
+  - name: Remote Functions
+    purpose: Secure production commitments
+    confidence: inferred
+    node_type: act
+agent_teams:
+  - name: Agentic AI
+    purpose: Identify remediation actions
+    confidence: inferred
+    role: Identify remediation actions
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review supplier collaboration for inventory optimization and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New or updated demand/supply deviation detected (unexpected demand surge, supplier constraint, or shortage propagation) exceeding configured exception thresholds.]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Ingest demand, inventory, orders, and shortage alerts into the data foundation]
+  N1 --> N2[Cortex: Cortex Auto Forecast + RCA Service - Detect deviations and quantify impact using forecasts and RCA]
+  N2 --> N3{Agent: Agent Team + Process Builder (IF + Rules) + CWB Lifecycle - Agentic reasoning generates ranked prescriptive options and applies guardrails}
+  N3 -->|Primary| N4[PB: Remote Functions - Kinaxis RapidResponse / SAP S/4HANA - Execute approved autonomous actions and update execution systems]
+  N4 --> N5[UI: UI Screens (report/dashboard) + Notification - Surface actions, outcomes, and audit trail to planners for review]
+  N5 --> Z1[Outcome: Reduced stockouts and expedited shipments, improved service levels with fewer manual interventions, lower waste from smarter reallocation, and measurable protection of margin via constraint-aware decisions and audit trail of automated actions.]
+  N3 -->|Agentic confidence high and action wi...| B1[Autonomously execute reallocation/replan via Remote Functions and log action]
+  B1 --> O1[Outcome: Immediate corrective action reduces risk of stockout without human intervention]
+  O1 --> End[End]
+  N3 -->|Low model confidence or guardrail thr...| B2[Create CWB Lifecycle case routed to planners with recommended options; wait for human approval]
+  B2 --> O2[Outcome: Prevents risky automated changes; ensures human-in-the-loop for sensitive decisions]
+  O2 --> End[End]
+  N3 -->|Execution blocked by external constra...| B3[Agent Team proposes contingency plan (alternate sourcing, customer prioritization) and notifies stakeholders; escalate if no viable automated option]
+  B3 --> O3[Outcome: Maintains service-level tradeoffs while minimizing manual churn and protecting margin]
+  O3 --> End[End]
+  Z1 --> End[End]

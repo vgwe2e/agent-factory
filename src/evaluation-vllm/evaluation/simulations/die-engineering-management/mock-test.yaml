@@ -1,0 +1,42 @@
+decision: >-
+  Approve die designs, manage fabrication & sourcing, plan maintenance, optimize
+  changeover, validate new dies, and analyze life cycle costs.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New die design submission or maintenance request.
+  parameters:
+    objective: >-
+      Reduce COGS, improve yield, and accelerate time-to-market for die-related
+      productions by coordinating deterministic and agentic decisions across
+      design approvals, sourcing, maintenance, and changeover.
+    key_inputs:
+      - Die Design Submission
+      - Maintenance Request
+      - Fabrication & Sourcing Data
+      - Changeover Data
+      - Validation Data
+      - Life Cycle Cost Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate and optimize die design approval, sourcing, maintenance scheduling,
+    changeover, validation, and life cycle costing.
+  outcome: >-
+    Reduced COGS, improved yield, accelerated time-to-market, minimized
+    downtime, and optimized cost of ownership.
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - CWB Lifecycle
+    - Process Builder
+    - Exception Management
+    - Dashboard
+rationale: >-
+  By leveraging agentic AI and deterministic workflows, Ford can streamline die
+  engineering and management processes, leading to significant cost savings and
+  efficiency improvements.

@@ -1,0 +1,26 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex: []
+process_builder:
+  - name: Action Item
+    purpose: >-
+      Implement training programs, adjust shift planning, and source contingency
+      labor as needed.
+    confidence: confirmed
+    node_type: transaction
+agent_teams:
+  - name: Agentic AI
+    purpose: Identify skill gaps and potential training needs.
+    confidence: inferred
+    role: Identify skill gaps and potential training needs.
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review coordinate labor capacity planning across production shifts, gap
+      analysis, training, and contingent labor sourcing to reduce cogs and
+      maintain otif. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

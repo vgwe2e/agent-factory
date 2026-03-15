@@ -1,0 +1,37 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: production-constraints
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supply-disruptions
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: quality-holds
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: demand-signals
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Predict impact
+  - component: AutoML
+    type: cortex
+    function: Assess mitigation options
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Make stop/start decisions
+  - component: Process Builder
+    type: process_builder
+    function: Execute recovery plan
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous detection, simulation, and resolution of production
+      constraints and exceptions to reduce cogs while maintaining otif and
+      availability. and approve the recommended action.

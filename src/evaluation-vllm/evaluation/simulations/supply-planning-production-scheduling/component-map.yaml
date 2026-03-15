@@ -1,0 +1,30 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: To gather current production volumes and plant capacities.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: To translate build plans into detailed material requirements.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: CWB Lifecycle
+    purpose: To address any supply constraints that may affect production.
+    confidence: confirmed
+    node_type: decide
+  - name: Notification
+    purpose: To communicate the optimized production plan to all involved parties.
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review to optimize supply planning and production scheduling by allocating
+      production volumes across globally dispersed plants, translating build
+      plans into long-term material requirements, assessing supplier capacity,
+      resolving supply constraints, and validating build plan feasibility across
+      divisions. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

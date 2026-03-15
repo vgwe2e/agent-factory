@@ -1,0 +1,17 @@
+flowchart TD
+  A[Trigger: Daily Load Planning & Carrier Assignment]
+  A --> N1[Stream: DDM/Crawlers - Retrieve load details and carrier information]
+  N1 --> N2[Stream: STREAMS - Analyze load and carrier data]
+  N2 --> N3{PB: Process Builder - Optimize routes and carrier assignments}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute and monitor planned routes]
+  N4 --> Z1[Outcome: Reduced COGS, improved OTIF, optimized working capital]
+  N3 -->|High demand during peak periods| B1[Adjust capacity planning and expedite shipments]
+  B1 --> O1[Outcome: Ensure timely delivery and manage increased volume efficiently]
+  O1 --> End[End]
+  N3 -->|Unexpected real-time conditions (e.g....| B2[Re-optimize routes and notify stakeholders]
+  B2 --> O2[Outcome: Maintain service levels despite disruptions]
+  O2 --> End[End]
+  N3 -->|Carrier capacity constraints| B3[Allocate additional capacity or reassign loads]
+  B3 --> O3[Outcome: Balance capacity and ensure on-time delivery]
+  O3 --> End[End]
+  Z1 --> End[End]

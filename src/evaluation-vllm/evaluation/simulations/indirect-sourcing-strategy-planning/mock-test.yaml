@@ -1,0 +1,39 @@
+decision: >-
+  Annual indirect spend plan development, indirect category strategy definition,
+  market intelligence & benchmarking, budget allocation & forecasting, make vs.
+  buy analysis for indirect services.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Annual planning cycle initiation or significant market changes.
+  parameters:
+    objective: >-
+      Develop and automate end-to-end indirect sourcing decisions to optimize
+      cost of goods sold, working capital, and supplier terms.
+    key_inputs:
+      - Historical Spend Data
+      - Market Intelligence Reports
+      - Supplier Performance Metrics
+      - Internal Capability Assessments
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate the decision-making process for indirect sourcing using
+    cross-domain inputs.
+  outcome: >-
+    Reduced indirect COGS, improved cash conversion, and alignment of strategic
+    spend with supplier capabilities and market benchmarks.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - AutoML
+    - CWB Lifecycle
+    - Remote Functions
+    - UI Screens
+rationale: >-
+  Automating these decisions will streamline the indirect sourcing process,
+  ensuring optimal cost and working capital management.

@@ -1,0 +1,39 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Data collection
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Network design optimization
+    confidence: confirmed
+    capability: Network design optimization
+  - name: AutoML
+    purpose: Network configuration optimization
+    confidence: inferred
+    capability: Network configuration optimization
+  - name: Safety Stock Service
+    purpose: Strategy development
+    confidence: inferred
+    capability: Strategy development
+  - name: RCA Service
+    purpose: Compliance validation
+    confidence: inferred
+    capability: Compliance validation
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Plan approval
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Plan implementation
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review launch logistics & distribution planning and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

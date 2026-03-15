@@ -1,0 +1,20 @@
+flowchart TD
+  A[Trigger: Receipt of raw material coils and initiation of in-line processing activities.]
+  A --> N1[Stream: DDM/Crawlers - Receive raw material coils]
+  N1 --> N2[Cortex: Remote Functions - Inspect and accept raw material coils]
+  N2 --> N3{PB: Process Builder - Generate production plan for slitting and blanking}
+  N3 -->|Primary| N4{PB: Process Builder - Optimize storage levels and locations}
+  N4 --> N5{PB: Process Builder - Schedule timely delivery to presses}
+  N5 --> N6[PB: Remote Functions - Segregate and prepare scrap materials]
+  N6 --> N7{PB: CWB Lifecycle - Investigate and resolve quality issues}
+  N7 --> Z1[Outcome: Reduced working capital, minimized COGS, and improved line readiness.]
+  N3 -->|High scrap rate detected| B1[Increase inspection frequency]
+  B1 --> O1[Outcome: Improved scrap classification and reduced waste.]
+  O1 --> End[End]
+  N3 -->|Quality issue identified| B2[Initiate CWB Lifecycle for resolution]
+  B2 --> O2[Outcome: Supplier remediation and containment actions taken.]
+  O2 --> End[End]
+  N3 -->|Inventory levels exceed thresholds| B3[Adjust storage locations]
+  B3 --> O3[Outcome: Optimized inventory levels and reduced working capital.]
+  O3 --> End[End]
+  Z1 --> End[End]

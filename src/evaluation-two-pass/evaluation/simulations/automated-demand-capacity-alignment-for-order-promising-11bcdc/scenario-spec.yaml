@@ -1,0 +1,118 @@
+objective: >-
+  Automatically align demand signals, inventory availability, and fulfillment
+  capacity to produce accurate ATP commitments that support S&OP capacity and
+  COGS targets while preserving service levels.
+trigger: >-
+  New or updated confirmed order/demand forecast, inventory snapshot, or
+  capacity plan (scheduled or event-driven ingest).
+decision: >-
+  Dynamically determine ATP commitment (accept, partial-commit with revised
+  promise date, or reject) by reconciling demand forecast, inventory
+  availability, and fulfillment capacity against S&OP and finance targets.
+expected_action: >-
+  Process Builder orchestrates data ingestion (STREAMS/DDM), runs forecasting
+  and capacity checks (Cortex Auto Forecast + rules), generates ATP
+  recommendation via CWB Lifecycle, and writes ATP commitments or exceptions
+  back to SAP S/4HANA using Remote Functions; exceptions are surfaced to
+  planners via UI Screens/notifications.
+expected_outcome: >-
+  Higher ATP accuracy and fewer over-promises, improved revenue realization and
+  gross margin alignment to COGS targets, predictable fulfillment sequencing,
+  and fewer manual exception escalations.
+rationale: >-
+  Deterministic, process-driven orchestration aligns cross-domain inputs
+  (demand, inventory, capacity, finance) in a repeatable workflow using Aera
+  Process Builder, STREAMS for integration, Cortex forecasting for demand
+  signals, and Remote Functions/CWB for automated ERP writebacks and
+  human-in-the-loop exception handling.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Aera Subject Areas
+    type: Data Warehouse
+    status: tbd
+  - name: Cortex Auto Forecast
+    type: AI Service
+    status: tbd
+key_inputs:
+  - name: Confirmed orders / sales orders
+    source: SAP S/4HANA
+    purpose: Incoming firm demand to evaluate against available-to-promise
+    preferred_stream_type: batch
+  - name: Demand forecasts (regional, NPI, promotions)
+    source: Cortex Auto Forecast
+    purpose: Projected demand signals to align ATP with planning forecasts
+    preferred_stream_type: time_series
+  - name: On-hand inventory and allocations
+    source: SAP S/4HANA
+    purpose: Physical availability check for ATP calculation
+    preferred_stream_type: batch
+  - name: Fulfillment capacity & line/plant schedules
+    source: Aera Subject Areas
+    purpose: Capacity constraints used to sequence and limit commitments
+    preferred_stream_type: batch
+  - name: S&OP capacity and COGS targets
+    source: Aera Subject Areas
+    purpose: Governance constraints to bias ATP decisions toward financial targets
+    preferred_stream_type: batch
+  - name: Promotions / launch schedules
+    source: SAP S/4HANA
+    purpose: Adjust demand impact and priority for NPI/promotional orders
+happy_path:
+  - step: >-
+      Ingest confirmed orders, inventory snapshot, capacity plan, forecasts, and
+      S&OP targets
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Consolidate and normalize source data into Subject Areas for downstream
+      processing
+  - step: Compute reconciled demand and near-term forecast adjustments
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Produce demand signals and variance drivers (seasonality, promotion, NPI)
+      to inform ATP
+  - step: Apply ATP rules and capacity checks, generate recommended commitment
+    stage: decide
+    component: Process Builder (IF, Rules) + CWB Lifecycle
+    purpose: >-
+      Evaluate inventory vs. demand vs. capacity and produce
+      accept/partial/reject recommendation with rationale
+  - step: Execute commitment writeback or create exception workflow
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Write ATP commitment to SAP S/4HANA or initiate exception CWB for planner
+      action
+  - step: Surface commitments and exceptions to planners and S&OP
+    stage: notify
+    component: UI Screens + Notification
+    purpose: >-
+      Provide transparent recommendations, explainability, and action items for
+      human review
+branches:
+  - condition: Inventory sufficient but plant capacity constrained for requested date
+    response: >-
+      Recommend partial fulfillment or alternative promise date; flag for S&OP
+      sequencing adjustments
+    outcome: >-
+      Avoid over-promising; maintain service levels by offering revised delivery
+      options and escalating capacity trade-offs
+  - condition: Inventory shortage for high-margin items with S&OP COGS/priority override
+    response: >-
+      Allocate available inventory based on financial/priority rules and create
+      backorder plan for remainder
+    outcome: >-
+      Maximize revenue and margin while transparently managing backlog and
+      customer expectations
+  - condition: >-
+      Significant forecast deviation (promotions or NPI) causing sustained
+      capacity shortfall
+    response: >-
+      Trigger S&OP exception subprocess (Process Builder -> Notification ->
+      Agent Team) for cross-functional replan
+    outcome: >-
+      Cross-domain decision established (capacity expansion, alternate sourcing,
+      or demand shaping) to realign ATP and financial targets

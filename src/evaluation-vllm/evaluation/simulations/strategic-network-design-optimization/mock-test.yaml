@@ -1,0 +1,38 @@
+decision: >-
+  Optimal global and regional network configuration to maximize EBITDA, minimize
+  COGS, and ensure service levels.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Monthly demand forecast update or significant market change event.
+  parameters:
+    objective: >-
+      Autonomous design and optimization of Ford's global and regional network
+      footprint, hub/spoke configurations, and post-merger integration plans.
+    key_inputs:
+      - Demand Forecast
+      - Cost Data
+      - Market Changes
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Generate and execute scenario-driven implementation plans and financial
+    forecasts.
+  outcome: >-
+    Optimized global and regional network designs that align with EBITDA,
+    working capital, and COGS targets.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - AutoML
+    - Remote Functions
+    - CWB Lifecycle
+    - Process Builder
+    - Dashboard
+rationale: >-
+  Leverage Aera's AI/ML capabilities to continuously align strategic network
+  design with business objectives, ensuring resilience and cost-efficiency.

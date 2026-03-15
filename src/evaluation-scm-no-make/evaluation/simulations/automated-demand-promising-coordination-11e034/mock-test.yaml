@@ -1,0 +1,62 @@
+decision: >-
+  Coordinate ATP-based order promising and allocation across Planning (forecast
+  inputs & demand sensing), Fulfillment (order allocation), and Delivery
+  (expedite/options) to determine confirmed promise date, allocation quantity,
+  and any required expedite or partial-ship action.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Event: new or high-priority customer order created OR Scheduled: frequent
+    near-term promise recalculation (e.g., hourly/4-hour batch) to align
+    promises with updated inventory, forecasts, and shipment ETAs.
+  parameters:
+    objective: >-
+      Automatically coordinate demand planning, ATP-based order promising, and
+      allocation across Planning, Fulfillment, and Customer Delivery to align
+      near-term promises with actual inventory and forecast drivers, reducing
+      ATP over-promising and improving on-time fulfillment.
+    key_inputs:
+      - Open Sales Orders
+      - ATP / Available Inventory by Location
+      - Near-term Demand Signal / Short-term Forecast
+      - Safety Stock / FG Targets
+      - Supply / Inbound ETA and Shortage Propagation
+      - Warehouse Availability & Reservations
+      - Transportation ETAs & Expedite Options
+      - Allocation & Prioritization Rules / SLAs
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS (Advanced Statistical Forecasting)
+      - Kinaxis RapidResponse
+      - Kinaxis (Rebalancing / Order Expediting / FG Safety Stock)
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL (Uber Freight / carrier integrations)
+expected_output:
+  action: >-
+    Orchestrate data consolidation, reconcile demand signals with ATP, generate
+    recommended promise/allocation, write decisions to S4/Kinaxis (allocation &
+    promise), and surface exceptions for human review (CWB) with notifications
+    to Logistics/Sales when expediting or allocation changes are required.
+  outcome: >-
+    Reduced ATP over-promising, improved on-time fulfillment, fewer late
+    shipments, protected revenue, and reduced COGS variability through
+    synchronized near-term planning across Planning, Fulfillment, and Delivery.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast
+    - Process Builder (Rules + Remote Functions)
+    - Remote Functions
+    - CWB Lifecycle / UI Screen
+rationale: >-
+  Deterministic, process-driven coordination leverages Aera's ETL (STREAMS/DDM),
+  scheduled demand sensing, orchestration (Process Builder), deterministic
+  decision execution (Remote Functions), and human-in-the-loop exception
+  handling (CWB Lifecycle). Integrating enterprise forecasts (SAS), ERP ATP
+  (S4), APS signals (Kinaxis), WMS visibility (Blue Yonder), and carrier ETAs
+  (Uber Freight/TMS) enables accurate, repeatable promise decisions without
+  expecting sub-second real-time guarantees.

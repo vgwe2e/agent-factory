@@ -1,0 +1,65 @@
+decision: >-
+  Assess whether to add new driver features to model inputs by evaluating
+  statistical significance and incremental forecast accuracy vs. data
+  complexity. Triggered by Assess Data activity that compares baseline forecasts
+  to feature-enriched forecasts and scores driver importance.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled weekly data refresh or ingestion of new driver datasets (new
+    promotional, COGS or external signals) that could affect demand model
+    inputs.
+  parameters:
+    objective: >-
+      Unify demand forecasting, data validation, feature enrichment, and
+      forecast-driven revenue optimization across multi-SKU, multi-location CPG
+      network to accelerate accurate demand signals, optimize inventory, and
+      protect revenue while reducing waste.
+    key_inputs:
+      - Historical sales / shipments
+      - Advanced statistical forecasts
+      - Promotion & pricing calendar
+      - COGS and gross margin by SKU
+      - Inventory on-hand and locations
+      - Lead times and supply constraints
+      - 3rd-party shipments / carrier events
+      - External drivers (weather, holidays, macro)
+      - Feature candidate dataset (new driver data)
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Kinaxis RapidResponse
+      - Kinaxis
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Frieght
+expected_output:
+  action: >-
+    Automatically ingest and validate new driver data, run significance and
+    impact analysis, if significant then enrich feature set and retrain Cortex
+    Auto Forecast, propagate updated forecasts to Safety Stock Service and
+    downstream planners via Process Builder + Remote Functions, create CWB
+    Lifecycle item for manual review when human-in-the-loop is required, and
+    write approved replenishment or pricing adjustments back to S4/Kinaxis.
+  outcome: >-
+    Improved forecast accuracy and demand signal freshness, optimized safety
+    stock and replenishment plans, prioritized exceptions for planner review,
+    reduced stockouts and overstocks, and protected promotional revenue through
+    COGS-aware feature updates.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - STREAMS (Data Quality & Validation) + Data Foundation Subject Areas
+    - Cortex Auto Forecast + RCA Service (feature importance)
+    - Process Builder (IF, Rules) + CWB Lifecycle
+    - Cortex Auto Forecast + Safety Stock Service + Remote Functions
+    - UI Screens (CWB) + Process Builder Notification
+rationale: >-
+  Combining touchless ingestion, automated validation, model-driven feature
+  selection, and lifecycle recommendation balances automation with controlled
+  human oversight. This reduces manual feature engineering, accelerates updates
+  to planning inputs, and aligns inventory and pricing actions to revenue impact
+  and cost-of-goods-sold considerations.

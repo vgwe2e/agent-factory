@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest invoice data into Aera.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Ensure accuracy and completeness of invoice data.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Remote Functions
+    purpose: Determine if invoice matches PO and GR details.
+    confidence: inferred
+    node_type: decide
+  - name: CWB Lifecycle
+    purpose: Handle discrepancies through a structured workflow.
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: Execute payment runs based on cash flow and supplier terms.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unify and automate core p2p decisions across invoice intake, 3-way
+      match, discrepancy handling, and payment term management to reduce cogs
+      and working capital while improving otif and supplier cash-flow terms. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

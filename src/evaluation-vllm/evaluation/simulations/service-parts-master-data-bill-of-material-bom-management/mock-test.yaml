@@ -1,0 +1,44 @@
+decision: >-
+  Create or deactivate service part numbers based on lifecycle events and
+  obsolescence risks, maintain BOM structures for service parts and decide when
+  to adjust BOM based on changes, manage technical attributes/specifications for
+  service parts to ensure data quality, plan and execute data quality audits and
+  remediation activities, maintain cross-reference and supersession data for
+  interchangeable service parts.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Lifecycle events and obsolescence risks for service parts.
+  parameters:
+    objective: >-
+      Unify service parts numbering, BOM structures, and attribute data with
+      automated quality remediation and supplier cross-reference, enabling
+      end-to-end consistency across parts across Ford's service network.
+    key_inputs:
+      - Lifecycle Events
+      - BOM Changes
+      - Technical Attributes
+      - Data Quality Issues
+      - Cross-Reference Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automatically create or deactivate service part numbers, adjust BOM
+    structures based on changes, ensure technical attributes and specifications
+    are up-to-date, conduct regular data quality audits and remediate issues,
+    maintain accurate cross-reference and supersession data.
+  outcome: >-
+    Improved COGS, reduced write-offs, and enhanced working capital efficiency
+    through cleaner part masters.
+  affected_components:
+    - DDM/Crawlers
+    - Process Builder
+    - Process Builder
+    - Dashboard
+rationale: >-
+  This solution ensures end-to-end consistency across parts, reducing errors and
+  improving operational efficiency.

@@ -1,0 +1,62 @@
+objective: >-
+  Autonomous identification and prioritization of critical off-road and
+  emergency vehicle parts, allocation of stock, and orchestration of fastest
+  multimodal shipping.
+trigger: Detection of vehicles off the road requiring critical parts.
+decision: >-
+  Identify and prioritize critical parts, allocate stock, arrange expedited
+  shipping, and enhance visibility/tracking.
+expected_action: >-
+  Parts are identified, prioritized, allocated, and shipped using the fastest
+  available multimodal options.
+expected_outcome: >-
+  Maximized on-time-in-full (OTIF) delivery of critical parts with minimized
+  working capital.
+rationale: >-
+  Enhance emergency and critical parts fulfillment by automating the
+  identification, prioritization, allocation, and shipping processes.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Off-Road Vehicle Status
+    source: SAP S/4HANA
+    purpose: Identify vehicles requiring critical parts.
+  - name: Part Inventory Levels
+    source: SAP S/4HANA
+    purpose: Determine stock availability for critical parts.
+  - name: Carrier Availability
+    source: External APIs
+    purpose: Select fastest multimodal shipping options.
+happy_path:
+  - step: Detect off-road vehicles requiring critical parts.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect data on off-road vehicles and their part requirements.
+  - step: Prioritize critical parts based on urgency.
+    stage: analyze
+    component: AutoML
+    purpose: Classify and prioritize parts based on urgency and availability.
+  - step: Allocate stock from designated locations.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure stock is allocated efficiently to meet urgent needs.
+  - step: Arrange for expedited shipping and special handling.
+    stage: act
+    component: Remote Functions
+    purpose: Coordinate with carriers for expedited shipping.
+  - step: Enhance visibility and track shipments.
+    stage: surface
+    component: UI Screens
+    purpose: Provide real-time tracking and visibility for critical parts.
+branches:
+  - condition: Insufficient stock for critical parts.
+    response: Trigger production or procurement of additional parts.
+    outcome: Ensure continuous stock availability for critical parts.
+  - condition: Carrier delays or issues.
+    response: Reallocate parts to alternative carriers.
+    outcome: Maintain on-time delivery despite carrier issues.
+  - condition: Part prioritization conflicts.
+    response: Manual review and override through CWB Lifecycle.
+    outcome: Resolve conflicts and ensure optimal part allocation.

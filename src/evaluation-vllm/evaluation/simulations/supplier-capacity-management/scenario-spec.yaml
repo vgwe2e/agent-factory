@@ -1,0 +1,74 @@
+objective: >-
+  Optimize supplier capacity commitments, validate production-part capacity,
+  assess risk, route capacity expansion decisions, and monitor tiered supplier
+  capacity to reduce COGS, improve OTIF, and strengthen supply resilience.
+trigger: Monthly supplier capacity review cycle initiation.
+decision: >-
+  Review and formalize supplier capacity commitments, verify production part
+  capacity, assess risk, process capacity increase requests, and monitor tiered
+  supplier capacity.
+expected_action: >-
+  Automate the review, verification, risk assessment, request processing, and
+  monitoring activities using Aera's deterministic processes.
+expected_outcome: >-
+  Reduced COGS, improved on-time in-full (OTIF) performance, and enhanced supply
+  resilience through optimized supplier capacity management.
+rationale: >-
+  The scenario leverages Aera's deterministic processes to streamline supplier
+  capacity management, ensuring alignment with forecasted demand and mitigating
+  potential disruptions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Supplier Capacity Commitments
+    source: SAP S/4HANA
+    purpose: To review and formalize supplier capacity commitments.
+  - name: Production Part Capacity Data
+    source: SAP S/4HANA
+    purpose: To verify supplier demonstrated production capacity during PPAP.
+  - name: Supplier Risk Assessment Data
+    source: SAP S/4HANA
+    purpose: To assess supplier capacity risks and develop mitigation plans.
+  - name: Capacity Expansion Requests
+    source: SAP S/4HANA
+    purpose: To process and approve supplier requests for capacity expansions.
+  - name: Tier-N Supplier Capacity Data
+    source: SAP S/4HANA
+    purpose: To monitor and support critical sub-tier suppliers.
+happy_path:
+  - step: Retrieve supplier capacity commitments from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest supplier capacity commitment data.
+  - step: Analyze supplier capacity commitments and formalize them.
+    stage: analyze
+    component: Process Builder
+    purpose: Review and formalize supplier capacity commitments.
+  - step: Validate production part capacity during PPAP.
+    stage: analyze
+    component: Process Builder
+    purpose: Verify supplier demonstrated production capacity.
+  - step: Assess supplier capacity risks and develop mitigation plans.
+    stage: analyze
+    component: Process Builder
+    purpose: Identify and mitigate supplier capacity risks.
+  - step: Process and approve supplier capacity expansion requests.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Approve supplier capacity expansion requests.
+  - step: Monitor tiered supplier capacity and provide support.
+    stage: act
+    component: Process Builder
+    purpose: Monitor and support critical sub-tier suppliers.
+branches:
+  - condition: Supplier capacity expansion request exceeds predefined thresholds.
+    response: Escalate to senior management for approval.
+    outcome: Senior management reviews and approves the request.
+  - condition: Supplier capacity risk assessment identifies high-risk areas.
+    response: Develop detailed mitigation plans and escalate to relevant stakeholders.
+    outcome: Stakeholders review and implement mitigation plans.
+  - condition: Tier-N supplier capacity monitoring detects potential disruptions.
+    response: Initiate support actions and adjust capacity allocations.
+    outcome: Adjustments made to prevent disruptions and ensure production continuity.

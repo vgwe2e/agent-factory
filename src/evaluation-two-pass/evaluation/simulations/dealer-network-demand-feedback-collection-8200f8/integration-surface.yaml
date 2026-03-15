@@ -1,0 +1,58 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer Portal / Dealer Network API
+    type: Dealer Portal API
+    status: tbd
+  - name: Marketing Automation / Promotion Calendar
+    type: Marketing system
+    status: tbd
+  - name: Product Management / PLM
+    type: Product Management tool
+    status: tbd
+  - name: Executive Consensus Inputs (CWB / Email)
+    type: Manual / CWB
+    status: tbd
+aera_ingestion:
+  - stream_name: historical-sales-and-shipment-data
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: dealer-network-demand-signals-market-intelligence
+    stream_type: api
+    source: Dealer Portal / Dealer Network API
+  - stream_name: marketing-promotions-and-calendar
+    stream_type: batch
+    source: Marketing Automation / Promotion Calendar
+  - stream_name: product-launch-engineering-constraints
+    stream_type: batch
+    source: Product Management / PLM
+  - stream_name: executive-adjustments-and-consensus-directives
+    stream_type: Event Stream
+    source: Executive Consensus Inputs (CWB / Email)
+  - stream_name: current-inventory-and-supply-constraints
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: baseline-statistical-forecast
+    stream_type: Event Stream
+    source: Cortex Auto Forecast
+processing:
+  - component: Remote Functions + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Perform controlled SAP S/4HANA writeback or route exceptions for
+      human-in-the-loop approval
+  - component: Notification + UI Screen (Action Item / CWB view)
+    type: process_builder
+    function: Ensure cross-functional visibility and allow fast overrides when needed
+  - component: Process Builder + Agent Team (Agentic AI)
+    type: agent_teams
+    function: >-
+      Apply multi-agent reasoning and rule-based guardrails to produce a
+      reconciled plan and confidence score
+ui_surface:
+  - component: Data View / Dashboard
+    screen: Primary
+    purpose: >-
+      Provide traceability, performance tracking (stockouts, excess, working
+      capital) and inputs for model refinement

@@ -1,0 +1,60 @@
+decision: >-
+  Deterministic selection and ranking of regions and customer segments for
+  targeted demand-shaping, supply commitment adjustments, and price
+  recommendations using rule-based scoring + deterministic optimization with a
+  confidence threshold that gates human review.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled daily/weekly orchestration or event-driven trigger when competitor
+    sales/production or regional market volatility exceeds configured threshold.
+  parameters:
+    objective: >-
+      Autonomously prioritize regions and customer segments and orchestrate
+      demand shaping, supply commitments, and pricing adjustments using
+      integrated market, competitor, economic, consumer, and regulatory signals
+      to reduce working capital and increase revenue capture.
+    key_inputs:
+      - Current sales & supply commitments
+      - Competitor sales & production signals
+      - Regional economic indicators
+      - Consumer preference / channel signals
+      - Regulatory event stream
+      - Operational constraints
+    source_systems:
+      - SAP S/4HANA
+      - Competitor data feeds (third-party / web-scrape)
+      - Regional economic indicators (macro data provider)
+      - Consumer preference signals (surveys/CRM insights)
+      - Regulatory / policy updates feed
+expected_output:
+  action: >-
+    Process Builder ingests enterprise and external signals, runs deterministic
+    scoring and optimization (Rules + Remote Functions + Cortex forecasts),
+    surfaces prioritized actions; if confidence >= threshold then automatically
+    execute Remote Functions to update SAP S/4HANA supply commitments and push
+    pricing signals; if confidence < threshold then create Agent Team review
+    Action Items and hold writebacks until approval.
+  outcome: >-
+    Timely, region-specific adjustments that reduce inventory days and working
+    capital while increasing captured revenue from competitor-driven market
+    shifts; measurable KPIs: lower days-of-inventory, improved regional revenue
+    capture, reduced stock imbalances within the planning horizon.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - STREAMS
+    - 'Cortex Auto Forecast + Process Builder: Rules'
+    - 'Remote Functions + Process Builder: Notification + UI Screens'
+    - 'Process Builder: IF + Process Builder: Agent Team'
+    - Dashboard
+rationale: >-
+  Combining deterministic rules with forecast signals (demand shifts, competitor
+  moves, economic indicators, consumer preference changes, regulatory impacts)
+  enables fast, auditable decisions. Using Process Builder for orchestration,
+  deterministic scoring rules for explainability, Cortex forecasting for signal
+  validation, and Remote Functions for controlled writebacks balances speed with
+  safety and preserves ERP integrity.

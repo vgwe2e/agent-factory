@@ -1,0 +1,57 @@
+decision: >-
+  Ramp up launch volumes by detailing sequencing and capacity alignments across
+  plants and lines, balancing demand with production capability and cost.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    NPI program launch event or updated launch volume/target recorded in SAP
+    S/4HANA (or scheduled ramp planning cadence).
+  parameters:
+    objective: >-
+      Autonomously plan and coordinate end-to-end NPI production activities
+      (pre-production, ramp-up, supplier readiness, pilot builds, end-of-life)
+      to minimize COGS, accelerate time-to-market, improve OTIF and optimize
+      working capital during vehicle launch cycles.
+    key_inputs:
+      - Launch volume targets (by model/variant/timebucket)
+      - Bill of Materials (BOM) & Routings
+      - Plant/line capacity and shift schedules
+      - Supplier readiness & lead times
+      - Historical ramp profiles & pilot build outcomes
+      - Cost structures and COGS drivers
+    source_systems:
+      - SAP S/4HANA
+      - Manufacturing Execution System (MES)
+      - Supplier Portal / SRM
+      - Plant Capacity Master / Line Config DB
+      - Planning Data Warehouse / Subject Area
+expected_output:
+  action: >-
+    Orchestrate data ingestion, deterministic optimization (capacity &
+    sequencing), human-in-the-loop review, and ERP writeback to SAP S/4HANA to
+    operationalize approved NPI ramp plans and downstream production orders.
+  outcome: >-
+    Automated, validated ramp plans executed in SAP: reduced COGS from optimized
+    allocations, faster time-to-market through coordinated sequencing, improved
+    OTIF for launch SKUs, and reduced working capital via staged inventory and
+    supplier synchronization.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - STREAMS -> Subject Areas
+    - Remote Functions (optimizer)
+    - Process Builder + CWB Lifecycle + UI Screen
+    - Remote Functions (ERP writeback)
+    - Notification + UI Screen (dashboard)
+    - Dashboard
+rationale: >-
+  Deterministic optimization + process orchestration is best for constrained,
+  rules-driven NPI ramp problems with heavy ERP integration and multi-echelon
+  coordination. Process Builder handles orchestration, Remote Functions run the
+  optimizer and ERP writebacks, STREAMS/DDM prepare reliable inputs, and CWB
+  Lifecycle/UI Screens provide controlled human approvals. High implementation
+  complexity is justified by material cost, lead-time and cross-plant benefits
+  during launches.

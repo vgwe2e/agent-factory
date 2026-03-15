@@ -1,0 +1,87 @@
+objective: >-
+  Automate consensus-building, demand and supply reviews, financial alignment,
+  and strategic trade-offs within S&OP/IBP to improve OTIF, reduce stockouts and
+  excess, and optimize EBITDA and working capital.
+trigger: Scheduled S&OP/IBP meeting kickoff.
+decision: >-
+  Cross-functional team consensus on procurement and capacity plans; executive
+  approval of demand, supply, and financial plans; strategic trade-off
+  decisions.
+expected_action: >-
+  Automated presentation and approval of consolidated demand and supply plans,
+  financial alignment, and strategic trade-offs.
+expected_outcome: >-
+  Improved OTIF, reduced stockouts and excess inventory, optimized EBITDA and
+  working capital.
+rationale: >-
+  Automating the S&OP/IBP review and decision-making process enhances
+  efficiency, reduces errors, and ensures alignment across all functional areas.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Demand Plan Data
+    source: SAP S/4HANA
+    purpose: To consolidate and present the global demand plan for executive review.
+  - name: Supply Plan Scenarios
+    source: SAP S/4HANA
+    purpose: >-
+      To present supply plan options and secure executive decisions on preferred
+      scenarios.
+  - name: Financial Implications
+    source: SAP S/4HANA
+    purpose: >-
+      To review and approve the integrated financial implications of the IBP
+      plan.
+happy_path:
+  - step: Retrieve demand plan data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Collect demand plan data for review.
+  - step: Analyze demand plan data using Cortex Auto Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Generate insights and forecasts for executive review.
+  - step: Present demand plan and gather executive feedback.
+    stage: surface
+    component: UI Screens
+    purpose: Facilitate executive review and alignment on the demand plan.
+  - step: Retrieve supply plan scenarios from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Collect supply plan scenarios for review.
+  - step: Analyze supply plan scenarios using AutoML.
+    stage: analyze
+    component: AutoML
+    purpose: Evaluate supply plan options and their financial impacts.
+  - step: Present supply plan scenarios and gather executive feedback.
+    stage: surface
+    component: UI Screens
+    purpose: Secure executive decisions on preferred supply scenarios.
+  - step: Retrieve financial implications from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Collect financial data for review.
+  - step: Analyze financial implications using Cortex Monitoring.
+    stage: analyze
+    component: Cortex Monitoring
+    purpose: Ensure financial alignment and accuracy.
+  - step: Present financial implications and gather executive approval.
+    stage: surface
+    component: UI Screens
+    purpose: Obtain executive approval of the overall IBP plan.
+  - step: Facilitate strategic trade-off decisions.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Support executive decisions on strategic trade-offs.
+branches:
+  - condition: Insufficient data for demand plan analysis.
+    response: Notify stakeholders and request additional data.
+    outcome: Delayed decision-making until data is available.
+  - condition: Disagreement on preferred supply scenario.
+    response: Escalate to senior executives for final decision.
+    outcome: Final supply scenario selected after escalation.
+  - condition: Financial implications exceed budget constraints.
+    response: Re-evaluate supply and demand plans to align with budget.
+    outcome: Adjusted plans presented for re-approval.

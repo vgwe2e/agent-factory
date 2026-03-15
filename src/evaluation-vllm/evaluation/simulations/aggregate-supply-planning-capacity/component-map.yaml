@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: To prepare data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: To determine optimal capacity utilization.
+    confidence: confirmed
+    capability: To determine optimal capacity utilization.
+  - name: AutoML
+    purpose: To ensure sufficient inventory for future production.
+    confidence: inferred
+    capability: To ensure sufficient inventory for future production.
+process_builder:
+  - name: Process Builder
+    purpose: To balance capital expenditure, capacity, and cost-to-serve.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: To match demand with available supply and resources.
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: UI Screens
+    purpose: To enable human-in-the-loop review and approval.
+    confidence: confirmed
+    component_type: display

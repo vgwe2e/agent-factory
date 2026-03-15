@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New product introduction or significant process change.]
+  A --> N1[Stream: DDM/Crawlers - Ingest production requirements and inventory levels from SAP S/4HANA.]
+  N1 --> N2[Cortex: AutoML - Analyze production requirements and inventory levels using AutoML.]
+  N2 --> N3{PB: Process Builder - Generate optimized production plans and line layouts.}
+  N3 -->|Primary| N4[PB: Remote Functions - Adjust inventory levels based on optimized plans.]
+  N4 --> N5[PB: CWB Lifecycle - Review and approve optimized plans through CWB Lifecycle.]
+  N5 --> Z1[Outcome: Reduced COGS, improved on-time delivery, and increased EBITDA.]
+  N3 -->|Insufficient inventory levels detected.| B1[Trigger replenishment orders.]
+  B1 --> O1[Outcome: Maintain optimal inventory levels.]
+  O1 --> End[End]
+  N3 -->|Significant process change request.| B2[Update standard work instructions and tooling design.]
+  B2 --> O2[Outcome: Ensure process alignment with changes.]
+  O2 --> End[End]
+  N3 -->|Detected potential process failures.| B3[Implement preventive controls via PFMEA.]
+  B3 --> O3[Outcome: Reduce risk and cost of quality issues.]
+  O3 --> End[End]
+  Z1 --> End[End]

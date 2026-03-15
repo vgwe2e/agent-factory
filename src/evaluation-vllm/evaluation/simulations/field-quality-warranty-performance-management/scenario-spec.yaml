@@ -1,0 +1,70 @@
+objective: >-
+  Reduce COGS related to warranty, shorten resolution cycles, and improve OTIF
+  by autonomously analyzing field quality data, identifying warranty root
+  causes, coordinating supplier recovery actions, and automating critical field
+  communications.
+trigger: New field quality data and warranty claims are available in SAP S/4HANA.
+decision: >-
+  Identify root-cause patterns in field quality with supplier attribution,
+  select corrective action plans, choose supplier recovery actions, and decide
+  escalation or resolution paths for field actions/recalls.
+expected_action: >-
+  Analyze field quality data, identify root causes, select corrective actions,
+  pursue financial recovery from suppliers, and manage communication and
+  resolution processes.
+expected_outcome: >-
+  Reduced COGS related to warranty, shortened resolution cycles, improved OTIF,
+  and enhanced supplier relationships.
+rationale: >-
+  This scenario leverages AI/ML to autonomously analyze field quality data,
+  identify root causes, and coordinate supplier recovery actions, thereby
+  reducing COGS and improving overall supply chain efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Field Quality Data
+    source: SAP S/4HANA
+    purpose: To analyze trends and assign root causes to specific supplier components.
+  - name: Warranty Claims Data
+    source: SAP S/4HANA
+    purpose: >-
+      To investigate recurring supplier quality issues impacting vehicle
+      reliability.
+  - name: Supplier Financial Data
+    source: SAP S/4HANA
+    purpose: To pursue financial recovery from suppliers for warranty claims.
+happy_path:
+  - step: Ingest field quality and warranty claims data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To collect and prepare data for analysis.
+  - step: Analyze field quality data using RCA Service to identify root causes.
+    stage: analyze
+    component: RCA Service
+    purpose: To determine the root causes of field quality issues.
+  - step: Select corrective action plans using AutoML to balance cost and impact.
+    stage: decide
+    component: AutoML
+    purpose: To choose the most effective corrective actions.
+  - step: Determine supplier recovery actions using Remote Functions.
+    stage: decide
+    component: Remote Functions
+    purpose: To optimize financial recovery while maintaining supplier relationships.
+  - step: >-
+      Manage communication and resolution processes with suppliers using Process
+      Builder.
+    stage: act
+    component: Process Builder
+    purpose: To ensure timely and effective resolution of field actions and recalls.
+branches:
+  - condition: High severity supplier issue identified
+    response: Escalate to senior management for immediate action.
+    outcome: Accelerated resolution timeline and minimized COGS impact.
+  - condition: Supplier refuses to commit to remediation
+    response: Initiate legal action through Remote Functions.
+    outcome: Ensured financial recovery and maintained supplier accountability.
+  - condition: Insufficient data for root cause identification
+    response: Request additional data from suppliers via UI Screens.
+    outcome: Enhanced data completeness for future analysis.

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Periodic validation cycle or new production data available.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve production data from SAP S/4HANA.]
+  N1 --> N2[Stream: STREAMS - Update simulation models with production data.]
+  N2 --> N3{PB: Process Builder - Execute simulation models to validate process performance.}
+  N3 -->|Primary| N4[PB: CWB Lifecycle - Review simulation results and decide on process adjustments.]
+  N4 --> N5[PB: Remote Functions - Update simulation models based on review decisions.]
+  N5 --> Z1[Outcome: Reduced COGS through faster, more reliable process capability validation and ongoing model integrity.]
+  N3 -->|Simulation results indicate significa...| B1[Trigger CWB Lifecycle for detailed review and decision-making.]
+  B1 --> O1[Outcome: Adjust process parameters and update simulation models accordingly.]
+  O1 --> End[End]
+  N3 -->|Real production data indicates a need...| B2[Execute Remote Functions to update simulation models.]
+  B2 --> O2[Outcome: Ensure simulation models remain accurate and up-to-date.]
+  O2 --> End[End]
+  N3 -->|Simulation results suggest no signifi...| B3[Continue periodic validation cycle.]
+  B3 --> O3[Outcome: Maintain ongoing model integrity and process capability validation.]
+  O3 --> End[End]
+  Z1 --> End[End]

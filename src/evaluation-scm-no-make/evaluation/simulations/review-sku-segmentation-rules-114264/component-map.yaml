@@ -1,0 +1,40 @@
+streams:
+  - name: STREAMS
+    purpose: Consolidate and cleanse inputs for segmentation analysis.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Process Builder - Rules
+    purpose: >-
+      Generate baseline classifications and identify SKUs near rule boundaries
+      or showing performance drift.
+    confidence: confirmed
+    capability: >-
+      Generate baseline classifications and identify SKUs near rule boundaries
+      or showing performance drift.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: >-
+      Present deterministic recommendations with rationale and impact estimates
+      for human approval.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Persist approved segmentation changes to S4 and notify downstream systems.
+    confidence: inferred
+    node_type: act
+  - name: Process Builder - Notification / UI Screen
+    purpose: >-
+      Inform planners, inventory owners, and APS teams and provide a link to
+      review results.
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review review and update sku segmentation (abc/xyz) rules to optimize
+      portfolio mix against demand variability and service targets. and approve
+      the recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Detection of BIW defects.]
+  A --> N1[Stream: DDM/Crawlers - Detect BIW defects and tag non-conformances.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Prioritize non-conformances for rework.]
+  N2 --> N3{Agent: Agentic AI - Allocate and sequence repairs at rework stations.}
+  N3 -->|Primary| N4{PB: CWB Lifecycle - Convene MRB to decide part disposition.}
+  N4 --> N5[Cortex: RCA Service - Analyze rework data to identify trends.]
+  N5 --> N6[PB: Notification - Escalate critical quality issues.]
+  N6 --> Z1[Outcome: Reduced COGS, improved OTIF, and enhanced line efficiency.]
+  N3 -->|High volume of non-conformances detec...| B1[Increase rework station capacity.]
+  B1 --> O1[Outcome: Improved throughput and reduced delays.]
+  O1 --> End[End]
+  N3 -->|Severe non-conformances requiring imm...| B2[Expedite MRB decision-making process.]
+  B2 --> O2[Outcome: Faster resolution and minimized impact on production.]
+  O2 --> End[End]
+  N3 -->|Recurring defects identified.| B3[Implement corrective actions and update procedures.]
+  B3 --> O3[Outcome: Reduced future defects and optimized rework processes.]
+  O3 --> End[End]
+  Z1 --> End[End]

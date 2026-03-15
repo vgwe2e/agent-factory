@@ -1,0 +1,38 @@
+decision: >-
+  Define and optimize inventory targets, safety stocks, and build strategies to
+  balance working capital and service levels.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic review of inventory levels and supply chain performance.
+  parameters:
+    objective: >-
+      Integrate deterministic, end-to-end inventory and build decisions across
+      global multi-echelon networks to reduce working capital, prevent
+      stockouts, and lower COGS.
+    key_inputs:
+      - Inventory Levels
+      - Demand Forecasts
+      - Supply Variability Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate target setting, safety stock optimization, obsolete/excess
+    inventory reduction, and service-parts integration with coordinated
+    replenishment and build decisions.
+  outcome: Near real-time policy-driven actions with measurable P&L impact.
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - Safety Stock Service
+    - Remote Functions
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  This solution will enable a more efficient and cost-effective inventory
+  management strategy by leveraging deterministic models and real-time data.

@@ -1,0 +1,142 @@
+objective: >-
+  Automate end-to-end spot buy orchestration to minimize COGS and EBITDA impact
+  by selecting optimal supplier and pricing using touchless demand signals,
+  real-time market data, and contract terms.
+trigger: >-
+  Touchless demand shortfall or spot buy requirement detected from Kinaxis
+  RapidResponse (shortage propagation) or an automated demand signal exceeding
+  replenishment thresholds.
+decision: >-
+  Select Supplier: choose between preferred and alternate approved spot-buy
+  suppliers by balancing price, reliability, lead time, and contract terms;
+  prefer the preferred supplier when criteria are met.
+expected_action: >-
+  Automatically evaluate supplier options, negotiate or apply best-market
+  pricing, create and write back a spot PO to S4, and book logistics with TMS /
+  3PL; surface recommendation for rare human override.
+expected_outcome: >-
+  Touchless spot buys executed with optimized landed cost, protected service
+  levels, reduced waste risk, faster cash-to-cash cycle, and supplier
+  performance metrics updated for future decisions.
+rationale: >-
+  A deterministic process route orchestrated in Process Builder leverages
+  Kinaxis shortage signals, contract constraints from S4, and external market
+  prices to make reproducible, auditable supplier selections and automate
+  downstream execution while preserving a human-in-the-loop override for edge
+  cases.
+source_systems:
+  - name: SAP S/4HANA (S4)
+    type: ERP / Finance & Procurement
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / Shortage Propagation
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting / Analytics
+    status: identified
+  - name: Blue Yonder WMS
+    type: Warehouse Management
+    status: identified
+  - name: Uber Freight TMS / 3PL Booking
+    type: Transportation Management / 3PL
+    status: identified
+  - name: Supplier Market Price Feed
+    type: external market feed / aggregator
+    status: tbd
+  - name: Contract Repository / CLM
+    type: Contract Management
+    status: tbd
+key_inputs:
+  - name: Spot Buy Trigger Event
+    source: Kinaxis RapidResponse
+    purpose: Indicates item-level shortage or demand spike requiring spot purchase
+    preferred_stream_type: STREAMS
+  - name: Touchless Demand Signal / Forecast Delta
+    source: SAS (Advanced Statistical Forecasting)
+    purpose: Quantify incremental demand variance and urgency for spot buy sizing
+    preferred_stream_type: Report Data
+  - name: On-hand & Available-to-Promise
+    source: SAP S/4HANA / Blue Yonder WMS
+    purpose: Validate inventory position and confirm need and quantity for spot buy
+    preferred_stream_type: Data View
+  - name: Real-time Supplier Market Prices
+    source: Supplier Market Price Feed
+    purpose: Provide current spot pricing and lead-time options for negotiation
+    preferred_stream_type: DDM/Crawlers
+  - name: Contract Terms & Approved Supplier List
+    source: SAP S/4HANA / Contract Repository
+    purpose: >-
+      Enforce contractual pricing floors/ceilings, compliance, and preferred
+      supplier rules
+    preferred_stream_type: Report Data
+  - name: Supplier Performance & Reliability Scores
+    source: SAS / Historical Kinaxis Data
+    purpose: Score suppliers on on-time delivery, quality, and historical cost variance
+    preferred_stream_type: STREAMS
+  - name: Transport Capacity & Cost
+    source: Uber Freight TMS / 3PL
+    purpose: >-
+      Evaluate logistics availability and landed-cost impact for supplier
+      selection
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: Detect spot buy requirement from shortage propagation and forecast delta
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Ingest shortage event from Kinaxis and forecast delta from SAS to trigger
+      spot buy workflow
+  - step: Enrich & evaluate supplier options with market and contract data
+    stage: analyze
+    component: Remote Functions
+    purpose: >-
+      Fetch market prices, contract constraints (S4/CLM), inventory and
+      transport costs; compute landed cost and reliability score per supplier
+  - step: Recommend supplier and pricing, allow override if required
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      Present recommended preferred or alternate supplier, negotiated price, and
+      rationale for accept/reject/override
+  - step: Execute spot PO creation and logistics booking
+    stage: act
+    component: Process Builder
+    purpose: >-
+      Write PO to S4 (Advanced ATP), push booking to Uber Freight TMS / 3PL, and
+      notify supplier electronically
+  - step: Notify stakeholders and surface execution status
+    stage: notify
+    component: Notification
+    purpose: >-
+      Send confirmations to procurement, supply planners, and finance with links
+      to UI Screen for details
+  - step: Reconcile delivery and update supplier performance metrics
+    stage: review
+    component: STREAMS
+    purpose: >-
+      Ingest GR/receipt, update cost/variance, refresh supplier scores and feed
+      back to Kinaxis for rebalancing
+branches:
+  - condition: >-
+      Preferred supplier available and landed cost within threshold of market /
+      contract
+    response: >-
+      Auto-select preferred supplier and proceed with automated PO and logistics
+      booking
+    outcome: >-
+      Touchless execution with preferred supplier, minimized friction and
+      compliance with contracts
+  - condition: Preferred supplier available but priced materially above market threshold
+    response: >-
+      Trigger automated short negotiation (RFQ/price request) via Remote
+      Functions; if negotiation fails, select alternate supplier per score
+    outcome: >-
+      Either improved price with preferred supplier or fallback to lower-cost
+      alternate to protect EBITDA
+  - condition: No approved supplier meets reliability or contractual constraints
+    response: >-
+      Escalate to human procurement team (Agent Team) via CWB Lifecycle for
+      manual sourcing / exception handling
+    outcome: >-
+      Prevent risky sourcing decisions; human-mediated resolution with audit
+      trail

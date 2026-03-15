@@ -1,0 +1,129 @@
+objective: >-
+  Autonomously allocate manpower and equipment across multi-site production
+  lines to resolve bottlenecks, maximize throughput, and reduce COGS by aligning
+  capacity with demand signals.
+trigger: >-
+  Scheduled run (daily) and on-demand when demand/schedule variance exceeds
+  threshold (>X%) or bottleneck flag raised by line telemetry.
+decision: >-
+  Allocate manpower and equipment to tasks to satisfy production schedule
+  constraints, optimizing cost and throughput.
+expected_action: >-
+  Process Builder invokes capacity optimizer (Remote Functions) to produce
+  resource allocation plan; plans are written back to SAP S/4HANA as resource
+  assignments/work orders, notifications sent to line supervisors, and a
+  dashboard surfaced for review/override.
+expected_outcome: >-
+  Reduced COGS and downtime through targeted bottleneck resolution, improved
+  line throughput and takt compliance, better alignment of capacity with demand
+  forecasts, and auditable writeback to ERP.
+rationale: >-
+  Deterministic, process-driven orchestration uses STREAMS/DDM to consolidate
+  ERP and MES inputs, Cortex forecasting and capacity modeling to predict demand
+  and identify bottlenecks, and Process Builder + Remote Functions for
+  repeatable allocation and ERP writeback. Human review surface (UI Screens/CWB)
+  supports overrides where required, enabling safe automation across multi-site
+  manufacturing.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant MES
+    type: MES
+    status: tbd
+  - name: Workforce Management / Time & Attendance
+    type: HR/WFM
+    status: tbd
+key_inputs:
+  - name: Production Schedule / Orders
+    source: SAP S/4HANA (via DDM/Crawlers -> STREAMS)
+    purpose: >-
+      Primary demand-driven schedule to satisfy (work orders, timing,
+      quantities).
+    preferred_stream_type: STREAMS
+  - name: Resource Master (labor skills, equipment specs, rates)
+    source: SAP S/4HANA (HR module) / WFM
+    purpose: >-
+      Available people, certifications, equipment capabilities and cost for
+      allocation decisions.
+    preferred_stream_type: STREAMS
+  - name: Demand Forecast / Signal
+    source: Cortex Auto Forecast (subject area)
+    purpose: >-
+      Short- to mid-term demand signal to size capacity and anticipate
+      bottlenecks.
+    preferred_stream_type: Cortex Auto Forecast
+  - name: Line Capacity, OEE, utilization metrics
+    source: Plant MES / telemetry
+    purpose: >-
+      Realized capacity and downtime data to detect bottlenecks and feasible
+      allocations.
+    preferred_stream_type: DDM/Crawlers
+  - name: Allocation Rules & Constraints
+    source: Process Builder Rules / Data Views
+    purpose: >-
+      Business rules (labor regulations, shift patterns, maintenance windows) to
+      enforce feasible allocations.
+happy_path:
+  - step: Consolidate inputs
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Ingest production schedule, resource master, line capacity and telemetry
+      into Subject Areas.
+  - step: Forecast & capacity modeling
+    stage: analyze
+    component: Cortex Auto Forecast + STREAMS
+    purpose: >-
+      Generate demand forecast and build line/plant capacity model; identify
+      initial bottlenecks.
+  - step: Run allocation optimizer
+    stage: decide
+    component: Process Builder (Process -> Rules -> Remote Functions)
+    purpose: >-
+      Execute deterministic optimization rules (Remote Functions) to allocate
+      manpower and equipment respecting constraints and cost objectives.
+  - step: Commit allocations
+    stage: act
+    component: Remote Functions (Transaction)
+    purpose: >-
+      Write resource assignments/work orders back to SAP S/4HANA and update
+      schedule transactions.
+  - step: Notify operations
+    stage: notify
+    component: Process Builder (Notification)
+    purpose: >-
+      Send assignment and change notifications to supervisors, maintenance, and
+      shift planners.
+  - step: Surface results & allow override
+    stage: review
+    component: UI Screens (dashboard & CWB lifecycle)
+    purpose: >-
+      Display allocation, bottleneck view, KPIs and provide accept/override
+      workflow for planners.
+branches:
+  - condition: >-
+      Available capacity < required capacity for prioritized orders (hard
+      constraint violation)
+    response: >-
+      Invoke bottleneck-driven subprocess (Process Builder Subprocess + Remote
+      Functions) to reprioritize orders, suggest overtime, machine swaps, or
+      transfer to alternate sites.
+    outcome: >-
+      Revised allocation plan with feasible trade-offs or escalation to supply
+      chain/planning for manual intervention.
+  - condition: Skill/certification mismatch for allocated labor
+    response: >-
+      Create Action Item and CWB entry to route to planners with suggested
+      alternatives (retraining, swap, temporary contractor) and optional manual
+      override.
+    outcome: >-
+      Allocation paused for planner decision; system logs recommendation and
+      timestamps override decisions for audit.
+  - condition: ERP writeback failure or transaction conflict
+    response: >-
+      Rollback Transaction node in Process Builder, persist allocation snapshot
+      in Subject Areas, notify IT and planners, and schedule automated retry.
+    outcome: >-
+      Allocations staged pending resolution; no partial commits in ERP;
+      stakeholders alerted for remediation.

@@ -1,0 +1,41 @@
+decision: >-
+  Autonomous decision-making for stock rebalancing, safety stock optimization,
+  order fulfillment, warehouse transfers, and core return logistics.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Parts order creation, urgent request, inventory imbalance, core return
+    initiation.
+  parameters:
+    objective: >-
+      Optimize service parts logistics operations by autonomously deciding and
+      executing actions to reduce working capital, prevent stockouts, and
+      improve OTIF.
+    key_inputs:
+      - Parts Orders
+      - Urgent Requests
+      - Inventory Levels
+      - Core Returns
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Optimized fulfillment routing, expedited shipping decisions, cross-DC
+    transfers, and core part allocation.
+  outcome: >-
+    Reduced working capital, minimized stockouts, improved on-time in-full
+    (OTIF) delivery rates.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - Process Builder
+    - Remote Functions
+    - Cortex Monitoring
+    - Dashboard
+rationale: >-
+  Automate logistics decisions to enhance efficiency and responsiveness in
+  service parts operations.

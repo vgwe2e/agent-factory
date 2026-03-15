@@ -1,0 +1,57 @@
+decision: >-
+  Authorize kitting batch release and line-feed schedule that balances feed
+  rates, line constraints, buffer targets, and inspection outcomes.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New or updated ASN / inbound shipment record for battery components from SAP
+    S/4HANA (or supplier portal) indicating expected receipt within the next 72
+    hours.
+  parameters:
+    objective: >-
+      Autonomously orchestrate inbound material receipt, quality screening,
+      kitting, and timed line-feeding for battery assembly lines to reduce COGS,
+      minimize stockouts, and improve OTIF across multi-echelon suppliers and
+      warehouses.
+    key_inputs:
+      - Advanced Shipping Notice (ASN) / Inbound Shipment
+      - On-hand Inventory and Lot/Serial Master
+      - Line production schedule / takt rates
+      - Warehouse capacity & staging layout
+      - Inspection results / quality flags
+      - Supplier performance / carrier ETA history
+    source_systems:
+      - SAP S/4HANA
+      - Warehouse Execution System (WES)
+      - Manufacturing Execution System (MES)
+      - Supplier Portal / EDI
+      - Inspection / Quality Devices (OCR, sensors)
+expected_output:
+  action: >-
+    Agentic orchestration assesses arrivals and quality risk, allocates
+    components to kits, schedules inspections and staging, issues pick/putaway
+    and kit delivery instructions to WES/MES via Remote Functions, and surfaces
+    exceptions for human review via CWB Lifecycle.
+  outcome: >-
+    Timely delivery of kits to lines with minimized idle time and excess buffer,
+    fewer stockouts, lower handling costs (reduced COGS through optimized
+    staging/kitting), faster quarantine resolution for failed inspections, and
+    improved OTIF for battery production.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Agent Team
+    - Remote Functions
+    - CWB Lifecycle
+    - Process Builder
+    - Dashboard
+rationale: >-
+  Battery production requires tight sequencing and traceability; agentic
+  orchestration combines data ingestion, predictive arrival/quality risk
+  assessment, and automated execution to optimize staging and kitting cadence
+  across suppliers and warehouses while keeping human-in-the-loop for
+  exceptions.

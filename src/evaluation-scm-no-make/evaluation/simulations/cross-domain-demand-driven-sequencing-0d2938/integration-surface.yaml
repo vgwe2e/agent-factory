@@ -1,0 +1,74 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP (Advanced ATP / production master)
+    status: identified
+  - name: SAS
+    type: Analytics/Segmentation
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / short-term planning
+    status: identified
+  - name: Kinaxis (FG Safety Stock / Rebalancing / Order Expediting)
+    type: APS / inventory modeling
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS / 3PL
+    status: identified
+  - name: MES
+    type: MES (production execution / line sequencing)
+    status: tbd
+aera_ingestion:
+  - stream_name: demand-segmentation-outputs-sku-x-location-x-segment
+    stream_type: delta batch
+    source: SAS / Advanced Forecasting outputs
+  - stream_name: short-term-forecasts-0-14-day-horizon
+    stream_type: delta batch
+    source: Advanced Statistical Forecasting in SAS / Kinaxis short-term forecasts
+  - stream_name: available-production-capacity-and-line-configurations
+    stream_type: batch
+    source: S4 (capacity master) + MES (line states)
+  - stream_name: inventory-on-hand-by-sku-and-location
+    stream_type: delta batch
+    source: Blue Yonder WMS
+  - stream_name: shortage-expediting-signals
+    stream_type: Event Stream
+    source: Kinaxis RapidResponse / Kinaxis Order Expediting
+  - stream_name: logistics-constraints-and-outbound-windows
+    stream_type: batch
+    source: Uber Freight TMS / 3PL
+processing:
+  - component: Process Builder (Rules + Remote Functions)
+    type: process_builder
+    function: >-
+      Apply prioritization, capacity, and cost rules to produce actionable
+      sequence and allocation recommendations
+  - component: Remote Functions (ERP/MES writeback) + Process Builder
+    type: process_builder
+    function: >-
+      Write plans to S4 (ATP/capacity), send sequencing to MES, and push
+      shortage/exchange notifications to Kinaxis
+  - component: CWB Lifecycle (Action Item) + Notification
+    type: process_builder
+    function: >-
+      Surface recommendations and exceptions for human review or override where
+      rules mark manual intervention
+  - component: UI Screens + Subject Areas (dashboard)
+    type: process_builder
+    function: >-
+      Track service level, stockouts, line utilization, and COGS impact for
+      continuous improvement
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automatically coordinate demand segmentation outputs with
+      production sequencing and line allocation to minimize stockouts and excess
+      across skus and locations, aligning plan and make with near-term demand
+      signals to protect revenue and optimize cogs. and approve the recommended
+      action.

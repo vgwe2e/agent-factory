@@ -1,0 +1,132 @@
+objective: >-
+  Deliver an end-to-end demand forecasting and forecast-driven inventory &
+  revenue optimization stack that unifies ML forecasts, autonomous data
+  validation, COGS-aware features, and lifecycle-driven review across multi-SKU,
+  multi-location CPG network to improve forecast accuracy, reduce
+  stockouts/waste, and protect revenue.
+trigger: >-
+  Scheduled demand planning cadence or arrival of updated market inputs
+  (promotions, competitor signals, COGS updates, planner adjustments).
+decision: >-
+  Choose ML forecast model variant (Cortex Auto Forecast configuration) that
+  balances forecast accuracy vs model complexity, triggered by Gather Market
+  Inputs from market planners and market signals.
+expected_action: >-
+  Ingest and validate transactional, inventory, promotion and market-signal
+  data; generate Cortex Auto Forecast demand forecasts and explainability;
+  compute safety stock and inventory impact; route exceptions and model-variant
+  selection to CWB Lifecycle for planner review; write approved forecast and
+  replenishment recommendations back to S4 / Kinaxis via Remote Functions.
+expected_outcome: >-
+  Higher forecast accuracy with explainability, optimized safety stock and
+  replenishment recommendations, reduced stockouts and waste, improved
+  promotional revenue protection, auditable planner overrides and automated
+  ERP/APS writebacks.
+rationale: >-
+  Uses Aera Data Foundation (DDM/STREAMS) to centralize and validate inputs,
+  Cortex Auto Forecast for robust time-series modeling and SHAP explainability,
+  Safety Stock Service for inventory optimization, Process Builder to
+  orchestrate model selection and exception routing, CWB Lifecycle for
+  human-in-the-loop approvals, and Remote Functions for safe ERP/APS
+  writeback—aligns with platform strengths for batch-oriented DI and hybrid
+  human+AI workflows.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting/Analytics
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight / 3PL integrations
+    type: TMS/3PL
+    status: identified
+  - name: >-
+      Third-party Market Signals (promotions, competitor pricing, weather,
+      macro)
+    status: tbd
+  - name: Planner inputs (CWB / UI Screens)
+    status: tbd
+key_inputs:
+  - name: Historical sales / POS time-series
+    source: S4 (or POS feeds ingested via DDM)
+    purpose: Primary training signal for Cortex Auto Forecast
+    preferred_stream_type: time-series
+  - name: Inventory on hand & movements
+    source: Blue Yonder WMS / S4
+    purpose: Up-to-date stock levels for safety stock and replenishment impact
+    preferred_stream_type: timeseries
+  - name: Promotions and marketing events
+    source: Marketing systems / SAS / third-party feeds
+    purpose: Feature enrichment for demand spikes and lift modeling
+    preferred_stream_type: event
+  - name: COGS and pricing
+    source: S4
+    purpose: Revenue impact calculation and price-sensitivity features
+    preferred_stream_type: snapshot
+  - name: Market signals (competitor price, weather, macro indicators)
+    source: Third-party Market Signals
+    purpose: Exogenous features for improved forecast accuracy
+  - name: Planner adjustments & model selection input
+    source: CWB Lifecycle / UI Screens
+    purpose: Human-in-the-loop overrides and model variant selection
+happy_path:
+  - step: >-
+      Ingest and validate source data (sales, inventory, promotions, COGS,
+      market feeds) into Data Foundation
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: Centralize and clean inputs, run data quality checks and transformations
+  - step: Train and score demand forecasts with explainability
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Produce time-series forecasts, algorithm selection, and SHAP-based feature
+      explainability
+  - step: Orchestrate model-variant selection and exception detection
+    stage: decide
+    component: Process Builder (IF / Rules) + CWB Lifecycle
+    purpose: >-
+      Select model config balancing accuracy vs complexity; surface exceptions
+      and create CWB items for planner review
+  - step: >-
+      Compute safety stock and generate replenishment & revenue impact
+      recommendations, then writeback approved recommendations
+    stage: act
+    component: Safety Stock Service + Remote Functions
+    purpose: >-
+      Translate forecasts into inventory targets and ERP/APS updates; perform
+      COGS-aware revenue impact calculations and write to S4/Kinaxis
+  - step: Planner review, accept/override forecasts and notify stakeholders
+    stage: review
+    component: CWB Lifecycle + UI Screens + Process Builder Notification
+    purpose: >-
+      Human-in-the-loop approval, capture audit trail, trigger notifications and
+      downstream execution
+branches:
+  - condition: Data quality checks fail (missing/invalid sales or inventory data)
+    response: >-
+      Process Builder routes to Data Quality remediation subprocess and creates
+      CWB for planners, suspends automated writeback
+    outcome: Prevent corrupt forecast outputs, ensure data fixes before re-run
+  - condition: Simpler model variant selected due to sparsity or low history
+    response: >-
+      Fallback to lower-complexity Cortex Auto Forecast config or rule-based
+      forecast proxy and flag higher uncertainty in CWB
+    outcome: >-
+      Maintain defensible forecast with explicit uncertainty; require more
+      frequent review
+  - condition: >-
+      Forecast-driven replenishment conflicts with APS constraints
+      (capacity/shortages flagged by Kinaxis)
+    response: >-
+      Process Builder invokes Kinaxis interface, creates exception CWB and
+      suggests alternative allocation scenarios via Remote Functions
+    outcome: >-
+      Coordinated resolution: prioritized allocations, reduced stockouts,
+      documented decisions

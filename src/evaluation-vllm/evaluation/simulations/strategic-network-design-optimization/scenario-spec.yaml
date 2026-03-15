@@ -1,0 +1,65 @@
+objective: >-
+  Autonomous design and optimization of Ford's global and regional network
+  footprint, hub/spoke configurations, and post-merger integration plans.
+trigger: Monthly demand forecast update or significant market change event.
+decision: >-
+  Optimal global and regional network configuration to maximize EBITDA, minimize
+  COGS, and ensure service levels.
+expected_action: >-
+  Generate and execute scenario-driven implementation plans and financial
+  forecasts.
+expected_outcome: >-
+  Optimized global and regional network designs that align with EBITDA, working
+  capital, and COGS targets.
+rationale: >-
+  Leverage Aera's AI/ML capabilities to continuously align strategic network
+  design with business objectives, ensuring resilience and cost-efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Demand Forecast
+    source: SAP S/4HANA
+    purpose: Input for network simulation and optimization.
+  - name: Cost Data
+    source: SAP S/4HANA
+    purpose: To calculate COGS and EBITDA implications.
+  - name: Market Changes
+    source: External Data Feeds
+    purpose: To adjust network configurations based on market dynamics.
+happy_path:
+  - step: Ingest demand forecast and cost data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for network simulation.
+  - step: Analyze demand scenarios using Cortex Auto Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict future demand patterns.
+  - step: Optimize network configuration using AutoML.
+    stage: analyze
+    component: AutoML
+    purpose: Determine optimal network design.
+  - step: Generate business case and financial forecasts.
+    stage: decide
+    component: Remote Functions
+    purpose: Quantify financial impacts of proposed network changes.
+  - step: Present optimized network design and business case for approval.
+    stage: act
+    component: CWB Lifecycle
+    purpose: Ensure human-in-the-loop review and approval.
+  - step: Execute approved network redesign plan.
+    stage: act
+    component: Process Builder
+    purpose: Automate the execution of the network redesign plan.
+branches:
+  - condition: Market conditions significantly change during the planning period.
+    response: Re-run network optimization with updated demand forecast.
+    outcome: Adjusted network design to reflect new market conditions.
+  - condition: Financial implications exceed predefined thresholds.
+    response: Escalate to senior management for additional review.
+    outcome: Enhanced oversight and potential modifications to the business case.
+  - condition: Post-merger integration complicates network design.
+    response: Engage in detailed scenario planning with RCA Service.
+    outcome: Resilient network design that balances integration challenges.

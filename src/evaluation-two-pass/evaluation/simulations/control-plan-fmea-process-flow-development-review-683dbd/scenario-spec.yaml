@@ -1,0 +1,139 @@
+objective: >-
+  Unify APQP/PPAP lifecycle decisions across planning, design review, process
+  validation, and deviation management to accelerate approvals, reduce
+  non-conformances, and improve COGS and working capital for Ford quality
+  gateframes.
+trigger: >-
+  New or updated Control Plan / FMEA / Process Flow or PPAP submission detected
+  for a configured part or program.
+decision: >-
+  Approve control plan and PPAP readiness (accept, request supplier rework, or
+  escalate to engineering/deviation) and select validated control approaches and
+  process validations to minimize COGS risk.
+expected_action: >-
+  Agentic coordination collects artifacts, validates completeness and
+  traceability, recommends a control plan and validation steps, routes
+  recommendation via CWB for accept/reject/override, triggers PPAP requests and
+  SAP S/4HANA change or receipt transactions via Remote Functions, and notifies
+  stakeholders/suppliers.
+expected_outcome: >-
+  Shorter approval cycles with measurable reduction in rework and
+  non-conformances, faster PPAP turnarounds, improved supplier collaboration,
+  and downstream COGS and working-capital improvements from fewer holds and
+  accelerated part releases.
+rationale: >-
+  APQP/PPAP decisions span multiple teams and systems; agentic orchestration
+  centralizes document ingestion, automates validation, synthesizes
+  recommendations via agents, and enforces human-in-the-loop approvals (CWB)
+  with system writebacks to SAP to compress lifecycle time while preserving
+  governance and traceability.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: PLM (e.g., Siemens Teamcenter / Windchill)
+    status: tbd
+  - name: Supplier Portal / PPAP Repository
+    status: tbd
+  - name: Quality Management System (QMS)
+    status: tbd
+  - name: Email/Collaboration (supplier exchanges)
+    status: tbd
+key_inputs:
+  - name: Control Plan (APQP)
+    source: PLM / Supplier Portal / QMS
+    purpose: Define inspection and control steps required for part/process.
+    preferred_stream_type: document
+  - name: FMEA (Process & Design)
+    source: PLM / QMS
+    purpose: Identify failure modes and mitigation controls to select validation steps.
+    preferred_stream_type: document
+  - name: Process Flow / Process Capability Data
+    source: PLM / Supplier Portal / QMS
+    purpose: Validate manufacturing steps and capability numbers for control selection.
+    preferred_stream_type: document
+  - name: PPAP Submission Package
+    source: Supplier Portal / QMS
+    purpose: >-
+      Evidence for part approval (measurements, run-at-rate, sample control
+      plans).
+    preferred_stream_type: document
+  - name: Part Master / BOM / Change Request
+    source: SAP S/4HANA
+    purpose: >-
+      Ensure part-level traceability, change linkage, and trigger SAP
+      writebacks.
+    preferred_stream_type: table
+  - name: Supplier Capability & Certification Data (PPK, IATF)
+    source: Supplier Portal / QMS
+    purpose: Assess supplier readiness and need for additional validation or deviation.
+    preferred_stream_type: document
+happy_path:
+  - step: >-
+      Ingest APQP artifacts and PPAP packages from PLM, supplier portal, and SAP
+      into the data foundation.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Centralize documents and metadata for gateframe processing and
+      traceability.
+  - step: >-
+      Normalize, validate metadata and perform completeness & BOM alignment
+      checks.
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Ensure required fields, traceability to part/BOM, and baseline quality
+      signals for decisioning.
+  - step: >-
+      Agent synthesizes inputs, recommends control approaches and a validation
+      plan, and proposes approval path.
+    stage: decide
+    component: Agent Team
+    purpose: >-
+      Use agentic AI to combine documentation, capability data, and business
+      rules to create an actionable recommendation.
+  - step: >-
+      Route recommendation through CWB for human review/accept/reject/override
+      and capture decision rationale.
+    stage: act
+    component: CWB Lifecycle
+    purpose: >-
+      Enable human-in-the-loop approvals, exceptions, and recorded governance
+      for auditability.
+  - step: >-
+      On approval, trigger PPAP request/supplier notification and SAP S/4HANA
+      writebacks for part release or change via Remote Functions.
+    stage: notify
+    component: Remote Functions
+    purpose: >-
+      Automate supplier requests and update ERP to reflect approval status and
+      reduce manual handoffs.
+  - step: >-
+      Surface gateframe status, cycle-time KPIs, non-conformance trends and COGS
+      impact to program teams and quality leads.
+    stage: review
+    component: UI Screen
+    purpose: >-
+      Provide transparency for continuous improvement and SLA-driven escalation
+      decisions.
+branches:
+  - condition: Agent recommendation accepted by reviewers
+    response: Proceed with PPAP issuance and SAP writeback for part release.
+    outcome: >-
+      Standard approval path completed; reduced cycle time and on-time part
+      release.
+  - condition: Reviewers request supplier rework or additional validation
+    response: >-
+      Create task with required rework steps, route to supplier via CWB, and set
+      gated rechecks; re-ingest updated artifacts.
+    outcome: >-
+      Controlled rework loop with traceability; increased short term cycle time
+      but reduced downstream non-conformance risk.
+  - condition: Supplier PPAP fails or supplier capability insufficient
+    response: >-
+      Escalate to engineering and procurement via Process Builder, initiate
+      deviation or containment workflow, and flag parts in SAP for hold.
+    outcome: >-
+      Rapid containment and corrective action routing to protect production and
+      manage COGS impact.

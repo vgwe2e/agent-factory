@@ -1,0 +1,38 @@
+decision: >-
+  Sequence confirmed vehicle orders for optimal line efficiency, minimize
+  changeovers, meet due dates, balance throughput vs. inventory; manage changes
+  to build schedule orders; resolve material availability constraints.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New confirmed vehicle order in SAP S/4HANA.
+  parameters:
+    objective: >-
+      Integrate order sequencing, release/execution monitoring, dynamic schedule
+      changes, and material availability resolution to optimize production
+      throughput, reduce COGS, and improve working capital.
+    key_inputs:
+      - Confirmed Vehicle Orders
+      - Production Plan
+      - Material Availability
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate end-to-end sequencing, release timing, adaptive schedule changes,
+    and material constraints with real-time data and cross-system coordination.
+  outcome: >-
+    Optimized production throughput, reduced COGS, improved working capital,
+    synchronized decisions across Order and Production domains.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Leverage Aera's deterministic approach to streamline production scheduling and
+  material management, ensuring efficient and timely order fulfillment.

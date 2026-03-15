@@ -1,0 +1,68 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Ford Pro Telematics / Uptime
+    type: Telematics
+    status: tbd
+  - name: PLM / Engineering (EV lifecycle)
+    type: PLM
+    status: tbd
+  - name: Field Service / Recall Management
+    type: FSM
+    status: tbd
+aera_ingestion:
+  - stream_name: parts-master-bom
+    stream_type: Batch (daily)
+    source: SAP S/4HANA
+  - stream_name: historical-parts-sales-returns
+    stream_type: Batch (daily)
+    source: SAP S/4HANA
+  - stream_name: ford-pro-uptime-service-contract-telemetry
+    stream_type: Event Stream
+    source: Ford Pro Telematics / Uptime
+  - stream_name: inventory-on-hand-inbound
+    stream_type: Batch (intra-day)
+    source: SAP S/4HANA
+  - stream_name: recall-campaign-schedule-and-priority
+    stream_type: Event Stream
+    source: Field Service / Recall Management
+  - stream_name: ev-component-lifecycle-obsolescence-plan
+    stream_type: Event Stream
+    source: PLM / Engineering
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Produce baseline demand forecasts with algorithm selection and SHAP
+      explainability for each SKU/location
+  - component: Process Builder (Rules, IF, Transaction) + Safety Stock Service
+    type: process_builder
+    function: >-
+      Deterministically convert forecasts into order quantities and timing while
+      enforcing recall and lifecycle policies
+  - component: Remote Functions (SAP S/4HANA writeback) + Process Builder (Notification)
+    type: process_builder
+    function: >-
+      Push purchase/order transactions to SAP S/4HANA and generate exception CWB
+      items for human review
+  - component: CWB Lifecycle + UI Screens
+    type: process_builder
+    function: >-
+      Allow planners to accept, override, or split recommendations with audit
+      trail and action items
+  - component: Process Builder (Notification) + Subject Areas (report)
+    type: process_builder
+    function: >-
+      Communicate confirmed orders, recall allocations, and KPI changes to
+      supply chain and finance
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review unify six service-parts demand processes into a single end-to-end
+      decision engine that produces precise sku-level forecasts, continuously
+      aligns inventory and procurement with demand signals (including recalls
+      and ev lifecycle effects), and minimizes excess/obsolete parts while
+      improving on-time availability and cogs efficiency for ford pro service
+      parts. and approve the recommended action.

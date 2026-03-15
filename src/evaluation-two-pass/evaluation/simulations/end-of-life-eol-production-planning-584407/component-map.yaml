@@ -1,0 +1,41 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: Consolidate canonical dataset for the model/program into Subject Areas.
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: Subject Areas + Data Quality & Validation
+    purpose: >-
+      Ensure data completeness and enforce EOL policy constraints before
+      optimization.
+    confidence: confirmed
+    capability: >-
+      Ensure data completeness and enforce EOL policy constraints before
+      optimization.
+  - name: Remote Functions (optimization solver) invoked by Process Builder
+    purpose: >-
+      Produce candidate phase-out schedules, costs, supplier impact, and KPI
+      trade-offs.
+    confidence: confirmed
+    capability: >-
+      Produce candidate phase-out schedules, costs, supplier impact, and KPI
+      trade-offs.
+process_builder:
+  - name: Process (Process Builder) + CWB Lifecycle
+    purpose: Present recommendation with key trade-offs for accept/reject/override.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (SAP writeback) + Notification
+    purpose: >-
+      Write changes to SAP S/4HANA, push PO adjustments/cancellations, and
+      notify suppliers and internal teams.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screen (dashboard) + Cortex Monitoring
+    purpose: >-
+      Track OTIF, COGS, inventory write-downs, and supplier compliance through
+      the phase-out.
+    confidence: confirmed
+    component_type: display

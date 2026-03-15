@@ -1,0 +1,59 @@
+decision: >-
+  Select and approve a prioritized demand management plan (baseline forecast +
+  short-term adjustments + execution actions) across SKU/location that balances
+  revenue uplift, margin impact, and working capital.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Start of planning cycle or detection of a material deviation between
+    baseline plan and short-term demand signals (e.g., sudden sales uplift,
+    promo event, or rising stockout risk).
+  parameters:
+    objective: >-
+      Implement end-to-end demand orchestration and execution across SKU x
+      location to reduce stockouts, minimize waste, protect revenue, lower
+      working capital, and accelerate EBITDA through unified forecasting,
+      short-term sensing, prioritization, and automated execution.
+    key_inputs:
+      - >-
+        Business goals & initiatives (volume targets, promo strategy, margin
+        targets)
+      - Historical sales & shipment transactions (SKU x location)
+      - Advanced statistical forecasts
+      - Short-term signals (POS upticks, promotions, weather, market data)
+      - Inventory positions & safety stock targets
+      - Capacity & constraint data (plant, DC, transport)
+      - Promotion calendar & trade agreements
+      - Order & allocation execution status
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS (Advanced Statistical Forecasting)
+      - Kinaxis RapidResponse
+      - Blue Yonder WMS
+      - Uber Freight (3PL / TMS)
+expected_output:
+  action: >-
+    Ingest historicals, promotions, and short-term signals; generate baseline
+    and short-horizon forecasts; apply prioritization rules and stakeholder
+    approvals; create and write back replenishment/expedite orders and
+    allocation changes to planning/execution systems.
+  outcome: >-
+    Reduced stockouts and spoilage, improved service levels, optimized inventory
+    (lower safety stock/working capital), protected revenue vs. promo spend, and
+    measurable EBITDA uplift through coordinated demand planning and automated
+    execution.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex Auto Forecast + SAS integration (Data Science)
+    - Process Builder (Rules + CWB Lifecycle)
+    - Process Builder + Remote Functions
+    - UI Screens + Subject Areas
+rationale: >-
+  Combining touchless forecasting (Cortex Auto Forecast), short-term sensing,
+  rules-based prioritization, and automated execution via Process Builder and
+  Remote Functions enables timely, scalable decisions across the SKU/location
+  matrix while preserving human oversight for high-impact exceptions.

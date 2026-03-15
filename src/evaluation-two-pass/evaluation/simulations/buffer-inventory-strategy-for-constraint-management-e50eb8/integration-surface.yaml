@@ -1,0 +1,50 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Cortex Auto Forecast
+    type: Aera Service
+    status: tbd
+  - name: Supplier Portal / EDI
+    status: tbd
+aera_ingestion:
+  - stream_name: plant-capacity-work-center-calendars
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: current-inventory-on-hand-in-transit
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: open-purchase-orders-and-supplier-lead-times
+    stream_type: Report Data
+    source: SAP S/4HANA / Supplier Portal
+  - stream_name: demand-forecast
+    stream_type: Event Stream
+    source: Cortex Auto Forecast
+  - stream_name: routing-times-changeover-and-cycle-times
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: cost-inputs-material-cost-production-cost-expedite-cost
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast + Safety Stock Service + Subject Areas
+    type: cortex
+    function: >-
+      Generate demand outlooks, baseline buffers, and score constraint
+      criticality
+  - component: Process Builder (Process + Rules + Data View)
+    type: process_builder
+    function: >-
+      Run deterministic scenario simulations (reallocation, expedite, buffer
+      placement) and select the optimal plan
+  - component: Remote Functions + Process Builder (Action Item)
+    type: process_builder
+    function: >-
+      Create/modify POs, adjust production schedules in SAP S/4HANA and trigger
+      logistics updates; open CWB when manual intervention required
+ui_surface:
+  - component: UI Screens + Notification
+    screen: Primary
+    purpose: >-
+      Present executed plan, expected COGS/OTD impact, and allow overrides/audit
+      via CWB Lifecycle

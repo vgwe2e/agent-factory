@@ -1,0 +1,80 @@
+objective: >-
+  Optimize stock positioning, safety stock policies, deployment rules, and
+  obsolescence/excess handling across the automotive supply network.
+trigger: Monthly inventory review cycle.
+decision: >-
+  Determine optimal stock positioning, safety stock levels, deployment rules,
+  and obsolescence/excess handling strategies.
+expected_action: >-
+  Adjust inventory positions, update safety stock levels, enforce deployment
+  rules, and plan disposition for obsolete/excess inventory.
+expected_outcome: >-
+  Reduced working capital, minimized COGS related to mis-fulfillment, improved
+  OTIF across plants, suppliers, and distribution centers.
+rationale: >-
+  By integrating stock location, safety stock, deployment governance, and
+  obsolete/excess reduction into a single decision loop, Ford can achieve
+  significant financial and operational improvements.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: To determine current stock positions and identify areas for optimization.
+  - name: Historical Sales Data
+    source: SAP S/4HANA
+    purpose: To inform demand forecasting and safety stock calculations.
+  - name: Supply Chain Network Map
+    source: SAP S/4HANA
+    purpose: >-
+      To understand the logistics network and identify strategic stocking
+      locations.
+happy_path:
+  - step: >-
+      Retrieve current inventory levels and historical sales data from SAP
+      S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+  - step: >-
+      Analyze historical sales data using Cortex Auto Forecast to predict future
+      demand.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Generate accurate demand forecasts.
+  - step: >-
+      Use Safety Stock Service to calculate optimal safety stock levels based on
+      demand forecasts.
+    stage: analyze
+    component: Safety Stock Service
+    purpose: Balance stockout risk against carrying costs.
+  - step: Apply CWB Lifecycle to review and approve calculated safety stock levels.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure alignment with business policies.
+  - step: Utilize Process Builder to design and enforce inventory deployment rules.
+    stage: decide
+    component: Process Builder
+    purpose: Optimize service levels and COGS.
+  - step: >-
+      Implement Remote Functions to update inventory positions and safety stock
+      levels in SAP S/4HANA.
+    stage: act
+    component: Remote Functions
+    purpose: Enforce new policies and rules.
+branches:
+  - condition: High variance in demand forecasts
+    response: Engage RCA Service to identify root causes of demand variability.
+    outcome: Improve forecast accuracy and adjust safety stock levels accordingly.
+  - condition: Significant excess inventory detected
+    response: >-
+      Trigger a subprocess in Process Builder to plan disposition and logistics
+      for excess inventory.
+    outcome: Minimize carrying costs and mitigate waste.
+  - condition: Strategic stocking location changes required
+    response: >-
+      Use Process Builder to reroute inventory and update network map in SAP
+      S/4HANA.
+    outcome: Optimize logistics network and reduce working capital.

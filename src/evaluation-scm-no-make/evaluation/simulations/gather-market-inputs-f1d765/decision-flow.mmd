@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled demand planning cadence or arrival of updated market inputs (promotions, competitor signals, COGS updates, planner adjustments).]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Ingest and validate source data (sales, inventory, promotions, COGS, market feeds) into Data Foundation]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Train and score demand forecasts with explainability]
+  N2 --> N3{PB: Process Builder (IF / Rules) + CWB Lifecycle - Orchestrate model-variant selection and exception detection}
+  N3 -->|Primary| N4[PB: Safety Stock Service + Remote Functions - Compute safety stock and generate replenishment & revenue impact recommendations, then writeback approved recommendations]
+  N4 --> N5[PB: CWB Lifecycle + UI Screens + Process Builder Notification - Planner review, accept/override forecasts and notify stakeholders]
+  N5 --> Z1[Outcome: Higher forecast accuracy with explainability, optimized safety stock and replenishment recommendations, reduced stockouts and waste, improved promotional revenue protection, auditable planner overrides and automated ERP/APS writebacks.]
+  N3 -->|Data quality checks fail (missing/inv...| B1[Process Builder routes to Data Quality remediation subprocess and creates CWB for planners, suspends automated writeback]
+  B1 --> O1[Outcome: Prevent corrupt forecast outputs, ensure data fixes before re-run]
+  O1 --> End[End]
+  N3 -->|Simpler model variant selected due to...| B2[Fallback to lower-complexity Cortex Auto Forecast config or rule-based forecast proxy and flag higher uncertainty in CWB]
+  B2 --> O2[Outcome: Maintain defensible forecast with explicit uncertainty; require more frequent review]
+  O2 --> End[End]
+  N3 -->|Forecast-driven replenishment conflic...| B3[Process Builder invokes Kinaxis interface, creates exception CWB and suggests alternative allocation scenarios via Remote Functions]
+  B3 --> O3[Outcome: Coordinated resolution: prioritized allocations, reduced stockouts, documented decisions]
+  O3 --> End[End]
+  Z1 --> End[End]

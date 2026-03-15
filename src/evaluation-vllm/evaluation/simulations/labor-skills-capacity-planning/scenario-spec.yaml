@@ -1,0 +1,75 @@
+objective: >-
+  Coordinate labor capacity planning across production shifts, gap analysis,
+  training, and contingent labor sourcing to reduce COGS and maintain OTIF.
+trigger: Monthly production planning cycle start.
+decision: >-
+  Jointly optimize workforce availability, training-driven capacity, and
+  flexible staffing from contingents.
+expected_action: >-
+  Implement training programs, adjust shift planning, and source contingency
+  labor as needed.
+expected_outcome: >-
+  Reduced labor-related variances, prevented line stoppages, and improved
+  on-time delivery.
+rationale: >-
+  By leveraging Aera's agentic AI capabilities, Ford can dynamically manage
+  labor capacity, ensuring optimal resource allocation and maintaining high
+  productivity levels.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Current Workforce Skills
+    source: SAP S/4HANA
+    purpose: Identify existing skill sets within the workforce.
+  - name: Future Vehicle Technology Requirements
+    source: SAP S/4HANA
+    purpose: Determine required skills for upcoming vehicle technologies.
+  - name: Production Shift Data
+    source: SAP S/4HANA
+    purpose: Analyze current shift planning and labor distribution.
+  - name: Training Program Costs
+    source: SAP S/4HANA
+    purpose: Evaluate the cost-effectiveness of different training programs.
+  - name: Automation Investment Data
+    source: SAP S/4HANA
+    purpose: Assess the impact of automation on labor requirements.
+  - name: Contingent Labor Market Data
+    source: External APIs
+    purpose: Source and plan for contingency labor needs.
+happy_path:
+  - step: Retrieve current workforce skills and future technology requirements.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+  - step: Perform skill gap analysis using agentic AI.
+    stage: analyze
+    component: Agentic AI
+    purpose: Identify skill gaps and potential training needs.
+  - step: Optimize shift planning and labor distribution.
+    stage: decide
+    component: Agentic AI
+    purpose: Ensure efficient labor allocation across shifts.
+  - step: Recommend training programs based on cost and effectiveness.
+    stage: decide
+    component: Agentic AI
+    purpose: Prioritize training initiatives to build necessary skills.
+  - step: Evaluate automation investment opportunities.
+    stage: analyze
+    component: Agentic AI
+    purpose: Assess the impact of automation on labor capacity.
+  - step: Plan for and source contingency labor.
+    stage: act
+    component: Agentic AI
+    purpose: Address unexpected labor shortages or demand spikes.
+branches:
+  - condition: Insufficient budget for recommended training programs.
+    response: Adjust training program recommendations to fit budget constraints.
+    outcome: Revised training plan with prioritized courses.
+  - condition: Significant increase in demand requiring additional labor.
+    response: Increase contingency labor sourcing efforts.
+    outcome: Additional labor sourced to meet demand.
+  - condition: Automation investments exceed projected ROI.
+    response: Re-evaluate automation plans and adjust accordingly.
+    outcome: Optimized automation strategy with revised labor requirements.

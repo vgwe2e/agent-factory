@@ -1,0 +1,20 @@
+flowchart TD
+  A[Trigger: Daily inventory levels and production schedules.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve current inventory levels and production schedules.]
+  N1 --> N2[Stream: STREAMS - Analyze inventory levels and production schedules to determine optimal material delivery sequences.]
+  N2 --> N3[Stream: STREAMS - Generate kitting and sub-assembly sequences based on production requirements.]
+  N3 --> N4[Stream: STREAMS - Determine optimal inventory levels and cycle counting frequencies.]
+  N4 --> N5{PB: Remote Functions - Schedule maintenance for material handling equipment.}
+  N5 -->|Primary| N6{PB: Remote Functions - Allocate empty containers based on usage and availability.}
+  N6 --> N7{PB: Remote Functions - Set replenishment thresholds and schedules for point-of-use systems.}
+  N7 --> Z1[Outcome: Reduced carrying and expediting costs, improved line uptime, and increased on-time delivery to customers and production lines.]
+  N5 -->|Inventory levels are critically low.| B1[Trigger emergency replenishment orders.]
+  B1 --> O1[Outcome: Prevent stockouts and maintain production continuity.]
+  O1 --> End[End]
+  N5 -->|Equipment requires immediate maintena...| B2[Schedule urgent maintenance and adjust production schedules.]
+  B2 --> O2[Outcome: Minimize downtime and ensure continuous operation.]
+  O2 --> End[End]
+  N5 -->|Empty containers are insufficient.| B3[Prioritize container allocation based on criticality.]
+  B3 --> O3[Outcome: Maintain efficient logistics and avoid bottlenecks.]
+  O3 --> End[End]
+  Z1 --> End[End]

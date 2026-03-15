@@ -1,0 +1,43 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: seasonal-demand-forecast-sku-x-location-x-week
+    stream_type: batch
+    source: Cortex Auto Forecast
+  - stream_name: >-
+      current-logistics-capacity-warehouse-slots-dock-capacity-vehicle-hours-by-node
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: transportation-cost-rates-mode-lane-distance-based-costs
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: service-level-targets-and-business-policies
+    stream_type: batch
+    source: Subject Areas / Operational policy
+  - stream_name: operational-constraints-labor-schedules-vehicle-driver-availability
+    stream_type: batch
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Detect seasonality and produce smooth time-series forecasts per
+      SKU-location to drive capacity needs.
+  - component: Process (Process Builder) - Rules + Remote Functions
+    type: process_builder
+    function: >-
+      Apply business rules and run allocation calculations to balance service
+      level targets and transportation costs within constraints.
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Perform ERP writeback to SAP S/4HANA with planned capacity changes and
+      transactional updates.
+ui_surface:
+  - component: UI Screens (dashboard, report, action item)
+    screen: Primary
+    purpose: >-
+      Present final allocation, highlight exceptions or constraint breaches, and
+      provide action items for planner overrides.

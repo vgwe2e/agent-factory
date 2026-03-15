@@ -1,0 +1,64 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / Supply Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS / 3PL
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+aera_ingestion:
+  - stream_name: contract-terms-rate-cards-lsp-master-contracts
+    stream_type: periodic batch
+    source: S4 (contract module, supplier master)
+  - stream_name: shipment-events-freight-invoices
+    stream_type: delta batch
+    source: Uber Freight (TMS) / 3PL
+  - stream_name: operational-kpis-on-time-claims-dwell-detention
+    stream_type: delta batch
+    source: Blue Yonder WMS / Kinaxis RapidResponse
+  - stream_name: demand-forecast-consumption-signals
+    stream_type: periodic batch
+    source: SAS (Advanced Statistical Forecasting) / Kinaxis
+  - stream_name: inventory-order-shortage-signals
+    stream_type: delta batch
+    source: Kinaxis (shortage propagation / order expediting)
+  - stream_name: historical-spend-and-kpi-trends
+    stream_type: Event Stream
+    source: Subject Areas (Aera Data Foundation / STREAMS outputs)
+processing:
+  - component: Cortex Auto Forecast + RCA Service
+    type: cortex
+    function: >-
+      Align demand signals to capacity and surface root causes of KPI
+      degradation
+  - component: Remote Functions + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Write changes to S4/TMS when permitted; open CWB for human approvals when
+      thresholds or penalties apply
+  - component: Notification + UI Screen (dashboard/report)
+    type: process_builder
+    function: >-
+      Deliver recommended actions, financial impact, and next steps to
+      procurement/logistics/finance
+  - component: Process Builder (Rules / IF) + Agent Team
+    type: agent_teams
+    function: >-
+      Apply business rules, agentic reasoning on unstructured contract text and
+      rank actions (auto-route, alternative LSP, claim)
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review continuously optimize lsp (logistics service provider) spend and
+      enforce contract compliance by aligning demand signals with supplier
+      performance to reduce cogs, improve working capital, and protect ebitda.
+      and approve the recommended action.

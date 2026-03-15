@@ -1,0 +1,60 @@
+decision: >-
+  Dynamically determine coordinated channel actions (price adjustments, rebate
+  accrual updates, and price-protection commitments) that maximize consolidated
+  gross margin subject to finance margin floors, contractual constraints, and
+  network/availability limits.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled orchestration (daily) or event-driven update when pricing/rebate
+    contract, forecast, or network constraint data changes in source systems.
+  parameters:
+    objective: >-
+      Automatically synchronize pricing, rebates, and price-protection actions
+      across Direct, Distributor, and Retail channels to prevent channel-induced
+      margin erosion while preserving channel integrity and financial controls.
+    key_inputs:
+      - Pricing & Rebate Master
+      - Demand Forecast (time-series)
+      - Network Constraints & Availability
+      - Channel Sales Commitments / Orders
+      - Finance Margin Targets & Floors
+      - Historical Channel Performance
+    source_systems:
+      - S4
+      - SAS
+      - Kinaxis RapidResponse
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Freight
+expected_output:
+  action: >-
+    Process Builder evaluates margin impact using demand forecasts and network
+    constraints, applies deterministic business rules to select coordinated
+    price/rebate actions, executes ERP writebacks via Remote Functions to S4 for
+    approved changes, and notifies Sales/Finance/Planning stakeholders.
+    Exceptions are routed to CWB Lifecycle for manual approval.
+  outcome: >-
+    Aligned cross-channel pricing and rebate decisions that maintain target
+    gross margins, accurate rebate accruals, minimized channel margin erosion,
+    automated ERP updates with audit trail, and timely stakeholder visibility
+    for exceptions.
+  affected_components:
+    - STREAMS
+    - Process Builder (Stream -> Data View)
+    - Process Builder (IF + Rules)
+    - Remote Functions (ERP writeback) / Transaction
+    - Notification + Data View
+    - Dashboard
+rationale: >-
+  A deterministic, process-driven approach uses authoritative data from ERP,
+  demand forecasts, and APS to enforce finance-approved margin floors and
+  contractual rules. Automating coordination reduces reactive discounting,
+  prevents margin leakage across channels, and preserves channel partner
+  commitments while enabling controlled human intervention for exceptions.
+  Medium complexity due to ERP writebacks, multi-system integration, and finance
+  controls.

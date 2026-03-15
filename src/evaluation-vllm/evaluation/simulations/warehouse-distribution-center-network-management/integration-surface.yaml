@@ -1,0 +1,34 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: logistics-cost-metrics
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: service-coverage-metrics
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: warehouse-layout-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: parts-inventory-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Identify trends and areas for improvement.
+  - component: AutoML
+    type: process_builder
+    function: Optimize logistics cost and service coverage.
+  - component: Remote Functions
+    type: process_builder
+    function: Maximize storage efficiency and throughput.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize dc/cross-dock location strategy, warehouse automation,
+      parts storage, and service parts distribution network to reduce cogs,
+      improve otif, and boost order capture. and approve the recommended action.

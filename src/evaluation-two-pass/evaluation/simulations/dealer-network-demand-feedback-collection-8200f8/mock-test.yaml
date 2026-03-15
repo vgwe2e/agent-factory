@@ -1,0 +1,58 @@
+decision: >-
+  Determine signal trust weights and reconcile competing demand inputs to
+  produce a unified demand plan and confidence score, escalating to human review
+  when confidence or consensus thresholds are not met.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Weekly demand cycle or major event (promotion launch, product launch,
+    significant dealer input, or executive adjustment).
+  parameters:
+    objective: >-
+      Autonomously harmonize demand signals from sales/marketing, dealer
+      network, product development, and executive reviews into a single
+      reconciled demand plan that optimizes working capital and revenue impact
+      while reducing stockouts and excess inventory.
+    key_inputs:
+      - Historical sales and shipment data
+      - Dealer network demand signals & market intelligence
+      - Marketing promotions and calendar
+      - Product launch / engineering constraints
+      - Executive adjustments and consensus directives
+      - Current inventory and supply constraints
+      - Baseline statistical forecast
+    source_systems:
+      - SAP S/4HANA
+      - Dealer Portal / Dealer Network API
+      - Marketing Automation / Promotion Calendar
+      - Product Management / PLM
+      - Executive Consensus Inputs (CWB / Email)
+expected_output:
+  action: >-
+    Agentic orchestration reconciles inputs, generates a reconciled demand plan
+    with confidence metadata, writes final plan to SAP S/4HANA via Remote
+    Functions, and surfaces exceptions/recommendations through CWB Lifecycle for
+    stakeholder review when required.
+  outcome: >-
+    A single authoritative demand plan aligned across functions with lower
+    stockouts and excess, improved service levels, measurable reduction in
+    working capital tied to inventory, and auditable rationale for changes and
+    overrides.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex Auto Forecast + STREAMS
+    - Remote Functions + CWB Lifecycle
+    - Notification + UI Screen (Action Item / CWB view)
+    - Process Builder + Agent Team (Agentic AI)
+    - Data View / Dashboard
+rationale: >-
+  Agentic AI combined with Process Builder enables adaptive multi-agent
+  reconciliation across structured and unstructured inputs. Cortex Auto Forecast
+  provides robust baselines; STREAMS and DDM ingest and normalize source data;
+  Remote Functions ensure controlled SAP writeback. CWB Lifecycle and
+  notifications provide safe human-in-the-loop when confidence is low or
+  executives intervene.

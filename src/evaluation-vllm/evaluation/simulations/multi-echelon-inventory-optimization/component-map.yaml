@@ -1,0 +1,34 @@
+streams:
+  - name: DDM/Crawler
+    purpose: Collect raw material inventory data.
+    confidence: inferred
+    type: DDM/Crawler
+cortex:
+  - name: Safety Stock Service
+    purpose: Calculate optimal buffer stock levels.
+    confidence: inferred
+    capability: Calculate optimal buffer stock levels.
+  - name: AutoML
+    purpose: Optimize WIP levels between production stages.
+    confidence: inferred
+    capability: Optimize WIP levels between production stages.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Human-in-the-loop review and approval of inventory recommendations.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Writeback updated inventory levels to SAP S/4HANA.
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review consolidate four l4 inventory decisions across raw material
+      buffers, wip balance, finished goods stocking, and plant-level targets
+      into a coordinated, semi-autonomous di engine to reduce working capital
+      tied to excess stock while preventing stockouts and elevating otif. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

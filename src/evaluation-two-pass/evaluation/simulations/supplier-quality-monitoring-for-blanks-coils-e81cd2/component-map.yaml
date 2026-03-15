@@ -1,0 +1,41 @@
+streams:
+  - name: STREAMS
+    purpose: Centralize and normalize quality and master data for analysis
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: RCA Service
+    purpose: >-
+      Identify drivers, correlated features, and compute supplier-material risk
+      scores
+    confidence: inferred
+    capability: >-
+      Identify drivers, correlated features, and compute supplier-material risk
+      scores
+process_builder:
+  - name: Remote Functions + CWB Lifecycle
+    purpose: >-
+      Automate ERP writebacks and route decisions for human-in-the-loop
+      approvals where needed
+    confidence: confirmed
+    node_type: act
+  - name: Notification
+    purpose: >-
+      Alert stakeholders and provide CWB/UI links to recommendation details and
+      audit scheduling
+    confidence: confirmed
+    node_type: communication
+agent_teams:
+  - name: Process Builder + Agent Team
+    purpose: Generate explainable recommendations and confidence scores for actions
+    confidence: confirmed
+    role: Generate explainable recommendations and confidence scores for actions
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review continuously monitor and audit quality performance of raw material
+      and blank/coil suppliers to determine audit frequency, sampling plans, and
+      remediation triggers that maintain incoming material quality. and approve
+      the recommended action.
+    confidence: confirmed
+    component_type: display

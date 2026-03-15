@@ -1,0 +1,123 @@
+objective: >-
+  Establish an autonomous pipeline that integrates time-series forecasting and
+  regression-based demand driver analysis to produce optimized, deployable
+  demand forecasts that reduce COGS and working capital across Ford's
+  multi-echelon supplier-plant-DC network.
+trigger: >-
+  Scheduled weekly forecast cycle or event-driven trigger when demand deviates
+  from baseline by >X% (business threshold).
+decision: >-
+  Quantify and set demand-driver weightings, accept or adjust integrated
+  forecast recommendations, and decide whether to deploy optimized forecasts and
+  procurement/production adjustments to SAP S/4HANA or route for human review.
+expected_action: >-
+  Orchestrate DDM/STREAMS ingestion, run Cortex Auto Forecast (time-series) and
+  AutoML regression (demand drivers), reconcile outputs in Process Builder,
+  present recommendations via CWB Lifecycle for approval, and write optimized
+  plans back to SAP S/4HANA (or queue exceptions).
+expected_outcome: >-
+  Higher forecast accuracy (lower MAPE), reduced stockouts and excess inventory
+  across echelons, tighter material planning that trims COGS and lowers working
+  capital, and continuous measurement of model performance for periodic
+  retraining.
+rationale: >-
+  Combining automated time-series forecasting with regression analysis of demand
+  drivers ensures forecasts reflect both historical patterns and causal signals.
+  Orchestrating model development, deployment, and measurement via Process
+  Builder + Cortex + CWB Lifecycle enables repeatable, auditable adjustments to
+  planning that align procurement and production across suppliers, plants, and
+  DCs.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer POS / Retail Sales
+    status: tbd
+  - name: Market / Macroeconomic Indicators API
+    type: API
+    status: tbd
+key_inputs:
+  - name: Historical shipments & sales (SKU-location-time)
+    source: SAP S/4HANA
+    purpose: Baseline time-series training and backtesting for demand forecasts
+    preferred_stream_type: STREAMS
+  - name: Material lead times & inventory levels
+    source: SAP S/4HANA
+    purpose: >-
+      Constrain replenishment recommendations and multi-echelon planning
+      calculations
+    preferred_stream_type: STREAMS
+  - name: Promotions, incentives, and launch schedules
+    source: Dealer POS / Marketing feeds
+    purpose: Feature signals for regression to capture campaign-driven demand shifts
+    preferred_stream_type: DDM/Crawlers
+  - name: Supplier capacity & constraints
+    source: Supplier reports / EDI
+    purpose: >-
+      Feed constraints into optimization and feasibility checks for recommended
+      plans
+  - name: Macro / market indicators (fuel prices, consumer sentiment)
+    source: Market / Macroeconomic Indicators API
+    purpose: Exogenous variables for regression to improve forecast responsiveness
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: Ingest and standardize ERP + external signals
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Collect historical demand, supply, promotions, and market data into
+      Subject Areas
+  - step: Generate baseline time-series forecasts
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Produce per-SKU-location baseline forecasts with algorithm selection and
+      SHAP explainability
+  - step: Quantify demand drivers via regression
+    stage: analyze
+    component: AutoML
+    purpose: >-
+      Identify and score causal drivers, producing recommended driver weightings
+      and sensitivity metrics
+  - step: Orchestrate decision & approve deployment
+    stage: decide
+    component: Process Builder + CWB Lifecycle
+    purpose: >-
+      Reconcile forecasts and driver outputs, present recommendations for
+      accept/adjust/override and capture approvals
+  - step: Publish optimized plans and writebacks
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Write optimized replenishment and production plans to SAP S/4HANA or
+      create exception transactions
+  - step: Monitor performance and surface insights
+    stage: review
+    component: Cortex Monitoring + Subject Areas
+    purpose: >-
+      Track forecast accuracy, stockouts/excess, and trigger retraining or
+      process adjustments
+branches:
+  - condition: Model ensemble MAPE > predefined threshold during validation
+    response: >-
+      Auto-schedule retraining with expanded feature set and notify Data Science
+      team via Process Builder + Notification node
+    outcome: >-
+      Retraining and feature engineering initiated; deployment blocked until
+      performance meets threshold
+  - condition: >-
+      Regression shows no statistically significant drivers or conflicting
+      signals
+    response: >-
+      Flag SKU-location segments for manual review via CWB Lifecycle and route
+      to Data Science for feature enrichment
+    outcome: >-
+      Human-in-the-loop review ensures conservative deployment; maintain
+      baseline forecast until resolved
+  - condition: SAP S/4HANA writeback fails or is unavailable
+    response: >-
+      Queue writebacks in Process Builder Stream, create exception Action Items,
+      and notify procurement/planning teams
+    outcome: >-
+      Plans are held and visible to users for manual execution; no silent data
+      drift introduced

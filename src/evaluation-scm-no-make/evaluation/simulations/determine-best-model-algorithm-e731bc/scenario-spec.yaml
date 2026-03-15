@@ -1,0 +1,158 @@
+objective: >-
+  Automate end-to-end top-line demand forecasting with continuous demand
+  sensing, automated model selection and parameterization, and EBITDA-aligned
+  tuning to reduce stockouts, waste, and promo volatility while improving
+  revenue and margin.
+trigger: >-
+  Daily or event-driven ingest of updated market signals (POS, promotions,
+  pricing, macro indicators) or weekly scheduled model-selection cycle.
+decision: >-
+  Determine Best Model & Algorithm: choose best model type and parameters per
+  SKU/group balancing fit quality vs computational complexity (triggered during
+  model selection phase).
+expected_action: >-
+  Automatically evaluate candidate forecasting algorithms, select best-fit model
+  per SKU/group, tune parameters to incorporate promotions, seasonality and
+  EBITDA constraints, persist parameters and forecasts to Subject Areas, and
+  write final forecasts/parameters back to S4 and Kinaxis; surface exceptions
+  and borderline cases via CWB Lifecycle for human review.
+expected_outcome: >-
+  Continuous improvement in forecast accuracy (lower MAPE), fewer stockouts and
+  overstocks, reduced promo-driven volatility, faster propagation of demand
+  signal into supply plans (Kinaxis), and measurable EBITDA-aligned tradeoffs in
+  forecast bias and service levels.
+rationale: >-
+  A closed-loop process that continuously ingests market signals and automates
+  model selection and parameter tuning enables responsive, scalable forecasting.
+  Cortex Auto Forecast provides robust algorithm selection; Process Builder
+  orchestrates rules and gates; Remote Functions handle complex calculations and
+  ERP writebacks; CWB Lifecycle manages exceptions and human overrides—together
+  aligning forecasts with EBITDA and operational constraints.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Statistical Tool
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Statistical Tool
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (generic)
+    type: APS
+    status: identified
+  - name: Kinaxis for FG Safety Stock Modeling
+    type: APS
+    status: identified
+  - name: Kinaxis for Rebalancing
+    type: APS
+    status: identified
+  - name: Kinaxis for Order Expediting
+    type: APS
+    status: identified
+  - name: Kinaxis Rapid Response for APS supply chain planning
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL)
+    type: 3PL/TMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+key_inputs:
+  - name: Historical sales (SKU-level time series)
+    source: S4 / Subject Areas
+    purpose: Primary training data for time-series modeling and pattern detection
+    preferred_stream_type: time_series
+  - name: POS and demand signals (store/region)
+    source: S4 / downstream integrations
+    purpose: Short-term demand sensing and promotion impact estimation
+    preferred_stream_type: time_series
+  - name: Promotions & pricing calendar
+    source: S4 / Marketing feeds
+    purpose: Encode promotion events and pricing shifts for model features
+    preferred_stream_type: batch
+  - name: Inventory & on-hand levels
+    source: Blue Yonder WMS / S4
+    purpose: Constraint and service-level impact assessment; safety-stock context
+    preferred_stream_type: batch
+  - name: Supply status & lead times
+    source: Kinaxis RapidResponse / S4
+    purpose: >-
+      Assess supply constraints and inform parameterization for feasible
+      forecasts
+    preferred_stream_type: batch
+  - name: Macro & market indicators (pricing elasticity, seasonality drivers)
+    source: External market feeds / DDM crawlers
+    purpose: Augment models for demand shifts and seasonality adjustments
+    preferred_stream_type: batch
+  - name: Forecast performance metrics (MAPE, bias, service level)
+    source: Subject Areas / Cortex Monitoring
+    purpose: Compare model fits, monitor drift, and drive selection/tuning
+    preferred_stream_type: time_series
+  - name: EBITDA targets and margin constraints
+    source: Finance (S4 or planning inputs)
+    purpose: Parameterize cost/service trade-offs and bias tolerances across SKUs
+    preferred_stream_type: batch
+happy_path:
+  - step: Consolidate market, POS, master and inventory data into Aera Subject Areas
+    stage: ingest
+    component: STREAMS
+    purpose: Aggregate, cleanse and prepare time-series and event features for modeling
+  - step: Run automated algorithm selection and baseline forecasts
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Assess demand patterns, candidate algorithms, and produce baseline metrics
+      (MAPE, bias)
+  - step: Orchestrate model selection and EBITDA-aligned parameter tuning
+    stage: decide
+    component: Process Builder (Process, Rules)
+    purpose: >-
+      Apply rules to balance fit vs complexity and adjust parameters to meet
+      EBITDA constraints
+  - step: Execute parameter optimization and write final forecasts
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Perform complex calculations, persist tuned parameters to Subject Areas,
+      write forecasts/params back to S4 and trigger Kinaxis
+  - step: Surface recommendations and exceptions for review
+    stage: review
+    component: CWB Lifecycle / UI Screens
+    purpose: >-
+      Present borderline cases for human override, capture decisions, and
+      finalize writeback
+branches:
+  - condition: Model fit (MAPE/bias) fails business threshold for many SKUs
+    response: >-
+      Process Builder triggers Data Science subprocess to run alternate
+      algorithms or feature engineering (Script/Data Science node) and flags
+      results; escalate persistent failures to data science team via
+      Notification
+    outcome: >-
+      Fallback models or retrained models deployed; persistent issues routed for
+      manual investigation
+  - condition: >-
+      EBITDA constraint cannot be satisfied without violating service-level
+      minima
+    response: >-
+      Adjust tradeoff weights via Process Rules and surface tradeoff options in
+      CWB Lifecycle for finance approval; if rejected, apply predefined
+      conservative parameter set
+    outcome: >-
+      Either approved EBITDA-aligned parameters or conservative defaults to
+      protect service levels
+  - condition: Critical input data (promotions, POS) is missing or stale
+    response: >-
+      DDM/Crawlers and STREAMS retry ingestion; if unresolved, tag affected SKUs
+      and route to CWB Lifecycle for manual data correction
+    outcome: >-
+      Either automated ingestion succeeds and loop continues, or affected
+      forecasts are held/flagged for human remediation

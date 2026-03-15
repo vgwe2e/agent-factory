@@ -1,0 +1,34 @@
+decision: >-
+  Determine the quality status of products based on operator self-inspections,
+  automated vision systems, end-of-line diagnostics, and attribute gaging.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Completion of production line activities requiring quality inspection.
+  parameters:
+    objective: >-
+      Reduce scrap, rework, and downtime by autonomously detecting, classifying,
+      and certifying product quality through integrated inspections.
+    key_inputs:
+      - Operator Inspection Results
+      - Automated Vision System Data
+      - Diagnostic Test Results
+      - Attribute Gaging Results
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automatically classify and certify product quality, route defective items
+    for rework, and release合格产品。
+  outcome: Reduced scrap, rework, and downtime, improved OTIF and COGS efficiency。
+  affected_components:
+    - DDM/Crawlers
+    - Remote Functions
+    - Agentic AI
+    - Dashboard
+rationale: >-
+  Integrating multiple inspection methods ensures comprehensive quality control,
+  leveraging both human and automated systems for optimal decision-making。

@@ -1,0 +1,39 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Data collection
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Data linkage
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Trend analysis
+    confidence: confirmed
+    capability: Trend analysis
+  - name: RCA Service
+    purpose: Root cause analysis
+    confidence: inferred
+    capability: Root cause analysis
+  - name: AutoML
+    purpose: Segmentation
+    confidence: inferred
+    capability: Segmentation
+process_builder:
+  - name: Action Item
+    purpose: >-
+      Generate monthly warranty cost trend reports, prioritize quality
+      improvements for top warranty concerns, intervene with underperforming
+      dealers, guide comprehensive problem resolution decisions, proactively
+      mitigate future warranty costs
+    confidence: confirmed
+    node_type: transaction
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review warranty performance monitoring & analytics and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

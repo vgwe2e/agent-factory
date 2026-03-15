@@ -1,0 +1,54 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Collect historical demand, supply, promotions, and market data into
+      Subject Areas
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Produce per-SKU-location baseline forecasts with algorithm selection and
+      SHAP explainability
+    confidence: confirmed
+    capability: >-
+      Produce per-SKU-location baseline forecasts with algorithm selection and
+      SHAP explainability
+  - name: AutoML
+    purpose: >-
+      Identify and score causal drivers, producing recommended driver weightings
+      and sensitivity metrics
+    confidence: inferred
+    capability: >-
+      Identify and score causal drivers, producing recommended driver weightings
+      and sensitivity metrics
+process_builder:
+  - name: Process Builder + CWB Lifecycle
+    purpose: >-
+      Reconcile forecasts and driver outputs, present recommendations for
+      accept/adjust/override and capture approvals
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Write optimized replenishment and production plans to SAP S/4HANA or
+      create exception transactions
+    confidence: inferred
+    node_type: act
+  - name: Cortex Monitoring + Subject Areas
+    purpose: >-
+      Track forecast accuracy, stockouts/excess, and trigger retraining or
+      process adjustments
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review establish an autonomous pipeline that integrates time-series
+      forecasting and regression-based demand driver analysis to produce
+      optimized, deployable demand forecasts that reduce cogs and working
+      capital across ford's multi-echelon supplier-plant-dc network. and approve
+      the recommended action.
+    confidence: confirmed
+    component_type: display

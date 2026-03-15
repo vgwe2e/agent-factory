@@ -1,0 +1,47 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: service-part-order-details
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: trade-compliance-rules
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: environmental-regulations
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: quality-defect-reports
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: safety-emissions-standards
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: counterfeit-detection-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Evaluate and apply compliant trade practices.
+  - component: AutoML
+    type: cortex
+    function: Balance regulatory costs with supply chain operations.
+  - component: RCA Service
+    type: cortex
+    function: Identify root causes and remediation actions.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Human-in-the-loop decision support.
+  - component: Remote Functions
+    type: process_builder
+    function: Ensure compliance and quality assurance.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate decisioning across regulatory compliance, environmental
+      packaging, quality defect resolution, safety/emissions adherence, and
+      counterfeit prevention for ford's service parts. and approve the
+      recommended action.

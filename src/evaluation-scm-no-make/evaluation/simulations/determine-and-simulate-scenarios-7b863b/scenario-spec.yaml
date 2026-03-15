@@ -1,0 +1,146 @@
+objective: >-
+  Orchestrate end-to-end supply scenario planning to protect revenue and
+  optimize cash flow by evaluating deterministic supply options, simulating
+  multi-scenario outcomes, and executing auditable supply plan writebacks across
+  SKUs and locations.
+trigger: >-
+  Determine And Simulate Scenarios (scheduled planning cycle or event-driven:
+  forecast deviation, inventory shortage, or executive directive)
+decision: >-
+  Choose which supply scenarios to evaluate and which supply option(s) to
+  simulate, balancing projected REVENUE impact and risk exposure
+expected_action: >-
+  Automate ingestion of demand, inventory, capacity and revenue inputs; generate
+  candidate supply scenarios; run multi-scenario simulations (Kinaxis/S4);
+  select optimal scenario by revenue/cash trade-offs; write back selected supply
+  plan to S4/Kinaxis and notify stakeholders with an auditable decision record.
+expected_outcome: >-
+  Reduced stockouts and lost revenue, improved working capital utilization,
+  faster decision cycle with auditable rationale for selected supply options,
+  and automated execution of supply plan changes.
+rationale: >-
+  Use Process Builder as the orchestration backbone to coordinate ETL (STREAMS),
+  deterministic scenario scoring (Remote Functions), APS simulations (Kinaxis
+  RapidResponse), and auditable decision capture (CWB Lifecycle). This hybrid
+  flow leverages enterprise forecasting (SAS) and ERP truth (S4) for
+  deterministic scenario evaluation, supports medium implementation complexity,
+  and preserves auditability and human override where needed.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Analytics
+    status: identified
+  - name: >-
+      Kinaxis RapidResponse (APS / Shortage Propagation / Rebalancing / Order
+      Expediting / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS/3PL
+    status: identified
+key_inputs:
+  - name: Baseline demand forecast
+    source: SAS (Advanced Statistical Forecasting)
+    purpose: >-
+      Baseline demand used to assess lost sales and revenue exposure for
+      scenarios
+    preferred_stream_type: DDM/Crawlers
+  - name: On-hand inventory & location allocations
+    source: S4 (SAP S/4HANA) and Blue Yonder WMS
+    purpose: >-
+      Determine current stock levels, available-to-promise, and starting point
+      for simulations
+    preferred_stream_type: STREAMS
+  - name: Supply capacity, lead times, planned receipts
+    source: S4 (SAP S/4HANA) and Kinaxis RapidResponse
+    purpose: >-
+      Constraint inputs for scenario simulation (production, inbound, transfer
+      capacity)
+    preferred_stream_type: STREAMS
+  - name: SKU revenue / price & margin attributes
+    source: S4 (SAP S/4HANA)
+    purpose: >-
+      Compute revenue impact per stockout / fulfillment scenario to guide
+      decisioning
+    preferred_stream_type: STREAMS
+  - name: Shortage propagation and downstream substitution rules
+    source: Kinaxis RapidResponse
+    purpose: >-
+      Model how shortages propagate and where substitution or rebalancing can
+      mitigate revenue loss
+    preferred_stream_type: STREAMS
+  - name: Open orders, shipments, and expediting options
+    source: Blue Yonder WMS, Uber Freight TMS, Kinaxis
+    purpose: >-
+      Identify immediate fulfillment levers and expedited transport options for
+      simulations and writeback
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Consolidate master and transaction inputs
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Extract and normalize forecasts, inventory, capacity, revenue and open
+      orders into subject area
+  - step: Generate baseline update and candidate scenario set
+    stage: analyze
+    component: Remote Functions
+    purpose: >-
+      Apply deterministic rules and revenue-impact calculations to create
+      prioritized scenario options
+  - step: Select scenarios for execution
+    stage: decide
+    component: Rules
+    purpose: >-
+      Apply decision thresholds (revenue at risk, service level, working
+      capital) to pick top scenarios to simulate
+  - step: Run multi-scenario supply simulations
+    stage: analyze
+    component: Remote Functions
+    purpose: >-
+      Invoke Kinaxis RapidResponse and S4 ATP APIs to simulate supply options,
+      shortage propagation and financial impacts
+  - step: Finalize and capture decision
+    stage: review
+    component: CWB Lifecycle
+    purpose: >-
+      Record recommended supply option with rationale, allow human
+      approve/reject/override, and audit decision
+  - step: Execute selected plan and notify stakeholders
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Writeback chosen supply updates to S4 / Kinaxis and trigger notifications
+      to planning, logistics, and finance
+branches:
+  - condition: >-
+      Simulation results exceed revenue-loss threshold or unacceptable service
+      degradation
+    response: >-
+      Trigger CWB Lifecycle with escalation to planning leads and generate
+      alternate high-cost expedite scenarios (use Remote Functions to model
+      expedited options)
+    outcome: >-
+      Human-in-the-loop approves expedited actions to protect revenue; increased
+      cost vs. revenue trade-off documented
+  - condition: >-
+      Critical input data missing or failing validation (forecast, inventory,
+      capacity)
+    response: >-
+      Pause process (Process Builder Wait), send Data Quality notification to
+      data stewards, and block simulations until resolved
+    outcome: >-
+      Simulations deferred; data corrected and re-ingested with full audit trail
+      to ensure decision integrity
+  - condition: Multiple scenarios present near-equal revenue and working capital outcomes
+    response: >-
+      Surface ranked scenarios in a dashboard / UI screen for planner selection
+      and record selection via CWB Lifecycle
+    outcome: >-
+      Planner selects preferred scenario; decision captured for audit and
+      executed via Remote Functions

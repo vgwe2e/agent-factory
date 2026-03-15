@@ -1,0 +1,66 @@
+objective: >-
+  Reduce COGS by optimizing inventory positioning, transportation routing, and
+  production-aligned load sequencing for finished powertrains.
+trigger: Daily inventory update from SAP S/4HANA.
+decision: >-
+  Optimize inventory positioning, outbound routes, and load sequencing for
+  finished powertrains.
+expected_action: >-
+  Autonomous decision-making for inventory positioning, route optimization, and
+  load planning.
+expected_outcome: >-
+  2-10% COGS reduction, improved OTIF, reduced handling and vessel/tractor
+  utilization inefficiencies.
+rationale: >-
+  By leveraging autonomous decision-making, the solution can optimize multiple
+  aspects of the logistics process, leading to significant cost savings and
+  efficiency improvements.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: To determine current inventory positions and plan future movements.
+  - name: Demand Forecasts
+    source: Cortex Auto Forecast
+    purpose: To predict future demand and align inventory positioning.
+  - name: Transportation Costs
+    source: STREAMS
+    purpose: To calculate and optimize transportation costs.
+happy_path:
+  - step: Retrieve current inventory levels from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To gather up-to-date inventory information.
+  - step: Generate demand forecasts using Cortex Auto Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: To predict future demand for powertrains.
+  - step: Optimize inventory positioning using AutoML.
+    stage: decide
+    component: AutoML
+    purpose: To determine optimal inventory positions.
+  - step: Plan outbound routes and load sequences using STREAMS.
+    stage: decide
+    component: STREAMS
+    purpose: To minimize transportation and handling costs.
+  - step: Execute optimized load plans and generate shipment documentation.
+    stage: act
+    component: Remote Functions
+    purpose: To prepare and document shipments.
+  - step: Track shipments and report transit damage.
+    stage: review
+    component: UI Screens
+    purpose: To monitor shipments and ensure timely delivery.
+branches:
+  - condition: Inventory levels exceed predefined thresholds.
+    response: Adjust inventory positioning and rerun optimization.
+    outcome: Ensures balanced inventory levels and minimizes carrying costs.
+  - condition: Unexpected demand spike detected.
+    response: Recalculate demand forecasts and adjust inventory positioning.
+    outcome: Aligns inventory with sudden changes in demand.
+  - condition: Transit damage reported.
+    response: Initiate damage assessment and claim processing.
+    outcome: Minimizes working capital impact from damaged shipments.

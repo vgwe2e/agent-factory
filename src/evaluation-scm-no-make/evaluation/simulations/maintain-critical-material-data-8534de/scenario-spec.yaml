@@ -1,0 +1,160 @@
+objective: >-
+  Automate end-to-end orchestration of SKU/location data (demand, inventory,
+  orders, promotions, and critical material attributes) to harmonize
+  requirements, maintain critical material data quality, and trigger
+  deterministic actions (rebalances, POs, supplier notifications) that reduce
+  waste, protect revenue, and improve COGS across Hershey's network.
+trigger: >-
+  Scheduled material-data refresh cadence or promotion calendar update (daily
+  batch) OR detection of topology/shortage signal from Kinaxis RapidResponse.
+decision: >-
+  Choosing maintenance approach for critical material data balancing COGS impact
+  and data accuracy triggered by material data refresh cadence.
+expected_action: >-
+  Ingest and harmonize source feeds, run deterministic validation and business
+  rules to update critical-material flags or generate CWB exceptions; for
+  validated auto-changes, writeback updates to S4 and notify Kinaxis for
+  rebalancing and order expediting; for exceptions, create CWB Lifecycle tasks
+  routed to data steward/planner for review.
+expected_outcome: >-
+  Consistent SKU/location master and requirement datasets across systems,
+  prioritized exceptions for human review, automated rebalances/PO adjustments
+  where safe to act, reduced spoilage and stock imbalances, improved promotional
+  ROI and lower COGS from timely material-data corrections.
+rationale: >-
+  A deterministic Process Builder route with STREAMS-based harmonization and
+  rule-based exception handling ensures repeatable, auditable updates to
+  material-critical attributes and requirements. Integrating S4, forecasting
+  (SAS), Kinaxis, WMS and TMS systems minimizes handoffs and enables coordinated
+  actions (rebalance, expedite, writeback) that directly reduce waste and
+  protect revenue while keeping human-in-the-loop for high-impact changes.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Frieght
+    type: 3PL
+    status: identified
+key_inputs:
+  - name: >-
+      SKU/Location Master (material attributes, pack, shelf-life, criticality
+      flags)
+    source: S4 (master data)
+    purpose: Baseline master reference for decisioning and writeback target
+    preferred_stream_type: STREAMS
+  - name: Demand forecasts (baseline and promotion-adjusted)
+    source: SAS (Advanced Statistical Forecasting)
+    purpose: >-
+      Provide demand signals for requirement generation and promo impact
+      detection
+    preferred_stream_type: DDM/Crawlers
+  - name: Inventory on hand and location balances
+    source: Blue Yonder WMS / S4
+    purpose: Determine replenishment needs, rebalancing, and spoilage risk
+    preferred_stream_type: STREAMS
+  - name: Open POs and supplier lead times
+    source: S4 / Kinaxis
+    purpose: Assess supply commitments and execute expedites/rebalances
+    preferred_stream_type: STREAMS
+  - name: Shortage / constraint signals and APS recommendations
+    source: Kinaxis RapidResponse
+    purpose: >-
+      Trigger urgent rebalancing, expediting, or promotion-impact mitigation
+      actions
+    preferred_stream_type: DDM/Crawlers
+  - name: Promotions calendar and changes
+    source: Marketing/Promotion feeds (integrated via DDM)
+    purpose: Detect promotional-change impacts on demand and inventory deployment
+    preferred_stream_type: DDM/Crawlers
+  - name: Safety stock and FG model parameters
+    source: Kinaxis (safety stock models) / Subject Areas
+    purpose: Inform deterministic replenishment thresholds and auto-action limits
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: >-
+      Pull scheduled batch feeds (master, forecast, inventory, POs, promotions)
+      into Aera
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Collect authoritative data from S4, SAS, Kinaxis, WMS, and TMS for
+      orchestration
+  - step: >-
+      Harmonize, validate and enrich feeds; compute derived requirements
+      (SKU/location demand, replenishment need)
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Standardize schemas, run data-quality rules and derive requirement records
+      for decisioning
+  - step: >-
+      Evaluate deterministic rules to decide maintenance vs exception routing
+      (IF: low-impact auto-update else CWB)
+    stage: decide
+    component: Process Builder (IF / Rules)
+    purpose: >-
+      Apply business thresholds (COGS impact, data confidence, safety-stock
+      bounds) to choose action
+  - step: >-
+      Execute automated updates and orchestration actions: writeback master
+      updates to S4, push rebalances/expedites to Kinaxis
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Perform authorized system updates and notify downstream APS for supply
+      adjustments
+  - step: >-
+      Create CWB Lifecycle tasks for exceptions and notify planners/data
+      stewards
+    stage: notify
+    component: CWB Lifecycle / Notification
+    purpose: >-
+      Route high-impact or low-confidence cases for human approval with context
+      and action items
+  - step: >-
+      Surface consolidated KPI and exception report for review (promo ROI, waste
+      reduction, COGS impact)
+    stage: surface
+    component: Data View / UI Screen / dashboard
+    purpose: >-
+      Provide planners and leadership visibility into outcomes and outstanding
+      exceptions
+branches:
+  - condition: Data quality checks fail (missing or inconsistent master attributes)
+    response: >-
+      Do not auto-update; create CWB Lifecycle exception and send Action Item to
+      data steward with failing records
+    outcome: >-
+      Human review required before any writeback to S4; preserves data accuracy
+      and avoids incorrect COGS impact
+  - condition: Deterministic rule flags high COGS impact for proposed auto-change
+    response: >-
+      Hold change and escalate via CWB to planning + finance for approval;
+      include simulation of COGS delta
+    outcome: >-
+      Prevents unintended financial impact; ensures cross-functional sign-off
+      before execution
+  - condition: >-
+      Kinaxis signals urgent shortage with supplier lead-time variance above
+      threshold
+    response: >-
+      Trigger expedited order flow to Kinaxis RapidResponse and notify supplier
+      via Remote Function/TMS integration; create CWB for tracking
+    outcome: >-
+      Rapid mitigation of potential stockouts while maintaining audit trail and
+      planner oversight

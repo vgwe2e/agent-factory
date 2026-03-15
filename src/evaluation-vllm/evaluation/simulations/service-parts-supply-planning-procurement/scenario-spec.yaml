@@ -1,0 +1,87 @@
+objective: >-
+  Optimize service parts production ordering, supplier capacity planning,
+  aftermarket sourcing, and shortage escalation to reduce COGS, prevent
+  stockouts, and improve EBITDA and working capital.
+trigger: Periodic service parts demand forecast update or detected shortage.
+decision: >-
+  Which service parts Production Order to place with suppliers, aligning with
+  demand, lead times, and cost to minimize COGS; assess and ensure supplier
+  capacity for current and future service part demand, selecting sourcing paths
+  to meet requirements while controlling COGS; negotiate and manage long-term
+  supply agreements for service parts based on demand forecasts, pricing, and
+  supply risk; identify and source aftermarket suppliers, selecting among
+  alternatives to optimize cost and availability for service parts; escalate and
+  resolve critical part shortages for vehicle repairs by determining escalation
+  actions and resolution paths.
+expected_action: >-
+  Place optimized production orders with suppliers; ensure adequate supplier
+  capacity through negotiation and agreement management; source aftermarket
+  suppliers to optimize cost and availability; escalate and resolve critical
+  part shortages efficiently.
+expected_outcome: >-
+  Reduced COGS, minimized stockouts, improved EBITDA, and accelerated issue
+  resolution.
+rationale: >-
+  Coordinating replenishment, capacity, and supplier selection across the
+  service parts network will yield measurable improvements in financial metrics
+  and operational efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Service Parts Demand Forecast
+    source: SAP S/4HANA
+    purpose: Align production orders with demand
+    preferred_stream_type: STREAMS
+  - name: Supplier Capacity Data
+    source: SAP S/4HANA
+    purpose: Ensure supplier capacity meets demand
+    preferred_stream_type: STREAMS
+  - name: Long-Term Supply Agreements
+    source: SAP S/4HANA
+    purpose: Manage supply agreements
+    preferred_stream_type: STREAMS
+  - name: Aftermarket Supplier Data
+    source: SAP S/4HANA
+    purpose: Source aftermarket suppliers
+    preferred_stream_type: STREAMS
+  - name: Critical Part Shortages
+    source: SAP S/4HANA
+    purpose: Escalate and resolve shortages
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Fetch service parts demand forecast
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect demand data
+  - step: Analyze supplier capacity and demand alignment
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Forecast demand and assess capacity
+  - step: Place optimized production orders
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Human-in-the-loop decision for order placement
+  - step: Negotiate and manage long-term supply agreements
+    stage: act
+    component: Remote Functions
+    purpose: Automate agreement management
+  - step: Source aftermarket suppliers
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Select optimal suppliers
+  - step: Escalate and resolve critical part shortages
+    stage: act
+    component: Exception Management
+    purpose: Resolve shortages efficiently
+branches:
+  - condition: Insufficient supplier capacity
+    response: Trigger additional supplier sourcing
+    outcome: Ensure adequate capacity
+  - condition: High cost of production orders
+    response: Review and negotiate terms with suppliers
+    outcome: Minimize COGS
+  - condition: Unresolved critical part shortage
+    response: Escalate to senior management
+    outcome: Accelerate resolution

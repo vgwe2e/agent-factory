@@ -1,0 +1,65 @@
+objective: >-
+  Integrate production planning and sequencing across daily build, schedule
+  adjustments, and line balancing to reduce COGS, improve OTIF, and strengthen
+  multi-plant alignment.
+trigger: Daily production start or significant upstream/downstream changes detected.
+decision: >-
+  Choose optimal daily build sequence, adjust production schedule, manage model
+  mix, and assess capacity needs.
+expected_action: >-
+  Automate end-to-end sequencing decisions, apply capacity-aware scheduling, and
+  balance line utilization with product mix constraints.
+expected_outcome: >-
+  Reduced COGS, improved OTIF, and enhanced multi-plant alignment through
+  optimized production planning and sequencing.
+rationale: >-
+  Automating production planning and sequencing decisions will streamline
+  operations, reduce costs, and improve on-time delivery performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Daily Build Sequence
+    source: SAP S/4HANA
+    purpose: To follow the daily build sequence provided by central planning.
+  - name: Production Schedule Changes
+    source: SAP S/4HANA
+    purpose: To adjust production schedules based on upstream/downstream changes.
+  - name: Model Mix Data
+    source: SAP S/4HANA
+    purpose: To determine the optimal mix of vehicle models on the production line.
+  - name: Capacity Data
+    source: SAP S/4HANA
+    purpose: To assess and optimize future capacity needs.
+happy_path:
+  - step: Ingest daily build sequence data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To collect and prepare daily build sequence information.
+  - step: Analyze production schedule changes and model mix data.
+    stage: analyze
+    component: STREAMS
+    purpose: To transform and aggregate data for further analysis.
+  - step: Apply capacity-aware scheduling and model mix optimization.
+    stage: decide
+    component: AutoML
+    purpose: To determine the optimal production schedule and model mix.
+  - step: Execute adjusted production schedule and model mix.
+    stage: act
+    component: Remote Functions
+    purpose: To implement the optimized production plan.
+  - step: Monitor and validate the effectiveness of the new plan.
+    stage: review
+    component: Cortex Monitoring
+    purpose: To ensure the plan meets efficiency and on-time delivery targets.
+branches:
+  - condition: Significant upstream/downstream changes detected.
+    response: Trigger production schedule adjustment and rebalancing.
+    outcome: Adjusted production schedule to maintain throughput and on-time delivery.
+  - condition: Insufficient capacity to meet production demand.
+    response: Initiate capacity planning and utilization analysis.
+    outcome: Optimized capacity to meet future production demands.
+  - condition: Model mix constraints not met.
+    response: Rebalance line utilization with updated model mix.
+    outcome: Balanced workload and throughput with demand and constraints.

@@ -1,0 +1,63 @@
+decision: >-
+  Select which disruption scenarios and N‑Tier impacts to run in the digital
+  twin (breadth vs. run‑time cost) and decide prioritized continuity / sourcing
+  / contract actions based on simulated EBITDA, service‑level and
+  working‑capital impacts.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled or ad‑hoc execution of the resilience plan (stress test campaign)
+    or detection of elevated external risk signals for key suppliers /
+    commodities.
+  parameters:
+    objective: >-
+      Provide an integrated Resilience Procurement Control Tower that delivers
+      N‑Tier supplier visibility, runs digital‑twin stress tests, and aligns
+      continuity and sourcing decisions to protect margins and revenue amid
+      input cost volatility and promotional spend.
+    key_inputs:
+      - N‑Tier supplier mapping (tiers, relationships, lead times)
+      - Contracts, purchase orders, SLAs
+      - Demand forecasts and promotional plans
+      - Inventory positions & safety stock models
+      - Shortage propagation & APS constraints
+      - Transport capacity & lead time variability
+      - Disruption scenario library (severity, duration, geography)
+      - Continuity plans and escalation playbooks
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS (Advanced Statistical Forecasting)
+      - Kinaxis RapidResponse
+      - Kinaxis (FG Safety Stock / Rebalancing / Order Expediting)
+      - Blue Yonder WMS
+      - Uber Freight TMS / 3PL
+      - External Risk & Market Feeds (commodities, geo events)
+expected_output:
+  action: >-
+    Agentic orchestration builds the N‑Tier digital twin, runs prioritized
+    scenario simulations, scores supplier vulnerabilities and mitigation
+    options, generates ranked continuity and sourcing recommendations, and
+    writes approved actions back to S4/Kinaxis while notifying stakeholders.
+  outcome: >-
+    Clear, prioritized mitigation plan (contracts, alternate sourcing, inventory
+    positioning, expediting) with estimated impact on service level, working
+    capital and EBITDA; faster detection of critical single points of failure;
+    reduced disruption risk and aligned continuity execution.
+  affected_components:
+    - STREAMS
+    - Agent Team
+    - Data Science
+    - CWB Lifecycle
+    - Remote Functions
+    - UI Screen
+    - Dashboard
+rationale: >-
+  Agentic multi‑agent orchestration enables adaptive scenario generation and
+  targeted simulation runs (balancing coverage and cost), combined with
+  deterministic Streams and Remote Functions for reliable data ingestion and
+  writebacks. Human-in-the-loop approval (CWB Lifecycle) preserves governance
+  while agentic agents optimize scenario selection and interpretation.

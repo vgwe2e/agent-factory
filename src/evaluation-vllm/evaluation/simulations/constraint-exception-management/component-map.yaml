@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest constraint data
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict impact
+    confidence: confirmed
+    capability: Predict impact
+  - name: AutoML
+    purpose: Assess mitigation options
+    confidence: inferred
+    capability: Assess mitigation options
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Make stop/start decisions
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: Execute recovery plan
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomous detection, simulation, and resolution of production
+      constraints and exceptions to reduce cogs while maintaining otif and
+      availability. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

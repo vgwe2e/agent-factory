@@ -1,0 +1,51 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Create a consistent Subject Area with container positions, locations,
+      rates and schedules
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Subject Areas
+    purpose: >-
+      Aggregate inventories, lead times, demand windows and cost parameters for
+      solver
+    confidence: confirmed
+    capability: >-
+      Aggregate inventories, lead times, demand windows and cost parameters for
+      solver
+  - name: Remote Functions
+    purpose: >-
+      Generate cost-minimized movement plan (routes, carriers, timings)
+      respecting constraints
+    confidence: inferred
+    capability: >-
+      Generate cost-minimized movement plan (routes, carriers, timings)
+      respecting constraints
+process_builder:
+  - name: Process Builder
+    purpose: >-
+      Auto-approve plans that meet thresholds; create CWB Lifecycle exceptions
+      for conflicts
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Write schedule to SAP S/4HANA and push instructions/notifications to
+      carriers
+    confidence: inferred
+    node_type: act
+  - name: UI Screen
+    purpose: Provide visibility, manual override and audit trail for plan decisions
+    confidence: confirmed
+    node_type: integration
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously schedule and route returnable containers across
+      multi-echelon network to minimize transport cost and cycle time while
+      meeting service requirements and supplier receipt compliance. and approve
+      the recommended action.
+    confidence: confirmed
+    component_type: display

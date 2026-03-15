@@ -1,0 +1,62 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant MES
+    type: MES
+    status: tbd
+  - name: HR / Workforce Management
+    type: HR
+    status: tbd
+aera_ingestion:
+  - stream_name: sales-orders-confirmed-demand
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: demand-forecast-time-series
+    stream_type: Event Stream
+    source: Cortex Auto Forecast
+  - stream_name: plant-line-master-data-routing-capacities
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: equipment-capability-mttr-mtbf-downtime-logs
+    stream_type: DDM/Crawlers
+    source: Plant MES
+  - stream_name: changeover-times-and-sequence-dependent-setup-costs
+    stream_type: STREAMS
+    source: SAP S/4HANA / MES
+  - stream_name: shift-calendars-labor-availability-skill-mappings
+    stream_type: Event Stream
+    source: HR / Workforce Management
+  - stream_name: cost-rates-variable-machining-labor-oee-impact
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: business-constraints-policies-service-levels-site-preferences
+    stream_type: Event Stream
+    source: Planner inputs (UI Screen) / Process Builder rules
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Provide time-series demand inputs and prediction uncertainty for capacity
+      sizing.
+  - component: Process (Process Builder) + Remote Functions
+    type: cortex
+    function: >-
+      Simulate multiple allocation scenarios with sequence/changeover, labor,
+      and equipment constraints to identify bottlenecks and feasible plans.
+  - component: Process (Process Builder) - Rules / IF
+    type: process_builder
+    function: >-
+      Choose optimal plan by balancing cost, utilization, service level, and
+      changeover minimization; flag exceptions.
+  - component: Remote Functions + Process (Process Builder) - Action Item / Notification
+    type: process_builder
+    function: >-
+      Write optimized production schedules back to SAP S/4HANA, notify
+      operations, and surface plan in UI screens for planners/operators.
+ui_surface:
+  - component: UI Screen / Subject Areas / Dashboard
+    screen: Primary
+    purpose: >-
+      Provide transparency, MAPE/throughput KPIs, and explanation of bottleneck
+      decisions for planner validation and audit.

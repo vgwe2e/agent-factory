@@ -1,0 +1,52 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: finished-goods-inventory-ledger-on-hand-lot-expiry-location
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: inventory-movements-receipts-shipments-transfers
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: production-schedule-mps-and-capacity
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: dealer-allocation-and-shipment-plan
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: finance-provisioning-and-write-off-policy-thresholds-approval-rules
+    stream_type: Event Stream
+    source: Finance policy (configured in ERP / governance documents)
+  - stream_name: aging-thresholds-and-mitigation-rules
+    stream_type: Event Stream
+    source: Business configuration (Process Builder rules)
+processing:
+  - component: Rules
+    type: process_builder
+    function: >-
+      Assign risk band (low/medium/high) and determine candidate actions
+      (reschedule, reallocate, promotion, write-off)
+  - component: Process Builder (Remote Functions)
+    type: process_builder
+    function: >-
+      Push MPS/schedule changes, update dealer allocations, and create financial
+      disposition transactions in SAP S/4HANA
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Present exceptions to S&OP and Finance for approval with recommended
+      actions
+  - component: UI Screen
+    type: process_builder
+    function: >-
+      Stakeholders review approvals, track aging KPIs, and confirm reduction in
+      at-risk inventory
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automatically coordinate finished goods aging management across
+      planning, production scheduling, dealer allocation, and finance to
+      minimize write-offs and reduce stock obsolescence while optimizing working
+      capital. and approve the recommended action.

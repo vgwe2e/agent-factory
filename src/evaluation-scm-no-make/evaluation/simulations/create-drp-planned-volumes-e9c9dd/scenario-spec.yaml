@@ -1,0 +1,151 @@
+objective: >-
+  Automate end-to-end DRP decisions to generate, validate, and execute
+  multi-echelon planned volumes (DRP) with autonomous STR release and
+  closed-loop exception handling to reduce COGS, improve working capital, and
+  protect EBITDA.
+trigger: >-
+  Scheduled DRP planning window or a demand/inventory signal (e.g., forecast
+  deviation, stockout risk, or replenishment threshold breach).
+decision: >-
+  Select and execute DRP planned volumes across allocation scenarios (current vs
+  expanded) that balance COGS impact and service levels, then release STRs and
+  distribute plan impacts with exception handling and reconciliation.
+expected_action: >-
+  Orchestrate data ingestion, run demand & inventory analyses, generate ranked
+  DRP allocation scenarios, present recommended DRP planned volumes via agentic
+  AI and CWB lifecycle for exception overrides, execute STR releases and plan
+  writebacks to S4/Kinaxis, and route exceptions for rapid remediation.
+expected_outcome: >-
+  Autonomous, repeatable DRP cycles that lower COGS, reduce inventory and
+  working capital, maintain service levels, ensure rapid execution of STR
+  releases, and provide auditable exception handling and impact distribution.
+rationale: >-
+  Combines Process Builder orchestration, Cortex analytics, Remote Functions for
+  execution, and agentic AI for adaptive reasoning and human-in-the-loop
+  approvals to close the DRP loop across enterprise systems and ensure fast,
+  data-driven decisions with operational writebacks.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Forecasting Engine
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (FG Safety Stock Modeling / Rebalancing / Order Expediting)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: TMS/3PL
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting Engine
+    status: identified
+key_inputs:
+  - name: Demand Forecast (time series)
+    source: SAS / Advanced Statistical Forecasting in SAS
+    purpose: Baseline demand signal for DRP volume creation and scenario evaluation.
+  - name: Inventory Positions & On-hand
+    source: S4 (SAP S/4HANA) and Blue Yonder WMS
+    purpose: >-
+      Current multi-echelon inventory for replenishment and allocation
+      calculations.
+  - name: Safety Stock Models / Parameters
+    source: Kinaxis (FG Safety Stock Modeling)
+    purpose: >-
+      Inputs for service-level constraints and safety stock adjustments in
+      scenario scoring.
+  - name: Open Orders & Allocations
+    source: S4 (SAP S/4HANA) and Kinaxis RapidResponse
+    purpose: Assess demand commitments and constraint-driven allocation impact.
+  - name: Transportation Constraints & Lead Times
+    source: Uber Freight TMS / 3PL data / S4
+    purpose: >-
+      Model STR feasibility, lead-time windows and cost impact for STR release
+      and execution.
+  - name: DRP Parameters (policy knobs)
+    source: Planner inputs via UI Screen / Process Builder
+    purpose: >-
+      Tunable decision levers (e.g., COGS threshold, service-level targets,
+      escalation rules).
+  - name: Shortage Propagation Signals
+    source: Kinaxis RapidResponse (shortage propagation)
+    purpose: >-
+      Trigger rebalancing, expediting and escalate exception handling when
+      shortages propagate.
+happy_path:
+  - step: >-
+      Ingest master and transactional data (forecasts, inventory, orders,
+      lead-times)
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Collect and normalize inputs required for DRP analysis and scenario
+      modeling.
+  - step: >-
+      Run analytics and scenario generation (demand reconciliation, safety stock
+      recalculation, allocation scenarios)
+    stage: analyze
+    component: Cortex Auto Forecast + Safety Stock Service + Remote Functions
+    purpose: >-
+      Create candidate DRP planned volumes and score scenarios for COGS vs
+      service trade-offs.
+  - step: >-
+      Agentic orchestration to recommend optimal DRP planned volumes and surface
+      trade-offs
+    stage: decide
+    component: Process Builder + Agent Team (agentic_ai)
+    purpose: >-
+      Use agentic AI to synthesize scenarios, rank recommendations, and prepare
+      CWB lifecycle recommendations.
+  - step: >-
+      Present recommendations for automated accept or human override and capture
+      decision
+    stage: review
+    component: CWB Lifecycle + UI Screen
+    purpose: >-
+      Enable human-in-the-loop approvals, accept/override of DRP planned
+      volumes, and record rationale.
+  - step: 'Execute approved DRP: STR release, writebacks and plan redistributions'
+    stage: act
+    component: Remote Functions (ERP/Kinaxis writeback) + Process Builder
+    purpose: >-
+      Push STR releases to S4/Kinaxis, update planned volumes, and trigger
+      rebalancing/expediting workflows.
+  - step: Notify stakeholders and surface post-execution impacts for reconciliation
+    stage: notify
+    component: Notification + Data View
+    purpose: >-
+      Alert ops/planners of execution status, exceptions, and distribute plan
+      impact metrics for review.
+branches:
+  - condition: Selected DRP recommendation exceeds configured COGS or risk threshold
+    response: >-
+      Agentic AI downgrades to conservative allocation scenario and routes for
+      mandatory planner approval via CWB Lifecycle; include alternative
+      mitigations (phased release).
+    outcome: >-
+      Avoids adverse cost impact; ensures human approval for high-impact actions
+      and logs decision rationale.
+  - condition: >-
+      ERP/Kinaxis writeback (STR or planned volume update) fails or returns
+      conflict
+    response: >-
+      Process Builder triggers Remote Functions retry logic, creates Action Item
+      for planner with failure context, and pauses subsequent downstream
+      actions.
+    outcome: >-
+      Writeback failure is retried and escalated; execution is auditable and
+      prevents inconsistent plan state.
+  - condition: Severe shortage propagated (unresolvable via DRP scenarios)
+    response: >-
+      Trigger Kinaxis replan subprocess, engage Agent Team for cross-echelon
+      trade-off negotiation, and notify supply chain leadership.
+    outcome: >-
+      Rapid collaborative resolution with prioritized allocations and documented
+      mitigation steps; DRP loop remains auditable.

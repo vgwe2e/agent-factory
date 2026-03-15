@@ -1,0 +1,148 @@
+objective: >-
+  Automate end-to-end MRP decisions across BOM release, material requirements
+  calculation, supplier release, inventory policy, and shortage risk assessment
+  to minimize COGS, improve OTIF, and optimize working capital across
+  multi-echelon automotive networks.
+trigger: >-
+  Scheduled daily MRP run OR immediate on BOM/ECO release or demand forecast
+  deviation >10% (whichever occurs first).
+decision: >-
+  Which materials are at risk of shortage and which preemptive actions
+  (expedite, reschedule, re-source, adjust safety stock, or defer production)
+  should be executed to avoid production impact while balancing cost vs.
+  service-level and working capital trade-offs.
+expected_action: >-
+  Execute an integrated pipeline: ingest SAP S/4HANA master/transactional data
+  via STREAMS, produce demand signals with Cortex Auto Forecast and run Safety
+  Stock Service for dynamic buffers, evaluate shortage risk with RCA-style
+  scoring, have a Process Builder flow (Agent Team/agentic_ai) select actions
+  via rules and cost-service optimization, then use Remote Functions to write
+  changes to SAP (PO changes/supplier releases) and notify suppliers/planners.
+  Create CWB Lifecycle items when confidence or cost thresholds require human
+  approval.
+expected_outcome: >-
+  Fewer unplanned stockouts and expedited shipments, lower COGS through
+  optimized BOM integrity and sourcing decisions, improved OTIF, reduced excess
+  inventory and working capital, faster corrective actions for shortages, and
+  measurable improvements in MAPE/stockout rate/working-capital-days.
+rationale: >-
+  Multi-echelon automotive MRP involves complex, interdependent signals (BOMs,
+  lead times, demand noise, supplier constraints). Combining STREAMS ingestion,
+  Cortex forecasting, Safety Stock Service, agentic Process Builder
+  orchestration, and Remote Functions enables adaptive, autonomous decisions
+  while preserving human-in-the-loop controls for higher-risk or low-confidence
+  cases.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    status: tbd
+  - name: Supplier Portal / EDI / API
+    status: tbd
+  - name: WMS / Warehouse System
+    status: tbd
+key_inputs:
+  - name: BOMs & ECOs (released engineering bills)
+    source: SAP S/4HANA
+    purpose: >-
+      Ensure BOM integrity and identify part substitutions/changes that affect
+      demand and procurement
+    preferred_stream_type: STREAMS
+  - name: Material requirements / MRP outputs (planned orders, shortages)
+    source: SAP S/4HANA
+    purpose: Primary signal of net requirements and suggested replenishment actions
+    preferred_stream_type: STREAMS
+  - name: Inventory balances & multi-echelon positions
+    source: SAP S/4HANA
+    purpose: >-
+      Current on-hand and in-transit inventory for safety-stock and allocation
+      calculations
+    preferred_stream_type: STREAMS
+  - name: Open POs and supplier confirmations
+    source: SAP S/4HANA
+    purpose: Assess incoming supply, lead-time reliability, and short-term availability
+    preferred_stream_type: STREAMS
+  - name: Production schedule / planned orders
+    source: MES
+    purpose: >-
+      Align material actions to production windows and rescheduling
+      opportunities
+  - name: Demand forecast and forecast deltas
+    source: Cortex Auto Forecast
+    purpose: Drive net requirements and identify forecast-driven shortage risk
+  - name: Supplier constraints, lead-time variability, capacity
+    source: Supplier Portal / EDI / API
+    purpose: >-
+      Determine feasibility and lead-time for expediting, resourcing
+      alternatives, and cost impacts
+    preferred_stream_type: DDM/Crawlers
+  - name: Historical usage, lead-time distribution, cost metrics
+    source: Subject Areas
+    purpose: Feature inputs for risk scoring, RCA, and cost-vs-service optimization
+    preferred_stream_type: Subject Areas
+happy_path:
+  - step: >-
+      Consolidate BOMs, inventory, open POs, and production schedule into the
+      data foundation.
+    stage: ingest
+    component: STREAMS
+    purpose: Normalize and stage master and transactional inputs for analysis.
+  - step: >-
+      Generate demand signal and dynamic buffer requirements; compute shortage
+      risk scores.
+    stage: analyze
+    component: Cortex Auto Forecast + Safety Stock Service + RCA Service
+    purpose: >-
+      Forecast demand, compute dynamic safety stock, and surface root-cause
+      drivers of potential shortages.
+  - step: >-
+      Agentic orchestration evaluates costs, service targets, lead-time
+      feasibility and selects actions (expedite/reschedule/re-source/adjust
+      safety stock).
+    stage: decide
+    component: Process Builder (Agent Team / agentic_ai) + Rules
+    purpose: >-
+      Apply decision logic and agent reasoning to pick the optimal mitigation
+      action balancing cost vs. service.
+  - step: >-
+      Execute decided actions: update POs, release/expedite supplier orders,
+      adjust planned production windows.
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Write changes back to SAP S/4HANA and trigger supplier communications or
+      MES schedule updates.
+  - step: >-
+      Surface decisions, exceptions, and KPIs to planners and suppliers; open
+      CWB for required approvals.
+    stage: surface
+    component: UI Screen / CWB Lifecycle / Notification
+    purpose: >-
+      Provide transparency, allow manual overrides where required, and notify
+      stakeholders of executed changes.
+branches:
+  - condition: >-
+      High confidence (risk score high and actions feasible within cost
+      thresholds)
+    response: >-
+      Agentic flow auto-executes Remote Functions to change POs and notify
+      suppliers; logs actions to Subject Areas.
+    outcome: >-
+      Rapid automated mitigation with minimal human intervention; reduced lead
+      time to resolution.
+  - condition: Medium confidence or cost above auto-exec threshold
+    response: >-
+      Process Builder creates a CWB Lifecycle approval task for supply planner
+      with recommended actions and impact analysis.
+    outcome: >-
+      Human-in-the-loop review ensures governance on higher-cost or
+      higher-impact decisions.
+  - condition: Supplier capacity constraint or no feasible expediting path
+    response: >-
+      Agent recommends alternate sourcing or production rescheduling and
+      escalates to sourcing/planning teams via Agent Team collaboration and
+      notifications.
+    outcome: >-
+      Avoids futile auto-actions, surfaces alternatives to prevent production
+      disruption, and records decision rationale for audit.

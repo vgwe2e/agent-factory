@@ -1,0 +1,38 @@
+decision: >-
+  Optimize the assembly line by applying deterministic optimization and
+  semi-autonomous orchestration across various sub-processes.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Start of the module assembly process in SAP S/4HANA.
+  parameters:
+    objective: >-
+      Autonomous optimization of the end-to-end battery module assembly line to
+      reduce COGS and improve on-time delivery while maintaining quality.
+    key_inputs:
+      - Cell Performance Metrics
+      - Module Assembly Data
+      - Cooling System Components
+      - Electrical Test Results
+      - Production Line Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate and optimize cell sorting, module structure allocation, cooling
+    routing, electrical testing, and line-cycle timing.
+  outcome: >-
+    Reduced COGS, improved on-time delivery, and maintained quality across
+    multiple plants, lines, and suppliers.
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - Process Builder
+    - Dashboard
+rationale: >-
+  Jointly applying deterministic optimization and semi-autonomous orchestration
+  will streamline the assembly process, leading to cost savings and efficiency
+  gains.

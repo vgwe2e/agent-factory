@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Real-time sensor data collection and anomaly detection]
+  A --> N1[Stream: DDM/Crawlers - Collect sensor data from IoT devices]
+  N1 --> N2[Stream: STREAMS - Integrate sensor data into predictive analytics platform]
+  N2 --> N3[Cortex: AutoML - Deploy and refine ML models for anomaly detection]
+  N3 --> N4{PB: Notification - Generate predictive alerts based on model outputs}
+  N4 -->|Primary| N5[PB: Remote Functions - Trigger corrective maintenance actions based on alerts]
+  N5 --> Z1[Outcome: Optimize maintenance timing, reduce COGS from unexpected failures, and improve OTIF by minimizing unplanned downtime]
+  N4 -->|Anomaly detected but no immediate act...| B1[Monitor and escalate if condition worsens]
+  B1 --> O1[Outcome: Continued monitoring and conditional escalation]
+  O1 --> End[End]
+  N4 -->|Critical failure predicted| B2[Immediate maintenance scheduling and notification]
+  B2 --> O2[Outcome: Preventive maintenance action initiated]
+  O2 --> End[End]
+  N4 -->|Insufficient data for accurate predic...| B3[Data quality check and retraining of ML model]
+  B3 --> O3[Outcome: Improved model accuracy and reliability]
+  O3 --> End[End]
+  Z1 --> End[End]

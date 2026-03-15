@@ -1,0 +1,98 @@
+objective: >-
+  Autonomous orchestration of end-to-end battery pack assembly decisions to
+  reduce COGS, improve OTIF, and enhance supplier/manufacturing synchronization.
+trigger: Start of battery pack assembly process.
+decision: >-
+  Optimize module-to-pack integration, BMS installation, sealing/leak testing,
+  end-of-line testing, and anomaly detection to maximize efficiency and quality.
+expected_action: >-
+  Automate and coordinate the assembly process across multiple activities using
+  Aera's orchestration capabilities.
+expected_outcome: >-
+  Reduced COGS, improved on-time in-full (OTIF) delivery, and enhanced quality
+  control through synchronized assembly processes.
+rationale: >-
+  By leveraging Aera's deterministic decision-making capabilities, the solution
+  can autonomously manage the battery pack assembly process, leading to
+  significant cost savings and quality improvements.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Module Integration Plan
+    source: SAP S/4HANA
+    purpose: To determine optimal module integration and wiring harness routing.
+  - name: BMS Installation Parameters
+    source: SAP S/4HANA
+    purpose: To select optimal BMS installation sequencing and settings.
+  - name: Sealing/Leak Test Conditions
+    source: SAP S/4HANA
+    purpose: To define sealing and leak test process conditions.
+  - name: End-of-Line Test Suite
+    source: SAP S/4HANA
+    purpose: To determine the appropriate test suite and sequencing.
+  - name: Real-Time Monitoring Thresholds
+    source: SAP S/4HANA
+    purpose: To set real-time monitoring thresholds and corrective actions.
+happy_path:
+  - step: >-
+      Retrieve module integration plan and wiring harness routing from SAP
+      S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Ingest module integration data.
+  - step: >-
+      Analyze module integration plan to maximize COGS reduction and ensure pack
+      integrity.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Optimize module integration plan.
+  - step: Retrieve BMS installation parameters from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Ingest BMS installation data.
+  - step: >-
+      Analyze BMS installation parameters to minimize rework and optimize labor
+      utilization.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Optimize BMS installation sequencing.
+  - step: Retrieve sealing/leak test conditions from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Ingest sealing/leak test data.
+  - step: >-
+      Analyze sealing/leak test conditions to ensure pack integrity with minimal
+      scrap and rework.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Optimize sealing/leak test process.
+  - step: Retrieve end-of-line test suite from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Ingest end-of-line test data.
+  - step: >-
+      Analyze end-of-line test suite to maximize throughput while meeting
+      reliability targets.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Optimize end-of-line test suite.
+  - step: Retrieve real-time monitoring thresholds from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Ingest real-time monitoring data.
+  - step: Analyze real-time monitoring thresholds to minimize downtime and scrap.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Optimize real-time monitoring thresholds.
+branches:
+  - condition: Module integration plan fails quality check.
+    response: Trigger corrective action workflow.
+    outcome: Corrective actions are taken to address quality issues.
+  - condition: BMS installation parameters exceed labor utilization limits.
+    response: Adjust BMS installation sequencing to optimize labor usage.
+    outcome: Labor utilization is optimized, reducing rework.
+  - condition: Sealing/leak test conditions result in high scrap rates.
+    response: Modify sealing/leak test process conditions to reduce scrap.
+    outcome: Scrap rates are minimized, improving overall quality.

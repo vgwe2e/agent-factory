@@ -1,0 +1,37 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: historical-sales-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: key-influencing-variables
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: forecast-accuracy-metrics
+    stream_type: Event Stream
+    source: Cortex Monitoring
+processing:
+  - component: Data Quality & Validation
+    type: cortex
+    function: Ensure data integrity for reliable forecasting.
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Predict future demand accurately.
+  - component: AutoML
+    type: cortex
+    function: Identify and quantify demand drivers.
+  - component: Remote Functions
+    type: process_builder
+    function: Implement advanced models for dynamic demand prediction.
+  - component: Cortex Monitoring
+    type: process_builder
+    function: Evaluate model performance and guide improvements.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review develop and deploy statistical and ml-based demand forecasting
+      models to improve production planning and inventory decisions, reducing
+      stockouts and excess inventory. and approve the recommended action.

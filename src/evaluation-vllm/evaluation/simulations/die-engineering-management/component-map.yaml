@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest new die design data from SAP S/4HANA.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Classify design options based on manufacturability and cost.
+    confidence: inferred
+    capability: Classify design options based on manufacturability and cost.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Present recommendations for design approval.
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: Coordinate supplier selection and schedule alignment.
+    confidence: confirmed
+    node_type: act
+  - name: Exception Management
+    purpose: Schedule and allocate resources for maintenance.
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce cogs, improve yield, and accelerate time-to-market for
+      die-related productions by coordinating deterministic and agentic
+      decisions across design approvals, sourcing, maintenance, and changeover.
+      and approve the recommended action.
+    confidence: confirmed
+    component_type: display

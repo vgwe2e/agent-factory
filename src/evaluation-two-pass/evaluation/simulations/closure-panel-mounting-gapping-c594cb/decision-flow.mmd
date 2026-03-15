@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled daily planning run or production-order change event from SAP S/4HANA]
+  A --> N1[Stream: STREAMS - Ingest master inputs (orders, materials, capacities, specs, quality history) and validate referential integrity]
+  N1 --> N2[Cortex: Remote Functions (constraint solver) - Run constraint-based scheduler to generate synchronized mounting, gapping, welding sequence, and quality-release recommendations]
+  N2 --> N3{PB: Process Builder - IF + Action Item - Evaluate optimizer output against business rules and thresholds; route exceptions requiring human review}
+  N3 -->|Primary| N4[PB: Process Builder - Transaction + Remote Functions (SAP writeback) - Commit approved schedule and release flags to execution systems and create transactions for tracked changes]
+  N4 --> N5[UI: UI Screen (dashboard + CWB Lifecycle view) - Surface schedule, changeover plan, risk flags and KPIs to planners/operators; allow override where authorized]
+  N5 --> Z1[Outcome: Optimized, synchronized BIW schedule that reduces changeover time and rework, lowers COGS, preserves OTIF targets, and produces exception tickets for high-risk items requiring human review.]
+  N3 -->|Optimizer cannot produce a feasible s...| B1[Generate relaxed alternative schedules with trade-offs (deferred orders, increased changeovers) and create Action Item for planner intervention]
+  B1 --> O1[Outcome: Manual planner selects or adjusts alternatives; system records decision and re-commits selected schedule]
+  O1 --> End[End]
+  N3 -->|High quality-risk flagged for specifi...| B2[Hold release of affected panels, route to inspection/repair workflow, and recommend adjusted sequencing to isolate risk]
+  B2 --> O2[Outcome: Reduced scrap/rework for flagged panels; potential localized delay but improved quality metrics]
+  O2 --> End[End]
+  N3 -->|Material shortage for prioritized ord...| B3[Partially release schedule for available items, generate expedited procurement suggestion via SAP S/4HANA update, and escalate to supply planner]
+  B3 --> O3[Outcome: Critical orders remain prioritized for OTIF; procurement is expedited at potential incremental cost]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,54 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Collect baseline sales, production, backlog, capacity, and macro scenario
+      inputs for modeling
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Create clean, aggregated datasets suitable for multi-year analysis and
+      scenario inputs
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Provide baseline multi-year forecasts and alternative trajectories under
+      macro/tech scenarios
+    confidence: confirmed
+    capability: >-
+      Provide baseline multi-year forecasts and alternative trajectories under
+      macro/tech scenarios
+process_builder:
+  - name: Remote Functions
+    purpose: >-
+      Write approved plan and CAPEX alignment actions to systems of record for
+      downstream execution
+    confidence: inferred
+    node_type: act
+  - name: UI Screens / Notification (CWB Lifecycle)
+    purpose: >-
+      Capture sign-offs, record overrides, and notify supply chain, finance, and
+      product teams
+    confidence: confirmed
+    node_type: review
+agent_teams:
+  - name: Process Builder (Process + Agentic AI + CWB Lifecycle)
+    purpose: >-
+      Run deterministic scenario ensembles, invoke Remote Functions for
+      capacity/CAPEX math, and produce an approval-ready recommendation
+    confidence: confirmed
+    role: >-
+      Run deterministic scenario ensembles, invoke Remote Functions for
+      capacity/CAPEX math, and produce an approval-ready recommendation
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review produce an autonomous, deterministic multi-year (5+ year) vehicle
+      portfolio demand and scenario engine that jointly optimizes demand
+      projections, macroeconomic scenarios, technology shift impacts, and
+      capacity constraints to align production and capex with strategic product
+      shifts. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

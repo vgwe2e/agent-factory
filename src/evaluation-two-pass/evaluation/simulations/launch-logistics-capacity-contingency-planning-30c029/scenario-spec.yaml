@@ -1,0 +1,157 @@
+objective: >-
+  Orchestrate semi-autonomous, multi-echelon logistics decisions during
+  automotive model launches to minimize COGS, protect OTIF service levels, and
+  accelerate time-to-market by coordinating inbound/outbound routing, packaging
+  sequencing, and contingency activation.
+trigger: >-
+  Launch program entry + detection of inbound/outbound disruption (carrier ETA
+  slip, port delay, capacity shortfall) within pre-launch or launch window.
+decision: >-
+  Select and activate the contingency logistics plan (alternate carrier/route,
+  buffer inventory deployment, split shipments, or packaging/sequence
+  adjustments) balancing cost vs. resilience vs. lead time.
+expected_action: >-
+  Process Builder evaluates data signals, scores contingency alternatives via
+  rules and Remote Functions, writes selected plan to SAP S/4HANA (transport
+  orders, inventory reservations, packaging sequences), triggers execution with
+  carriers/3PLs, and issues CWB notifications for required human
+  approvals/overrides.
+expected_outcome: >-
+  Activated contingency minimizes OTIF impact while constraining incremental
+  logistics cost; multi-echelon stock repositions and sequencing adjustments
+  executed in SAP S/4HANA; operations and carrier partners notified; launch
+  timeline preserved or minimally impacted.
+rationale: >-
+  Deterministic process orchestration across multi-echelon inventory, transport,
+  and packaging systems enables repeatable, auditable contingency activations
+  during high-risk launches. Process Builder ensures governed routing and Remote
+  Functions enable secure SAP writebacks; CWB provides human-in-the-loop when
+  trade-offs exceed policy thresholds.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Transportation Management System (TMS)
+    type: TMS
+    status: tbd
+  - name: Warehouse Management System (WMS)
+    type: WMS
+    status: tbd
+  - name: PLM / Launch Schedule
+    type: PLM
+    status: tbd
+  - name: Carrier APIs / 3PL feeds
+    type: External API
+    status: tbd
+  - name: External Risk Feeds (weather, port congestion)
+    type: External Feed
+    status: tbd
+key_inputs:
+  - name: Launch schedule & sequencing
+    source: PLM / SAP S/4HANA
+    purpose: >-
+      Define critical launch milestones, build and shipment sequence
+      constraints, and packaging windows.
+    preferred_stream_type: DDM/Crawlers
+  - name: Inventory balances (multi-echelon)
+    source: SAP S/4HANA
+    purpose: >-
+      Assess on-hand at plants, DCs, and in-transit to determine buffer
+      availability and repositioning candidates.
+    preferred_stream_type: STREAMS
+  - name: Warehouse capacity & slotting
+    source: WMS
+    purpose: >-
+      Validate inbound receiving capacity and packaging throughput constraints
+      at target sites.
+    preferred_stream_type: STREAMS
+  - name: Transportation ETAs and carrier capacity
+    source: TMS / Carrier APIs
+    purpose: >-
+      Detect delays, capacity shortfalls, and alternate routing options with
+      lead time and cost impacts.
+    preferred_stream_type: DDM/Crawlers
+  - name: Packaging constraints & sequence rules
+    source: PLM / Packaging spec repository
+    purpose: >-
+      Ensure feasible packaging/sequence changes that preserve compliance and
+      quality during contingency.
+    preferred_stream_type: DDM/Crawlers
+  - name: Service-level targets and cost/risk policy
+    source: Business rules store
+    purpose: >-
+      Quantify trade-offs (allowed cost delta vs. required OTIF) to drive
+      rule-based decision thresholds.
+  - name: External disruption signals (weather, port closures)
+    source: External Risk Feeds
+    purpose: >-
+      Trigger contingency evaluation and provide severity scoring for decision
+      logic.
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: >-
+      Ingest all launch, inventory, transport, capacity, and external risk feeds
+      on scheduled cadence and on disruption events.
+    stage: ingest
+    component: Process Builder - Stream (STREAMS / DDM)
+    purpose: >-
+      Consolidate authoritative inputs into the Subject Area for launch
+      decisioning.
+  - step: >-
+      Analyze multi-echelon availability, transport impact, packaging
+      constraints and compute alternative contingency options with cost and
+      lead-time estimates.
+    stage: analyze
+    component: Process Builder - Rules + Remote Functions (cost/lead-time calcs)
+    purpose: >-
+      Score alternatives (alternate carrier, buffer pull, split shipments,
+      sequence change) against policy thresholds.
+  - step: >-
+      Decide the recommended contingency plan using IF branching and policy
+      thresholds; escalate to CWB if policy limits exceeded.
+    stage: decide
+    component: Process Builder - IF + CWB Lifecycle
+    purpose: >-
+      Select automated activation vs. human-in-the-loop approval based on
+      cost/resilience trade-offs.
+  - step: >-
+      Act: execute selected plan—create transport orders, inventory
+      reservations, and packaging sequence updates with writebacks to SAP
+      S/4HANA and notify carriers/3PLs.
+    stage: act
+    component: Remote Functions (ERP writeback) + Process Builder - Transaction
+    purpose: Trigger operational changes in source systems to effect contingency.
+  - step: >-
+      Notify operations, launch management, and carriers and surface decision
+      rationale and key KPIs on launch dashboard for review.
+    stage: notify
+    component: Process Builder - Notification + UI Screen (dashboard)
+    purpose: >-
+      Ensure traceability, stakeholder awareness, and provide interface for
+      overrides.
+branches:
+  - condition: >-
+      Insufficient warehouse or transport capacity for any automated contingency
+      and cost delta within policy threshold
+    response: >-
+      Activate split shipments with prioritized SKUs and schedule staggered
+      inbound; adjust packaging sequence to reduce throughput demand.
+    outcome: >-
+      Service level maintained for highest priority SKUs; incremental cost
+      controlled via predefined policy.
+  - condition: Cost delta to meet OTIF exceeds policy threshold
+    response: >-
+      Route decision to CWB Lifecycle for human approval; include recommended
+      alternative with full cost/service trade-off and escalate to launch
+      leadership.
+    outcome: >-
+      Human-in-the-loop accepts higher-cost contingency or selects alternative
+      (e.g., delayed shipment) with documented rationale.
+  - condition: No feasible contingency (carrier capacity and inventory exhausted)
+    response: >-
+      Trigger exception workflow to enact launch mitigation plan: prioritize
+      production sequencing changes, invoke external buffer suppliers, and
+      update launch timeline scenarios.
+    outcome: >-
+      Launch plan adjusted with minimized customer impact; executive
+      stakeholders informed and contingency recovery plan initiated.

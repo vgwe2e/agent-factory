@@ -1,0 +1,38 @@
+decision: Assess and coordinate supply chain readiness and resource allocation for NPI.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New product introduction (NPI) announcement.
+  parameters:
+    objective: >-
+      Optimize the end-to-end NPI network for Ford by synchronizing capacity
+      validation, pilot build coordination, ramp-up monitoring, and post-launch
+      optimization.
+    key_inputs:
+      - NPI Announcement
+      - Supply Chain Infrastructure Data
+      - Pilot Build Data
+      - Production and Logistics Capacity Data
+      - Ramp-Up Monitoring Data
+      - Post-Launch Optimization Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate the assessment, coordination, validation, monitoring, and
+    optimization of the supply chain for NPI.
+  outcome: >-
+    Minimized COGS during launch, protected working capital, and ensured on-time
+    delivery across suppliers, plants, and distributors.
+  affected_components:
+    - Process Builder
+    - Process Builder
+    - CWB Lifecycle
+    - Process Builder
+    - Dashboard
+rationale: >-
+  Leverage Aera's deterministic processes to rapidly and autonomously make
+  decisions that reduce ramp costs and stockouts during product introductions.

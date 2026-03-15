@@ -1,0 +1,41 @@
+decision: >-
+  Determine optimal press setup, tooling installation, production run
+  configuration, quality adjustments, and post-stamping handling steps.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Start of a new production run or changeover event.
+  parameters:
+    objective: >-
+      Synchronize press setup, stamping production, in-process quality
+      monitoring, and post-stamping handling to minimize COGS, reduce
+      changeovers, prevent defects, and improve OTIF.
+    key_inputs:
+      - Production Specifications
+      - First-Piece Inspection Results
+      - Stamping Production Metrics
+      - Quality Adjustments
+      - Production Data
+      - Post-Stamping Handling Instructions
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Execute optimized press setup, approve first-piece inspection, configure
+    stamping production runs, adjust in-process quality, collect production
+    data, and handle parts post-stamping.
+  outcome: >-
+    Minimized COGS, reduced changeovers, prevented defects, improved OTIF, and
+    optimized overall production efficiency.
+  affected_components:
+    - DDM/Crawlers
+    - Action Item
+    - Agentic AI
+    - Dashboard
+rationale: >-
+  By leveraging real-time data and AI-driven insights, the solution will enable
+  synchronized and efficient press operations, leading to significant cost
+  savings and improved quality.

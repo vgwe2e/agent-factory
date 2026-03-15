@@ -1,0 +1,48 @@
+decision: >-
+  Release the final daily production schedule to operations, track production
+  progress and trigger corrective actions for deviations, analyze deviations to
+  determine root causes and corrective actions, plan and schedule rework/repair
+  activities, optimize changeover plans to minimize production costs.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Daily production schedule generation and continuous production progress
+    monitoring.
+  parameters:
+    objective: >-
+      Reduce COGS, improve on-time delivery, and lower working capital by
+      optimizing production schedules and monitoring execution across
+      multi-plant automotive production.
+    key_inputs:
+      - Daily Production Schedule
+      - Production Progress Data
+      - Deviation Reports
+      - Rework/Repair Requirements
+      - Changeover Plans
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Finalize and release daily production schedule, continuously monitor
+    production progress and report deviations, analyze deviations and implement
+    corrective actions, schedule rework/repair activities efficiently, optimize
+    changeover plans for minimal production costs.
+  outcome: >-
+    Improved on-time delivery, reduced COGS, and optimized working capital
+    through efficient production scheduling and monitoring.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - RCA Service
+    - CWB Lifecycle
+    - Notification
+    - AutoML
+    - Dashboard
+rationale: >-
+  Unify daily schedule release, progress tracking, adherence analytics, rework
+  planning, and changeover optimization to ensure real-time visibility and
+  autonomous exception handling.

@@ -1,0 +1,73 @@
+objective: >-
+  Enhance customer experience and technical support for connected services by
+  autonomously coordinating onboarding, diagnostics, and real-time
+  communications to maximize revenue, reduce service downtime, and improve
+  retention metrics.
+trigger: Customer initiates onboarding process or reports a connectivity issue.
+decision: >-
+  Choose optimal onboarding and activation strategy for connected services,
+  determine remediation actions based on remote diagnostics, decide escalation
+  pathways for critical service failures, and plan proactive communication
+  strategies for service interruptions.
+expected_action: >-
+  Guide customers through onboarding and activation, recommend and execute
+  remediation actions, escalate critical issues to appropriate teams, and notify
+  customers about service interruptions.
+expected_outcome: >-
+  Improved customer satisfaction, reduced downtime, increased activation
+  revenue, and decreased churn.
+rationale: >-
+  Autonomous coordination across onboarding, diagnostics, and communications
+  will enhance the overall customer experience and operational efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Customer Onboarding Data
+    source: SAP S/4HANA
+    purpose: Identify customer preferences and service needs
+    preferred_stream_type: STREAMS
+  - name: Diagnostic Logs
+    source: SAP S/4HANA
+    purpose: Analyze connectivity issues
+    preferred_stream_type: STREAMS
+  - name: Service Interruption Alerts
+    source: SAP S/4HANA
+    purpose: Trigger proactive notifications
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Collect customer onboarding data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Gather necessary information for onboarding
+  - step: Analyze diagnostic logs
+    stage: analyze
+    component: RCA Service
+    purpose: Identify connectivity issues
+  - step: Recommend remediation actions
+    stage: decide
+    component: Agentic AI
+    purpose: Propose solutions based on diagnostics
+  - step: Execute remediation plan
+    stage: act
+    component: Remote Functions
+    purpose: Implement recommended actions
+  - step: Escalate critical issues
+    stage: act
+    component: Process Builder
+    purpose: Route critical issues to appropriate teams
+  - step: Notify customers about service interruptions
+    stage: notify
+    component: Notification
+    purpose: Maintain customer communication
+branches:
+  - condition: High severity issue detected
+    response: Auto-escalate to engineering team
+    outcome: Immediate resolution
+  - condition: No actionable insights from diagnostics
+    response: Request human intervention
+    outcome: Manual troubleshooting
+  - condition: Customer prefers self-service
+    response: Provide detailed troubleshooting guide
+    outcome: Empower customer self-resolution

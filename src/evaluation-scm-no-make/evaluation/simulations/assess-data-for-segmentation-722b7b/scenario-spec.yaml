@@ -1,0 +1,154 @@
+objective: >-
+  Create deterministic SKU-Location demand segments (ABC/XYZ-style blocs) and
+  execute autonomous, revenue-driven allocation of production and inventory at
+  the segment level with touchless execution and rapid rollback capability.
+trigger: >-
+  Scheduled re-segmentation cadence (e.g., weekly) or detection of significant
+  demand-pattern shift from monitoring (Cortex/streamed alerts).
+decision: >-
+  Select segmentation profile thresholds and attribute weights to classify
+  SKU-location pairs into demand blocs; decide allocation volumes per bloc
+  balancing revenue priority, service targets, and capacity constraints (L4
+  Decision: segmentation profile thresholds and attribute criteria).
+expected_action: >-
+  Process Builder orchestrates: ingest master & transaction data via
+  STREAMS/DDM, apply deterministic segmentation rules, compute segment-level
+  allocation using Rules + Remote Functions, write allocation orders/changes to
+  S4 and Kinaxis, propagate picks/ship updates to WMS/TMS; surface results to
+  operations dashboard and enable one-click rollback via transactional control.
+expected_outcome: >-
+  Precise SKU-location demand blocs driving optimized, touchless allocations
+  that prioritize revenue and service while respecting capacity; downstream
+  ERP/planning/WMS/TMS updated automatically; exceptions routed for review;
+  rapid rollback available to revert allocations if needed.
+rationale: >-
+  Deterministic segmentation (rule-based ABC/XYZ at SKU-location granularity)
+  produces stable, explainable demand blocs that simplify allocation logic and
+  enable scalable, autonomous writebacks. Using Process Builder + STREAMS for
+  orchestration and Remote Functions for ERP/plan writeback ensures robust
+  execution and controlled rollback while integrating enterprise planning and
+  execution systems (S4, Kinaxis, WMS/TMS).
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/planning
+    status: identified
+  - name: Kinaxis (FG Safety Stock Modeling / Rebalancing / Order Expediting)
+    type: planning_services
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: forecasting
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL integrations)
+    type: TMS/3PL
+    status: identified
+key_inputs:
+  - name: Sales history / shipments (SKU x location x time)
+    source: S4 / SAS
+    purpose: Primary demand signal for segmentation and segment demand sizing
+    preferred_stream_type: scheduled_batch
+  - name: SKU master / product attributes
+    source: S4
+    purpose: >-
+      Provide hierarchies, product family, revenue weight, lead times for
+      segmentation and allocation prioritization
+    preferred_stream_type: scheduled_batch
+  - name: Location master / DC attributes (capacity, service tier)
+    source: S4 / Kinaxis
+    purpose: Define location constraints and service priority used in allocation rules
+    preferred_stream_type: scheduled_batch
+  - name: Inventory on-hand and available-to-promise
+    source: Blue Yonder WMS / S4
+    purpose: >-
+      Feed available supply for allocation calculations and rollback
+      reconciliation
+    preferred_stream_type: scheduled_batch
+  - name: Segmentation rule set (thresholds, attribute weights)
+    source: Process Builder configuration / business input
+    purpose: >-
+      Deterministic rules that assign SKU-location to demand blocs (ABC/XYZ
+      parameters)
+  - name: Capacity / production constraints
+    source: Kinaxis RapidResponse
+    purpose: Limiters for allocation to ensure plan feasibility
+    preferred_stream_type: api
+  - name: Safety stock and replenishment policy outputs
+    source: Kinaxis FG Safety Stock Modeling
+    purpose: >-
+      Incorporate safety stock settings into allocation and replenishment
+      decisions
+    preferred_stream_type: scheduled_batch
+  - name: Transport capacity and SLA inputs
+    source: Uber Freight TMS
+    purpose: Constrain shipping-based allocation and influence prioritization
+    preferred_stream_type: api
+happy_path:
+  - step: Ingest authoritative masters and transactions into the Subject Area
+    stage: ingest
+    component: STREAMS (DDM/Crawlers)
+    purpose: >-
+      Consolidate sales, inventory, SKU and location data into curated subject
+      tables for segmentation
+  - step: >-
+      Execute deterministic segmentation rules to assign SKU-location pairs into
+      demand blocs
+    stage: analyze
+    component: Process Builder (Rules node)
+    purpose: >-
+      Run ABC/XYZ-style rule engine using configured thresholds and attribute
+      weights to produce segments
+  - step: >-
+      Compute segment-level allocation volumes honoring revenue priority and
+      capacity
+    stage: decide
+    component: Process Builder (IF + Remote Functions)
+    purpose: >-
+      Apply allocation logic and invoke Remote Functions for complex
+      calculations or revenue-weighted allocation
+  - step: >-
+      Write allocations and replenishment orders to execution and planning
+      systems
+    stage: act
+    component: >-
+      Remote Functions (ERP writeback) -> S4, Kinaxis updates, WMS/TMS
+      notifications
+    purpose: >-
+      Perform transactional updates to S4 and Kinaxis and push pick/ship
+      instructions to WMS/TMS with rollback tokens
+  - step: Surface results and provide operational rollback/exception handling
+    stage: surface
+    component: UI Screen (dashboard) + CWB Lifecycle snapshot / Action Item
+    purpose: >-
+      Show allocation outcomes, KPIs, exceptions and allow one-click rollback or
+      human review via Action Item/CWB
+branches:
+  - condition: Data quality failures detected (missing sales, inventory mismatch)
+    response: >-
+      Process Builder invokes Data Quality & Validation (STREAMS) and creates
+      Action Item/CWB for human review; pause allocation writebacks and
+      optionally run conservative fallback allocations
+    outcome: >-
+      Allocation deferred until data reconciled or conservative allocations
+      applied to protect service levels
+  - condition: Computed allocations exceed production or transport capacity constraints
+    response: >-
+      Process Builder calls Kinaxis RapidResponse via Remote Functions to
+      re-optimize allocations by revenue priority; if re-optimization fails,
+      flag for manual intervention via Action Item
+    outcome: >-
+      Rebalanced allocation that respects capacity or escalation to planners for
+      exceptions
+  - condition: >-
+      Rollback requested within retention window or automated rollback rule
+      triggered
+    response: >-
+      Process Builder executes Rollback Transaction node to revert writes in
+      S4/Kinaxis and notify downstream systems; surface rollback audit in UI
+    outcome: >-
+      Touchless rapid rollback completed and systems restored to prior state
+      with audit trail

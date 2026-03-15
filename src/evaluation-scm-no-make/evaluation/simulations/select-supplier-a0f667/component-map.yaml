@@ -1,0 +1,45 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Ingest shortage event from Kinaxis and forecast delta from SAS to trigger
+      spot buy workflow
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Remote Functions
+    purpose: >-
+      Fetch market prices, contract constraints (S4/CLM), inventory and
+      transport costs; compute landed cost and reliability score per supplier
+    confidence: inferred
+    capability: >-
+      Fetch market prices, contract constraints (S4/CLM), inventory and
+      transport costs; compute landed cost and reliability score per supplier
+process_builder:
+  - name: CWB Lifecycle
+    purpose: >-
+      Present recommended preferred or alternate supplier, negotiated price, and
+      rationale for accept/reject/override
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: >-
+      Write PO to S4 (Advanced ATP), push booking to Uber Freight TMS / 3PL, and
+      notify supplier electronically
+    confidence: confirmed
+    node_type: act
+  - name: Notification
+    purpose: >-
+      Send confirmations to procurement, supply planners, and finance with links
+      to UI Screen for details
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end spot buy orchestration to minimize cogs and
+      ebitda impact by selecting optimal supplier and pricing using touchless
+      demand signals, real-time market data, and contract terms. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

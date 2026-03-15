@@ -1,0 +1,135 @@
+objective: >-
+  Autonomously plan and coordinate end-to-end NPI production activities
+  (pre-production, ramp-up, supplier readiness, pilot builds, end-of-life) to
+  minimize COGS, accelerate time-to-market, improve OTIF and optimize working
+  capital during vehicle launch cycles.
+trigger: >-
+  NPI program launch event or updated launch volume/target recorded in SAP
+  S/4HANA (or scheduled ramp planning cadence).
+decision: >-
+  Ramp up launch volumes by detailing sequencing and capacity alignments across
+  plants and lines, balancing demand with production capability and cost.
+expected_action: >-
+  Orchestrate data ingestion, deterministic optimization (capacity &
+  sequencing), human-in-the-loop review, and ERP writeback to SAP S/4HANA to
+  operationalize approved NPI ramp plans and downstream production orders.
+expected_outcome: >-
+  Automated, validated ramp plans executed in SAP: reduced COGS from optimized
+  allocations, faster time-to-market through coordinated sequencing, improved
+  OTIF for launch SKUs, and reduced working capital via staged inventory and
+  supplier synchronization.
+rationale: >-
+  Deterministic optimization + process orchestration is best for constrained,
+  rules-driven NPI ramp problems with heavy ERP integration and multi-echelon
+  coordination. Process Builder handles orchestration, Remote Functions run the
+  optimizer and ERP writebacks, STREAMS/DDM prepare reliable inputs, and CWB
+  Lifecycle/UI Screens provide controlled human approvals. High implementation
+  complexity is justified by material cost, lead-time and cross-plant benefits
+  during launches.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Manufacturing Execution System (MES)
+    status: tbd
+  - name: Supplier Portal / SRM
+    status: tbd
+  - name: Plant Capacity Master / Line Config DB
+    status: tbd
+  - name: Planning Data Warehouse / Subject Area
+    status: tbd
+key_inputs:
+  - name: Launch volume targets (by model/variant/timebucket)
+    source: SAP S/4HANA Sales / Launch orders
+    purpose: Demand to be allocated across plants/lines during ramp
+    preferred_stream_type: batch (daily)
+  - name: Bill of Materials (BOM) & Routings
+    source: SAP S/4HANA (MM/PP)
+    purpose: >-
+      Component requirements, lead times, line-specific operations and cycle
+      times
+    preferred_stream_type: batch (daily)
+  - name: Plant/line capacity and shift schedules
+    source: Plant Capacity Master / MES
+    purpose: Feasible production capacity, changeover windows and constraints
+    preferred_stream_type: delta-batch
+  - name: Supplier readiness & lead times
+    source: Supplier Portal / SRM
+    purpose: Supplier constraints, readiness dates and external capacity availability
+    preferred_stream_type: delta-batch
+  - name: Historical ramp profiles & pilot build outcomes
+    source: Planning Data Warehouse / Subject Areas
+    purpose: >-
+      Reference profiles, risk factors and tune deterministic
+      constraints/parameters
+  - name: Cost structures and COGS drivers
+    source: SAP S/4HANA Costing / Finance
+    purpose: >-
+      Objective function inputs for optimization (COGS, transportation,
+      inventory holding)
+    preferred_stream_type: batch (weekly)
+happy_path:
+  - step: >-
+      Ingest master and transactional NPI inputs from SAP, MES and supplier
+      systems; run data quality checks and standardize schemas.
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate BOM, launch volumes, capacity, supplier readiness into
+      canonical tables
+  - step: >-
+      Transform and assemble planning subject area for ramp modeling
+      (plant-line-sku-timebucket facts, constraints, cost parameters).
+    stage: analyze
+    component: STREAMS -> Subject Areas
+    purpose: Create curated dataset for deterministic optimizer and reporting
+  - step: >-
+      Execute deterministic optimizer (sequencing, capacity allocation, supplier
+      allocations, cost minimization) with business constraints and scenario
+      variants.
+    stage: analyze
+    component: Remote Functions (optimizer)
+    purpose: Generate feasible, cost-aware ramp plans and alternative scenarios
+  - step: >-
+      Present recommended ramp plan and key KPIs to launch stakeholders for
+      review and accept/request changes via a CWB review workbench.
+    stage: decide
+    component: Process Builder + CWB Lifecycle + UI Screen
+    purpose: Enable human-in-the-loop approval and capture exceptions/overrides
+  - step: >-
+      Apply approved plan: write production orders, push schedule and component
+      releases back to SAP S/4HANA and notify suppliers of commit windows.
+    stage: act
+    component: Remote Functions (ERP writeback)
+    purpose: Operationalize plan across ERP and supplier systems
+  - step: >-
+      Surface launch KPIs (OTIF, COGS delta, working capital impact, ramp
+      adherence) and alert owners on deviations for ongoing monitoring.
+    stage: notify
+    component: Notification + UI Screen (dashboard)
+    purpose: >-
+      Provide transparency and trigger exception workflows when performance
+      deviates
+branches:
+  - condition: Stakeholders approve recommended plan
+    response: >-
+      Process Builder proceeds to ERP writeback and supplier notifications;
+      schedule locked for execution.
+    outcome: Plan executed; monitoring begins and KPIs tracked in Subject Areas
+  - condition: Stakeholders request changes or tighter constraints
+    response: >-
+      CWB Lifecycle routes inputs/overrides back to Process Builder which
+      re-invokes Remote Functions optimizer with updated constraints and
+      generates new plan variant.
+    outcome: >-
+      Re-optimized plan produced and re-presented for approval (iterative loop
+      until acceptance)
+  - condition: >-
+      Critical data quality or missing supplier readiness information detected
+      during ingest/validation
+    response: >-
+      Process Builder triggers Data Quality & Validation tasks in STREAMS, sends
+      notifications to data owners and pauses decision until resolved.
+    outcome: >-
+      Ingestion paused and decision deferred until trusted inputs are available;
+      prevents flawed plan execution

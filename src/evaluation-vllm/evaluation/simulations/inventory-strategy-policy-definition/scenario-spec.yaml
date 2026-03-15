@@ -1,0 +1,81 @@
+objective: >-
+  Optimize inventory strategy and policy definition across the automotive supply
+  network to reduce working capital, lower COGS, and improve OTIF.
+trigger: Periodic review of inventory levels and policies.
+decision: >-
+  Recalibrate safety stock levels, classify inventory, establish VMI policies,
+  and design consignment programs.
+expected_action: >-
+  Adjust safety stock levels, apply differentiated inventory policies, define
+  VMI policies, and design consignment programs.
+expected_outcome: >-
+  Reduced working capital, lower COGS, improved OTIF, and optimized inventory
+  management.
+rationale: >-
+  Jointly governing stock levels, segmentation-driven replenishment, and
+  supplier/partner inventory programs will enhance overall supply chain
+  efficiency and financial performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Determine current stock levels for safety stock recalculation.
+  - name: Demand Variability
+    source: SAP S/4HANA
+    purpose: Assess demand patterns for safety stock adjustments.
+  - name: Lead Times
+    source: SAP S/4HANA
+    purpose: Evaluate lead times for safety stock adjustments.
+  - name: Service Targets
+    source: SAP S/4HANA
+    purpose: Set service level targets for safety stock adjustments.
+  - name: Inventory Value
+    source: SAP S/4HANA
+    purpose: Classify inventory items for ABC/XYZ segmentation.
+  - name: Inventory Volatility
+    source: SAP S/4HANA
+    purpose: Classify inventory items for ABC/XYZ segmentation.
+  - name: Strategic Suppliers
+    source: SAP S/4HANA
+    purpose: Identify suppliers for VMI policies.
+  - name: Consignment Items
+    source: SAP S/4HANA
+    purpose: Determine items for consignment programs.
+happy_path:
+  - step: Retrieve current inventory levels and demand variability from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for safety stock recalculation.
+  - step: Calculate optimal safety stock levels using Safety Stock Service.
+    stage: analyze
+    component: Safety Stock Service
+    purpose: Determine new safety stock levels.
+  - step: Classify inventory items into ABC/XYZ segments using AutoML.
+    stage: analyze
+    component: AutoML
+    purpose: Apply differentiated inventory policies.
+  - step: Define VMI policies with strategic suppliers using Process Builder.
+    stage: decide
+    component: Process Builder
+    purpose: Establish VMI policies.
+  - step: Design consignment programs using Process Builder.
+    stage: decide
+    component: Process Builder
+    purpose: Develop consignment programs.
+  - step: Review and approve changes via CWB Lifecycle.
+    stage: review
+    component: CWB Lifecycle
+    purpose: Ensure human-in-the-loop validation.
+branches:
+  - condition: Safety stock levels exceed budget constraints.
+    response: Adjust service targets and re-run safety stock calculation.
+    outcome: Optimized safety stock within budget.
+  - condition: Strategic suppliers refuse VMI policy terms.
+    response: Negotiate revised terms or revert to traditional replenishment methods.
+    outcome: Revised VMI policies or traditional replenishment.
+  - condition: Consignment program design fails to meet financial settlement terms.
+    response: Revise financial terms and re-evaluate consignment program.
+    outcome: Revised consignment program terms.

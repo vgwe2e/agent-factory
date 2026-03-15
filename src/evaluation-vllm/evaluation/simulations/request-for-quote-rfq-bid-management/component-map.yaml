@@ -1,0 +1,24 @@
+streams:
+  - name: DDM/Crawler
+    purpose: To gather necessary data for sourcing packages.
+    confidence: inferred
+    type: DDM/Crawler
+cortex:
+  - name: Process Builder
+    purpose: To create detailed RFQs with specifications and volumes.
+    confidence: confirmed
+    capability: To create detailed RFQs with specifications and volumes.
+process_builder:
+  - name: Process Builder
+    purpose: To initiate the RFQ process and manage supplier communications.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate bom sourcing, rfq release, supplier clarification, bid
+      analysis, and cost breakdowns to optimize cogs and cash flow in automotive
+      sourcing. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

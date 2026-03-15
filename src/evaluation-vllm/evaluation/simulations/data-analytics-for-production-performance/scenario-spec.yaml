@@ -1,0 +1,70 @@
+objective: >-
+  Link real-time production data, KPI orchestration, predictive maintenance,
+  cost-of-quality insights, and continuous improvement to reduce COGS, improve
+  EBITDA, and strengthen working capital.
+trigger: Real-time production data availability and periodic KPI review cycles.
+decision: >-
+  Decide what real-time production data to surface and how to respond to
+  anomalies to support immediate operational decisions.
+expected_action: Surface real-time production data and respond to anomalies.
+expected_outcome: >-
+  Reduced COGS, improved EBITDA, strengthened working capital, optimized line
+  sequencing, and enhanced OTIF-enabled production planning.
+rationale: >-
+  Leveraging real-time data and predictive analytics to drive operational
+  excellence and financial performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Real-Time Production Data
+    source: SAP S/4HANA
+    purpose: Immediate operational insights
+  - name: KPI Metrics
+    source: SAP S/4HANA
+    purpose: Monitor critical production metrics
+  - name: Historical Equipment Data
+    source: SAP S/4HANA
+    purpose: Predictive maintenance
+  - name: Quality Data
+    source: SAP S/4HANA
+    purpose: Cost-of-quality analysis
+  - name: Process Data
+    source: SAP S/4HANA
+    purpose: Digital twin simulation
+happy_path:
+  - step: Collect real-time production data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Immediate operational insights
+  - step: Generate KPI dashboards
+    stage: analyze
+    component: UI Screens
+    purpose: Monitor critical production metrics
+  - step: Forecast equipment failures and quality issues
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predictive maintenance
+  - step: Analyze cost-of-quality
+    stage: analyze
+    component: AutoML
+    purpose: Cost-saving measures
+  - step: Simulate process changes
+    stage: analyze
+    component: Digital Twin
+    purpose: Process optimization
+  - step: Prioritize continuous improvement projects
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Efficiency gains
+branches:
+  - condition: Anomaly detected in real-time data
+    response: Alert and initiate immediate corrective action
+    outcome: Minimized downtime
+  - condition: Significant deviation in KPIs
+    response: Generate alerts and recommend corrective actions
+    outcome: Optimized working capital
+  - condition: High probability of equipment failure
+    response: Schedule preventive maintenance
+    outcome: Reduced COGS

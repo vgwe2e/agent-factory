@@ -1,0 +1,147 @@
+objective: >-
+  Manage purchase order (PO) changes — quantity, cost, dates, amounts,
+  descriptions, cost objects — and orchestrate approvals and writebacks while
+  balancing immediate spend, delivery risk, and contract terms.
+trigger: >-
+  PO change request from procurement user or supplier, or automated signal from
+  supplier performance / shortage propagation (Kinaxis/SAS) indicating need to
+  modify an open PO.
+decision: >-
+  Choose PO change and approval path (auto-approve, routed approval, or reject)
+  by evaluating change magnitude, contract terms, budget impact, delivery risk,
+  and shortage urgency.
+expected_action: >-
+  Agentic AI (Agent Team) synthesizes inputs, proposes ranked change options
+  with recommended approval route, routes recommendation via Process Builder +
+  CWB Lifecycle for human-in-the-loop approvals, then Remote Functions writes
+  approved PO updates to S4.
+expected_outcome: >-
+  PO updates are applied in S4 for approved changes, exceptions are routed for
+  manual review, delivery and spend risk are mitigated through coordinated
+  coordination with Kinaxis signals and procurement approvals, and stakeholders
+  are notified.
+rationale: >-
+  Agentic route suits unstructured change requests and multi-criteria trade-offs
+  (cost vs delivery vs contracts). Use Process Builder to orchestrate checks,
+  CWB Lifecycle for human approvals, Remote Functions for secure S4 writeback,
+  and platform data services (DDM/Crawlers, STREAMS, Cortex/RCA) to evaluate
+  supplier performance and shortage impact.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis
+    type: APS
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: Logistics Provider
+    status: identified
+key_inputs:
+  - name: PO Change Request (fields and delta)
+    source: Supplier Portal / Procurement UI / S4 change note
+    purpose: >-
+      Defines requested field changes (qty, cost, dates, amount, description,
+      cost objects) and initiator context
+    preferred_stream_type: DDM/Crawlers
+  - name: Current PO Master Data
+    source: S4 (PO header/line, payment terms, contract references)
+    purpose: Baseline PO state for diffing, validation, and impact calculation
+    preferred_stream_type: DDM/Crawlers
+  - name: Contract Terms & Approved Pricing
+    source: S4 / Contract Management (if available)
+    purpose: >-
+      Validate change against contractual constraints, change fees, and approval
+      thresholds
+    preferred_stream_type: DDM/Crawlers
+  - name: Supplier Performance Signals
+    source: >-
+      SAS / Kinaxis (delivery reliability, lead-time variance, quality
+      incidents)
+    purpose: >-
+      Assess delivery risk and need for expedited or conservative change
+      handling
+    preferred_stream_type: STREAMS
+  - name: Shortage & Inventory Impact
+    source: Kinaxis RapidResponse (shortage propagation / safety stock triggers)
+    purpose: >-
+      Quantify downstream fulfillment risk and urgency for PO increases or
+      expediting
+    preferred_stream_type: STREAMS
+  - name: Budget / Spend Availability
+    source: S4 FI / Procurement budgets
+    purpose: Determine financial approval path and stop-gates for cost increases
+    preferred_stream_type: DDM/Crawlers
+  - name: Forecast / Demand Signal
+    source: Advanced Statistical Forecasting in SAS
+    purpose: Inform quantity change justification relative to demand outlook
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: Ingest change request and relevant PO + contract data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Collect requested change, current PO, contract, budget and recent supplier
+      metrics
+  - step: Analyze impact on delivery risk, inventory, and spend
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Run rules and short-run simulations using Kinaxis shortage signals and SAS
+      forecasts to score impacts
+  - step: Agentic synthesis and recommendation generation
+    stage: decide
+    component: Agent Team
+    purpose: >-
+      LLM agent compiles options (approve, escalate, reject), ranks by
+      risk/cost/contract fit, and selects approval route
+  - step: Route recommendation for approval and capture decision
+    stage: act
+    component: Process Builder / CWB Lifecycle
+    purpose: >-
+      Automate approvals (auto-approve thresholds) or create CWB for human
+      review and record decision
+  - step: Execute approved PO changes and notify stakeholders
+    stage: act
+    component: Remote Functions / Notification
+    purpose: >-
+      Write updates to S4, send notifications to procurement, supplier, and
+      impacted planners
+  - step: Surface audit trail and review outcome
+    stage: review
+    component: UI Screen / Subject Areas
+    purpose: Provide a decision log, change history, and KPIs for post-change review
+branches:
+  - condition: Change exceeds financial or contractual auto-approval thresholds
+    response: >-
+      Process Builder routes to multi-level approvals via CWB Lifecycle
+      (escalate to finance / legal)
+    outcome: >-
+      Change held pending required approvals; audit trail captured; decision
+      later triggers Remote Functions on approval
+  - condition: High delivery risk / shortage urgency detected by Kinaxis
+    response: >-
+      Agent Team recommends expedited approval path and optional partial
+      acceptance (e.g., split shipments); Process Builder triggers expedited
+      notifications and prioritizes approval
+    outcome: >-
+      PO modified to mitigate stockout risk (expedite or increase qty) with
+      approvals captured post-facto if within policy
+  - condition: Supplier rejects proposed change or change violates contract terms
+    response: >-
+      Agent Team surfaces alternatives (alternative suppliers, interim
+      transfers) and creates exception CWB for procurement negotiation
+    outcome: >-
+      Negotiation workflow initiated; PO change not written until negotiated
+      resolution; stakeholders alerted

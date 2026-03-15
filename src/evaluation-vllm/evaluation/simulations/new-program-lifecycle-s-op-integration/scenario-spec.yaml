@@ -1,0 +1,71 @@
+objective: Unified decision intelligence for S&OP integration across lifecycle events
+trigger: >-
+  New vehicle launch, EOL planning, parts transition, engineering change,
+  marketing campaign initiation
+decision: >-
+  Choose optimal production and capacity plans, procurement strategies, and
+  forecast adjustments for S&OP
+expected_action: >-
+  Automate end-to-end S&OP decisions to reduce COGS, protect revenue, and
+  improve working capital
+expected_outcome: >-
+  Reduced costs, protected revenue, improved working capital through coordinated
+  demand, supply, and financial planning
+rationale: >-
+  Automating S&OP decisions across lifecycle events ensures consistent and
+  optimized planning, reducing manual effort and improving financial outcomes
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: New Vehicle Launch Data
+    source: SAP S/4HANA
+    purpose: To inform ramp-up production and capacity planning
+  - name: EOL Vehicle Data
+    source: SAP S/4HANA
+    purpose: To determine end-of-life production and procurement plans
+  - name: Component Run-Out Data
+    source: SAP S/4HANA
+    purpose: To manage component run-out and transition to service parts
+  - name: Engineering Change Data
+    source: SAP S/4HANA
+    purpose: To assess and quantify the impact of engineering changes on demand
+  - name: Marketing Campaign Data
+    source: SAP S/4HANA
+    purpose: To incorporate marketing campaign plans into S&OP
+happy_path:
+  - step: Ingest new vehicle launch data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and prepare data for analysis
+  - step: Analyze ramp-up production and capacity plans
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Generate forecast and optimize production plans
+  - step: Decide on optimal production and capacity plan
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Present recommendations for human review and approval
+  - step: Act on approved production and capacity plan
+    stage: act
+    component: Remote Functions
+    purpose: Execute the chosen plan and update SAP S/4HANA
+  - step: Review and monitor plan execution
+    stage: review
+    component: Cortex Monitoring
+    purpose: Track forecast accuracy and plan performance
+  - step: Notify stakeholders of plan status
+    stage: notify
+    component: Notification
+    purpose: Communicate plan progress and outcomes
+branches:
+  - condition: Insufficient data for accurate forecasting
+    response: Request additional data from SAP S/4HANA
+    outcome: Delayed decision until more data is available
+  - condition: Significant engineering change detected
+    response: Reassess S&OP inputs and adjust production plans
+    outcome: Updated S&OP plans reflecting engineering changes
+  - condition: Marketing campaign impact exceeds thresholds
+    response: Adjust forecast and allocation accordingly
+    outcome: Revised S&OP plans incorporating marketing impact

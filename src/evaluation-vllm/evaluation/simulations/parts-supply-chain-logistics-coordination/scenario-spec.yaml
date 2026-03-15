@@ -1,0 +1,76 @@
+objective: >-
+  Optimize recall parts supply chain and logistics coordination to reduce
+  working capital, prevent stockouts, and improve OTIF while lowering COGS and
+  EBITDA.
+trigger: Start of recall campaign or periodic inventory review.
+decision: >-
+  Forecast recall parts demand, manage inventory levels, coordinate
+  distribution, handle defective part returns, and dispose of obsolete/surplus
+  parts.
+expected_action: >-
+  Generate purchase orders, maintain inventory levels, coordinate logistics,
+  capture returns, and decide disposition paths.
+expected_outcome: >-
+  Reduced working capital, minimized stockouts, improved OTIF, lower COGS, and
+  optimized EBITDA.
+rationale: >-
+  Jointly optimizing forecasting, inventory positioning, and logistics decisions
+  will streamline the recall parts supply chain, ensuring timely delivery and
+  efficient resource utilization.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Recall Campaign Data
+    source: SAP S/4HANA
+    purpose: To forecast demand and generate purchase orders.
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: To manage inventory levels across locations.
+  - name: Logistics Costs
+    source: SAP S/4HANA
+    purpose: To coordinate distribution and expediting decisions.
+  - name: Defective Part Returns
+    source: SAP S/4HANA
+    purpose: To capture returns for engineering analysis.
+  - name: Obsolete/Surplus Parts
+    source: SAP S/4HANA
+    purpose: To decide disposition paths for optimization.
+happy_path:
+  - step: Forecast recall parts demand using historical data and campaign timelines.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict required parts volume for recall campaigns.
+  - step: Generate purchase orders to suppliers based on forecasted demand.
+    stage: act
+    component: Remote Functions
+    purpose: Place orders with suppliers considering lead times and costs.
+  - step: Monitor inventory levels across locations to ensure adequate stock.
+    stage: analyze
+    component: STREAMS
+    purpose: Maintain optimal inventory levels to avoid stockouts and obsolescence.
+  - step: Coordinate logistics to distribute recall parts to dealerships.
+    stage: act
+    component: Process Builder
+    purpose: Ensure timely delivery while minimizing logistics costs.
+  - step: Capture defective part returns for engineering analysis.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect return data for further disposition decisions.
+  - step: Decide disposition paths for obsolete/surplus parts.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      Optimize working capital by choosing store, scrap, recycle, or return
+      options.
+branches:
+  - condition: Inventory levels fall below threshold.
+    response: Trigger emergency order from suppliers.
+    outcome: Prevent stockouts and ensure timely delivery.
+  - condition: Logistics costs exceed budget.
+    response: Re-optimize distribution routes and methods.
+    outcome: Minimize logistics expenses while maintaining OTIF.
+  - condition: High volume of defective part returns.
+    response: Initiate engineering analysis and expedite remediation.
+    outcome: Address quality issues promptly and reduce future defects.

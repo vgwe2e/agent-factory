@@ -1,0 +1,82 @@
+objective: >-
+  Integrate Material Requirements Planning (MRP) across BOM release, material
+  requirements calculation, supplier release, inventory policy, and shortage
+  risk assessment to optimize BOM integrity, proactive material planning,
+  supplier coordination, and dynamic safety stock, reducing COGS and improving
+  OTIF and working capital.
+trigger: Periodic MRP run initiated by SAP S/4HANA.
+decision: >-
+  Release and maintain accurate BOMs for configurations/markets; compute net
+  component requirements from MPS; generate and transmit material release
+  schedules to suppliers; define optimal inventory policies; assess parts
+  shortage risks and take preemptive actions.
+expected_action: >-
+  Accurate BOM release and maintenance; net component requirements calculation;
+  supplier release generation and transmission; optimal inventory policy
+  definition; proactive shortage risk assessment and action.
+expected_outcome: >-
+  Reduced COGS, improved OTIF, and optimized working capital through enhanced
+  MRP processes.
+rationale: >-
+  Automate end-to-end MRP decisions to improve efficiency, reduce costs, and
+  enhance service levels across multi-echelon automotive networks.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: BOM Data
+    source: SAP S/4HANA
+    purpose: Maintain accurate BOMs
+    preferred_stream_type: STREAMS
+  - name: MPS Data
+    source: SAP S/4HANA
+    purpose: Calculate net component requirements
+    preferred_stream_type: STREAMS
+  - name: Supplier Data
+    source: SAP S/4HANA
+    purpose: Generate and transmit release schedules
+    preferred_stream_type: STREAMS
+  - name: Inventory Data
+    source: SAP S/4HANA
+    purpose: Define inventory policies
+    preferred_stream_type: STREAMS
+  - name: Shortage Data
+    source: SAP S/4HANA
+    purpose: Assess shortage risks
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Fetch BOM data from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Ensure accurate BOMs
+  - step: Calculate net component requirements
+    stage: analyze
+    component: STREAMS
+    purpose: Minimize material cost and avoid shortages
+  - step: Generate supplier release schedules
+    stage: decide
+    component: Process Builder
+    purpose: Ensure timely deliveries
+  - step: Define optimal inventory policies
+    stage: decide
+    component: Safety Stock Service
+    purpose: Balance service levels and working capital
+  - step: Assess parts shortage risks
+    stage: analyze
+    component: RCA Service
+    purpose: Identify and mitigate potential shortages
+  - step: Transmit release schedules to suppliers
+    stage: act
+    component: Remote Functions
+    purpose: Ensure timely deliveries
+branches:
+  - condition: Insufficient inventory data
+    response: Notify stakeholders
+    outcome: Manual intervention required
+  - condition: Supplier delivery delays
+    response: Expedite orders
+    outcome: Mitigate production impact
+  - condition: High shortage risk
+    response: Reorder materials
+    outcome: Avoid production disruptions

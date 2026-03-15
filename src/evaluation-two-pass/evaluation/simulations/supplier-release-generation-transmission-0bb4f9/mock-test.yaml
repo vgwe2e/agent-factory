@@ -1,0 +1,58 @@
+decision: >-
+  Generate and transmit material release schedules to suppliers to ensure timely
+  deliveries while balancing cost, capacity, and production needs.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled MRP run completion or a BOM/production schedule change (new BOM
+    release, forecast update, or exception detection).
+  parameters:
+    objective: >-
+      Automate end-to-end MRP decisions to generate and transmit supplier
+      material release schedules that balance cost, supplier capacity, and
+      production needs across a multi-echelon automotive network to reduce COGS,
+      improve OTIF, and optimize working capital.
+    key_inputs:
+      - BOM Release & ECO
+      - Production Schedule (finite plan / confirmed orders)
+      - On-hand Inventory & Reservations
+      - Supplier Lead Times, Capacity & Constraints
+      - Demand Forecast / Seasonality adjustments
+      - Safety Stock / Inventory Policy parameters
+      - Open POs and ASN status
+    source_systems:
+      - SAP S/4HANA
+      - Supplier EDI/API Gateway
+      - Supplier Portal / Partner Systems
+expected_output:
+  action: >-
+    Automatically compute material requirements (per released BOM and production
+    schedule), reconcile inventory and safety stock targets, select supplier
+    release quantities and dates, and write back release schedules to SAP
+    S/4HANA and supplier-facing channels (EDI/API or supplier portal). Escalate
+    constrained items to human review where needed.
+  outcome: >-
+    Timely supplier releases aligned to production needs with reduced expedited
+    buys and obsolescence, lower COGS through optimized sourcing and lot-sizing,
+    improved OTIF, and reduced working capital via dynamic safety stock and
+    prioritized releases.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast / Safety Stock Service
+    - Remote Functions + Process Builder (Transaction)
+    - CWB Lifecycle / UI Screen
+    - Agentic AI (Process Builder orchestrating Agent Team + RCA Service)
+    - Process Builder Notification / Agent Team
+    - Dashboard
+rationale: >-
+  Agentic AI plus Process Builder orchestrates complex, multi-source MRP logic
+  (BOM integrity, multi-echelon inventory, supplier capacity, and shortage
+  risk). Use Cortex forecasting and Safety Stock Service for demand and
+  inventory optimization, Remote Functions for SAP writeback and supplier
+  transmission, and CWB Lifecycle/Agent Team for human-in-the-loop exception
+  handling. This hybrid approach supports adaptive reasoning for
+  cross-functional tradeoffs while ensuring auditability and ERP integration.

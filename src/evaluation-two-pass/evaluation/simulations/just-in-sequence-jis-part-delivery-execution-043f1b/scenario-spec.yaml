@@ -1,0 +1,129 @@
+objective: >-
+  Orchestrate Just-in-Sequence (JIS) deliveries, pull-based replenishment, and
+  line-waste reduction across production lines by dynamically allocating
+  multi-echelon inventory and sequencing constraints to minimize COGS and
+  improve OTIF.
+trigger: >-
+  New or updated production sequence/schedule, inventory threshold breach, or
+  scheduled replenishment window for a line-side location.
+decision: >-
+  Execute Just-in-Sequence deliveries to assembly line, selecting delivery
+  timing and supplier/line-side fulfillment nodes to minimize line stop risk
+  while balancing cost and OTIF.
+expected_action: >-
+  Agentic workflow computes optimal JIS delivery plan (timing, fulfillment node,
+  substitutions), allocates multi-echelon inventory, issues pick/ship and
+  AGV/line-side instructions via ERP writebacks, and opens CWB exceptions when
+  constraints or mismatches occur.
+expected_outcome: >-
+  Fewer line stoppages, higher sequence accuracy, lower material handling costs
+  and COGS, improved On-Time-In-Full (OTIF) for assembly lines, and auditable
+  ERP updates for executed deliveries.
+rationale: >-
+  Combining agentic AI for adaptive sequencing with Process Builder
+  orchestration, STREAMS data foundation, Cortex decisioning for
+  demand/allocation signals, and Remote Functions for ERP writeback enables
+  closed-loop JIS execution across suppliers and plant nodes. This hybrid DI
+  approach lets the system reason about last-minute changes, multi-echelon
+  tradeoffs, and cost vs. service decisions while surfacing exceptions for human
+  review.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant MES (line buffers & sensors)
+    status: tbd
+  - name: Warehouse/WMS
+    status: tbd
+  - name: Supplier TMS / Supplier Portal
+    status: tbd
+key_inputs:
+  - name: Production sequence & schedule
+    source: SAP S/4HANA (or MES)
+    purpose: >-
+      Defines assembly sequence windows and timing constraints for JIS
+      deliveries
+    preferred_stream_type: STREAMS
+  - name: Real-time inventory levels (multi-echelon)
+    source: SAP S/4HANA / WMS
+    purpose: >-
+      Available stock at plant buffers, warehouse, and supplier nodes for
+      allocation
+    preferred_stream_type: STREAMS
+  - name: Supplier lead times, constraints, and shipment status
+    source: SAP S/4HANA / Supplier Portal
+    purpose: Determine feasible fulfillment nodes and expedite options
+  - name: Line-side buffer capacities & handling constraints
+    source: MES / Plant systems
+    purpose: Enforce physical constraints when scheduling deliveries
+  - name: Line stop / downtime indicators and quality exceptions
+    source: MES / Plant sensors
+    purpose: >-
+      Signal elevated risk and trigger re-prioritization or emergency
+      replenishment
+happy_path:
+  - step: >-
+      Consolidate production schedule, inventory, supplier data into subject
+      area
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Create unified, validated dataset for sequencing and allocation
+      calculations
+  - step: >-
+      Forecast short-horizon demand windows and compute allocation risk across
+      nodes
+    stage: analyze
+    component: Cortex Auto Forecast + Data Science
+    purpose: >-
+      Estimate per-sequence material needs and identify multi-echelon allocation
+      plan
+  - step: >-
+      Agentic planning selects optimal JIS delivery timing, fulfillment node,
+      and exceptions
+    stage: decide
+    component: Process Builder + Agent Team
+    purpose: >-
+      Resolve sequencing constraints, cost vs. OTIF tradeoffs, and finalize
+      execution plan
+  - step: >-
+      Execute logistics and ERP updates for picks/shipments and line-side
+      delivery instructions
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Write orders to SAP S/4HANA, notify suppliers/warehouse, and dispatch
+      AGV/line conveyors
+  - step: >-
+      Surface recommendations, exceptions and execution status to planners;
+      allow overrides
+    stage: review
+    component: CWB Lifecycle + UI Screen + Agent Team
+    purpose: >-
+      Human-in-the-loop review for exceptions and continuous monitoring of
+      OTIF/COGS impact
+branches:
+  - condition: Insufficient inventory at all nearby nodes to meet a sequence window
+    response: >-
+      Agent triggers expedited supplier shipment or suggests sequence
+      swap/substitution and presents cost/service tradeoffs via CWB
+    outcome: >-
+      Expedited fulfillment reduces line-stop risk at higher cost; planner
+      approves or adjusts plan
+  - condition: >-
+      Last-minute sequence change within critical lead-time for scheduled
+      delivery
+    response: >-
+      Process Builder + Agent Team recalculates deliveries, holds/redirects
+      shipments and issues updated pick/ship instructions; alerts impacted lines
+    outcome: >-
+      Deliveries realigned to new sequence preserving OTIF where possible; some
+      manual handling may increase
+  - condition: Delivery mismatch or quality exception detected on receipt
+    response: >-
+      CWB Lifecycle opens exception, invokes Rollback Transaction for ERP picks
+      if needed, and routes to human approval with recommended corrective
+      actions
+    outcome: >-
+      Incorrect materials prevented from consumption; exception tracked and
+      resolved with audit trail

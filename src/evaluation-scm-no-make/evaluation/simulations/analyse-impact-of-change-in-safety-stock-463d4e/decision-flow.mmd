@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New or updated demand scenario (from SAS forecasting) or threshold breach in service-risk or working-capital exposure detected during nightly scenario run.]
+  A --> N1[Stream: STREAMS - Ingest forecasts, inventory, POs, and master data into Aera subject areas]
+  N1 --> N2[Cortex: Process Builder (calls Safety Stock Service / Remote Functions) - Generate risk-adjusted demand scenarios and run multi-echelon safety-stock sensitivity]
+  N2 --> N3{PB: CWB Lifecycle - Rank scenario outcomes and produce recommended safety-stock adjustments and execution plans}
+  N3 -->|Primary| N4[PB: Process Builder (Remote Functions) - Execute accepted changes: write safety-stock updates and replenishment actions to S4/Kinaxis or create expedite/rebalance orders]
+  N4 --> N5[PB: Notification / Action Item (Process Builder) - Notify stakeholders and create action items for manual follow-up where required; log audit trail]
+  N5 --> Z1[Outcome: Reduced stockouts (improved revenue protection) and lower tied-up inventory (working capital reduction) at target service levels; automated execution for low-risk changes, human review for high-impact actions; audit trail of decisions and ERP/APS writebacks.]
+  N3 -->|Recommended safety-stock increase yie...| B1[Escalate recommendation to manual approval via CWB Lifecycle and route to finance + supply planning team]
+  B1 --> O1[Outcome: Human review and explicit approval required before any writeback; recommendation remains staged]
+  O1 --> End[End]
+  N3 -->|Scenario analysis indicates low servi...| B2[Auto-apply safety-stock reductions via Remote Functions to Kinaxis/S4 with asynchronous notification]
+  B2 --> O2[Outcome: Working capital freed quickly while monitoring for subsequent demand deviations]
+  O2 --> End[End]
+  N3 -->|ERP/APS writeback fails or integratio...| B3[Create Action Items assigned to operations/planners and mark transaction for manual execution; retry integration per Process Builder schedule]
+  B3 --> O3[Outcome: No silent failures: manual tasks ensure execution and reconciliation when automated writes are unavailable]
+  O3 --> End[End]
+  Z1 --> End[End]

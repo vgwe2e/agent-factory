@@ -1,0 +1,60 @@
+decision: >-
+  Identify bottlenecks and determine corrective actions (line changes,
+  sequencing, buffer adjustments, manpower/equipment reallocation) that maximize
+  throughput subject to constraints (shift schedules, changeover time,
+  maintenance windows).
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled capacity planning run (e.g., daily/weekly) or event-driven trigger
+    when realized throughput drops >10% vs plan or demand forecast variance
+    >15%.
+  parameters:
+    objective: >-
+      Autonomously identify production bottlenecks across multi-site lines and
+      execute corrective actions (line changes, sequencing, buffer adjustments,
+      manpower/equipment reallocation) to improve throughput, reduce COGS, and
+      align capacity with demand signals.
+    key_inputs:
+      - Production Orders & Routing
+      - Capacity Master (line, workcenter, shift)
+      - Realized Throughput & OEE
+      - Equipment Status / MTTR / MTBF
+      - Demand Forecast
+      - Changeover Times & Sequencing Rules
+      - Inventory Buffer Levels
+    source_systems:
+      - SAP S/4HANA
+      - MES
+      - SCADA / Equipment Telemetry
+      - APS / Scheduling
+      - Demand Forecasting Service
+expected_output:
+  action: >-
+    Rank and select corrective actions; automatically execute low-risk changes
+    (sequencing, buffer tuning, manpower reassignments) via Remote Functions and
+    ERP writeback to SAP S/4HANA, and create CWB Lifecycle recommendations for
+    high-risk or exception actions requiring human approval.
+  outcome: >-
+    Improved line throughput and utilization, reduced COGS from lower idle time
+    and reduced overtime/changeover, fewer downstream delays, and closer
+    alignment of available capacity to forecasted demand.
+  affected_components:
+    - STREAMS
+    - RCA Service + Data Science
+    - Process Builder (Rules, IF)
+    - Process Builder (Remote Functions, Action Item, CWB Lifecycle)
+    - UI Screen + Notification
+    - Dashboard
+rationale: >-
+  Deterministic, process-driven orchestration is required to operationalize
+  multi-step capacity adjustments across ERP and shop-floor systems. Process
+  Builder coordinates data ingestion (STREAMS), bottleneck detection
+  (RCA/Rules), and action execution (Remote Functions + CWB Lifecycle) while
+  preserving human-in-the-loop controls for safety/maintenance constraints. This
+  reduces manual analysis time, standardizes corrective actions, and enables
+  repeatable capacity optimization across sites.

@@ -1,0 +1,100 @@
+objective: >-
+  Autonomous rebalancing of stock, maintaining tight cycle counts, discarding
+  obsolete inventory, optimizing warehouse slotting, and ensuring material
+  handling capacity.
+trigger: Daily inventory update from SAP S/4HANA.
+decision: >-
+  Optimal storage locations, cycle counting plan, disposition of obsolete
+  inventory, warehouse slotting strategy, and maintenance schedule for material
+  handling equipment.
+expected_action: >-
+  Automated adjustments to storage locations, cycle counting plans, disposition
+  actions, slotting strategies, and maintenance schedules.
+expected_outcome: >-
+  Reduced COGS, improved working capital, and enhanced SG&A efficiency through
+  optimized inventory and warehouse operations.
+rationale: >-
+  Leverage Aera's deterministic decision-making capabilities to autonomously
+  manage warehouse and inventory operations, reducing manual intervention and
+  improving overall efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: To determine current stock levels and identify areas for optimization.
+  - name: Material Handling Equipment Status
+    source: SAP S/4HANA
+    purpose: To schedule maintenance activities based on equipment status.
+  - name: Historical Inventory Data
+    source: SAP S/4HANA
+    purpose: To inform cycle counting and slotting strategies.
+happy_path:
+  - step: >-
+      Ingest inventory levels and material handling equipment status from SAP
+      S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for decision-making.
+  - step: >-
+      Analyze historical inventory data to determine optimal storage locations
+      and cycle counting plans.
+    stage: analyze
+    component: AutoML
+    purpose: Generate insights for storage and cycle counting optimization.
+  - step: Decide on optimal storage locations and cycle counting plans.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Present recommendations for review and approval.
+  - step: Act on approved storage and cycle counting plans by updating SAP S/4HANA.
+    stage: act
+    component: Remote Functions
+    purpose: Implement changes in the ERP system.
+  - step: Analyze obsolete inventory data to determine disposition actions.
+    stage: analyze
+    component: AutoML
+    purpose: Generate insights for disposition decisions.
+  - step: Decide on disposition actions for obsolete inventory.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Present recommendations for review and approval.
+  - step: Act on approved disposition actions by updating SAP S/4HANA.
+    stage: act
+    component: Remote Functions
+    purpose: Implement changes in the ERP system.
+  - step: Analyze warehouse layout data to determine optimal slotting strategy.
+    stage: analyze
+    component: AutoML
+    purpose: Generate insights for slotting optimization.
+  - step: Decide on optimal slotting strategy.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Present recommendations for review and approval.
+  - step: Act on approved slotting strategy by updating SAP S/4HANA.
+    stage: act
+    component: Remote Functions
+    purpose: Implement changes in the ERP system.
+  - step: Analyze material handling equipment status to schedule maintenance.
+    stage: analyze
+    component: AutoML
+    purpose: Generate insights for maintenance scheduling.
+  - step: Decide on maintenance schedule for material handling equipment.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Present recommendations for review and approval.
+  - step: Act on approved maintenance schedule by updating SAP S/4HANA.
+    stage: act
+    component: Remote Functions
+    purpose: Implement changes in the ERP system.
+branches:
+  - condition: Inventory levels exceed predefined thresholds.
+    response: Trigger additional cycle counting and reconciliation.
+    outcome: Ensures higher inventory accuracy and minimizes carrying costs.
+  - condition: Material handling equipment requires immediate corrective maintenance.
+    response: Prioritize corrective maintenance over preventive maintenance.
+    outcome: Ensures uninterrupted warehouse operations.
+  - condition: Obsolete inventory exceeds disposal limits.
+    response: Initiate bulk disposal or repurposing actions.
+    outcome: Reduces excess inventory and improves working capital.

@@ -1,0 +1,125 @@
+objective: >-
+  Autonomously schedule and route returnable containers across multi-echelon
+  network to minimize transport cost and cycle time while meeting service
+  requirements and supplier receipt compliance.
+trigger: >-
+  Scheduled planning run (e.g., daily/weekly) or event-trigger (container
+  shortage, overdue returns, inbound schedule change).
+decision: >-
+  Choose routes, frequencies, carrier assignments and move timing for returnable
+  containers that balance COGS vs. availability subject to capacity and
+  compliance constraints.
+expected_action: >-
+  Ingest master and transaction data, run optimization solver to generate
+  movement plan, validate plan against business rules, write approved schedule
+  back to SAP S/4HANA, issue carrier instructions, and open exception CWBs for
+  non-compliant items.
+expected_outcome: >-
+  Reduced container transport COGS, faster container turnover (lower days
+  outstanding), improved OTIF and supplier receipt compliance, and fewer manual
+  planning interventions.
+rationale: >-
+  Deterministic, process-driven orchestration best suits rule-based scheduling
+  plus solver optimization. Use STREAMS for data consolidation, Remote Functions
+  for optimization and ERP writeback, and Process Builder to orchestrate
+  decision rules and exception routing (CWB Lifecycle) so the solution is
+  auditable, automatable, and integrates with SAP S/4HANA.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Carrier TMS
+    type: TMS
+    status: tbd
+  - name: Warehouse Management System
+    type: WMS
+    status: tbd
+  - name: Supplier Portal
+    type: Portal
+    status: tbd
+  - name: Telematics / GPS
+    type: Telematics
+    status: tbd
+key_inputs:
+  - name: Container inventory positions (loaded/empty/damaged)
+    source: SAP S/4HANA
+    purpose: Available container counts by location for balancing and scheduling
+    preferred_stream_type: batch
+  - name: Location master / lead times / transit matrix
+    source: SAP S/4HANA
+    purpose: Network topology and transit time constraints for routing
+    preferred_stream_type: batch
+  - name: Transport rates, carrier capacity and constraints
+    source: Carrier TMS
+    purpose: Cost inputs and feasibility for route/carrier selection
+    preferred_stream_type: batch
+  - name: Carrier performance history (OTD, reliability)
+    source: Carrier TMS
+    purpose: Penalty/score inputs to bias carrier selection for service
+    preferred_stream_type: batch
+  - name: Supplier receipt schedules and compliance records
+    source: Supplier Portal
+    purpose: Detect overdue returns and enforce supplier compliance actions
+    preferred_stream_type: batch
+  - name: Production / Delivery schedules (demand for containers)
+    source: SAP S/4HANA
+    purpose: Forecast required container availability windows
+    preferred_stream_type: batch
+  - name: Telematics location & in-transit status
+    source: Telematics / GPS
+    purpose: Validate physical location and ETA of containers for rescheduling
+happy_path:
+  - step: Consolidate master and transaction data from SAP and partner systems
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Create a consistent Subject Area with container positions, locations,
+      rates and schedules
+  - step: Prepare network model and inputs for optimization
+    stage: analyze
+    component: Subject Areas
+    purpose: >-
+      Aggregate inventories, lead times, demand windows and cost parameters for
+      solver
+  - step: Run deterministic optimization solver and business-rule filters
+    stage: analyze
+    component: Remote Functions
+    purpose: >-
+      Generate cost-minimized movement plan (routes, carriers, timings)
+      respecting constraints
+  - step: Apply approval rules and route exceptions
+    stage: decide
+    component: Process Builder
+    purpose: >-
+      Auto-approve plans that meet thresholds; create CWB Lifecycle exceptions
+      for conflicts
+  - step: Execute approved schedule and notify execution systems and carriers
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Write schedule to SAP S/4HANA and push instructions/notifications to
+      carriers
+  - step: Surface plan and KPIs to planners; allow overrides where necessary
+    stage: surface
+    component: UI Screen
+    purpose: Provide visibility, manual override and audit trail for plan decisions
+branches:
+  - condition: Optimization improvement < configured threshold (marginal benefit)
+    response: >-
+      Skip automated replan; mark for periodic review and retain current
+      schedule
+    outcome: Avoid churn; maintain stability when changes provide minimal benefit
+  - condition: Carrier capacity or transit constraint prevents full execution
+    response: >-
+      Process Builder opens CWB Lifecycle exceptions and triggers fallback
+      routing heuristic
+    outcome: >-
+      Partial automated replan applied; unresolved items routed to planners for
+      manual assignment
+  - condition: Supplier non-compliance (overdue returns or receipt failures)
+    response: >-
+      Raise compliance exception CWB, notify supplier via Supplier Portal
+      integration, and apply contractual penalties per rules
+    outcome: >-
+      Supplier engagement and corrective action; contested items held in
+      exception until resolved

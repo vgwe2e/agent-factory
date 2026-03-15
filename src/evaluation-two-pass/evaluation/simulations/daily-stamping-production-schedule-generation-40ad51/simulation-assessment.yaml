@@ -1,0 +1,7 @@
+groundednessScore: 57
+integrationConfidenceScore: 85
+ambiguityRiskScore: 44
+implementationReadinessScore: 73
+verdict: REVIEW
+reasons:
+  - Scenario is plausible but still needs design review before commitment.

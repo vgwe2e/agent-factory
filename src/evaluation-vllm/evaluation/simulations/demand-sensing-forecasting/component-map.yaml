@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and prepare data for forecasting
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict demand 3-5 years out
+    confidence: confirmed
+    capability: Predict demand 3-5 years out
+  - name: AutoML
+    purpose: Optimize forecast bias and RMSE
+    confidence: inferred
+    capability: Optimize forecast bias and RMSE
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Aggregate and finalize monthly demand plans
+    confidence: confirmed
+    node_type: decide
+  - name: RCA Service
+    purpose: Identify areas for improvement in forecasting processes
+    confidence: inferred
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unify and automate demand sensing and forecast optimization across
+      multiple l4 processes to improve forecast accuracy, reduce working
+      capital, and enhance service levels. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

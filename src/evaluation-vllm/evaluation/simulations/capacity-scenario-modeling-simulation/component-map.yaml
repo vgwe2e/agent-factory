@@ -1,0 +1,38 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and prepare demand forecast data for analysis
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Model the impact of demand variations on capacity
+    confidence: confirmed
+    capability: Model the impact of demand variations on capacity
+  - name: AutoML
+    purpose: Evaluate different production strategies and their capacity impacts
+    confidence: inferred
+    capability: Evaluate different production strategies and their capacity impacts
+  - name: RCA Service
+    purpose: Identify and model the effects of supply chain disruptions
+    confidence: inferred
+    capability: Identify and model the effects of supply chain disruptions
+  - name: Remote Functions
+    purpose: Evaluate the financial impact of proposed capacity investments
+    confidence: inferred
+    capability: Evaluate the financial impact of proposed capacity investments
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Enable human-in-the-loop review and approval of recommended actions
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review synthesize demand fluctuations, production scenarios, and
+      disruption risks into an autonomous capacity planning engine that
+      optimizes line sequencing, changeovers, plant/carrier assignments, and
+      safety stock across multi-echelon automotive networks. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

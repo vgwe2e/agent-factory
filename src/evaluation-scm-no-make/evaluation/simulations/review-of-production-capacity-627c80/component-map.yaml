@@ -1,0 +1,41 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Centralize and validate source data into Subject Areas/data views for
+      planning
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Process Builder (Process) + Rules
+    purpose: >-
+      Run deterministic rules to detect capacity shortfalls and feasible
+      mitigation options
+    confidence: confirmed
+    capability: >-
+      Run deterministic rules to detect capacity shortfalls and feasible
+      mitigation options
+process_builder:
+  - name: Process Builder (IF) + Action Item / CWB Lifecycle
+    purpose: >-
+      Select best action by COGS impact, service uplift, and feasibility;
+      surface for approval when needed
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Writeback capacity adjustments and trigger Kinaxis rebalancing or S4
+      capacity updates
+    confidence: inferred
+    node_type: act
+  - name: Subject Areas + Report Data
+    purpose: Assess realized service levels, COGS delta, and adjust rules/thresholds
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: UI Screen (dashboard) + Process Builder (Notification)
+    purpose: >-
+      Provide visibility into executed decisions, updated utilization, cost
+      impact, and follow-up actions
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Capture shipment data
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Remote Functions
+    purpose: Validate shipment accuracy
+    confidence: inferred
+    capability: Validate shipment accuracy
+process_builder:
+  - name: Process Builder
+    purpose: Initiate inspection process
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Optimize storage
+    confidence: inferred
+    node_type: decide
+  - name: CWB Lifecycle
+    purpose: Address discrepancies
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review enable end-to-end automation for inbound receiving, quality
+      inspection triggers, putaway optimization, discrepancy resolution, and
+      hazardous material segregation. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

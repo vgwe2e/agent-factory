@@ -1,0 +1,76 @@
+objective: >-
+  Optimize stamping operations by integrating OEE tracking, KPI monitoring,
+  quality yield analysis, energy consumption tracking, predictive maintenance,
+  and cost of quality analysis into an autonomous performance management loop.
+trigger: Daily batch process initiated by SAP S/4HANA data refresh.
+decision: >-
+  Jointly optimize throughput, scrap reduction, energy efficiency, and
+  maintenance timing across stamping operations and upstream quality/coherence.
+expected_action: >-
+  Generate actionable insights and recommendations for maintenance, capacity
+  planning, and quality improvements.
+expected_outcome: >-
+  Reduced COGS and SG&A, improved working capital, and increased EBITDA through
+  synchronized, constraint-aware decisions.
+rationale: >-
+  By leveraging advanced analytics and autonomous decision-making, the solution
+  will enable Ford to make data-driven decisions that improve operational
+  efficiency and financial performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Stamping Press OEE Data
+    source: SAP S/4HANA
+    purpose: Track and analyze Overall Equipment Effectiveness
+  - name: Production KPI Data
+    source: SAP S/4HANA
+    purpose: Monitor and report on key performance indicators
+  - name: Quality Yield and Scrap Data
+    source: SAP S/4HANA
+    purpose: Analyze yield and scrap rates
+  - name: Energy Consumption Data
+    source: SAP S/4HANA
+    purpose: Monitor and analyze energy consumption
+  - name: Maintenance and Quality Deviation Data
+    source: SAP S/4HANA
+    purpose: Predict potential equipment failures and quality deviations
+  - name: Cost of Quality Data
+    source: SAP S/4HANA
+    purpose: Analyze the total cost of quality
+happy_path:
+  - step: Ingest OEE, KPI, quality, energy, and maintenance data from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and prepare raw data for analysis
+  - step: >-
+      Analyze OEE, KPIs, quality yield, energy consumption, and maintenance data
+      using Cortex Auto Forecast and RCA Service
+    stage: analyze
+    component: Cortex Auto Forecast, RCA Service
+    purpose: Identify trends, anomalies, and optimization opportunities
+  - step: >-
+      Generate recommendations for maintenance, capacity planning, and quality
+      improvements
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Present actionable insights for human review and approval
+  - step: >-
+      Execute approved recommendations and update SAP S/4HANA with new data and
+      insights
+    stage: act
+    component: Remote Functions
+    purpose: Implement recommended actions and maintain data consistency
+branches:
+  - condition: Detected significant OEE decline
+    response: Trigger immediate investigation and corrective actions
+    outcome: Prevent further decline and minimize downtime
+  - condition: >-
+      Identified high energy consumption without corresponding throughput
+      increase
+    response: Recommend energy-saving measures and monitor implementation
+    outcome: Reduce energy costs while maintaining production levels
+  - condition: Predicted maintenance issue with high risk of downtime
+    response: Schedule preemptive maintenance and notify relevant teams
+    outcome: Minimize unplanned downtime and reduce maintenance costs

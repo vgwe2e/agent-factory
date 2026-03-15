@@ -1,0 +1,52 @@
+source_systems:
+  - name: SAP S/4HANA
+    status: identified
+  - name: Transportation Management System (TMS)
+    status: tbd
+  - name: Carrier Portal / Bidding Platform
+    status: tbd
+  - name: Freight Audit & Payment / Finance
+    status: tbd
+  - name: Carrier Performance DB / Claims System
+    status: tbd
+aera_ingestion:
+  - stream_name: carrier-bids-rates-transit-times-capacity-commitments
+    stream_type: Event Stream
+    source: Carrier Portal / Procurement
+  - stream_name: contract-terms-approved-rate-cards
+    stream_type: Data View
+    source: SAP S/4HANA
+  - stream_name: historical-carrier-performance-otif-claims-dwell-time
+    stream_type: STREAM
+    source: Carrier Performance DB / TMS
+  - stream_name: integration-readiness-edi-api-capability-onboarding-status
+    stream_type: Event Stream
+    source: Carrier Portal / Integration Team
+  - stream_name: lane-demand-shipment-schedules
+    stream_type: STREAM
+    source: SAP S/4HANA
+  - stream_name: sla-compliance-rules-safety-security-regional-requirements
+    stream_type: Event Stream
+    source: SAP S/4HANA / Legal
+processing:
+  - component: Process Builder (Rules + IF + Branch)
+    type: process_builder
+    function: >-
+      Automate selection logic, route exceptions to human review when thresholds
+      or policy conflicts occur
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Perform ERP writebacks, trigger EDI/API provisioning, and create
+      onboarding tasks
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Manage exceptions, create action items, and track remediation until SLA
+      compliance is restored
+ui_surface:
+  - component: UI Screen / Dashboard
+    screen: Primary
+    purpose: >-
+      Provide transparent decision audit trail and operational status for
+      stakeholders

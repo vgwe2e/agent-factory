@@ -1,0 +1,41 @@
+decision: >-
+  Sequencing and prioritization of quality checks, test configurations, resource
+  allocation, and disposition paths for non-conforming parts.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Start of production line cycle or detection of non-conforming product.
+  parameters:
+    objective: >-
+      Reduce COGS from test-related waste, improve working capital through
+      faster disposition decisions, and tighten yield during platform launches
+      across multiple vehicle programs.
+    key_inputs:
+      - Quality Check Results
+      - Engine Performance Data
+      - Transmission Test Data
+      - Non-Conformance Reports
+      - Quality Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Optimize test sequences, allocate resources efficiently, authorize rework or
+    scrap, and implement corrective actions based on root cause analysis.
+  outcome: >-
+    Minimized rework, reduced test-related waste, faster disposition decisions,
+    improved yield, and optimized working capital.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - Process Builder
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Leveraging Aera's deterministic optimization and agentic coordination to
+  streamline quality control and testing processes, leading to significant cost
+  savings and improved efficiency.

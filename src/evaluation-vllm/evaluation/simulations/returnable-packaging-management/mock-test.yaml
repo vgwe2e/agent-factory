@@ -1,0 +1,37 @@
+decision: >-
+  Determine optimal fleet sizing, collection actions, cleaning schedules, and
+  loss prevention measures.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic review of returnable packaging inventory and usage data.
+  parameters:
+    objective: >-
+      Jointly optimize returnable container loop sizing, empty packaging
+      collection, and packaging tracking to reduce working capital, lower COGS,
+      and improve order fulfillment OTIF.
+    key_inputs:
+      - Returnable Container Usage Data
+      - Inventory Levels
+      - Maintenance Records
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Autonomous or semi-autonomous actions to optimize returnable packaging
+    management.
+  outcome: >-
+    Reduced working capital, lower COGS, improved order fulfillment OTIF, and
+    minimized reliance on one-way packaging.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Cortex Auto Forecast
+    - Process Builder
+    - Dashboard
+rationale: >-
+  Optimizing returnable packaging management through a continuous decision loop
+  improves financial and operational efficiency.

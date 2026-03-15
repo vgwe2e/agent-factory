@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Start of the topcoat application process for a new batch of vehicles.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve vehicle batch details from SAP S/4HANA.]
+  N1 --> N2[Cortex: AutoML - Determine optimal basecoat and clearcoat application plans.]
+  N2 --> N3[PB: Remote Functions - Control paint booth environmental parameters.]
+  N3 --> N4{PB: CWB Lifecycle - Verify and adjust color matches.}
+  N4 -->|Primary| N5[PB: Remote Functions - Monitor and adjust curing oven temperatures.]
+  N5 --> Z1[Outcome: Improved paint yield and finish quality, reduced rework, optimized energy and material usage, and improved on-time in-full (OTIF) delivery.]
+  N4 -->|Color match verification fails.| B1[Initiate color adjustment process.]
+  B1 --> O1[Outcome: Corrected color match and minimized rework.]
+  O1 --> End[End]
+  N4 -->|Curing oven temperature exceeds optim...| B2[Adjust oven temperature settings.]
+  B2 --> O2[Outcome: Optimized curing process and energy usage.]
+  O2 --> End[End]
+  N4 -->|Environmental parameters deviate from...| B3[Adjust paint booth conditions.]
+  B3 --> O3[Outcome: Maintained optimal conditions for paint application.]
+  O3 --> End[End]
+  Z1 --> End[End]

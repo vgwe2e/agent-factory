@@ -1,0 +1,39 @@
+decision: >-
+  Monitor stamping supplier performance and decide corrective actions or
+  supplier changes to ensure quality and cost targets are met.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic supplier performance data update from SAP S/4HANA.
+  parameters:
+    objective: >-
+      Autonomous monitoring and management of stamping supplier performance,
+      part quality, tooling/die supplier governance, pricing negotiations, and
+      production schedule alignment to reduce COGS, prevent delays, and improve
+      OTIF.
+    key_inputs:
+      - Supplier Performance Data
+      - Quality Audit Data
+      - Tooling & Die Contracts
+      - Pricing Terms
+      - Production Schedules
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: Generate corrective actions or supplier change recommendations.
+  outcome: >-
+    Improved supplier performance, reduced COGS, minimized delays, and enhanced
+    OTIF.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Process Builder
+    - Dashboard
+rationale: >-
+  Automate supplier performance monitoring, quality audits, contract management,
+  pricing negotiations, and production scheduling to streamline operations and
+  enhance supply chain efficiency.

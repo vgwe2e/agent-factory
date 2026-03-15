@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Monthly S&OP cycle kickoff or event-driven re-run when demand/supply variance or risk signal exceeds threshold.]
+  A --> N1[Stream: DDM/Crawlers - Ingest enterprise and external planning data]
+  N1 --> N2[Stream: STREAMS / Subject Areas - Harmonize and transform planning datasets]
+  N2 --> N3[Cortex: Cortex Auto Forecast + Safety Stock Service + Remote Functions - Generate demand and safety stock signals and run capacity feasibility]
+  N3 --> N4{Agent: Process Builder (Agent Team + Remote Functions) - Agentic generation of ranked plan alternatives and trade-off explanations}
+  N4 -->|Primary| N5[PB: UI Screen / CWB Lifecycle - Executive review, selection/override, and writeback]
+  N5 --> Z1[Outcome: Coordinated, policy-aligned production and inventory plan that lowers COGS, improves on-time delivery, reduces stockouts/overstock, and increases order capture while maintaining financial targets and documented executive decisions.]
+  N4 -->|Significant data quality or missing s...| B1[Pause S&OP run, surface data quality exceptions via Notification and run Data Quality & Validation rules; require remediation before plan selection]
+  B1 --> O1[Outcome: Decision delayed until data is remediated; prevents execution on unreliable inputs]
+  O1 --> End[End]
+  N4 -->|Capacity shortfall prevents meeting p...| B2[Agent Team proposes contingency plans (prioritized SKU allocation, subcontracting, overtime costs) and safety-stock rebalancing; present cost-impact trade-offs]
+  B2 --> O2[Outcome: Executives select contingency that balances service vs cost; plan executed with documented exception and increased procurement or cost where accepted]
+  O2 --> End[End]
+  N4 -->|Executive override requested that vio...| B3[Process Builder triggers a rules check and Remote Functions generate automated impact analysis (financial, OTIF, stockout risk); require explicit attestation in CWB before writeback]
+  B3 --> O3[Outcome: Override recorded with rationale and impact logged; writeback proceeds only after attestation, maintaining auditability]
+  O3 --> End[End]
+  Z1 --> End[End]

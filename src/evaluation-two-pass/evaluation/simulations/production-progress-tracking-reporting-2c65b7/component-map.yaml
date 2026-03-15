@@ -1,0 +1,54 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Consolidate SAP S/4HANA schedules and MES/IIoT events into subject areas
+      for analysis.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: RCA Service
+    purpose: >-
+      Identify whether deviation is due to machine stoppage, quality, material
+      shortfall, or changeover variance.
+    confidence: inferred
+    capability: >-
+      Identify whether deviation is due to machine stoppage, quality, material
+      shortfall, or changeover variance.
+process_builder:
+  - name: Remote Functions + Transaction
+    purpose: >-
+      Write updated work order releases to SAP S/4HANA and push work
+      instructions to MES or operators.
+    confidence: confirmed
+    node_type: act
+  - name: UI Screen
+    purpose: >-
+      Provide explainable recommendation, SHAP-like rationale from RCA, and
+      accept/override controls.
+    confidence: confirmed
+    node_type: integration
+  - name: Notification + CWB Lifecycle
+    purpose: >-
+      Alert shift leads, track exception lifecycle, and capture overrides for
+      audit and continuous improvement.
+    confidence: confirmed
+    node_type: notify
+agent_teams:
+  - name: Process (Process Builder) + Agent Team + Remote Functions
+    purpose: >-
+      Run optimizer, evaluate multi-plant impacts, and decide autonomous apply
+      vs. human approval.
+    confidence: confirmed
+    role: >-
+      Run optimizer, evaluate multi-plant impacts, and decide autonomous apply
+      vs. human approval.
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review deliver an adaptive, end-to-end production scheduling engine that
+      auto-detects hourly deviations, re-optimizes line sequences and
+      changeovers, and executes corrective schedules across multi-plant
+      automotive production to reduce cogs, improve on-time delivery, and lower
+      working capital. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

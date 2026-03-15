@@ -1,0 +1,72 @@
+objective: >-
+  Automate final mile scheduling, direct-to-customer delivery coordination, and
+  order fulfillment orchestration to optimize delivery times, reduce costs, and
+  improve service levels.
+trigger: Order placement and delivery readiness notification from SAP S/4HANA.
+decision: >-
+  Optimize final mile delivery window, carrier/route assignment, POD
+  verification, damage inspection, and direct-to-customer delivery coordination.
+expected_action: >-
+  Schedule optimal delivery appointments, verify POD, manage damage claims,
+  coordinate direct deliveries, and resolve dealer feedback.
+expected_outcome: >-
+  Improved order capture, increased OTIF, reduced last-mile costs, and enhanced
+  customer satisfaction.
+rationale: >-
+  Unify decision-making for delivery routing, plant/carrier selection, and
+  real-time exception handling to optimize revenue, COGS, and working capital.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Order Details
+    source: SAP S/4HANA
+    purpose: Identify delivery requirements and constraints.
+  - name: Carrier Availability
+    source: SAP S/4HANA
+    purpose: Determine available carriers and routes.
+  - name: Delivery Windows
+    source: SAP S/4HANA
+    purpose: Select optimal delivery time slots.
+  - name: POD Data
+    source: SAP S/4HANA
+    purpose: Verify proof of delivery.
+  - name: Damage Claims
+    source: SAP S/4HANA
+    purpose: Manage and resolve damage claims.
+happy_path:
+  - step: Retrieve order details and delivery requirements.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Gather necessary information for delivery scheduling.
+  - step: Analyze carrier availability and delivery windows.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict optimal carrier and delivery time slot.
+  - step: Assign final mile delivery window and carrier.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure optimal delivery schedule is selected.
+  - step: Schedule delivery appointment with dealer or direct customer.
+    stage: act
+    component: Remote Functions
+    purpose: Confirm delivery appointment and communicate with stakeholders.
+  - step: Collect and verify POD data.
+    stage: review
+    component: Remote Functions
+    purpose: Validate delivery completion and condition.
+  - step: Inspect and manage dealer delivery damage claims.
+    stage: act
+    component: CWB Lifecycle
+    purpose: Resolve damage claims and minimize COGS impact.
+branches:
+  - condition: POD data indicates discrepancies.
+    response: Trigger dispute resolution process.
+    outcome: Re-verify POD or initiate claim dispute.
+  - condition: Damage claim exceeds threshold.
+    response: Escalate to human review.
+    outcome: Manual intervention for claim resolution.
+  - condition: Direct-to-customer delivery is more cost-effective.
+    response: Coordinate direct delivery.
+    outcome: Optimize delivery channel for revenue and service levels.

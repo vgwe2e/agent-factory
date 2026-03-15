@@ -1,0 +1,39 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: current-workforce-skills
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: future-vehicle-technology-requirements
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-shift-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: training-program-costs
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: automation-investment-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: contingent-labor-market-data
+    stream_type: Event Stream
+    source: External APIs
+processing:
+  - component: Action Item
+    type: process_builder
+    function: >-
+      Implement training programs, adjust shift planning, and source contingency
+      labor as needed.
+  - component: Agentic AI
+    type: agent_teams
+    function: Identify skill gaps and potential training needs.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review coordinate labor capacity planning across production shifts, gap
+      analysis, training, and contingent labor sourcing to reduce cogs and
+      maintain otif. and approve the recommended action.

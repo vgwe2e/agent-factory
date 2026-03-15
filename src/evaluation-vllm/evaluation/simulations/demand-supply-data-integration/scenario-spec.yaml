@@ -1,0 +1,81 @@
+objective: >-
+  Unify and autonomously coordinate four L4 processes into a cross-functional
+  data-driven decision layer to reduce working capital, lower COGS, and improve
+  on-time delivery and order fulfillment.
+trigger: Periodic data refresh and validation cycle.
+decision: >-
+  Aggregate and harmonize multi-division sales forecasts, validate production
+  schedules, update supplier lead times and capacities, and integrate dealer
+  order backlogs.
+expected_action: >-
+  Autonomous validation and alignment of inputs, triggering end-to-end
+  decisions.
+expected_outcome: >-
+  Reduced working capital, lower COGS, improved on-time delivery, and optimized
+  order fulfillment.
+rationale: >-
+  By integrating and coordinating these processes, the system can make
+  data-driven decisions that optimize inventory and production planning, leading
+  to significant financial and operational benefits.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Sales Forecast Data
+    source: SAP S/4HANA
+    purpose: To aggregate and harmonize multi-division sales forecasts.
+  - name: Production Schedule Data
+    source: SAP S/4HANA
+    purpose: To validate and adjust master production schedules.
+  - name: Supplier Lead Times & Capacities
+    source: SAP S/4HANA
+    purpose: To continuously update supplier lead times and capacities.
+  - name: Dealer Order Backlog Data
+    source: SAP S/4HANA
+    purpose: >-
+      To incorporate dealer order backlogs into finished goods allocation
+      decisions.
+happy_path:
+  - step: Retrieve sales forecast data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To collect and harmonize multi-division sales forecasts.
+  - step: Validate and harmonize sales forecast data.
+    stage: analyze
+    component: STREAMS
+    purpose: To ensure data consistency and accuracy.
+  - step: Retrieve production schedule data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To validate and adjust master production schedules.
+  - step: Validate production schedule data against inventory inputs.
+    stage: analyze
+    component: STREAMS
+    purpose: To ensure feasibility and alignment with inventory.
+  - step: Retrieve supplier lead times and capacities from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To continuously update supplier lead times and capacities.
+  - step: Update supplier lead times and capacities.
+    stage: analyze
+    component: STREAMS
+    purpose: To maintain accurate supplier data for capacity planning.
+  - step: Retrieve dealer order backlog data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To incorporate dealer order backlogs into finished goods allocation.
+  - step: Integrate dealer order backlog data into finished goods allocation.
+    stage: decide
+    component: STREAMS
+    purpose: To optimize inventory deployment and OTIF.
+branches:
+  - condition: Inaccurate sales forecast data detected.
+    response: Trigger data correction workflow.
+    outcome: Corrected sales forecast data used for subsequent steps.
+  - condition: Production schedule data does not align with inventory.
+    response: Adjust production schedule data.
+    outcome: Aligned production schedule data used for subsequent steps.
+  - condition: Supplier lead times or capacities are outdated.
+    response: Update supplier lead times and capacities.
+    outcome: Updated supplier data used for subsequent steps.

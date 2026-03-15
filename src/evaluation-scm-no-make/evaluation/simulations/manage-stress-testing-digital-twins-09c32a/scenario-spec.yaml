@@ -1,0 +1,147 @@
+objective: >-
+  Provide an integrated Resilience Procurement Control Tower that delivers
+  N‑Tier supplier visibility, runs digital‑twin stress tests, and aligns
+  continuity and sourcing decisions to protect margins and revenue amid input
+  cost volatility and promotional spend.
+trigger: >-
+  Scheduled or ad‑hoc execution of the resilience plan (stress test campaign) or
+  detection of elevated external risk signals for key suppliers / commodities.
+decision: >-
+  Select which disruption scenarios and N‑Tier impacts to run in the digital
+  twin (breadth vs. run‑time cost) and decide prioritized continuity / sourcing
+  / contract actions based on simulated EBITDA, service‑level and
+  working‑capital impacts.
+expected_action: >-
+  Agentic orchestration builds the N‑Tier digital twin, runs prioritized
+  scenario simulations, scores supplier vulnerabilities and mitigation options,
+  generates ranked continuity and sourcing recommendations, and writes approved
+  actions back to S4/Kinaxis while notifying stakeholders.
+expected_outcome: >-
+  Clear, prioritized mitigation plan (contracts, alternate sourcing, inventory
+  positioning, expediting) with estimated impact on service level, working
+  capital and EBITDA; faster detection of critical single points of failure;
+  reduced disruption risk and aligned continuity execution.
+rationale: >-
+  Agentic multi‑agent orchestration enables adaptive scenario generation and
+  targeted simulation runs (balancing coverage and cost), combined with
+  deterministic Streams and Remote Functions for reliable data ingestion and
+  writebacks. Human-in-the-loop approval (CWB Lifecycle) preserves governance
+  while agentic agents optimize scenario selection and interpretation.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Shortage Propagation
+    status: identified
+  - name: Kinaxis (FG Safety Stock / Rebalancing / Order Expediting)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS / 3PL
+    type: TMS/3PL
+    status: identified
+  - name: External Risk & Market Feeds (commodities, geo events)
+    status: tbd
+key_inputs:
+  - name: N‑Tier supplier mapping (tiers, relationships, lead times)
+    source: S4 / Kinaxis / Supplier master
+    purpose: Build and maintain the digital twin topology to trace upstream impacts
+    preferred_stream_type: subject_area
+  - name: Contracts, purchase orders, SLAs
+    source: S4 (Contracts, POs)
+    purpose: >-
+      Assess contractual continuity levers (penalties, alternate suppliers,
+      pricing)
+  - name: Demand forecasts and promotional plans
+    source: SAS / Advanced Statistical Forecasting
+    purpose: Baseline demand to stress against and quantify revenue exposure
+  - name: Inventory positions & safety stock models
+    source: Kinaxis / Blue Yonder WMS
+    purpose: Estimate buffer capacity and on‑hand mitigation potential
+    preferred_stream_type: stream
+  - name: Shortage propagation & APS constraints
+    source: Kinaxis RapidResponse
+    purpose: Simulate shortage cascades and recovery timelines
+  - name: Transport capacity & lead time variability
+    source: Uber Freight TMS / 3PL data
+    purpose: Model logistics disruption and expediting feasibility
+  - name: Disruption scenario library (severity, duration, geography)
+    source: Process Builder / Agentic scenario generator
+    purpose: Parameterized scenarios used by digital twin simulations
+  - name: Continuity plans and escalation playbooks
+    source: S4 / internal knowledge base
+    purpose: Translate simulation outcomes to executable mitigation actions
+happy_path:
+  - step: >-
+      Ingest supplier, inventory, demand, contract and logistics data into the
+      data foundation
+    stage: ingest
+    component: STREAMS
+    purpose: Assemble canonical N‑Tier dataset and time series for simulation
+  - step: >-
+      Agentic orchestration generates tailored disruption scenarios and composes
+      the N‑Tier digital twin
+    stage: analyze
+    component: Agent Team
+    purpose: Create targeted simulation variants balancing coverage and run cost
+  - step: >-
+      Run parallel simulations and score impacts on service level, working
+      capital and EBITDA
+    stage: analyze
+    component: Data Science
+    purpose: Quantify exposures, bottlenecks and mitigation effectiveness
+  - step: >-
+      Produce ranked continuity and sourcing recommendations and present for
+      governed review
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      Enable human approval / override of agent recommendations with
+      traceability
+  - step: >-
+      Execute approved actions (sourcing switches, PO updates, expediting) and
+      writebacks to operational systems
+    stage: act
+    component: Remote Functions
+    purpose: Apply changes in S4 / Kinaxis and trigger transport/3PL actions
+  - step: >-
+      Surface results, KPIs and post‑mortem simulation explainability to
+      stakeholders
+    stage: review
+    component: UI Screen
+    purpose: Provide transparency, audit trail and next‑run tuning inputs
+branches:
+  - condition: >-
+      Key N‑Tier data is incomplete or inconsistent (gaps in supplier tiers /
+      lead times)
+    response: >-
+      Agent Team pauses automated runs and submits data‑quality Action Items via
+      Process Builder; request enrichments from S4 / suppliers; run reduced
+      scope simulations on confirmed subgraph.
+    outcome: >-
+      Prevents misleading full‑network simulations; produces scoped risk
+      insights and a prioritized data remediation backlog.
+  - condition: >-
+      Simulations identify high‑severity single points of failure with immediate
+      EBITDA or service risk
+    response: >-
+      Trigger emergency continuity pathway: elevated CWB Lifecycle approval
+      (fast‑track), auto‑provisioning of alternate sourcing suggestions, and
+      Remote Functions writeback to expedite orders and update contracts.
+    outcome: >-
+      Rapid mitigation reduces disruption duration and financial exposure;
+      actions are tracked and monitored via Cortex Monitoring.
+  - condition: Simulations show low impact across scenarios
+    response: >-
+      Defer costly interventions; schedule monitoring cadence and lower‑cost
+      mitigations (e.g., temporary safety‑stock increases) and log scenario
+      outcomes for periodic re‑run.
+    outcome: >-
+      Avoids unnecessary spend while maintaining readiness; keeps control tower
+      focused on high‑value risks.

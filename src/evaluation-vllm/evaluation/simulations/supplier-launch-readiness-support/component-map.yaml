@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect initial supplier data
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict optimal quality control strategies
+    confidence: confirmed
+    capability: Predict optimal quality control strategies
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Ensure feasible production start
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Validate supplier readiness
+    confidence: inferred
+    node_type: act
+  - name: RCA Service
+    purpose: Minimize COGS impact
+    confidence: inferred
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce cogs during new supplier launches by optimizing run-at-rate
+      verification, launch control planning, readiness assessments, and rapid
+      containment of launch issues. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

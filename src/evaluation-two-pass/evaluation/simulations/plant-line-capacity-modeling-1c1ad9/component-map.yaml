@@ -1,0 +1,43 @@
+streams:
+  - name: STREAMS
+    purpose: Centralize ERP and MES inputs into Subject Areas for downstream modeling.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Provide time-series demand inputs and prediction uncertainty for capacity
+      sizing.
+    confidence: confirmed
+    capability: >-
+      Provide time-series demand inputs and prediction uncertainty for capacity
+      sizing.
+  - name: Process (Process Builder) + Remote Functions
+    purpose: >-
+      Simulate multiple allocation scenarios with sequence/changeover, labor,
+      and equipment constraints to identify bottlenecks and feasible plans.
+    confidence: confirmed
+    capability: >-
+      Simulate multiple allocation scenarios with sequence/changeover, labor,
+      and equipment constraints to identify bottlenecks and feasible plans.
+process_builder:
+  - name: Process (Process Builder) - Rules / IF
+    purpose: >-
+      Choose optimal plan by balancing cost, utilization, service level, and
+      changeover minimization; flag exceptions.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions + Process (Process Builder) - Action Item / Notification
+    purpose: >-
+      Write optimized production schedules back to SAP S/4HANA, notify
+      operations, and surface plan in UI screens for planners/operators.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screen / Subject Areas / Dashboard
+    purpose: >-
+      Provide transparency, MAPE/throughput KPIs, and explanation of bottleneck
+      decisions for planner validation and audit.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,41 @@
+streams:
+  - name: STREAMS
+    purpose: Consolidate and normalize structured inputs for analysis
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Create time-series demand scenarios and ramp velocity estimates
+    confidence: confirmed
+    capability: Create time-series demand scenarios and ramp velocity estimates
+  - name: RCA Service
+    purpose: >-
+      Identify features, parts, and suppliers with highest impact on COGS and
+      availability
+    confidence: inferred
+    capability: >-
+      Identify features, parts, and suppliers with highest impact on COGS and
+      availability
+process_builder:
+  - name: Remote Functions + CWB Lifecycle
+    purpose: >-
+      Commit plan in SAP S/4HANA, surface exceptions for human approvals and
+      track audit
+    confidence: confirmed
+    node_type: act
+agent_teams:
+  - name: Process Builder + Agent Team
+    purpose: >-
+      Synthesize forecasts, constraints and business rules to propose an optimal
+      ramp plan
+    confidence: confirmed
+    role: >-
+      Synthesize forecasts, constraints and business rules to propose an optimal
+      ramp plan
+ui:
+  - name: UI Screen / dashboard
+    purpose: >-
+      Provide visibility, acceptance capture, and ongoing monitoring of ramp
+      performance
+    confidence: confirmed
+    component_type: display

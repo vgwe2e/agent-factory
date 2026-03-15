@@ -1,0 +1,135 @@
+objective: >-
+  Orchestrate autonomous, demand-driven initial production volume and ramp
+  profiles for new vehicle models by unifying sales forecasts, variant mix,
+  market intelligence, and capacity constraints to optimize COGS, revenue
+  capture, and working capital.
+trigger: >-
+  New model program kickoff or scheduled launch-planning cycle (stage-gate
+  approval to set initial production volumes).
+decision: >-
+  Select the initial production volume and ramp-up profile (top-N options) for
+  the new model that balances demand, capacity, COGS impact, and inventory risk.
+expected_action: >-
+  Agentic pipeline generates ranked launch volume & ramp scenarios with
+  quantified revenue, COGS, inventory and capacity impacts; presents
+  recommendations via CWB for review; on approval, writes selected plan to SAP
+  S/4HANA and notifies stakeholders.
+expected_outcome: >-
+  Aligned production launch plan committed to ERP reducing over/under production
+  risk, improved revenue capture from demand-aligned supply, lower working
+  capital tied to launch inventory, and demonstrable COGS optimization across
+  ramp profiles.
+rationale: >-
+  Unifying variant-level forecasts, market signals, and capacity data into an
+  agentic decision flow enables proactive scenario simulation and faster
+  consensus on launch volumes—reducing siloed estimates, manual reconciliations,
+  and costly misaligned production during model launches.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer Orders & Pipeline (CRM/Dealer)
+    type: CRM/Dealer
+    status: tbd
+  - name: Market Intelligence Feed
+    type: external_api
+    status: tbd
+  - name: Aera Cortex / Monitoring
+    type: intelligence
+    status: tbd
+key_inputs:
+  - name: Historical Sales & Shipments (variant-level)
+    source: SAP S/4HANA
+    purpose: Baseline demand history for variant-level forecasting and analog selection
+    preferred_stream_type: STREAMS
+  - name: Vehicle Configurations, BOM & Variant Attributes
+    source: SAP S/4HANA
+    purpose: >-
+      Map demand to buildable variants and identify cost drivers for COGS
+      simulation
+    preferred_stream_type: STREAMS
+  - name: Market Intelligence (macroeconomic, competitor, incentives)
+    source: Market Intelligence Feed
+    purpose: >-
+      External demand signals and scenario drivers for forecast adjustments and
+      uncertainty modelling
+  - name: Dealer Orders & Pipeline
+    source: Dealer Orders (CRM/Dealer)
+    purpose: >-
+      Near-term order signals and pre-orders to calibrate initial ramp
+      assumptions
+  - name: Plant Capacity & Constraint Data
+    source: SAP S/4HANA
+    purpose: >-
+      Validate feasible ramp profiles against capacity, tooling, and supplier
+      constraints
+    preferred_stream_type: STREAMS
+  - name: Forecast Accuracy / Backtest Metrics
+    source: Aera Cortex / Monitoring
+    purpose: >-
+      Weight model ensembles and quantify confidence intervals for scenario
+      selection
+happy_path:
+  - step: >-
+      Consolidate demand history, variant master, capacity and market feeds into
+      subject area
+    stage: ingest
+    component: STREAMS + DDM/Crawlers
+    purpose: Create a unified variant-level subject area for analysis and modelling
+  - step: >-
+      Generate baseline and probabilistic variant-level forecasts and
+      analog-based new-model signals
+    stage: analyze
+    component: Cortex Auto Forecast + Agent Team
+    purpose: Produce demand scenarios and forecast uncertainty for the new model
+  - step: >-
+      Simulate launch volume & ramp scenarios and score impacts on COGS,
+      revenue, inventory and capacity
+    stage: analyze
+    component: Remote Functions (scenario simulation) + Process Builder (Data Science)
+    purpose: Quantify tradeoffs across candidate ramp profiles for decisioning
+  - step: >-
+      Rank top-N launch profiles and route recommendations for human-in-the-loop
+      review
+    stage: decide
+    component: Process Builder (IF) + CWB Lifecycle
+    purpose: Present ranked options with explainability and trigger approval workflow
+  - step: >-
+      Write approved production plan to SAP and notify planning/manufacturing
+      stakeholders
+    stage: act
+    component: Remote Functions (ERP writeback) + Notification
+    purpose: Commit the selected ramp to SAP S/4HANA and inform downstream teams
+  - step: >-
+      Monitor launch performance, update forecasts, and adjust ramps as evidence
+      accrues
+    stage: review
+    component: Cortex Monitoring + Process Builder (Wait/Asynchronous)
+    purpose: Close the loop on post-launch adjustments and continuous improvement
+branches:
+  - condition: Market intelligence indicates high uncertainty or conflicting signals
+    response: >-
+      Agent Team launches focused data collection (external feeds, dealer
+      outreach) and generates wider scenario bands; decision deferred to next
+      planning cycle or flagged for senior review.
+    outcome: >-
+      Decision delayed with expanded uncertainty bands; human reviewer action
+      required to proceed or postpone launch commitments.
+  - condition: >-
+      Plant capacity or critical supplier constraints exceed feasible limits for
+      requested ramp
+    response: >-
+      Process Builder invokes remediation flow: propose alternative lower ramp,
+      phased production across plants, or supplier escalation via Action Item.
+    outcome: >-
+      Adjusted launch profile that fits constraints or a high-priority
+      mitigation plan is created; reduced risk of infeasible commitments.
+  - condition: >-
+      Forecast accuracy or model confidence below threshold for new-model
+      analogs
+    response: >-
+      Escalate to manual planning via CWB Lifecycle with enriched scenario
+      inputs and require explicit override to execute writeback.
+    outcome: >-
+      Human-approved conservative plan or additional validation steps before ERP
+      commit, preventing overcommitment on low-confidence forecasts.

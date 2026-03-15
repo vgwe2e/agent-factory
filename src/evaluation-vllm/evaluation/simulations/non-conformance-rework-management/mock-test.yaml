@@ -1,0 +1,40 @@
+decision: >-
+  Prioritize non-conformances for rework, allocate rework stations, make MRB
+  dispositions, identify corrective actions, and escalate critical quality
+  issues.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Detection of BIW defects.
+  parameters:
+    objective: >-
+      Reduce COGS linked to rework, scrap, and delays while improving OTIF and
+      line efficiency through coherent orchestration of non-conformance
+      handling.
+    key_inputs:
+      - BIW Defect Data
+      - Rework Station Data
+      - MRB Disposition Data
+      - Rework Loop Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Efficiently manage non-conformances, optimize rework station operations,
+    make informed MRB decisions, and escalate critical issues.
+  outcome: Reduced COGS, improved OTIF, and enhanced line efficiency.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - RCA Service
+    - CWB Lifecycle
+    - Notification
+    - Agentic AI
+    - Dashboard
+rationale: >-
+  Leveraging Aera's agentic AI capabilities to optimize non-conformance handling
+  across multiple plants and suppliers, reducing waste and improving overall
+  quality.

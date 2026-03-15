@@ -1,0 +1,62 @@
+source_systems:
+  - name: S4
+    type: ERP
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS / 3PL
+    type: TMS/3PL
+    status: identified
+aera_ingestion:
+  - stream_name: sku-master-product-attributes-current-abc-xyz-tags
+    stream_type: Report Data
+    source: S4
+  - stream_name: historical-sales-shipments
+    stream_type: Report Data
+    source: Advanced Statistical Forecasting in SAS
+  - stream_name: statistical-forecast-and-forecast-error-mape
+    stream_type: Data View
+    source: Advanced Statistical Forecasting in SAS
+  - stream_name: on-hand-inventory-and-replenishment-lead-time
+    stream_type: Report Data
+    source: S4
+  - stream_name: >-
+      operational-constraints-and-business-policy-thresholds-e-g-service-targets-abc-value-cutoffs
+    stream_type: Event Stream
+    source: Manual / Policy repository
+  - stream_name: downstream-impact-indicators-aps-alerts-shortage-propagation
+    stream_type: Report Data
+    source: Kinaxis RapidResponse
+processing:
+  - component: Process Builder - Rules
+    type: cortex
+    function: >-
+      Generate baseline classifications and identify SKUs near rule boundaries
+      or showing performance drift.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Present deterministic recommendations with rationale and impact estimates
+      for human approval.
+  - component: Remote Functions
+    type: process_builder
+    function: Persist approved segmentation changes to S4 and notify downstream systems.
+  - component: Process Builder - Notification / UI Screen
+    type: process_builder
+    function: >-
+      Inform planners, inventory owners, and APS teams and provide a link to
+      review results.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review review and update sku segmentation (abc/xyz) rules to optimize
+      portfolio mix against demand variability and service targets. and approve
+      the recommended action.

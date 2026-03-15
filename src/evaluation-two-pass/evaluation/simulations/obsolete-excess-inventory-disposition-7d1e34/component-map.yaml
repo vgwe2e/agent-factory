@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Pull nightly snapshot of SAP S/4HANA ledger, WMS counts, and MHE schedules
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Compute aging, excess, turnover, slotting score, and flag obsolescence
+      candidates
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process (Process Builder) + Rules + Data View
+    purpose: >-
+      Score candidates, respect safety stock/forecast, and create prioritized
+      disposition and slotting plans
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions + CWB Lifecycle (Action Item)
+    purpose: >-
+      Write transfer/disposition orders to SAP S/4HANA and route high-impact
+      recommendations to planners for approval
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screen (dashboard) + Notification
+    purpose: >-
+      Display executed changes, pending approvals, and KPIs (obsolete inventory,
+      slot utilization, handling moves)
+    confidence: confirmed
+    component_type: display

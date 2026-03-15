@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ensure high-quality data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Identify potential areas for cost reduction.
+    confidence: confirmed
+    capability: Identify potential areas for cost reduction.
+  - name: AutoML
+    purpose: Determine optimal categories and suppliers for optimization.
+    confidence: inferred
+    capability: Determine optimal categories and suppliers for optimization.
+process_builder:
+  - name: Process Builder
+    purpose: Optimize and consolidate small tail-spend items.
+    confidence: confirmed
+    node_type: act
+  - name: UI Screens
+    purpose: Monitor and communicate the value generated.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review implement an indirect spend analytics and optimization initiative
+      to autonomously identify and realize indirect spend opportunities across
+      the enterprise. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

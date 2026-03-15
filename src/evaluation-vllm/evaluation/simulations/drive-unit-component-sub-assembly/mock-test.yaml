@@ -1,0 +1,35 @@
+decision: >-
+  Optimize production sequencing, inventory positioning, and execution
+  orchestration for drive unit components and sub-assemblies.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Daily production planning cycle start
+  parameters:
+    objective: Drive Unit Component & Sub-Assembly Optimization
+    key_inputs:
+      - Production Orders
+      - Inventory Levels
+      - Machine Capacity
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automated decisions on production sequencing, resource allocation, and
+    quality gate settings.
+  outcome: >-
+    Reduced COGS, minimized working capital tied to component stock, improved
+    on-time delivery.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Leverage cross-domain data and analytics to autonomously optimize
+  manufacturing processes and QA gates, leading to cost savings and efficiency
+  improvements.

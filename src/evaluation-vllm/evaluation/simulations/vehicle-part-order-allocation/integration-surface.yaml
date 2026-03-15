@@ -1,0 +1,27 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: customer-dealer-orders
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: available-production-slots
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: parts-inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: allocation-rules
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Process Builder
+    type: process_builder
+    function: Determine optimal production slots for orders.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce cogs and improve otif through optimized order allocation and
+      inventory reservation. and approve the recommended action.

@@ -1,0 +1,76 @@
+objective: >-
+  Automate monitoring and decision-making for regulatory and trade policy
+  compliance to minimize COGS impact and protect OTIF while ensuring compliance.
+trigger: >-
+  Changes in import/export regulations, local content requirements, tariffs, and
+  environmental regulations.
+decision: >-
+  Assess and adjust sourcing strategies, determine local content strategies,
+  choose tariff mitigation strategies, and decide material composition
+  compliance actions.
+expected_action: >-
+  Adapt sourcing, adjust supplier mix, re-route shipments, or modify production
+  plans based on regulatory changes.
+expected_outcome: >-
+  Minimized COGS impact, protected OTIF, and ensured compliance with all
+  relevant regulations.
+rationale: >-
+  Automating the monitoring and decision-making process ensures timely
+  adjustments to sourcing and production strategies, reducing financial risks
+  and maintaining compliance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Import/Export Regulations
+    source: External Regulatory Bodies
+    purpose: Monitor changes in global import/export regulations.
+  - name: Local Content Requirements
+    source: Government Agencies
+    purpose: Analyze local content requirements for different markets.
+  - name: Tariffs and Trade Barriers
+    source: World Trade Organization (WTO)
+    purpose: Develop strategies to mitigate the impact of tariffs and trade barriers.
+  - name: Environmental Regulations
+    source: Environmental Protection Agencies
+    purpose: >-
+      Ensure compliance with environmental regulations regarding material
+      composition.
+happy_path:
+  - step: Ingest regulatory changes and updates.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and integrate regulatory data from various sources.
+  - step: Analyze the impact of regulatory changes on sourcing costs and strategies.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Predict the financial impact of regulatory changes on COGS and working
+      capital.
+  - step: Evaluate potential adjustments to sourcing and supplier strategies.
+    stage: analyze
+    component: AutoML
+    purpose: >-
+      Optimize sourcing and supplier strategies to minimize COGS impact while
+      maintaining compliance.
+  - step: Present recommendations for sourcing and supplier adjustments.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Provide human-in-the-loop review and approval for recommended adjustments.
+  - step: Execute approved adjustments to sourcing and supplier strategies.
+    stage: act
+    component: Remote Functions
+    purpose: Implement approved changes in SAP S/4HANA.
+branches:
+  - condition: Regulatory changes do not significantly impact COGS.
+    response: No action required.
+    outcome: Maintain current sourcing and supplier strategies.
+  - condition: Regulatory changes require immediate adjustment.
+    response: Trigger emergency workflow for rapid assessment and adjustment.
+    outcome: >-
+      Quickly adapt sourcing and supplier strategies to minimize financial
+      impact.
+  - condition: Approved adjustments cannot be implemented due to system issues.
+    response: Notify stakeholders and escalate for manual intervention.
+    outcome: Manual review and resolution of implementation issues.

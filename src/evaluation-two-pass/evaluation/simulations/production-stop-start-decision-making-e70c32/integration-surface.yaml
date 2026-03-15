@@ -1,0 +1,61 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: OT/SCADA (equipment telemetry)
+    type: OT
+    status: tbd
+  - name: Quality Management System / LIMS
+    type: Quality System
+    status: tbd
+  - name: Advanced Planning System / Demand Signal
+    type: APS / Demand
+    status: tbd
+aera_ingestion:
+  - stream_name: work-orders-production-schedule
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: inventory-on-hand-supply-commitments
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: equipment-telemetry-status
+    stream_type: Event Stream
+    source: OT/SCADA (or historian)
+  - stream_name: quality-holds-and-inspection-results
+    stream_type: STREAMS
+    source: Quality Management System / LIMS
+  - stream_name: demand-signal-priority-otif-targets
+    stream_type: STREAMS
+    source: Advanced Planning System / Sales Demand
+  - stream_name: downstream-impact-recovery-windows
+    stream_type: STREAMS
+    source: Calculated by STREAMS / Process Builder (derived)
+processing:
+  - component: Cortex RCA Service
+    type: cortex
+    function: >-
+      Identify primary constraint drivers and rank scenario alternatives by
+      expected outcomes.
+  - component: Process Builder
+    type: process_builder
+    function: >-
+      Apply deterministic business rules, run Remote Function simulations, and
+      choose action path with confidence thresholds.
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Perform ERP/API writebacks and orchestration commands to effect physical
+      changes and update systems of record.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Provide human-in-the-loop oversight, manual overrides, and audit trail for
+      exception handling.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously detect, simulate, and resolve production constraints
+      and exceptions to optimize stop/start decisions, reduce downtime and
+      waste, and preserve otif and availability. and approve the recommended
+      action.

@@ -1,0 +1,38 @@
+decision: >-
+  Determine the optimal procurement technology and automation strategies to
+  enhance efficiency and cost savings.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic review of procurement processes and system performance.
+  parameters:
+    objective: >-
+      Optimize procurement processes through automation and data integration to
+      improve COGS, working capital, and EBITDA.
+    key_inputs:
+      - Procurement Cycle Times
+      - COGS Data
+      - Supplier Performance Metrics
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate requisition-to-pay processes, maintain and enhance e-procurement
+    systems, and integrate data seamlessly with ERP systems.
+  outcome: >-
+    Reduced procurement cycle times, improved COGS, increased EBITDA, and
+    optimized working capital.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Monitoring
+    - Process Builder
+    - Remote Functions
+    - UI Screens
+    - Dashboard
+rationale: >-
+  Leveraging automation and data integration can streamline procurement
+  processes, reduce manual intervention, and provide actionable insights for
+  better decision-making.

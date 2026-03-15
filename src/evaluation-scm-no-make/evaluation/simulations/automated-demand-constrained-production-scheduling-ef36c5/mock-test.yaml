@@ -1,0 +1,61 @@
+decision: >-
+  Dynamically reallocate production load across planable SKUs and locations to
+  meet demand subject to inbound material readiness, supplier lead times,
+  production capacity, and business priority rules.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    New daily touchless demand forecast run or material/inbound change (daily
+    cadence) that materially changes demand or inbound availability for planable
+    SKUs.
+  parameters:
+    objective: >-
+      Automatically coordinate demand-informed production scheduling with
+      inbound material readiness and supplier lead times to produce executable,
+      conflict-free production plans that minimize stockouts and obsolescence
+      while protecting revenue and margins across SKU/location.
+    key_inputs:
+      - Touchless demand forecast
+      - Inventory on hand and reserved
+      - Inbound receipts / PO ETA
+      - Supplier lead times & expedite capability
+      - Production capacity & constraints
+      - Safety stock & FG availability targets
+      - Cost & margin rules (expedite and obsolescence cost)
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Kinaxis RapidResponse
+      - Kinaxis (Order Expediting / Rebalancing / FG Safety Stock Modeling)
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Freight
+expected_output:
+  action: >-
+    Process Builder evaluates consolidated inputs and runs deterministic
+    scheduling rules to produce an optimized production allocation; Remote
+    Functions write executable production orders to S4 and push plans/shortages
+    to Kinaxis RapidResponse; expedite or transfer orders created when required;
+    exceptions surfaced via CWB Lifecycle for planner override.
+  outcome: >-
+    Conflict-free, executable production schedule aligned to inbound materials
+    and supplier lead times; reduced stockouts and obsolescence; minimized
+    expediting costs where possible; prioritized fulfillment of high-margin
+    SKUs; clear exceptions for planner review.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast
+    - Process Builder (Rules + IF + Branch)
+    - Remote Function
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  A deterministic, process-driven approach coordinates forecasts, inventory,
+  supplier readiness and capacity to create actionable schedules. Automating
+  minimizes manual rework and reactionary expediting, preserves service levels
+  and margins, and provides auditable writebacks to S4/Kinaxis while routing
+  only true exceptions to planners.

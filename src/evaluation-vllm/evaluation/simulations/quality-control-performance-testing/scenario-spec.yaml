@@ -1,0 +1,73 @@
+objective: >-
+  Reduce COGS from test-related waste, improve working capital through faster
+  disposition decisions, and tighten yield during platform launches across
+  multiple vehicle programs.
+trigger: Start of production line cycle or detection of non-conforming product.
+decision: >-
+  Sequencing and prioritization of quality checks, test configurations, resource
+  allocation, and disposition paths for non-conforming parts.
+expected_action: >-
+  Optimize test sequences, allocate resources efficiently, authorize rework or
+  scrap, and implement corrective actions based on root cause analysis.
+expected_outcome: >-
+  Minimized rework, reduced test-related waste, faster disposition decisions,
+  improved yield, and optimized working capital.
+rationale: >-
+  Leveraging Aera's deterministic optimization and agentic coordination to
+  streamline quality control and testing processes, leading to significant cost
+  savings and improved efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Quality Check Results
+    source: In-Process Inspections
+    purpose: To determine the need for rework or further testing.
+  - name: Engine Performance Data
+    source: Engine Dyno & Hot Tests
+    purpose: To validate engine performance and durability.
+  - name: Transmission Test Data
+    source: Transmission Shift & Functionality Tests
+    purpose: To ensure transmission functionality and reliability.
+  - name: Non-Conformance Reports
+    source: Non-Conforming Product Disposition
+    purpose: To authorize disposition and rework actions.
+  - name: Quality Data
+    source: Quality Data Collection & Root Cause Analysis
+    purpose: To identify root causes and implement corrective actions.
+happy_path:
+  - step: Collect initial quality check results.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To gather data from in-process inspections.
+  - step: Analyze quality check results and determine next steps.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: To predict potential issues and optimize test sequences.
+  - step: Schedule and execute engine dyno and hot tests.
+    stage: act
+    component: Process Builder
+    purpose: To validate engine performance and durability.
+  - step: Schedule and execute transmission shift and functionality tests.
+    stage: act
+    component: Process Builder
+    purpose: To validate transmission performance and reliability.
+  - step: Analyze test results and determine disposition for non-conforming parts.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: To authorize rework, scrap, or concession requests.
+  - step: Implement corrective actions based on root cause analysis.
+    stage: act
+    component: Remote Functions
+    purpose: To address recurring manufacturing issues and improve yield.
+branches:
+  - condition: Non-conformance detected during in-process inspections.
+    response: Initiate rework authorization process.
+    outcome: Parts are reworked or scrapped based on quality requirements.
+  - condition: Engine performance does not meet specifications.
+    response: Re-run tests with different configurations.
+    outcome: Optimized test sequences to ensure performance standards.
+  - condition: Transmission functionality issues identified.
+    response: Allocate additional resources for detailed testing.
+    outcome: Enhanced testing to ensure reliability and performance.

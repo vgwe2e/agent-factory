@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest demand forecast from SAP S/4HANA
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Generate optimized capacity plans
+    confidence: confirmed
+    capability: Generate optimized capacity plans
+  - name: RCA Service
+    purpose: Detect and prioritize bottlenecks
+    confidence: inferred
+    capability: Detect and prioritize bottlenecks
+process_builder:
+  - name: Remote Functions
+    purpose: Optimize resource allocation based on production schedules
+    confidence: inferred
+    node_type: decide
+  - name: Process Builder
+    purpose: Execute bottleneck resolution strategies
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screens
+    purpose: Provide visibility into capacity usage
+    confidence: confirmed
+    component_type: display

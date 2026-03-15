@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Detection of a production constraint or exception (schedule slippage, supply disruption, machine fault, or quality hold) from operational feeds or operator input.]
+  A --> N1[Stream: STREAMS - Ingest operational & planning data on disruption]
+  N1 --> N2[Cortex: RCA Service - Detect constraint and diagnose root cause and impact]
+  N2 --> N3{Agent: Process Builder (Agent Team + Remote Functions) - Simulate recovery alternatives and rank by COGS/OTIF}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute approved low-risk recovery actions]
+  N4 --> N5[PB: CWB Lifecycle - Human review for high-impact or low-confidence plans]
+  N5 --> Z1[Outcome: Faster recovery from disruptions, fewer and shorter downtime events, reduced waste and expedited recovery scheduling, maintained or improved OTIF and availability, and measurable reduction in COGS impact per disruption.]
+  N3 -->|Recommended recovery has low risk and...| B1[Auto-execute plan via Remote Functions and writeback to SAP S/4HANA; create audit record]
+  B1 --> O1[Outcome: Rapid automated recovery; schedule updated and actions propagated to downstream systems]
+  O1 --> End[End]
+  N3 -->|Recommended recovery is high-impact o...| B2[Create CWB Lifecycle recommendation and route to responsible planner/ops for approval with attached simulations and SHAP-like explanations]
+  B2 --> O2[Outcome: Human-in-the-loop decision ensures control for high-risk changes; prevents unintended high-cost actions]
+  O2 --> End[End]
+  N3 -->|Critical data missing or conflicting ...| B3[Pause execution; generate data request via DDM/Crawlers and operator UI Screen; optionally escalate to operations manager]
+  B3 --> O3[Outcome: Prevents unsafe actions; resumes simulation and decision after data reconciliation or escalation]
+  O3 --> End[End]
+  Z1 --> End[End]

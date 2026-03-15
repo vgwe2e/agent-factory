@@ -1,0 +1,40 @@
+decision: >-
+  Identify and assess supply chain risks, develop mitigation strategies, and
+  model disruption scenarios.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Detection of potential supply chain risks or geopolitical events.
+  parameters:
+    objective: >-
+      Automate identification and assessment of supply chain risks, model
+      disruption scenarios, and execute resilient sourcing and capacity
+      responses across multi-echelon networks.
+    key_inputs:
+      - Supply Chain Risk Data
+      - Geopolitical Event Data
+      - Disaster Recovery Plans
+      - Supplier Data
+      - Disruption Scenarios
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Execute resilient sourcing and capacity responses based on identified risks
+    and modeled scenarios.
+  outcome: >-
+    Reduced working capital volatility, improved on-time delivery, and minimized
+    COGS exposure.
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - Cortex Auto Forecast
+    - Process Builder
+    - Remote Functions
+    - UI Screens
+rationale: >-
+  Unify risk profiling, geopolitical impact analysis, disaster recovery
+  planning, and supplier diversification to enhance supply chain resilience.

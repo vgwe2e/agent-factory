@@ -1,0 +1,150 @@
+objective: >-
+  Autonomously detect multi-plant capacity and supplier-driven constraints,
+  evaluate mitigation trade-offs across procurement, production scheduling, and
+  logistics, and execute coordinated actions to minimize COGS impact while
+  improving on-time delivery and measurable P&L outcomes.
+trigger: >-
+  Binding constraint detected affecting multi-plant fulfillment or a supplier
+  shortage/commitment change that threatens demand fulfilment or materially
+  increases COGS.
+decision: >-
+  Select and execute the optimal constraint-mitigation plan (reschedule
+  production, expedite/retime procurement, reroute or consolidate logistics)
+  that balances COGS, service level, and capacity with optional human approval
+  for high-risk changes.
+expected_action: >-
+  Orchestrate end-to-end steps: ingest SAP master and transactional data,
+  simulate mitigation scenarios (cost & service impact), select best plan via
+  deterministic rules + cost calculus, write recommended schedule/PO changes
+  back to SAP and notify stakeholders; escalate to CWB for approvals when
+  thresholds exceeded.
+expected_outcome: >-
+  Reduced incremental COGS from constraint-driven actions, improved on-time
+  delivery, fewer stockouts, measurable P&L improvement (reduced expedite costs,
+  lowered lost sales), and auditable execution trail for decisions and
+  writebacks.
+rationale: >-
+  Process Builder orchestrates deterministic multi-step workflows and
+  integrations; STREAMS/DDM ingest ERP and supplier signals; Cortex Auto
+  Forecast and deterministic rules + Remote Functions simulate cost/service
+  trade-offs; CWB Lifecycle provides controlled human-in-the-loop approvals
+  where business risk or supplier commitment uncertainty exists. This
+  combination supports cross-domain coordination (procurement, production,
+  logistics) with measurable financial outcomes.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Portal / EDI / ASN feeds
+    type: external_api
+    status: tbd
+  - name: 3PL / TMS (transportation availability)
+    type: external_api
+    status: tbd
+  - name: Aera Cortex services (Cortex Auto Forecast, Safety Stock, RCA)
+    type: platform_service
+    status: tbd
+key_inputs:
+  - name: Production schedule & capacity by plant
+    source: SAP S/4HANA
+    purpose: >-
+      Baseline scheduled production, workcenter capacity and constrained
+      resources for simulation and reschedule proposals
+    preferred_stream_type: STREAMS
+  - name: Inventory balances & on-hand by location
+    source: SAP S/4HANA
+    purpose: >-
+      Assess available supply, safety stock buffers and net requirements to
+      inform mitigation options
+    preferred_stream_type: STREAMS
+  - name: Open purchase orders / supplier acknowledgements
+    source: SAP S/4HANA
+    purpose: >-
+      Determine inbound supply commitments and lead-time availability for
+      expedite or reschedule decisions
+    preferred_stream_type: STREAMS
+  - name: Supplier shortage / allocation alerts
+    source: Supplier Portal / EDI / ASN feeds
+    purpose: >-
+      Trigger constraint detection and inform supplier-side mitigation
+      (expedite, alternate sourcing)
+    preferred_stream_type: DDM/Crawlers
+  - name: Demand forecast & updated S&OP signals
+    source: Cortex Auto Forecast
+    purpose: >-
+      Provide demand baseline and variance scenarios to evaluate production/PO
+      trade-offs
+  - name: Transportation capacity & ETA windows
+    source: 3PL / TMS
+    purpose: Assess logistics constraints and feasible reroute or consolidation options
+    preferred_stream_type: DDM/Crawlers
+  - name: Cost inputs (material cost, expedite cost, penalty/OTD impact)
+    source: SAP S/4HANA
+    purpose: Compute COGS impact and rank mitigation scenarios by P&L outcome
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Ingest enterprise and supplier signals
+    stage: ingest
+    component: Process Builder - Stream (DDM/Crawlers + STREAMS)
+    purpose: >-
+      Pull SAP production, inventory, PO data and supplier/3PL feeds into
+      Subject Areas for a unified view
+  - step: Detect binding constraints and forecast impact
+    stage: analyze
+    component: Cortex Auto Forecast + RCA Service (via Process Builder - Data View)
+    purpose: >-
+      Identify bottlenecks (plant-level capacity, supplier shortfall) and
+      quantify demand/service exposure and cost impact
+  - step: Generate and score mitigation scenarios
+    stage: decide
+    component: >-
+      Process Builder - Rules + Remote Functions (scenario simulation & cost
+      calculus)
+    purpose: >-
+      Simulate schedule shifts, PO expedites, and reroutes; score alternatives
+      on COGS, service level, and feasibility constraints
+  - step: Execute chosen plan or create CWB for exceptions
+    stage: act
+    component: >-
+      Process Builder - Action Item + Remote Functions (API writeback to SAP
+      S/4HANA)
+    purpose: >-
+      Apply approved schedule changes, update POs, and issue logistics
+      instructions; write auditable changes back to ERP or route to supplier
+      actions
+  - step: Human review for high-risk or no-feasible options
+    stage: review
+    component: CWB Lifecycle (Action Item / UI Screen)
+    purpose: >-
+      Route scenarios exceeding risk/cost thresholds for approval, or capture
+      overrides and rationale for auditability
+  - step: Surface results and notify stakeholders
+    stage: notify
+    component: Process Builder - Notification + UI Screen (dashboard)
+    purpose: >-
+      Communicate executed actions, expected OTD improvements, and P&L impact to
+      planners, procurement, and leadership
+branches:
+  - condition: >-
+      No feasible mitigation without violating contractual or capacity hard
+      constraints
+    response: >-
+      Escalate to CWB Lifecycle for executive review and negotiate supplier
+      commitments or customer reprioritization
+    outcome: >-
+      Formal exception approved/rejected with documented rationale; temporary
+      service concessions or demand reallocation executed
+  - condition: Best-cost scenario requires supplier expedite but supplier cannot commit
+    response: >-
+      Fallback to alternate supplier sourcing scenario or internal overtime
+      scenario simulated by Remote Functions and re-ranked by Rules
+    outcome: >-
+      Alternate plan executed (alternate supplier or internal schedule shift)
+      with updated COGS impact and notifications
+  - condition: Proposed schedule change materially increases COGS beyond threshold
+    response: >-
+      Automatically create trade-off report and route to S&OP owner via CWB for
+      approval before writeback
+    outcome: >-
+      Human approval preserves P&L guardrails; approved changes written back or
+      plan rolled back if rejected

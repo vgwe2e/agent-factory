@@ -1,0 +1,42 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: new-vehicle-launch-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: eol-vehicle-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: component-run-out-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: engineering-change-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: marketing-campaign-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Generate forecast and optimize production plans
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Present recommendations for human review and approval
+  - component: Remote Functions
+    type: process_builder
+    function: Execute the chosen plan and update SAP S/4HANA
+  - component: Cortex Monitoring
+    type: process_builder
+    function: Track forecast accuracy and plan performance
+  - component: Notification
+    type: process_builder
+    function: Communicate plan progress and outcomes
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review unified decision intelligence for s&op integration across lifecycle
+      events and approve the recommended action.

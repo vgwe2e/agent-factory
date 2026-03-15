@@ -1,0 +1,81 @@
+objective: >-
+  Optimize multi-echelon service parts inventory and distribution to reduce
+  working capital, cut COGS, and improve OTIF and order capture across dealer
+  networks.
+trigger: Monthly inventory review cycle or urgent fleet repair request.
+decision: >-
+  Forecast service parts demand across fleet service network to optimize
+  inventory, avoid stockouts, and minimize obsolescence while balancing carrying
+  costs.
+expected_action: >-
+  Generate accurate demand forecasts using historical data, optimize warehouse
+  and distribution network based on forecasted demand, expedite urgent parts
+  deliveries to minimize fleet downtime, dispose of obsolete parts efficiently
+  to optimize working capital, adjust stocking levels at service centers to
+  balance service levels and working capital.
+expected_outcome: >-
+  Reduced working capital tied to idle parts, lower COGS, improved OTIF, and
+  enhanced order capture across dealer networks.
+rationale: >-
+  Leveraging AI/ML for forecasting and optimization ensures timely availability
+  of parts, reduces costs, and improves overall service efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Historical Service Parts Sales Data
+    source: SAP S/4HANA
+    purpose: Forecasting demand
+    preferred_stream_type: STREAMS
+  - name: Warehouse Inventory Levels
+    source: SAP S/4HANA
+    purpose: Optimizing network
+    preferred_stream_type: STREAMS
+  - name: Urgent Repair Requests
+    source: SAP S/4HANA
+    purpose: Expediting parts
+    preferred_stream_type: STREAMS
+  - name: Obsolete Parts List
+    source: SAP S/4HANA
+    purpose: Disposition management
+    preferred_stream_type: STREAMS
+  - name: Dealer Service Center Inventory
+    source: SAP S/4HANA
+    purpose: Stocking optimization
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Retrieve historical service parts sales data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Data collection
+  - step: Generate demand forecasts using Cortex Auto Forecast
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predictive analytics
+  - step: Optimize warehouse and distribution network
+    stage: decide
+    component: Remote Functions
+    purpose: Network optimization
+  - step: Expedite urgent parts deliveries
+    stage: act
+    component: Remote Functions
+    purpose: Urgent delivery management
+  - step: Dispose of obsolete parts
+    stage: act
+    component: Remote Functions
+    purpose: Working capital optimization
+  - step: Adjust stocking levels at service centers
+    stage: act
+    component: Remote Functions
+    purpose: Inventory rebalancing
+branches:
+  - condition: Insufficient data for accurate forecasting
+    response: Manual override by analyst
+    outcome: Use historical averages for forecasting
+  - condition: High expedited shipping costs
+    response: Evaluate alternative suppliers
+    outcome: Cost-effective expedited options
+  - condition: Excess inventory at service centers
+    response: Rebalance inventory across centers
+    outcome: Optimized inventory levels

@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: New product pipeline data available in SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve new product pipeline data from SAP S/4HANA.]
+  N1 --> N2[Cortex: AutoML - Analyze BOM changes and engineering releases.]
+  N2 --> N3[Cortex: Remote Functions - Assess supply readiness for new product launches.]
+  N3 --> N4{PB: CWB Lifecycle - Plan end-of-life and obsolescence management.}
+  N4 -->|Primary| N5{Agent: Agentic AI - Strategically plan ICE to EV transition.}
+  N5 --> N6[UI: UI Screens - Present recommendations for integration and planning.]
+  N6 --> Z1[Outcome: Reduced COGS and working capital through synchronized product launches, lifecycle decisions, and obsolescence mitigation.]
+  N4 -->|Insufficient supply readiness for new...| B1[Trigger go/no-go decision review.]
+  B1 --> O1[Outcome: Delay or cancel new product launch.]
+  O1 --> End[End]
+  N4 -->|High obsolescence risk detected.| B2[Adjust EOL plans to mitigate risk.]
+  B2 --> O2[Outcome: Revised EOL plans to minimize write-downs.]
+  O2 --> End[End]
+  N4 -->|Significant BOM changes impact long-t...| B3[Reassess and update long-term plans.]
+  B3 --> O3[Outcome: Updated long-term plans incorporating BOM changes.]
+  O3 --> End[End]
+  Z1 --> End[End]

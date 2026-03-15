@@ -1,0 +1,49 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Ingest production schedule, resource master, line capacity and telemetry
+      into Subject Areas.
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+  - name: Cortex Auto Forecast + STREAMS
+    purpose: >-
+      Generate demand forecast and build line/plant capacity model; identify
+      initial bottlenecks.
+    confidence: confirmed
+    type: Cortex Auto Forecast + STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder (Process -> Rules -> Remote Functions)
+    purpose: >-
+      Execute deterministic optimization rules (Remote Functions) to allocate
+      manpower and equipment respecting constraints and cost objectives.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (Transaction)
+    purpose: >-
+      Write resource assignments/work orders back to SAP S/4HANA and update
+      schedule transactions.
+    confidence: confirmed
+    node_type: act
+  - name: Process Builder (Notification)
+    purpose: >-
+      Send assignment and change notifications to supervisors, maintenance, and
+      shift planners.
+    confidence: confirmed
+    node_type: notify
+  - name: UI Screens (dashboard & CWB lifecycle)
+    purpose: >-
+      Display allocation, bottleneck view, KPIs and provide accept/override
+      workflow for planners.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously allocate manpower and equipment across multi-site
+      production lines to resolve bottlenecks, maximize throughput, and reduce
+      cogs by aligning capacity with demand signals. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

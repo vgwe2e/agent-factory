@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Daily production planning cycle initiation.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve demand forecast and inventory levels]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Generate daily production schedules]
+  N2 --> N3{PB: CWB Lifecycle - Manage material releases and call-offs}
+  N3 -->|Primary| N4[PB: Exception Management - Monitor production order execution]
+  N4 --> N5{PB: Remote Functions - Analyze and adjust capacity utilization}
+  N5 --> N6[PB: CWB Lifecycle - Coordinate rework and reschedule activities]
+  N6 --> Z1[Outcome: Improved EBITDA, reduced COGS, optimized working capital, and enhanced production efficiency across multi-plant networks.]
+  N3 -->|Insufficient inventory levels detected| B1[Trigger emergency procurement process]
+  B1 --> O1[Outcome: Ensure material availability for production]
+  O1 --> End[End]
+  N3 -->|Significant deviation from production...| B2[Initiate manual review and adjustment]
+  B2 --> O2[Outcome: Correct deviations and maintain schedule adherence]
+  O2 --> End[End]
+  N3 -->|Unexpected increase in demand| B3[Reallocate capacity and expedite material releases]
+  B3 --> O3[Outcome: Meet increased demand without compromising quality]
+  O3 --> End[End]
+  Z1 --> End[End]

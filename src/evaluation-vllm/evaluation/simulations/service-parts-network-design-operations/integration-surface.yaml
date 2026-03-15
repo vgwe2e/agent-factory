@@ -1,0 +1,32 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: order-fulfillment-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: transportation-costs
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: carrier-performance-metrics
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: AutoML
+    type: cortex
+    function: Identify optimal inventory repositioning and fulfillment strategies.
+  - component: Remote Functions
+    type: process_builder
+    function: Implement the optimized plans across the network.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce working capital, lower cogs, and improve otif by
+      autonomously coordinating stock rebalancing, safety stock, and
+      production/fulfillment sequencing across warehouses, plants, and dcs. and
+      approve the recommended action.

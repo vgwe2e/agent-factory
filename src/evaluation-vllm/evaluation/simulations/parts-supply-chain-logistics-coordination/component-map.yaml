@@ -1,0 +1,38 @@
+streams:
+  - name: STREAMS
+    purpose: Maintain optimal inventory levels to avoid stockouts and obsolescence.
+    confidence: confirmed
+    type: STREAMS
+  - name: DDM/Crawlers
+    purpose: Collect return data for further disposition decisions.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict required parts volume for recall campaigns.
+    confidence: confirmed
+    capability: Predict required parts volume for recall campaigns.
+process_builder:
+  - name: Remote Functions
+    purpose: Place orders with suppliers considering lead times and costs.
+    confidence: inferred
+    node_type: act
+  - name: Process Builder
+    purpose: Ensure timely delivery while minimizing logistics costs.
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: >-
+      Optimize working capital by choosing store, scrap, recycle, or return
+      options.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize recall parts supply chain and logistics coordination to
+      reduce working capital, prevent stockouts, and improve otif while lowering
+      cogs and ebitda. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

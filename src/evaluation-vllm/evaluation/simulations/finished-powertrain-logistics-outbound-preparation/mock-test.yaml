@@ -1,0 +1,39 @@
+decision: >-
+  Optimize inventory positioning, outbound routes, and load sequencing for
+  finished powertrains.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Daily inventory update from SAP S/4HANA.
+  parameters:
+    objective: >-
+      Reduce COGS by optimizing inventory positioning, transportation routing,
+      and production-aligned load sequencing for finished powertrains.
+    key_inputs:
+      - Inventory Levels
+      - Demand Forecasts
+      - Transportation Costs
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Autonomous decision-making for inventory positioning, route optimization,
+    and load planning.
+  outcome: >-
+    2-10% COGS reduction, improved OTIF, reduced handling and vessel/tractor
+    utilization inefficiencies.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Cortex Auto Forecast
+    - AutoML
+    - Remote Functions
+    - UI Screens
+    - Dashboard
+rationale: >-
+  By leveraging autonomous decision-making, the solution can optimize multiple
+  aspects of the logistics process, leading to significant cost savings and
+  efficiency improvements.

@@ -1,0 +1,58 @@
+decision: >-
+  Dynamically adjust customer delivery promises and order commitments based on
+  live ATP/CTP data augmented by supplier inbound readiness signals, balancing
+  revenue capture with supplier capacity and inbound material availability.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    New customer order, order change, or supplier inbound readiness update
+    (ETA/ASN) ingested into the platform.
+  parameters:
+    objective: >-
+      Automatically align customer delivery promises with supplier inbound
+      readiness by coordinating Fulfill and Source domains to reduce backorders,
+      expedite where value-positive, and protect revenue and margins across
+      SKU/location matrices.
+    key_inputs:
+      - Customer Orders / Order Changes
+      - ATP / Advanced CTP Availability
+      - Supplier Inbound Readiness (ETA, ASN, readiness flags)
+      - Supplier Capacity / Shortage Propagation
+      - Forecast & Safety Stock Targets
+      - Inventory on Hand & Location Availability
+      - Transportation ETAs & Carrier Status
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Kinaxis RapidResponse
+      - >-
+        Kinaxis (Order Expediting / Shortage Propagation / Rebalancing / FG
+        Safety Stock Modeling)
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - Uber Freight (3PL)
+      - SAS (Advanced Statistical Forecasting)
+expected_output:
+  action: >-
+    Process Builder orchestrates data ingestion and rules evaluation, Remote
+    Functions compute revised promises and write updates to S4/Kinaxis, and CWB
+    Lifecycle surfaces recommendations for exception handling and manual
+    overrides.
+  outcome: >-
+    Reduced backorders and expedited delays for high-value demand, improved
+    OTIF, prioritized expediting where margins justify it, and synchronized
+    commitments between Fulfill and Source domains with auditable writebacks.
+  affected_components:
+    - STREAMS
+    - Process Builder - Rules
+    - Remote Functions
+    - CWB Lifecycle
+rationale: >-
+  Using deterministic process orchestration ensures repeatable, auditable
+  alignment of customer promises to supplier reality. Combining ATP/CTP with
+  supplier readiness signals prevents overcommitment, enables targeted
+  expediting for revenue-protecting orders, and minimizes margin erosion from
+  unnecessary rush actions.

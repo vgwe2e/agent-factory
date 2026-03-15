@@ -1,0 +1,25 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest acknowledgment data
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Identify differences between PO and acknowledgment
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Remote Functions
+    purpose: Apply rules to correct or escalate discrepancies
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review end-to-end automated handling of supplier po acknowledgments,
+      discrepancy resolutions, po system integration, and escalation for
+      unacknowledged pos across a multi-echelon automotive supply network. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

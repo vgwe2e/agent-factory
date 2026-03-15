@@ -1,0 +1,25 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: npi-program-details
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: tooling-fixture-requirements
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supplier-capacity-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: Ensure that the required tooling and fixtures are available.
+  - component: Process Builder
+    type: process_builder
+    function: Develop a phased capacity ramp-up plan to meet demand.
+ui_surface:
+  - component: UI Screens
+    screen: Primary
+    purpose: Display the results and recommendations for review and action.

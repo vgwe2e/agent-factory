@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Periodic data refresh from SAP S/4HANA and real-time demand signals.]
+  A --> N1[Stream: DDM/Crawlers - Ingest historical sales and reliability data from SAP S/4HANA]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Apply Cortex Auto Forecast to generate SKU-level demand forecasts]
+  N2 --> N3{PB: Remote Functions - Adjust forecasts based on real-time demand signals and market trends}
+  N3 -->|Primary| N4{PB: CWB Lifecycle - Route adjusted forecasts to CWB Lifecycle for human-in-the-loop review}
+  N4 --> N5[PB: Remote Functions - Execute replenishment orders and update inventory levels in SAP S/4HANA]
+  N5 --> Z1[Outcome: Continuous alignment of inventory and procurement with demand signals, reducing working capital while increasing on-time availability and COGS efficiency.]
+  N3 -->|Forecast accuracy falls below threshold| B1[Trigger Forecast Accuracy Analysis & Adjustment process]
+  B1 --> O1[Outcome: Improve future forecast accuracy through parameter tuning]
+  O1 --> End[End]
+  N3 -->|Excess inventory detected| B2[Initiate Excess & Obsolete Parts Demand Mitigation process]
+  B2 --> O2[Outcome: Reduce excess inventory and optimize working capital]
+  O2 --> End[End]
+  N3 -->|Recall or campaign event detected| B3[Activate Recall/Campaign Parts Demand Surge Planning process]
+  B3 --> O3[Outcome: Ensure timely availability of parts for recall or campaign needs]
+  O3 --> End[End]
+  Z1 --> End[End]

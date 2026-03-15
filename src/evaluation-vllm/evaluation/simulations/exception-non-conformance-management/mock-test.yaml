@@ -1,0 +1,46 @@
+decision: >-
+  Determine the appropriate action for handling the exception based on
+  predefined criteria and business rules.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Detection of a critical issue or non-conformance in production.
+  parameters:
+    objective: >-
+      Unify and automate exception handling across Production Stop & Hold,
+      Rework/Repair, Deviation & ECAs, Critical Issue Escalation, Scrap
+      Disposition, and Root Cause analyses to reduce COGS and improve OTIF and
+      line efficiency.
+    key_inputs:
+      - Critical Issues
+      - Non-Conformances
+      - Deviation Requests
+      - High-Priority Issues
+      - Scrap Parts
+      - Production Disruptions
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Execute the selected action, such as halting production, initiating rework,
+    approving deviations, escalating issues, disposing of scrap, or conducting
+    root cause analysis.
+  outcome: >-
+    Faster containment, optimized rework, minimized scrap, and accelerated
+    root-cause remediation leading to reduced COGS and improved OTIF and line
+    efficiency.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Monitoring
+    - CWB Lifecycle
+    - Remote Functions
+    - Cortex Monitoring
+    - Notification
+    - Dashboard
+rationale: >-
+  Automating exception handling reduces manual intervention, ensures
+  consistency, and accelerates decision-making, leading to better operational
+  outcomes.

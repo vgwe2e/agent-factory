@@ -1,0 +1,39 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: logistics-facility-investment-proposals
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: capex-project-proposals
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: roi-analysis-scenarios
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: annual-logistics-budget
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: AutoML
+    type: cortex
+    function: >-
+      Prioritize logistics facility investments based on cost, capacity, and
+      service levels.
+  - component: Remote Functions
+    type: cortex
+    function: Determine which CAPEX projects to approve or defer.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure budget allocation aligns with strategic goals and service levels.
+  - component: Notification
+    type: process_builder
+    function: Communicate decisions and next steps.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review combine deterministic optimization and agentic orchestration to
+      prioritize logistics capital planning and investment decisions. and
+      approve the recommended action.

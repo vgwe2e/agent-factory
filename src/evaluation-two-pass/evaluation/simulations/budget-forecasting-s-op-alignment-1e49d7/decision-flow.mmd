@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Periodic S&OP cycle trigger or ad-hoc 'budget/forecast alignment' request (monthly / quarterly) to evaluate candidate budget and forecast scenarios against COGS, margin, and working capital constraints.]
+  A --> N1[Stream: STREAMS - Ingest authoritative operational & financial data from SAP and external sources]
+  N1 --> N2[Cortex: Subject Areas - Assemble scenario P&L and working capital metrics into analytical layer]
+  N2 --> N3{PB: Process Builder: Rules + Remote Functions - Run deterministic optimization and rule evaluation to rank scenarios}
+  N3 -->|Primary| N4[PB: CWB Lifecycle + UI Screens - Surface recommendation and trade-offs for finance & S&OP review]
+  N4 --> N5[PB: Remote Functions + Process Builder Notification - Commit approved scenario and notify stakeholders]
+  N5 --> Z1[Outcome: Selected, S&OP-aligned budget and forecast committed in ERP; measurable uplift in EBITDA and improved cash conversion metrics; auditable decision record and retryable integration if writeback issues occur.]
+  N3 -->|Optimization identifies capacity cons...| B1[Automatically generate a constrained-feasible alternative scenario (reduced volumes / shifted production) and surface with explicit capacity trade-offs]
+  B1 --> O1[Outcome: Decision maker receives feasible options with clear capacity impact enabling timely accept/override]
+  O1 --> End[End]
+  N3 -->|Low confidence or high sensitivity in...| B2[Escalate to multi-stakeholder CWB (Finance + S&OP + Manufacturing) and attach detailed sensitivity analysis]
+  B2 --> O2[Outcome: Human-in-the-loop negotiation produces agreed compromise scenario or requests data refresh before commit]
+  O2 --> End[End]
+  N3 -->|ERP writeback (SAP S/4HANA) fails or ...| B3[Queue transaction, create exception Action Item in Process Builder, notify integration/ops team and retry per policy]
+  B3 --> O3[Outcome: Writeback audited and retried; decision remains recorded and stakeholders alerted until resolved]
+  O3 --> End[End]
+  Z1 --> End[End]

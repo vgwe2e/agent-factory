@@ -1,0 +1,44 @@
+streams:
+  - name: Process Builder - Stream (STREAMS / DDM)
+    purpose: >-
+      Consolidate authoritative inputs into the Subject Area for launch
+      decisioning.
+    confidence: confirmed
+    type: Process Builder - Stream (STREAMS / DDM)
+cortex:
+  - name: Process Builder - Rules + Remote Functions (cost/lead-time calcs)
+    purpose: >-
+      Score alternatives (alternate carrier, buffer pull, split shipments,
+      sequence change) against policy thresholds.
+    confidence: confirmed
+    capability: >-
+      Score alternatives (alternate carrier, buffer pull, split shipments,
+      sequence change) against policy thresholds.
+process_builder:
+  - name: Process Builder - IF + CWB Lifecycle
+    purpose: >-
+      Select automated activation vs. human-in-the-loop approval based on
+      cost/resilience trade-offs.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (ERP writeback) + Process Builder - Transaction
+    purpose: Trigger operational changes in source systems to effect contingency.
+    confidence: confirmed
+    node_type: act
+  - name: Process Builder - Notification + UI Screen (dashboard)
+    purpose: >-
+      Ensure traceability, stakeholder awareness, and provide interface for
+      overrides.
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review orchestrate semi-autonomous, multi-echelon logistics decisions
+      during automotive model launches to minimize cogs, protect otif service
+      levels, and accelerate time-to-market by coordinating inbound/outbound
+      routing, packaging sequencing, and contingency activation. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

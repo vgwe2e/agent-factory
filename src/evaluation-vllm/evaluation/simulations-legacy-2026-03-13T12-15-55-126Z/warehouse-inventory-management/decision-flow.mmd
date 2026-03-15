@@ -1,0 +1,18 @@
+flowchart TD
+    A[Inventory Data Update] --> B[PB: Process]
+    B --> C[Cortex: Raw Material Storage Optimization]
+    C --> D{Cycle Count Accuracy >99%?}
+    D -->|Yes| E[Cortex: Inventory Cycle Counting]
+    D -->|No| F[PB: Report Data]
+    E --> G[Cortex: Obsolete Inventory Disposition]
+    G --> H{Slotting Efficiency >85%?}
+    H -->|Yes| I[Cortex: Warehouse Slotting]
+    H -->|No| J[PB: Data View]
+    I --> K[Cortex: Material Handling Maintenance]
+    K --> L{Capacity Utilization <95%?}
+    L -->|Yes| M[PB: Transaction]
+    L -->|No| N[PB: Rollback Transaction]
+    M --> O[UI: Dashboard]
+    N --> P[UI: Alert]
+    O --> Q[End]
+    P --> Q

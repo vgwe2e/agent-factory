@@ -1,0 +1,71 @@
+objective: >-
+  Automate BOM sourcing, RFQ release, supplier clarification, bid analysis, and
+  cost breakdowns to optimize COGS and cash flow in automotive sourcing.
+trigger: New BOM creation or update in SAP S/4HANA.
+decision: >-
+  Assemble comprehensive sourcing packages, distribute RFQs, manage supplier
+  communications, evaluate supplier proposals, and select optimal bids.
+expected_action: >-
+  Generate precise RFQs, evaluate supplier proposals, and select optimal bids
+  with end-to-end orchestration.
+expected_outcome: >-
+  Reduced cycle times, improved on-time delivery, optimized COGS, and enhanced
+  cash flow.
+rationale: >-
+  Automating RFQ and bid management reduces manual effort, ensures consistency,
+  and improves decision-making through structured evaluation.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: BOM Data
+    source: SAP S/4HANA
+    purpose: To assemble comprehensive sourcing packages.
+  - name: Supplier List
+    source: SAP S/4HANA
+    purpose: To distribute RFQs and manage supplier communications.
+  - name: Supplier Responses
+    source: Supplier Portal
+    purpose: To coordinate supplier questions and responses.
+  - name: Technical Proposals
+    source: Supplier Portal
+    purpose: To evaluate supplier technical proposals.
+  - name: Commercial Bids
+    source: Supplier Portal
+    purpose: To perform commercial bid analysis and cost breakdowns.
+happy_path:
+  - step: Retrieve BOM data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: To gather necessary data for sourcing packages.
+  - step: Assemble comprehensive sourcing packages.
+    stage: analyze
+    component: Process Builder
+    purpose: To create detailed RFQs with specifications and volumes.
+  - step: Distribute RFQs to qualified suppliers.
+    stage: act
+    component: Process Builder
+    purpose: To initiate the RFQ process and manage supplier communications.
+  - step: Coordinate supplier questions and responses.
+    stage: decide
+    component: Process Builder
+    purpose: To handle supplier clarifications efficiently.
+  - step: Evaluate technical proposals.
+    stage: analyze
+    component: Process Builder
+    purpose: To assess feasibility and performance of supplier proposals.
+  - step: Perform commercial bid analysis and cost breakdowns.
+    stage: decide
+    component: Process Builder
+    purpose: To determine the best financial terms and select optimal bids.
+branches:
+  - condition: Supplier does not respond within specified timeframe.
+    response: Send reminder notification to supplier.
+    outcome: Ensures timely responses from suppliers.
+  - condition: Supplier proposal is deemed infeasible.
+    response: Reject proposal and notify supplier.
+    outcome: Maintains high standards for supplier proposals.
+  - condition: Multiple bids have similar financial terms.
+    response: Evaluate based on additional criteria such as lead time and reliability.
+    outcome: Selects the most reliable and cost-effective bid.

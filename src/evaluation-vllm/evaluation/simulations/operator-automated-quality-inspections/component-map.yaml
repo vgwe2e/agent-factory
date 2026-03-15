@@ -1,0 +1,24 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest operator self-inspection data
+    confidence: inferred
+    type: DDM/Crawlers
+cortex: []
+process_builder:
+  - name: Remote Functions
+    purpose: Route defective items for rework and release qualified products
+    confidence: inferred
+    node_type: act
+agent_teams:
+  - name: Agentic AI
+    purpose: Detect and classify defects using vision systems
+    confidence: inferred
+    role: Detect and classify defects using vision systems
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce scrap, rework, and downtime by autonomously detecting,
+      classifying, and certifying product quality through integrated
+      inspections. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,149 @@
+objective: >-
+  Reduce COGS and improve contract compliance and supplier resilience by
+  identifying and executing high-impact sourcing consolidation and optimization
+  opportunities across L4 sourcing processes using deterministic optimization
+  and semi-autonomous agents.
+trigger: >-
+  Periodic cost-structure review or scheduled category review
+  (monthly/quarterly) that flags material/commodity items with high COGS
+  contribution, fragmented supplier base, or low contract coverage.
+decision: >-
+  Select sourcing opportunities (items/commodities) for consolidation or
+  re-sourcing by evaluating should-cost breakdown, supplier capability, contract
+  coverage, service metrics, and supplier risk, then generate an executable
+  sourcing profile and action plan.
+expected_action: >-
+  Ingest supplier, contract, cost, demand and inventory signals; compute
+  should-cost and consolidation ROI; prioritize opportunities; create sourcing
+  profiles (target suppliers, lot-sizes, terms); execute sourcing events and ERP
+  contract/PO updates; monitor supplier performance and risk.
+expected_outcome: >-
+  Measurable COGS reduction for targeted categories, increased contract-covered
+  spend, fewer suppliers per commodity where appropriate, and improved supplier
+  resilience (reduced risk scores and faster mitigation actions).
+rationale: >-
+  Combining deterministic cost-modeling (should-cost), rule-based prioritization
+  and Process Builder orchestration enables consistent, scalable identification
+  and execution of sourcing opportunities. Integration with ERP and planning
+  systems ensures executable plans and closed-loop monitoring to capture savings
+  and maintain resilience.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (general)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS/3PL)
+    type: TMS/3PL
+    status: identified
+  - name: Contract Repository / CLM
+    status: tbd
+  - name: Supplier Portal / Performance DB
+    status: tbd
+key_inputs:
+  - name: Item/commodity cost breakdown (materials, labor, overhead, SG&A, margin)
+    source: S4 (costing tables) + SAS should-cost outputs
+    purpose: >-
+      Compute should-cost, identify line-item negotiation leverage and
+      consolidation ROI
+    preferred_stream_type: STREAMS
+  - name: Supplier master and performance metrics (OTIF, quality, capacity)
+    source: S4 + Supplier Portal / Performance DB
+    purpose: >-
+      Assess supplier capability, service tradeoffs, and consolidation
+      feasibility
+    preferred_stream_type: Subject Areas
+  - name: Contract coverage and commercial terms
+    source: Contract Repository / CLM
+    purpose: >-
+      Determine existing contractual coverage and opportunities to expand
+      compliant spend
+    preferred_stream_type: DDM/Crawlers
+  - name: Demand forecasts and usage patterns
+    source: Kinaxis RapidResponse / Advanced Statistical Forecasting in SAS
+    purpose: >-
+      Align sourcing volume profiles and lot-sizing to demand and safety stock
+      needs
+    preferred_stream_type: Subject Areas
+  - name: Inventory positions & lead times
+    source: Blue Yonder WMS + Kinaxis
+    purpose: Model supply timing, consolidation impact, and risk buffers
+    preferred_stream_type: STREAMS
+  - name: Supplier risk indicators (financial, geopolitical, capacity alerts)
+    source: External risk feeds + Supplier Portal
+    purpose: Weight resilience considerations in opportunity selection
+happy_path:
+  - step: >-
+      Ingest consolidated data (costs, contracts, suppliers, demand, inventory)
+      into the DI platform
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and stage canonical datasets for analysis
+  - step: >-
+      Transform and compute should-cost, consolidation ROI and supplier
+      capability scores
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Produce normalized cost-breakdowns and deterministic scoring for
+      prioritization
+  - step: >-
+      Prioritize opportunities and generate sourcing profiles using
+      deterministic rules and a Process Builder workflow
+    stage: decide
+    component: Process (Process Builder) + Rules
+    purpose: >-
+      Select items for consolidation/resourcing and create target supplier/terms
+      profile
+  - step: >-
+      Execute sourcing actions: route negotiations, create PO/contract change
+      proposals and schedule supplier engagements
+    stage: act
+    component: Action Item + Remote Functions
+    purpose: >-
+      Kick off negotiation events, writeback contract/PO updates to S4, and
+      capture execution tasks
+  - step: >-
+      Notify stakeholders and surface sourcing plan, expected savings and risk
+      mitigations on dashboard
+    stage: notify
+    component: Notification + UI Screen
+    purpose: >-
+      Communicate plan, get approvals if required, and provide transparency for
+      tracking
+branches:
+  - condition: >-
+      Insufficient contract coverage or legal constraints for recommended
+      consolidation
+    response: >-
+      Route to CWB Lifecycle for manual approval and contracting subprocess;
+      create negotiation action items and legal review subprocess
+    outcome: >-
+      Opportunity placed into contracting pipeline; partial or staged
+      consolidation plan with milestone-based execution
+  - condition: Target suppliers flagged as high risk (financial/geopolitical/capacity)
+    response: >-
+      Require dual-sourcing or alternate supplier inclusion and generate risk
+      mitigation plan via Process Builder
+    outcome: >-
+      Adjusted sourcing profile that preserves resilience (reduced single-source
+      exposure) with lower immediate COGS impact
+  - condition: >-
+      Computed savings/ROI below threshold or negative (no viable cost
+      advantage)
+    response: >-
+      Escalate to category manager for manual review and defer automation; flag
+      for monitoring and re-evaluation
+    outcome: >-
+      No consolidation executed; item monitored for future opportunity as inputs
+      change

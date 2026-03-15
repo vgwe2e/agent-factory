@@ -1,0 +1,35 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Create and update the multi-tier supplier map for downstream analysis
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Produce consistent attributes (lead-time, risk score, exposure) for
+      digital twin
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder + Remote Functions + CWB Lifecycle
+    purpose: Implement mitigation while preserving audit trail and approvals
+    confidence: confirmed
+    node_type: act
+  - name: Subject Areas + Cortex Monitoring
+    purpose: Track performance, update risk models, and improve future recommendations
+    confidence: confirmed
+    node_type: review
+agent_teams:
+  - name: Agent Team + Cortex (Agentic AI)
+    purpose: >-
+      Explore multi-node failure modes and surface prioritized continuity
+      actions
+    confidence: confirmed
+    role: >-
+      Explore multi-node failure modes and surface prioritized continuity
+      actions
+ui:
+  - name: UI Screens (dashboard, report) + CWB Lifecycle
+    purpose: Enable human review, accept/override, and document rationale
+    confidence: confirmed
+    component_type: display

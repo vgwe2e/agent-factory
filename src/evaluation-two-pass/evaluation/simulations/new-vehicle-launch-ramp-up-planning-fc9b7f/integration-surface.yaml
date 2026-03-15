@@ -1,0 +1,57 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Marketing Automation / Campaign Planning
+    status: tbd
+  - name: Supplier Portal / APS
+    status: tbd
+  - name: PLM / Engineering Change System
+    status: tbd
+aera_ingestion:
+  - stream_name: bill-of-materials-bom-routings
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: plant-capacity-line-utilization-constraints
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: supplier-lead-times-commitments-and-capacity
+    stream_type: batch
+    source: Supplier Portal / APS
+  - stream_name: marketing-campaign-schedule-and-expected-uplift
+    stream_type: Event Stream
+    source: Marketing Automation / Campaign Planning
+  - stream_name: historical-ramp-performance-ramp-up-learning-curves
+    stream_type: batch
+    source: Subject Areas (historical data ingested via STREAMS)
+  - stream_name: engineering-change-notices-ecos-and-impact-matrix
+    stream_type: Event Stream
+    source: PLM / Engineering Change System
+  - stream_name: demand-signal-dealer-orders-forecast-scenarios
+    stream_type: batch
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Create time-series demand scenarios and ramp velocity estimates
+  - component: RCA Service
+    type: cortex
+    function: >-
+      Identify features, parts, and suppliers with highest impact on COGS and
+      availability
+  - component: Remote Functions + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Commit plan in SAP S/4HANA, surface exceptions for human approvals and
+      track audit
+  - component: Process Builder + Agent Team
+    type: agent_teams
+    function: >-
+      Synthesize forecasts, constraints and business rules to propose an optimal
+      ramp plan
+ui_surface:
+  - component: UI Screen / dashboard
+    screen: Primary
+    purpose: >-
+      Provide visibility, acceptance capture, and ongoing monitoring of ramp
+      performance

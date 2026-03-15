@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Monthly inventory review cycle.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve current inventory levels and historical sales data from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze historical sales data using Cortex Auto Forecast to predict future demand.]
+  N2 --> N3[Cortex: Safety Stock Service - Use Safety Stock Service to calculate optimal safety stock levels based on demand forecasts.]
+  N3 --> N4{PB: CWB Lifecycle - Apply CWB Lifecycle to review and approve calculated safety stock levels.}
+  N4 -->|Primary| N5{PB: Process Builder - Utilize Process Builder to design and enforce inventory deployment rules.}
+  N5 --> N6[PB: Remote Functions - Implement Remote Functions to update inventory positions and safety stock levels in SAP S/4HANA.]
+  N6 --> Z1[Outcome: Reduced working capital, minimized COGS related to mis-fulfillment, improved OTIF across plants, suppliers, and distribution centers.]
+  N4 -->|High variance in demand forecasts| B1[Engage RCA Service to identify root causes of demand variability.]
+  B1 --> O1[Outcome: Improve forecast accuracy and adjust safety stock levels accordingly.]
+  O1 --> End[End]
+  N4 -->|Significant excess inventory detected| B2[Trigger a subprocess in Process Builder to plan disposition and logistics for excess inventory.]
+  B2 --> O2[Outcome: Minimize carrying costs and mitigate waste.]
+  O2 --> End[End]
+  N4 -->|Strategic stocking location changes r...| B3[Use Process Builder to reroute inventory and update network map in SAP S/4HANA.]
+  B3 --> O3[Outcome: Optimize logistics network and reduce working capital.]
+  O3 --> End[End]
+  Z1 --> End[End]

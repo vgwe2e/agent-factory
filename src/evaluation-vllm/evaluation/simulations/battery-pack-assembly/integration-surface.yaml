@@ -1,0 +1,36 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: module-integration-plan
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: bms-installation-parameters
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: sealing-leak-test-conditions
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: end-of-line-test-suite
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: real-time-monitoring-thresholds
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Optimize module integration plan.
+  - component: Action Item
+    type: process_builder
+    function: >-
+      Automate and coordinate the assembly process across multiple activities
+      using Aera's orchestration capabilities.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous orchestration of end-to-end battery pack assembly
+      decisions to reduce cogs, improve otif, and enhance supplier/manufacturing
+      synchronization. and approve the recommended action.

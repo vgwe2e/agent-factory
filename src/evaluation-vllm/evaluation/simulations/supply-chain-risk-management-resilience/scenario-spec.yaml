@@ -1,0 +1,72 @@
+objective: >-
+  Automate identification and assessment of supply chain risks, model disruption
+  scenarios, and execute resilient sourcing and capacity responses across
+  multi-echelon networks.
+trigger: Detection of potential supply chain risks or geopolitical events.
+decision: >-
+  Identify and assess supply chain risks, develop mitigation strategies, and
+  model disruption scenarios.
+expected_action: >-
+  Execute resilient sourcing and capacity responses based on identified risks
+  and modeled scenarios.
+expected_outcome: >-
+  Reduced working capital volatility, improved on-time delivery, and minimized
+  COGS exposure.
+rationale: >-
+  Unify risk profiling, geopolitical impact analysis, disaster recovery
+  planning, and supplier diversification to enhance supply chain resilience.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Supply Chain Risk Data
+    source: SAP S/4HANA
+    purpose: Identify and assess supply chain risks.
+  - name: Geopolitical Event Data
+    source: External Feeds
+    purpose: Monitor and analyze geopolitical impacts.
+  - name: Disaster Recovery Plans
+    source: Internal Systems
+    purpose: Maintain and trigger disaster recovery actions.
+  - name: Supplier Data
+    source: SAP S/4HANA
+    purpose: Develop single-source risk mitigation strategies.
+  - name: Disruption Scenarios
+    source: Internal Models
+    purpose: Evaluate network vulnerability and response effectiveness.
+happy_path:
+  - step: Ingest supply chain risk data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and prepare supply chain risk data.
+  - step: Analyze geopolitical events and their impact using AutoML.
+    stage: analyze
+    component: AutoML
+    purpose: Identify potential geopolitical risks.
+  - step: Develop disaster recovery plans using Process Builder.
+    stage: decide
+    component: Process Builder
+    purpose: Create and maintain disaster recovery plans.
+  - step: Generate single-source risk mitigation strategies using Remote Functions.
+    stage: decide
+    component: Remote Functions
+    purpose: Develop strategies to mitigate single-source risks.
+  - step: Model supply disruption scenarios using Cortex Auto Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Evaluate network vulnerability under different scenarios.
+  - step: Surface actionable insights and recommendations via UI Screens.
+    stage: surface
+    component: UI Screens
+    purpose: Present recommendations for resilient sourcing and capacity responses.
+branches:
+  - condition: High geopolitical risk detected.
+    response: Trigger disaster recovery plan.
+    outcome: Preserve supply chain flow during geopolitical disruptions.
+  - condition: Single-source supplier identified as high risk.
+    response: Implement alternative sourcing decisions.
+    outcome: Reduce dependency on single-source suppliers.
+  - condition: Supply disruption scenario indicates high network vulnerability.
+    response: Adjust capacity and sourcing plans.
+    outcome: Enhance network resilience against potential disruptions.

@@ -1,0 +1,36 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and prepare KPI data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Ensure compliance with service level agreements.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Generate insights into logistics network performance.
+    confidence: confirmed
+    capability: Generate insights into logistics network performance.
+  - name: AutoML
+    purpose: Identify cost optimization opportunities.
+    confidence: inferred
+    capability: Identify cost optimization opportunities.
+  - name: RCA Service
+    purpose: Pinpoint and prioritize network constraints.
+    confidence: inferred
+    capability: Pinpoint and prioritize network constraints.
+process_builder:
+  - name: Process Builder
+    purpose: Implement decisions to reduce COGS and improve OTIF.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review improve logistics performance by defining and tracking kpis,
+      optimizing cost-to-serve, ensuring sla adherence, and identifying
+      bottlenecks. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

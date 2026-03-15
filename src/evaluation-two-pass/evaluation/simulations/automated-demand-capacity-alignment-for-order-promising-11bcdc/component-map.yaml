@@ -1,0 +1,45 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Consolidate and normalize source data into Subject Areas for downstream
+      processing
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Produce demand signals and variance drivers (seasonality, promotion, NPI)
+      to inform ATP
+    confidence: confirmed
+    capability: >-
+      Produce demand signals and variance drivers (seasonality, promotion, NPI)
+      to inform ATP
+process_builder:
+  - name: Process Builder (IF, Rules) + CWB Lifecycle
+    purpose: >-
+      Evaluate inventory vs. demand vs. capacity and produce
+      accept/partial/reject recommendation with rationale
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Write ATP commitment to SAP S/4HANA or initiate exception CWB for planner
+      action
+    confidence: inferred
+    node_type: act
+  - name: UI Screens + Notification
+    purpose: >-
+      Provide transparent recommendations, explainability, and action items for
+      human review
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically align demand signals, inventory availability, and
+      fulfillment capacity to produce accurate atp commitments that support s&op
+      capacity and cogs targets while preserving service levels. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

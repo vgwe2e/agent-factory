@@ -1,0 +1,43 @@
+streams:
+  - name: STREAMS
+    purpose: Consolidate and validate source data for analysis and optimization.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder (IF)
+    purpose: >-
+      Apply business rules and thresholds to determine auto-execute vs. human
+      review.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (ERP Writeback) + Process Builder (Action Item)
+    purpose: >-
+      Persist plan to ERP and initiate logistics/supplier workflows for JIS
+      execution.
+    confidence: confirmed
+    node_type: act
+  - name: UI Screen (dashboard) + Notification
+    purpose: >-
+      Provide visibility, monitor OTIF/COGS impacts and route exceptions into
+      CWB when needed.
+    confidence: confirmed
+    node_type: notify
+agent_teams:
+  - name: Agentic AI (Multi-Agent Pipeline) + Remote Functions
+    purpose: >-
+      Produce optimized, constraint-aware delivery and kit sequences using
+      agentic reasoning and optimization logic.
+    confidence: confirmed
+    role: >-
+      Produce optimized, constraint-aware delivery and kit sequences using
+      agentic reasoning and optimization logic.
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review orchestrate line-side material delivery (jis, replenishment, waste
+      reduction) across production lines by coordinating multi-echelon inventory
+      and dynamic sequencing constraints to minimize cogs and improve otif. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

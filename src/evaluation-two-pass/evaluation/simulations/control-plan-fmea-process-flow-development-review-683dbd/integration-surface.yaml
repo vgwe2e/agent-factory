@@ -1,0 +1,60 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: PLM (e.g., Siemens Teamcenter / Windchill)
+    status: tbd
+  - name: Supplier Portal / PPAP Repository
+    status: tbd
+  - name: Quality Management System (QMS)
+    status: tbd
+  - name: Email/Collaboration (supplier exchanges)
+    status: tbd
+aera_ingestion:
+  - stream_name: control-plan-apqp
+    stream_type: document
+    source: PLM / Supplier Portal / QMS
+  - stream_name: fmea-process-design
+    stream_type: document
+    source: PLM / QMS
+  - stream_name: process-flow-process-capability-data
+    stream_type: document
+    source: PLM / Supplier Portal / QMS
+  - stream_name: ppap-submission-package
+    stream_type: document
+    source: Supplier Portal / QMS
+  - stream_name: part-master-bom-change-request
+    stream_type: table
+    source: SAP S/4HANA
+  - stream_name: supplier-capability-certification-data-ppk-iatf
+    stream_type: document
+    source: Supplier Portal / QMS
+processing:
+  - component: Agent Team
+    type: process_builder
+    function: >-
+      Use agentic AI to combine documentation, capability data, and business
+      rules to create an actionable recommendation.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Enable human-in-the-loop approvals, exceptions, and recorded governance
+      for auditability.
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Automate supplier requests and update ERP to reflect approval status and
+      reduce manual handoffs.
+  - component: UI Screen
+    type: process_builder
+    function: >-
+      Provide transparency for continuous improvement and SLA-driven escalation
+      decisions.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review unify apqp/ppap lifecycle decisions across planning, design review,
+      process validation, and deviation management to accelerate approvals,
+      reduce non-conformances, and improve cogs and working capital for ford
+      quality gateframes. and approve the recommended action.

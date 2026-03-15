@@ -1,0 +1,67 @@
+objective: >-
+  Autonomous detection, coordination, and execution of commercial changes across
+  engineering, volume/schedule planning, and contract management to optimize
+  COGS and onboarding of supplier terms.
+trigger: >-
+  Detection of engineering changes, volume/schedule changes, or contract
+  disputes.
+decision: >-
+  Assess commercial impact of changes, negotiate price adjustments, draft
+  contract amendments, and process retroactive adjustments.
+expected_action: >-
+  Automate impact assessment, negotiation, drafting, and processing of
+  commercial changes.
+expected_outcome: Reduced gross COGS, improved on-time delivery, enhanced margin protection.
+rationale: >-
+  Automate end-to-end change impact assessments, schedule adjustments, and
+  contract amendments to optimize supply chain efficiency and financial
+  performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Engineering Change Orders
+    source: SAP S/4HANA
+    purpose: Identify changes requiring commercial impact assessment.
+  - name: Production Volume Changes
+    source: SAP S/4HANA
+    purpose: Identify changes in production volumes or schedules.
+  - name: Contract Disputes
+    source: SAP S/4HANA
+    purpose: Identify disputes requiring retroactive adjustments.
+happy_path:
+  - step: Detect engineering changes
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest engineering change orders from SAP S/4HANA.
+  - step: Assess commercial impact
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Evaluate the financial impact of engineering changes.
+  - step: Negotiate price adjustments
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Negotiate price adjustments with suppliers.
+  - step: Draft contract amendments
+    stage: act
+    component: Process Builder
+    purpose: Draft formal contract amendments based on negotiated terms.
+  - step: Execute contract amendments
+    stage: act
+    component: Remote Functions
+    purpose: Write back contract amendments to SAP S/4HANA.
+  - step: Process retroactive adjustments
+    stage: act
+    component: Remote Functions
+    purpose: Track and process retroactive adjustments.
+branches:
+  - condition: No agreement reached during negotiation
+    response: Escalate to human review
+    outcome: Manual intervention required for further negotiation.
+  - condition: Contract dispute identified
+    response: Initiate dispute resolution process
+    outcome: Retroactive adjustments processed after resolution.
+  - condition: Volume/schedule change detected
+    response: Adjust production plans and renegotiate contracts
+    outcome: Updated contracts and production schedules.

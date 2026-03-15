@@ -1,0 +1,84 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Kinaxis (general services e.g., rebalancing, expediting, FG safety stock)
+    type: APS/Planning
+    status: identified
+  - name: SAS
+    type: Advanced Forecasting / Analytics
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight / TMS
+    type: TMS/3PL
+    status: identified
+  - name: Contract Management System
+    status: tbd
+  - name: Supplier Risk & Prequalification Platform
+    status: tbd
+  - name: Procurement Portal / Catalog
+    status: tbd
+  - name: Market Pricing / Benchmarking API
+    status: tbd
+aera_ingestion:
+  - stream_name: spend-history-open-pos
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA)
+  - stream_name: forecasted-demand-shortage-signals
+    stream_type: DDM/Crawlers
+    source: SAS / Kinaxis RapidResponse
+  - stream_name: supplier-risk-scores-prequalification-data
+    stream_type: DDM/Crawlers
+    source: Supplier Risk & Prequalification Platform
+  - stream_name: active-contracts-terms-pricing-volume-discounts-payment-po-timing
+    stream_type: Event Stream
+    source: Contract Management System
+  - stream_name: category-profiles-sourcing-playbooks
+    stream_type: Event Stream
+    source: Procurement Portal / Catalog
+  - stream_name: market-pricing-benchmark-data
+    stream_type: DDM/Crawlers
+    source: Market Pricing / Benchmarking API
+  - stream_name: inventory-fg-safety-stock-targets
+    stream_type: STREAMS
+    source: Kinaxis / Blue Yonder WMS
+processing:
+  - component: Cortex RCA Service + Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Produce prioritized sourcing opportunities with risk-adjusted demand and
+      contract constraints.
+  - component: Process Builder (Transaction + Remote Functions)
+    type: process_builder
+    function: >-
+      Execute sourcing paperwork, validate contractual reuse, and plan ERP
+      writeback for award/PO timing.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Allow procurement to accept, reject, or override agent recommendations
+      with audit trail.
+  - component: UI Screen + Notification
+    type: process_builder
+    function: >-
+      Communicate decisions, timelines, and financial impact to procurement,
+      finance, and supply planning.
+  - component: Agent Team (agentic_ai) orchestrated by Process Builder
+    type: agent_teams
+    function: >-
+      Select RFx / RFP / Auction / Direct negotiation based on multi-criteria
+      optimization and guardrails.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end sourcing decisions—sourcing approach selection,
+      supplier prequalification, rfx execution, contract-aware negotiations, and
+      implementation planning—to minimize cogs, protect margins, and optimize
+      working capital while reducing cycle time and improving supplier
+      resilience. and approve the recommended action.

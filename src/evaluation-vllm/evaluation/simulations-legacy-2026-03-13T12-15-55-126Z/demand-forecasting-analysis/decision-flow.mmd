@@ -1,0 +1,14 @@
+flowchart TD
+    A[Daily Forecast Cycle Trigger] --> B["PB: Global Sales Forecast Aggregation"]
+    B --> C["PB: Vehicle Configuration Mix Planning"]
+    C --> D["PB: Market Intelligence Integration"]
+    D --> E["PB: IF (Market Data Freshness Check)"]
+    E -->|Fresh Data| F["PB: New Model Launch Volume Planning"]
+    E -->|Outdated Data| G["PB: Fallback to Last Week's Data"]
+    G --> F
+    F --> H["PB: IF (Capacity Constraint Check)"]
+    H -->|Within Constraint| I["PB: Store Forecast for T+1"]
+    H -->|Exceeds Constraint| J["PB: Trigger Capacity Adjustment"]
+    J --> K["PB: Adjust Capacity Plan"]
+    K --> I
+    I --> End

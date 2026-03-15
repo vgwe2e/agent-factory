@@ -1,0 +1,80 @@
+objective: >-
+  Unify service parts numbering, BOM structures, and attribute data with
+  automated quality remediation and supplier cross-reference, enabling
+  end-to-end consistency across parts across Ford's service network.
+trigger: Lifecycle events and obsolescence risks for service parts.
+decision: >-
+  Create or deactivate service part numbers based on lifecycle events and
+  obsolescence risks, maintain BOM structures for service parts and decide when
+  to adjust BOM based on changes, manage technical attributes/specifications for
+  service parts to ensure data quality, plan and execute data quality audits and
+  remediation activities, maintain cross-reference and supersession data for
+  interchangeable service parts.
+expected_action: >-
+  Automatically create or deactivate service part numbers, adjust BOM structures
+  based on changes, ensure technical attributes and specifications are
+  up-to-date, conduct regular data quality audits and remediate issues, maintain
+  accurate cross-reference and supersession data.
+expected_outcome: >-
+  Improved COGS, reduced write-offs, and enhanced working capital efficiency
+  through cleaner part masters.
+rationale: >-
+  This solution ensures end-to-end consistency across parts, reducing errors and
+  improving operational efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Lifecycle Events
+    source: SAP S/4HANA
+    purpose: Trigger part number creation or deactivation.
+  - name: BOM Changes
+    source: SAP S/4HANA
+    purpose: Adjust BOM structures.
+  - name: Technical Attributes
+    source: SAP S/4HANA
+    purpose: Ensure data quality.
+  - name: Data Quality Issues
+    source: SAP S/4HANA
+    purpose: Identify discrepancies for remediation.
+  - name: Cross-Reference Data
+    source: SAP S/4HANA
+    purpose: Maintain accurate cross-references.
+happy_path:
+  - step: Ingest lifecycle events and obsolescence risks from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for part number decisions.
+  - step: >-
+      Analyze lifecycle events and obsolescence risks to determine part number
+      actions.
+    stage: analyze
+    component: Process Builder
+    purpose: Decide whether to create or deactivate part numbers.
+  - step: Adjust BOM structures based on changes detected.
+    stage: decide
+    component: Process Builder
+    purpose: Ensure accurate BOM structures.
+  - step: Validate and update technical attributes and specifications.
+    stage: decide
+    component: Process Builder
+    purpose: Maintain data quality.
+  - step: Conduct data quality audits and remediate issues.
+    stage: act
+    component: Process Builder
+    purpose: Improve working capital efficiency.
+  - step: Update cross-reference and supersession data.
+    stage: act
+    component: Process Builder
+    purpose: Ensure optimal substitution decisions.
+branches:
+  - condition: Data quality audit identifies significant discrepancies.
+    response: Initiate remediation workflow.
+    outcome: Resolved discrepancies and improved data quality.
+  - condition: BOM structure changes require manual review.
+    response: Route to CWB Lifecycle for approval.
+    outcome: Approved BOM structure adjustments.
+  - condition: Cross-reference data requires manual intervention.
+    response: Route to CWB Lifecycle for review.
+    outcome: Updated cross-reference data.

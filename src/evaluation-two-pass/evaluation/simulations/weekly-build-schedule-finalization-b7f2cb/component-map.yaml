@@ -1,0 +1,41 @@
+streams:
+  - name: STREAMS / Subject Areas
+    purpose: >-
+      Create unified, validated subject-area tables for scheduling inputs and
+      master constraints.
+    confidence: confirmed
+    type: STREAMS / Subject Areas
+cortex:
+  - name: Process Builder -> Rules + Data View
+    purpose: >-
+      Apply sequencing rules, multi-echelon capacity checks, and COGS drivers to
+      produce conflict-free candidate schedules.
+    confidence: confirmed
+    capability: >-
+      Apply sequencing rules, multi-echelon capacity checks, and COGS drivers to
+      produce conflict-free candidate schedules.
+process_builder:
+  - name: Process Builder -> Remote Functions -> Transaction
+    purpose: >-
+      Select final schedule that minimizes COGS while meeting OTIF and lock plan
+      for writeback.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (ERP writeback)
+    purpose: Push schedule to ERP for supplier release and shop-floor execution.
+    confidence: inferred
+    node_type: act
+  - name: Subject Areas -> Dashboard (UI Screens)
+    purpose: >-
+      Close the loop: measure outcomes and feed variance signals into next
+      weekly cycle.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: UI Screens + CWB Lifecycle (Notification)
+    purpose: >-
+      Provide planners with rationale, cost delta, and action items for
+      overrides or manual adjustments.
+    confidence: confirmed
+    component_type: display

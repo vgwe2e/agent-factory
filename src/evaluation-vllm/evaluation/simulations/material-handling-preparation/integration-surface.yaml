@@ -1,0 +1,43 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: raw-material-receipt-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-demand-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: press-line-status
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: scrap-classification-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: quality-issue-reports
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: Apply acceptance criteria.
+  - component: Process Builder
+    type: process_builder
+    function: Minimize waste and changeovers.
+  - component: Remote Functions
+    type: process_builder
+    function: Efficient recycling and disposal.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Supplier remediation and containment.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce working capital tied to inbound and in-plant inventories
+      while improving cogs through optimized material flow and enhanced line
+      readiness. and approve the recommended action.

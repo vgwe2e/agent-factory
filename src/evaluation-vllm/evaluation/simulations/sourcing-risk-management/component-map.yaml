@@ -1,0 +1,36 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Gather necessary data for risk assessment
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Identify high-risk suppliers and potential issues
+    confidence: inferred
+    capability: Identify high-risk suppliers and potential issues
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Ensure human oversight before executing plans
+    confidence: confirmed
+    node_type: review
+  - name: Remote Functions
+    purpose: Implement plans and update systems accordingly
+    confidence: inferred
+    node_type: act
+  - name: UI Screens
+    purpose: Provide visibility into risk management outcomes
+    confidence: confirmed
+    node_type: notify
+agent_teams:
+  - name: Agentic AI
+    purpose: Develop actionable plans to mitigate risks
+    confidence: inferred
+    role: Develop actionable plans to mitigate risks
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce working capital tied to inventory and cut cogs by managing
+      sourcing risks through proactive supplier risk assessment and dynamic
+      mitigation planning. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,34 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: To collect and prepare data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: RCA Service
+    purpose: To determine the root causes of field quality issues.
+    confidence: inferred
+    capability: To determine the root causes of field quality issues.
+process_builder:
+  - name: AutoML
+    purpose: To choose the most effective corrective actions.
+    confidence: inferred
+    node_type: decide
+  - name: Remote Functions
+    purpose: To optimize financial recovery while maintaining supplier relationships.
+    confidence: inferred
+    node_type: decide
+  - name: Process Builder
+    purpose: To ensure timely and effective resolution of field actions and recalls.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce cogs related to warranty, shorten resolution cycles, and
+      improve otif by autonomously analyzing field quality data, identifying
+      warranty root causes, coordinating supplier recovery actions, and
+      automating critical field communications. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

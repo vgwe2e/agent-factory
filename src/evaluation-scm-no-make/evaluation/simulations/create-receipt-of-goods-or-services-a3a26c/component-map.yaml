@@ -1,0 +1,35 @@
+streams:
+  - name: STREAMS
+    purpose: Collect and normalize inbound documents and scan events for matching
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Data Quality & Validation
+    purpose: Detect quantity/UM mismatches, missing items, and QA triggers
+    confidence: inferred
+    capability: Detect quantity/UM mismatches, missing items, and QA triggers
+process_builder:
+  - name: Process Builder (IF / Rules)
+    purpose: Deterministic decision based on supplier policy, tolerance, and QA outcome
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Writeback receipt transaction to S4 and update Blue Yonder WMS
+      inventory/receiving records
+    confidence: inferred
+    node_type: act
+  - name: UI Screen / Notification
+    purpose: Inform receiving team, supplier, and update dashboards with receipt status
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically create receipts of goods or services in sap s/4hana
+      when inbound shipments/asns and receiving events match purchase orders and
+      qa checks; route exceptions for manual acknowledgment. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

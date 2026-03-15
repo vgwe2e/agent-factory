@@ -1,0 +1,39 @@
+streams:
+  - name: DDM/Crawler
+    purpose: Ensure accurate BOMs
+    confidence: inferred
+    type: DDM/Crawler
+  - name: STREAMS
+    purpose: Minimize material cost and avoid shortages
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: RCA Service
+    purpose: Identify and mitigate potential shortages
+    confidence: inferred
+    capability: Identify and mitigate potential shortages
+process_builder:
+  - name: Process Builder
+    purpose: Ensure timely deliveries
+    confidence: confirmed
+    node_type: decide
+  - name: Safety Stock Service
+    purpose: Balance service levels and working capital
+    confidence: inferred
+    node_type: decide
+  - name: Remote Functions
+    purpose: Ensure timely deliveries
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review integrate material requirements planning (mrp) across bom release,
+      material requirements calculation, supplier release, inventory policy, and
+      shortage risk assessment to optimize bom integrity, proactive material
+      planning, supplier coordination, and dynamic safety stock, reducing cogs
+      and improving otif and working capital. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

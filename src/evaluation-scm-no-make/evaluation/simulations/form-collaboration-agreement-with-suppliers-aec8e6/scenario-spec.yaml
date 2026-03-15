@@ -1,0 +1,159 @@
+objective: >-
+  Automate end-to-end category innovation collaboration: select supplier and
+  collaboration model, execute agreements and procurement actions, and measure
+  initiative performance to drive revenue, EBITDA uplift, and working capital
+  improvements across multiple SKUs and suppliers.
+trigger: >-
+  An approved category innovation initiative reaches the L4 activity 'form
+  Collaboration Agreement With Suppliers' in the innovation pipeline.
+decision: >-
+  Select the best-fit supplier and collaboration model (equal collaboration vs
+  exclusive partnership) balancing projected innovation value, supplier risk,
+  and financial thresholds.
+expected_action: >-
+  Agentic workflow (Process Builder + Agent Team) scores suppliers, recommends
+  collaboration model, drafts agreement template, routes for approval (CWB
+  Lifecycle), and executes downstream writebacks (Remote Functions) to S4 and
+  logistics systems to initiate procurement and inventory actions.
+expected_outcome: >-
+  Signed supplier collaboration agreements for prioritized initiatives,
+  procurement and replenishment actions created in S4/TMS/WMS, tracked
+  initiative KPIs (revenue uplift, EBITDA impact, working capital), and
+  closed-loop monitoring for performance and rebalancing.
+rationale: >-
+  Coordinating supplier selection, contracting, and operational execution via
+  agentic AI shortens cycle time, aligns demand/inventory/procurement actions,
+  and enables measurable financial uplift. Using Process Builder for
+  orchestration, Cortex services for analysis, and Remote Functions for ERP/TMS
+  writebacks provides a practical, medium-complexity implementation path.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Advanced Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (general)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+key_inputs:
+  - name: approved_initiative_record
+    source: Process Builder / Subject Areas
+    purpose: >-
+      Initiative scope, target SKUs, timeline, and strategic intent used to
+      drive supplier selection and value analysis
+    preferred_stream_type: batch
+  - name: supplier_master_and_profiles
+    source: S4 / external supplier registry
+    purpose: >-
+      Supplier capabilities, prior performance, contractual templates, and risk
+      attributes for scoring and selection
+    preferred_stream_type: api
+  - name: demand_forecasts_by_SKU
+    source: Cortex Auto Forecast / SAS
+    purpose: >-
+      Projected demand lift and volume estimates used to size commercial terms
+      and inventory impacts
+    preferred_stream_type: batch
+  - name: inventory_and_safety_stock
+    source: Kinaxis / Blue Yonder WMS
+    purpose: >-
+      Current stock, FG safety stock models and replenishment constraints to
+      evaluate working capital and fulfillment risk
+    preferred_stream_type: batch
+  - name: procurement_terms_and_pricing
+    source: S4
+    purpose: >-
+      Baseline pricing, lead times, payment terms used to model financial impact
+      and negotiation levers
+    preferred_stream_type: api
+  - name: financial_targets_and_thresholds
+    source: Subject Areas / Finance reports
+    purpose: >-
+      Revenue, margin, EBITDA, and working capital thresholds to gate
+      collaboration model selection
+    preferred_stream_type: batch
+  - name: supplier_risk_scores
+    source: RCA Service / Data Science
+    purpose: >-
+      Operational and commercial risk scoring to balance exclusivity vs shared
+      collaboration
+    preferred_stream_type: batch
+  - name: collaboration_model_templates
+    source: Process Builder / Document repository
+    purpose: >-
+      Standard agreement templates and playbooks for equal collaboration vs
+      exclusive partnerships
+happy_path:
+  - step: >-
+      Ingest initiative, SKU, supplier, forecast, inventory, and financial
+      inputs
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: Aggregate and normalize all relevant data into Subject Areas for analysis
+  - step: Analyze demand uplift, inventory impacts, and supplier risk/value
+    stage: analyze
+    component: Cortex Auto Forecast + RCA Service + Data Science
+    purpose: >-
+      Generate demand scenarios, financial impact estimates, and supplier risk
+      scores to inform model selection
+  - step: Agentic recommendation of supplier and collaboration model
+    stage: decide
+    component: Process Builder -> Agent Team (agentic_ai) + Rules IF node
+    purpose: >-
+      Combine analytical outputs and business rules to propose the best-fit
+      supplier and collaboration model
+  - step: Human review and approval of recommended model
+    stage: review
+    component: CWB Lifecycle + UI Screen
+    purpose: >-
+      Present recommendation, allow accept/override, and capture approval or
+      negotiation instructions
+  - step: Execute agreements and operational writebacks
+    stage: act
+    component: Remote Functions + Process Builder (Action Item)
+    purpose: >-
+      Draft/agreement creation, S4 purchase terms writeback, and trigger
+      logistics updates (TMS/WMS) and supplier notifications
+  - step: Notify stakeholders and monitor initiative KPIs
+    stage: notify
+    component: >-
+      Process Builder Notification + Cortex Monitoring + Dashboard (Subject
+      Areas)
+    purpose: >-
+      Send supplier and internal notifications; surface KPI tracking for
+      revenue, EBITDA, and working capital impact
+branches:
+  - condition: No supplier meets minimum innovation value or risk thresholds
+    response: >-
+      Agent Team initiates an open RFP subprocess (Process Builder -> Dynamic
+      Subprocess) and flags initiative for re-scoping
+    outcome: >-
+      Initiative paused for supplier discovery; timelines extended and RFP
+      responses evaluated before re-issuing collaboration decision
+  - condition: Supplier rejects proposed commercial/collaboration terms
+    response: >-
+      Create negotiation Action Item and re-run negotiation simulation via Agent
+      Team; update proposed terms and re-present for approval
+    outcome: >-
+      Agreement amended through negotiated terms or initiative downgraded if
+      acceptable terms cannot be reached
+  - condition: Projected financial impact below organizational threshold after analysis
+    response: >-
+      Classify initiative as low-priority; monitor via Subject Areas and defer
+      active contracting
+    outcome: >-
+      Resources conserved; initiative moves to a monitored pipeline until
+      triggers or thresholds are met

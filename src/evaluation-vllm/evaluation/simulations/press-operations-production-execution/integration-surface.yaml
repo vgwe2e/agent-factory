@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: production-specifications
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: first-piece-inspection-results
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: stamping-production-metrics
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: quality-adjustments
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: post-stamping-handling-instructions
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Action Item
+    type: process_builder
+    function: >-
+      Execute optimized press setup, approve first-piece inspection, configure
+      stamping production runs, adjust in-process quality, collect production
+      data, and handle parts post-stamping.
+  - component: Agentic AI
+    type: agent_teams
+    function: Optimize changeover time and readiness.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review synchronize press setup, stamping production, in-process quality
+      monitoring, and post-stamping handling to minimize cogs, reduce
+      changeovers, prevent defects, and improve otif. and approve the
+      recommended action.

@@ -1,0 +1,33 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: npi-components
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: cost-reduction-ideas
+    stream_type: Event Stream
+    source: Suppliers
+  - stream_name: component-costs
+    stream_type: Event Stream
+    source: Industry Benchmarks
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: Calculate and allocate target costs for NPI components
+  - component: AutoML
+    type: cortex
+    function: Develop and apply should-cost models for component cost comparisons
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Engage engineering team for cost-optimized design options
+  - component: Remote Functions
+    type: process_builder
+    function: Capture, prioritize, and track cost-saving ideas from suppliers
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review cost & value optimization (sourcing phase) and approve the
+      recommended action.

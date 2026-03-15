@@ -1,0 +1,76 @@
+objective: >-
+  Minimize COGS impact from unplanned downtime, accelerate repairs, optimize
+  spare parts workflow, and ensure paint quality through calibrated robotics.
+trigger: Equipment breakdown or scheduled maintenance window.
+decision: >-
+  Determine the optimal maintenance actions, repair routing, spare parts
+  procurement, robotic calibration, and filter replacement schedules.
+expected_action: >-
+  Schedule and execute preventative maintenance, allocate resources for
+  emergency repairs, manage spare parts inventory, calibrate robotic arms, and
+  replace filters.
+expected_outcome: >-
+  Reduced paint shop downtime, minimized material costs, improved on-time
+  maintenance, and enhanced production readiness.
+rationale: >-
+  Leveraging agentic AI to automate and optimize maintenance activities,
+  ensuring efficient resource allocation and timely interventions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Equipment Status
+    source: SAP S/4HANA
+    purpose: Monitor equipment health and detect breakdowns.
+  - name: Maintenance Windows
+    source: SAP S/4HANA
+    purpose: Identify available maintenance slots.
+  - name: Spare Parts Inventory Levels
+    source: SAP S/4HANA
+    purpose: Track inventory levels and trigger reorders.
+  - name: Robotic Calibration Parameters
+    source: SAP S/4HANA
+    purpose: Define calibration cycles and parameters.
+  - name: Filter Usage Data
+    source: SAP S/4HANA
+    purpose: Schedule filter replacements based on usage.
+happy_path:
+  - step: Monitor equipment status and detect breakdowns.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect real-time equipment status data.
+  - step: Analyze equipment status and identify maintenance needs.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict maintenance requirements and potential breakdowns.
+  - step: Schedule preventative maintenance and allocate resources.
+    stage: decide
+    component: Process Builder
+    purpose: Automate maintenance scheduling and resource allocation.
+  - step: Execute maintenance tasks and monitor progress.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure timely execution of maintenance tasks.
+  - step: Manage spare parts inventory and trigger reorders.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Optimize spare parts inventory levels and procurement.
+  - step: Calibrate robotic arms and update programming.
+    stage: act
+    component: Remote Functions
+    purpose: Maintain robotic accuracy and efficiency.
+  - step: Schedule and execute filter replacements.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure optimal air quality and production throughput.
+branches:
+  - condition: Equipment breakdown detected outside scheduled maintenance windows.
+    response: Trigger emergency repair workflow.
+    outcome: Rapidly allocate resources and minimize downtime.
+  - condition: Insufficient spare parts inventory.
+    response: Expedite procurement process.
+    outcome: Ensure timely availability of critical spare parts.
+  - condition: Unexpected increase in filter usage.
+    response: Adjust filter replacement schedule.
+    outcome: Maintain optimal air quality with minimal disruption.

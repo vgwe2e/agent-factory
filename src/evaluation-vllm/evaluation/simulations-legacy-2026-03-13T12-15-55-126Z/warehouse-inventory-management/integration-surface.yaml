@@ -1,0 +1,62 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Raw Material & Component Storage Optimization
+    status: tbd
+  - name: Inventory Cycle Counting & Reconciliation
+    status: tbd
+  - name: Obsolete & Excess Inventory Disposition
+    status: tbd
+  - name: Warehouse Slotting & Location Management
+    status: tbd
+  - name: Material Handling Equipment Maintenance
+    status: tbd
+aera_ingestion:
+  - stream_name: inventory_levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: cycle_count_data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: disposition_records
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+  - stream_name: slotting_configurations
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+  - stream_name: equipment_maintenance_logs
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: inventory_rebalancing
+    type: Deterministic Engine
+    function: Autonomous stock rebalancing across echelons
+  - component: cycle_count_reconciliation
+    type: Deterministic Engine
+    function: Real-time cycle count validation and reconciliation
+  - component: disposition_processing
+    type: Deterministic Engine
+    function: Obsolete/excess inventory disposition workflow
+  - component: slotting_optimization
+    type: Deterministic Engine
+    function: Warehouse slotting configuration optimization
+  - component: equipment_scheduling
+    type: Deterministic Engine
+    function: Material handling equipment maintenance scheduling
+ui_surface:
+  - component: inventory_dashboard
+    screen: Inventory Rebalancing
+    purpose: Monitor and adjust stock levels across echelons
+  - component: cycle_count_interface
+    screen: Cycle Counting
+    purpose: Execute and validate cycle counts
+  - component: disposition_workflow
+    screen: Disposition Management
+    purpose: Process obsolete/excess inventory disposition
+  - component: slotting_planner
+    screen: Warehouse Slotting
+    purpose: Optimize warehouse location configurations
+  - component: equipment_log
+    screen: Maintenance Tracking
+    purpose: Monitor material handling equipment status

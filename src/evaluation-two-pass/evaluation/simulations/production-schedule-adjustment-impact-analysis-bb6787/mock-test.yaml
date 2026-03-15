@@ -1,0 +1,66 @@
+decision: >-
+  Select and execute the optimal constraint-mitigation plan (reschedule
+  production, expedite/retime procurement, reroute or consolidate logistics)
+  that balances COGS, service level, and capacity with optional human approval
+  for high-risk changes.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Binding constraint detected affecting multi-plant fulfillment or a supplier
+    shortage/commitment change that threatens demand fulfilment or materially
+    increases COGS.
+  parameters:
+    objective: >-
+      Autonomously detect multi-plant capacity and supplier-driven constraints,
+      evaluate mitigation trade-offs across procurement, production scheduling,
+      and logistics, and execute coordinated actions to minimize COGS impact
+      while improving on-time delivery and measurable P&L outcomes.
+    key_inputs:
+      - Production schedule & capacity by plant
+      - Inventory balances & on-hand by location
+      - Open purchase orders / supplier acknowledgements
+      - Supplier shortage / allocation alerts
+      - Demand forecast & updated S&OP signals
+      - Transportation capacity & ETA windows
+      - Cost inputs (material cost, expedite cost, penalty/OTD impact)
+    source_systems:
+      - SAP S/4HANA
+      - Supplier Portal / EDI / ASN feeds
+      - 3PL / TMS (transportation availability)
+      - Aera Cortex services (Cortex Auto Forecast, Safety Stock, RCA)
+expected_output:
+  action: >-
+    Orchestrate end-to-end steps: ingest SAP master and transactional data,
+    simulate mitigation scenarios (cost & service impact), select best plan via
+    deterministic rules + cost calculus, write recommended schedule/PO changes
+    back to SAP and notify stakeholders; escalate to CWB for approvals when
+    thresholds exceeded.
+  outcome: >-
+    Reduced incremental COGS from constraint-driven actions, improved on-time
+    delivery, fewer stockouts, measurable P&L improvement (reduced expedite
+    costs, lowered lost sales), and auditable execution trail for decisions and
+    writebacks.
+  affected_components:
+    - Process Builder - Stream (DDM/Crawlers + STREAMS)
+    - Cortex Auto Forecast + RCA Service (via Process Builder - Data View)
+    - >-
+      Process Builder - Rules + Remote Functions (scenario simulation & cost
+      calculus)
+    - >-
+      Process Builder - Action Item + Remote Functions (API writeback to SAP
+      S/4HANA)
+    - CWB Lifecycle (Action Item / UI Screen)
+    - Process Builder - Notification + UI Screen (dashboard)
+    - Dashboard
+rationale: >-
+  Process Builder orchestrates deterministic multi-step workflows and
+  integrations; STREAMS/DDM ingest ERP and supplier signals; Cortex Auto
+  Forecast and deterministic rules + Remote Functions simulate cost/service
+  trade-offs; CWB Lifecycle provides controlled human-in-the-loop approvals
+  where business risk or supplier commitment uncertainty exists. This
+  combination supports cross-domain coordination (procurement, production,
+  logistics) with measurable financial outcomes.

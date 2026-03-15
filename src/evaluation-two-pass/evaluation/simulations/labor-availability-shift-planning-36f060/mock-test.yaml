@@ -1,0 +1,56 @@
+decision: >-
+  Determine optimal shift schedules and mix of internal vs. contingent labor
+  (including targeted training assignments) to meet target output with minimized
+  overtime and labor cost.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New/updated production plan or material constraint detected for a platform
+    that changes required labor hours beyond configured threshold.
+  parameters:
+    objective: >-
+      Autonomously orchestrate production shift sequencing, internal labor
+      assignments, training-driven capacity, and contingent worker sourcing to
+      minimize labor cost variance and prevent line stoppages while sustaining
+      OTIF targets.
+    key_inputs:
+      - Production Plan (required labor hours by line & shift)
+      - >-
+        Workforce Master & Time Bookings (availability, scheduled hours, OT
+        limits)
+      - Training Completion & Eligibility
+      - Contingent Worker Availability & Rates
+      - Labor Cost Rules & Overtime Policies
+    source_systems:
+      - SAP S/4HANA
+      - Time & Attendance System
+      - Learning Management System (LMS)
+      - Contingent Staffing Vendor Portal
+expected_output:
+  action: >-
+    Process Builder invokes Agent Team to run joint optimization using
+    historical demand and labor supply signals (Cortex Auto Forecast + Streams),
+    propose shift sequences and contingent worker requests, execute SAP S/4HANA
+    schedule writeback via Remote Functions, and raise CWB for human approval
+    when escalation rules are met.
+  outcome: >-
+    Optimized shift rosters and contingent worker placements written to SAP
+    S/4HANA; training assignments scheduled; reduced overtime and COGS variance;
+    maintained or improved OTIF and fewer line stoppages.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast
+    - Agent Team
+    - Process Builder + Remote Functions
+    - CWB Lifecycle
+    - UI Screen (dashboard)
+rationale: >-
+  Combines predictive labor demand (seasonality/shifts), supply visibility
+  (internal availability, certifications, training backlog), and contingent
+  market signals to make proactive staffing decisions. Agentic AI enables
+  contextual reasoning across exceptions and vendor sourcing while Process
+  Builder ensures auditable orchestration and safe ERP writebacks.

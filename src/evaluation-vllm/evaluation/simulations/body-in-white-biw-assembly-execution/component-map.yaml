@@ -1,0 +1,28 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for assembly optimization.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Generate optimized assembly sequences and parameters.
+    confidence: inferred
+    capability: Generate optimized assembly sequences and parameters.
+  - name: Data Quality & Validation
+    purpose: Ensure feasibility and adherence to build specifications.
+    confidence: inferred
+    capability: Ensure feasibility and adherence to build specifications.
+process_builder:
+  - name: Remote Functions
+    purpose: Implement optimized assembly plan.
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce cogs and improve line efficiency in biw assembly by
+      optimizing sub-assembly scheduling, welding line sequencing, and
+      quality-release decisions. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

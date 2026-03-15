@@ -1,0 +1,70 @@
+objective: >-
+  Augment demand planning across global IBP alignment, new product launch
+  sensing, and demand exception management using AI/ML and rule-based systems.
+trigger: Monthly sales data update and new product launch announcements.
+decision: >-
+  Adopt global sales forecast scenario for IBP planning, integrating market
+  indicators and trends, setting initial demand plan for new product launches,
+  improving forecast accuracy, and managing demand exceptions.
+expected_action: >-
+  Generate and adopt a global sales forecast scenario, incorporate market trends
+  into demand planning, forecast initial demand for new product launches,
+  analyze and improve forecast accuracy, identify and manage demand deviations.
+expected_outcome: >-
+  Improved revenue capture, better availability, faster adaptation to demand
+  shifts, and reduced working capital tied to forecast errors.
+rationale: >-
+  Leveraging AI/ML for accurate forecasting and exception management enhances
+  decision-making and operational efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Monthly Sales Data
+    source: SAP S/4HANA
+    purpose: Forecast Generation
+  - name: Market Trends
+    source: External Data Sources
+    purpose: Trend Analysis
+  - name: New Product Launch Data
+    source: SAP S/4HANA
+    purpose: Demand Sensing
+  - name: Forecast Error Metrics
+    source: Subject Areas
+    purpose: Accuracy Improvement
+happy_path:
+  - step: Ingest monthly sales data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Data Collection
+  - step: Generate global sales forecast
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Forecast Generation
+  - step: Integrate market trends
+    stage: analyze
+    component: RCA Service
+    purpose: Trend Analysis
+  - step: Forecast initial demand for new products
+    stage: analyze
+    component: AutoML
+    purpose: Demand Sensing
+  - step: Adopt global sales forecast scenario
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Scenario Adoption
+  - step: Adjust forecast methods based on error analysis
+    stage: act
+    component: Remote Functions
+    purpose: Method Adjustment
+branches:
+  - condition: Significant demand deviation detected
+    response: Trigger reforecasting
+    outcome: Updated forecast
+  - condition: High forecast error
+    response: Review and adjust forecast methods
+    outcome: Improved forecast accuracy
+  - condition: Insufficient market data
+    response: Delay decision until more data available
+    outcome: Hold off on forecast adoption

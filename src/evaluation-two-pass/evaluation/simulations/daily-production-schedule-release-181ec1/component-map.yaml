@@ -1,0 +1,31 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and normalize SAP, MES and PLM inputs for scheduling
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS + Data Quality & Validation
+    purpose: Create a validated data foundation for deterministic scheduling
+    confidence: confirmed
+    type: STREAMS + Data Quality & Validation
+cortex:
+  - name: Process (Process Builder) + Remote Functions (optimizer)
+    purpose: Produce feasible, capacity- and changeover-aware schedules
+    confidence: confirmed
+    capability: Produce feasible, capacity- and changeover-aware schedules
+process_builder:
+  - name: CWB Lifecycle + Process IF (Rules)
+    purpose: Gate final release and surface exceptions for human-in-the-loop
+    confidence: confirmed
+    node_type: decide
+  - name: Process Transaction node + Remote Functions
+    purpose: Execute schedule release into enterprise systems and downstream execution
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screens (dashboard) + Notification (Process Builder)
+    purpose: >-
+      Provide visibility, enable manual adjustments, and close the communication
+      loop
+    confidence: confirmed
+    component_type: display

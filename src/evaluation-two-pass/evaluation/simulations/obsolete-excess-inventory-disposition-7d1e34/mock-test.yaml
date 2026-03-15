@@ -1,0 +1,53 @@
+decision: >-
+  Determine disposition for obsolete/excess SKUs (dispose, repurpose, sell,
+  retain) and compute slotting reassignments and transfer plans that respect
+  material handling capacity and safety stock constraints.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled nightly run and on-demand run after major inbound receipts or
+    plant/DC transfer confirmations.
+  parameters:
+    objective: >-
+      Autonomously rebalance multi-echelon inventory and optimize warehouse
+      slotting to reduce COGS, lower working capital, and improve SG&A
+      efficiency while ensuring material handling capacity constraints are
+      respected.
+    key_inputs:
+      - Inventory ledger (on-hand, lot, location)
+      - Cycle count and physical audit results
+      - Aging and sales velocity (SKU-level)
+      - Material handling capacity and shift window
+      - Forecast / demand signal
+    source_systems:
+      - SAP S/4HANA
+      - Warehouse Management System (WMS)
+      - Material Handling Schedule / MHE Roster
+expected_output:
+  action: >-
+    Process Builder orchestrates ETL, rule-based scoring, optimization checks,
+    and automated writebacks to SAP S/4HANA for disposition and transfer orders;
+    exceptions and high-impact recommendations are routed via CWB Lifecycle for
+    planner approval; notifications and dashboard updates are published.
+  outcome: >-
+    Automated disposition and slotting moves executed with audit trail and ERP
+    writebacks; measurable reductions in obsolete inventory and working capital,
+    improved slot utilization and reduced handling moves; timely escalation of
+    high-risk decisions to planners.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Process (Process Builder) + Rules + Data View
+    - Remote Functions + CWB Lifecycle (Action Item)
+    - UI Screen (dashboard) + Notification
+rationale: >-
+  Deterministic, process-driven orchestration is appropriate because disposition
+  and slotting decisions follow established business rules and constraints
+  (aging thresholds, demand forecasts, MHE capacity). Use STREAMS/DDM for
+  reliable ETL, Process Builder for multi-step orchestration, Rules and CWB
+  Lifecycle for deterministic decisioning with human-in-the-loop for high-impact
+  cases, and Remote Functions for safe ERP writebacks.

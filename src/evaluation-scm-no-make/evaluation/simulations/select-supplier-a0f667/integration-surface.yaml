@@ -1,0 +1,73 @@
+source_systems:
+  - name: SAP S/4HANA (S4)
+    type: ERP / Finance & Procurement
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / Shortage Propagation
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting / Analytics
+    status: identified
+  - name: Blue Yonder WMS
+    type: Warehouse Management
+    status: identified
+  - name: Uber Freight TMS / 3PL Booking
+    type: Transportation Management / 3PL
+    status: identified
+  - name: Supplier Market Price Feed
+    type: external market feed / aggregator
+    status: tbd
+  - name: Contract Repository / CLM
+    type: Contract Management
+    status: tbd
+aera_ingestion:
+  - stream_name: spot-buy-trigger-event
+    stream_type: STREAMS
+    source: Kinaxis RapidResponse
+  - stream_name: touchless-demand-signal-forecast-delta
+    stream_type: Report Data
+    source: SAS (Advanced Statistical Forecasting)
+  - stream_name: on-hand-available-to-promise
+    stream_type: Data View
+    source: SAP S/4HANA / Blue Yonder WMS
+  - stream_name: real-time-supplier-market-prices
+    stream_type: DDM/Crawlers
+    source: Supplier Market Price Feed
+  - stream_name: contract-terms-approved-supplier-list
+    stream_type: Report Data
+    source: SAP S/4HANA / Contract Repository
+  - stream_name: supplier-performance-reliability-scores
+    stream_type: STREAMS
+    source: SAS / Historical Kinaxis Data
+  - stream_name: transport-capacity-cost
+    stream_type: DDM/Crawlers
+    source: Uber Freight TMS / 3PL
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: >-
+      Fetch market prices, contract constraints (S4/CLM), inventory and
+      transport costs; compute landed cost and reliability score per supplier
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Present recommended preferred or alternate supplier, negotiated price, and
+      rationale for accept/reject/override
+  - component: Process Builder
+    type: process_builder
+    function: >-
+      Write PO to S4 (Advanced ATP), push booking to Uber Freight TMS / 3PL, and
+      notify supplier electronically
+  - component: Notification
+    type: process_builder
+    function: >-
+      Send confirmations to procurement, supply planners, and finance with links
+      to UI Screen for details
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end spot buy orchestration to minimize cogs and
+      ebitda impact by selecting optimal supplier and pricing using touchless
+      demand signals, real-time market data, and contract terms. and approve the
+      recommended action.

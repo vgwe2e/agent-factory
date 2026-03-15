@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect stamping demand data.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Manage MRP for stamping.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Optimize production sequencing and capacity allocation.
+    confidence: confirmed
+    capability: Optimize production sequencing and capacity allocation.
+process_builder:
+  - name: Safety Stock Service
+    purpose: Maximize throughput and minimize idle capacity.
+    confidence: inferred
+    node_type: decide
+  - name: Remote Functions
+    purpose: Manage urgent stamping orders.
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize stamping demand forecasting, daily production sequencing,
+      capacity utilization, mrp for stamping, and expedited order management to
+      reduce cogs, improve on-time delivery, and decrease working capital. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

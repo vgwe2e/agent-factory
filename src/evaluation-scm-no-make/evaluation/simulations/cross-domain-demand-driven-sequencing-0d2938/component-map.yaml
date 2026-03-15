@@ -1,0 +1,50 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate authoritative inputs (SAS, Advanced Forecasting, WMS, S4,
+      Kinaxis) into Aera Subject Areas
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+  - name: STREAMS + Subject Areas
+    purpose: >-
+      Normalize and apply data quality checks, produce SKU x location x line
+      views for decision logic
+    confidence: confirmed
+    type: STREAMS + Subject Areas
+cortex: []
+process_builder:
+  - name: Process Builder (Rules + Remote Functions)
+    purpose: >-
+      Apply prioritization, capacity, and cost rules to produce actionable
+      sequence and allocation recommendations
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (ERP/MES writeback) + Process Builder
+    purpose: >-
+      Write plans to S4 (ATP/capacity), send sequencing to MES, and push
+      shortage/exchange notifications to Kinaxis
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle (Action Item) + Notification
+    purpose: >-
+      Surface recommendations and exceptions for human review or override where
+      rules mark manual intervention
+    confidence: confirmed
+    node_type: notify
+  - name: UI Screens + Subject Areas (dashboard)
+    purpose: >-
+      Track service level, stockouts, line utilization, and COGS impact for
+      continuous improvement
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically coordinate demand segmentation outputs with
+      production sequencing and line allocation to minimize stockouts and excess
+      across skus and locations, aligning plan and make with near-term demand
+      signals to protect revenue and optimize cogs. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

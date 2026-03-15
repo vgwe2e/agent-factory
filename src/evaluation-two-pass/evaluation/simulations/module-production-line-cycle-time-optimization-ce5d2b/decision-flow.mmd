@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled production planning run or receipt of new/updated SAP S/4HANA production orders or major changeover/quality event.]
+  A --> N1[Stream: DDM/Crawlers - Ingest master and transactional data from SAP and plant systems on scheduled planning cadence.]
+  N1 --> N2[Stream: STREAMS / Subject Areas - Transform and validate inputs, compute derived constraints and KPIs (current cycle times, takt, changeover impact).]
+  N2 --> N3{PB: Process Builder + Remote Functions - Execute deterministic optimization to produce line-level schedules, sequence decisions, and workstation cycle timing.}
+  N3 -->|Primary| N4[PB: Process Builder (Transaction) + Remote Functions - Write optimized schedule and reschedule transactions back to SAP S/4HANA and enqueue operator work instructions; create CWB entries for exceptions.]
+  N4 --> N5[PB: CWB Lifecycle + UI Screen - Surface recommendations and exceptions to planners and line managers for review/approval; collect overrides if any.]
+  N5 --> Z1[Outcome: Reduced average cycle time and takt across targeted module lines, improved on-time delivery across plants, fewer unplanned changeovers, maintained or improved quality gate pass rates, and measurable COGS reduction.]
+  N3 -->|Optimizer finds no feasible schedule ...| B1[Create prioritized CWB exception list and route to manufacturing engineering and planning team via CWB Lifecycle for manual rework; suggest minimal relaxations (e.g., limited overtime windows) via Remote Functions.]
+  B1 --> O1[Outcome: Manual intervention resolves infeasibility; current production schedule maintained or minimally adjusted until constraints are addressed.]
+  O1 --> End[End]
+  N3 -->|Supplier lead-time deterioration or i...| B2[Trigger alternate sourcing/rescheduling subprocess in Process Builder: evaluate secondary suppliers, shift production between lines, or postpone low-priority orders.]
+  B2 --> O2[Outcome: Adjusted schedule that preserves high-priority deliveries with minimal COGS impact and documented supplier mitigation actions.]
+  O2 --> End[End]
+  N3 -->|Significant data quality or missing t...| B3[Pause optimization, run STREAMS data quality checks and notify data owners; queue a retry after remediation.]
+  B3 --> O3[Outcome: Avoids making decisions on bad data; alerts ensure remediation and eventual re-run with accurate inputs.]
+  O3 --> End[End]
+  Z1 --> End[End]

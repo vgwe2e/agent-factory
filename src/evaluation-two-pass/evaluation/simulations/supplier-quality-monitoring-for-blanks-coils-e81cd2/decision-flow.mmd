@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled batch run (e.g., weekly) plus exception triggers when incoming defect rate or quality notifications in SAP S/4HANA exceed defined thresholds.]
+  A --> N1[Stream: STREAMS - Ingest supplier inspection results, supplier master, and lot metadata into the platform]
+  N1 --> N2[Cortex: RCA Service - Perform root-cause and pattern analysis across defects and lot metadata]
+  N2 --> N3{Agent: Process Builder + Agent Team - Agentic AI synthesizes signals and formulates recommended audit frequency, sampling plan, and remediation triggers}
+  N3 -->|Primary| N4[PB: Remote Functions + CWB Lifecycle - Orchestrate approvals and create operational actions (quality notifications, audit events, shipment holds) in SAP]
+  N4 --> N5[PB: Notification - Notify supplier quality owners and surface recommendations for review]
+  N5 --> Z1[Outcome: High-risk suppliers receive prioritized audits and stronger sampling/remediation rules; quality exceptions are triaged and written back to SAP S/4HANA; improved defect capture, reduced escapes, and closed-loop remediation tracked in enterprise systems.]
+  N3 -->|Defect rate for supplier-material exc...| B1[Agent recommends immediate audit, sample escalation, and temporary shipment hold; Process Builder auto-creates quality notifications and an audit event via Remote Functions, and notifies escalation group.]
+  B1 --> O1[Outcome: Immediate QA hold recorded in SAP, supplier notified, onsite audit scheduled and remediation tracked.]
+  O1 --> End[End]
+  N3 -->|Insufficient or low-coverage inspecti...| B2[Agent requests additional evidence from supplier portal and flags record for manual review; monitoring pauses automated action until required data is available.]
+  B2 --> O2[Outcome: No automated audit scheduled; workflow awaits supplier evidence or manual quality owner decision to proceed.]
+  O2 --> End[End]
+  N3 -->|Agent confidence low or contradictory...| B3[Route recommendation to CWB Lifecycle for human review and override; include RCA Service findings and candidate sampling plans for the reviewer.]
+  B3 --> O3[Outcome: Decision deferred to supplier quality manager; audit/sampling plan established after manual approval, preserving traceability.]
+  O3 --> End[End]
+  Z1 --> End[End]

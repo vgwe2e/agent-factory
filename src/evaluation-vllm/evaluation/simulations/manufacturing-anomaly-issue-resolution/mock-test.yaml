@@ -1,0 +1,44 @@
+decision: >-
+  Immediate remediation actions and sequence to resume production, containment
+  of defective parts, inter-departmental issue escalation, implementation of
+  corrective actions, and aftermarket parts issue triage.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Detection of a manufacturing anomaly on the production line.
+  parameters:
+    objective: >-
+      Autonomous detection, triage, escalation, and resolution of manufacturing
+      anomalies in real time to reduce COGS, prevent waste, and improve OTIF.
+    key_inputs:
+      - Production Line Status
+      - Defective Part Data
+      - Issue Escalation Criteria
+      - Corrective Action Plans
+      - Aftermarket Service Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Immediate identification and resolution of production line stoppages,
+    containment and analysis of defective parts, escalation of critical issues
+    to appropriate functional owners, implementation and verification of
+    corrective actions, and triage and remediation of aftermarket parts issues.
+  outcome: >-
+    Reduced COGS, minimized waste, improved OTIF, and measurable EBITDA uplift
+    through faster resolution and lower defect-related costs.
+  affected_components:
+    - DDM/Crawlers
+    - RCA Service
+    - Remote Functions
+    - Process Builder
+    - Subject Areas
+    - Agentic AI
+    - Dashboard
+rationale: >-
+  The solution leverages autonomous anomaly detection and issue resolution to
+  streamline manufacturing processes, ensuring efficient and effective handling
+  of defects and issues.

@@ -1,0 +1,54 @@
+decision: >-
+  Select the initial production volume and ramp-up profile (top-N options) for
+  the new model that balances demand, capacity, COGS impact, and inventory risk.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New model program kickoff or scheduled launch-planning cycle (stage-gate
+    approval to set initial production volumes).
+  parameters:
+    objective: >-
+      Orchestrate autonomous, demand-driven initial production volume and ramp
+      profiles for new vehicle models by unifying sales forecasts, variant mix,
+      market intelligence, and capacity constraints to optimize COGS, revenue
+      capture, and working capital.
+    key_inputs:
+      - Historical Sales & Shipments (variant-level)
+      - Vehicle Configurations, BOM & Variant Attributes
+      - Market Intelligence (macroeconomic, competitor, incentives)
+      - Dealer Orders & Pipeline
+      - Plant Capacity & Constraint Data
+      - Forecast Accuracy / Backtest Metrics
+    source_systems:
+      - SAP S/4HANA
+      - Dealer Orders & Pipeline (CRM/Dealer)
+      - Market Intelligence Feed
+      - Aera Cortex / Monitoring
+expected_output:
+  action: >-
+    Agentic pipeline generates ranked launch volume & ramp scenarios with
+    quantified revenue, COGS, inventory and capacity impacts; presents
+    recommendations via CWB for review; on approval, writes selected plan to SAP
+    S/4HANA and notifies stakeholders.
+  outcome: >-
+    Aligned production launch plan committed to ERP reducing over/under
+    production risk, improved revenue capture from demand-aligned supply, lower
+    working capital tied to launch inventory, and demonstrable COGS optimization
+    across ramp profiles.
+  affected_components:
+    - STREAMS + DDM/Crawlers
+    - Remote Functions (scenario simulation) + Process Builder (Data Science)
+    - Process Builder (IF) + CWB Lifecycle
+    - Remote Functions (ERP writeback) + Notification
+    - Cortex Monitoring + Process Builder (Wait/Asynchronous)
+    - Cortex Auto Forecast + Agent Team
+    - Dashboard
+rationale: >-
+  Unifying variant-level forecasts, market signals, and capacity data into an
+  agentic decision flow enables proactive scenario simulation and faster
+  consensus on launch volumes—reducing siloed estimates, manual reconciliations,
+  and costly misaligned production during model launches.

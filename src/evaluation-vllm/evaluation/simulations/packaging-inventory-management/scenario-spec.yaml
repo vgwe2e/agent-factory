@@ -1,0 +1,58 @@
+objective: >-
+  Automate end-to-end replenishment and availability decisions for returnable
+  containers and packaging materials, reducing working capital and preventing
+  stockouts.
+trigger: >-
+  Daily reconciliation of physical returnable container counts vs system
+  records.
+decision: >-
+  Determine optimal buffer stock levels and trigger reorders for packaging
+  materials.
+expected_action: >-
+  Execute daily reconciliation, determine buffer stock levels, monitor inventory
+  levels, and trigger reorders.
+expected_outcome: Improved inventory accuracy, minimized carrying costs, and reduced stockouts.
+rationale: >-
+  Automating these processes will reduce working capital tied to packaging and
+  prevent stockouts across plants and distribution centers.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Physical Container Counts
+    source: SAP S/4HANA
+    purpose: Reconciliation of physical counts with system records.
+  - name: System Records
+    source: SAP S/4HANA
+    purpose: Verification against physical counts.
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Monitoring and triggering reorders.
+happy_path:
+  - step: Reconcile physical container counts with system records.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ensure inventory accuracy.
+  - step: Determine optimal buffer stock levels for packaging.
+    stage: analyze
+    component: AutoML
+    purpose: Prevent supply disruptions.
+  - step: Monitor inventory levels and trigger reorders.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Maintain service levels.
+  - step: Plan and conduct periodic physical counts and cycle counts.
+    stage: act
+    component: Process Builder
+    purpose: Maintain inventory accuracy.
+branches:
+  - condition: Discrepancy between physical and system records exceeds threshold.
+    response: Trigger exception management workflow.
+    outcome: Correct discrepancies and update system records.
+  - condition: Inventory levels fall below predefined thresholds.
+    response: Initiate emergency reorder process.
+    outcome: Prevent stockouts and maintain service levels.
+  - condition: Cycle count results indicate significant variance.
+    response: Adjust future cycle counting frequency.
+    outcome: Improve inventory accuracy and minimize disruption.

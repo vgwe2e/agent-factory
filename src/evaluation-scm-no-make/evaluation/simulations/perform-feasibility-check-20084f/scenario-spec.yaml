@@ -1,0 +1,149 @@
+objective: >-
+  Automate end-to-end production feasibility checks and capacity assurance
+  across SKUs and plants to optimize run-rate, reduce waste, and protect margins
+  by aligning demand, inventory, and procurement with plant capability.
+trigger: >-
+  Materialized change in demand signal or forecast (SAS) or shortage
+  propagation/constraint alert from Kinaxis RapidResponse crossing predefined
+  threshold
+decision: >-
+  Determine whether existing production capability can satisfy updated demand
+  within current utilization or whether to add resources (OT, shifts,
+  subcontracting, or tooling) or rebalance across plants.
+expected_action: >-
+  Automatically run feasibility analysis combining demand, inventory, production
+  capacity, and procurement lead times; surface ranked recommendations (run-rate
+  change, shift/OT, subcontracting, purchase orders, or SKU rebalancing); create
+  CWB action items for planner approval; write approved changes back to
+  S4/Kinaxis via Remote Functions.
+expected_outcome: >-
+  Faster decision cycles for capacity adjustments, improved capacity
+  utilization, reduced waste and lower COGS, maintained or improved service
+  levels across SKU/location matrix, and auditable action trail in enterprise
+  systems.
+rationale: >-
+  Deterministic, process-driven feasibility checks reduce manual analysis time
+  and standardize resource-add vs. rebalance decisions. Integration with
+  S4/Kinaxis and execution via Remote Functions closes the loop for rapid,
+  low-risk capacity changes while protecting margins.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (Order Expediting / Rebalancing / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS / 3PL Uber Freight
+    type: TMS/3PL
+    status: identified
+key_inputs:
+  - name: Forecast demand (SKU x location x horizon)
+    source: SAS
+    purpose: >-
+      Primary demand signal to size required production and trigger feasibility
+      checks
+    preferred_stream_type: DDM/Crawlers
+  - name: Confirmed sales orders and shipment commitments
+    source: S4 / Kinaxis
+    purpose: Firm demand that must be protected; used for feasibility prioritization
+    preferred_stream_type: DDM/Crawlers
+  - name: On-hand inventory and WIP levels
+    source: Blue Yonder WMS / S4
+    purpose: >-
+      Buffer availability and consumption for short-term feasibility
+      calculations
+    preferred_stream_type: STREAMS
+  - name: Current production schedules, machine/line capacity, and labor roster
+    source: S4 / Kinaxis RapidResponse
+    purpose: Available capacity baseline and constraints for run-rate evaluation
+    preferred_stream_type: DDM/Crawlers
+  - name: Open POs, lead times, and supplier constraints
+    source: S4
+    purpose: >-
+      Procurement visibility for deciding resource additions or materials-driven
+      delays
+    preferred_stream_type: DDM/Crawlers
+  - name: Safety stock / target inventory settings
+    source: Kinaxis (FG Safety Stock)
+    purpose: Service-level constraints to protect in feasibility trade-offs
+    preferred_stream_type: STREAMS
+  - name: Constraint/shortage alerts and propagated impacts
+    source: Kinaxis RapidResponse
+    purpose: Trigger for urgent feasibility checks and escalation
+  - name: SKU attributes (lead times, family grouping, lines qualified)
+    source: Subject Areas / S4
+    purpose: Feasibility rules and rebalancing eligibility
+    preferred_stream_type: Subject Areas
+happy_path:
+  - step: Consolidate inputs (forecast, orders, inventory, capacity, supplier data)
+    stage: ingest
+    component: STREAMS
+    purpose: Centralize and normalize data into subject areas for analysis
+  - step: >-
+      Run deterministic feasibility engine comparing demand to available
+      capacity and procurement constraints
+    stage: analyze
+    component: Remote Functions
+    purpose: >-
+      Calculate if current run-rate meets demand, identify bottlenecks, compute
+      candidate actions (OT, shift, subcontract, rebalance)
+  - step: >-
+      Apply business rules and rank recommended actions; present as CWB
+      recommendation for planner decision
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      Human-in-the-loop approval for resource additions or rebalancing with
+      contextual metrics (COGS impact, service risk)
+  - step: >-
+      Execute approved actions (schedule changes, PO creation, kinaxis updates)
+      and create action items for remaining items
+    stage: act
+    component: Process Builder
+    purpose: >-
+      Write approved changes back to S4/Kinaxis and generate work items for
+      operations/procurement
+  - step: Notify stakeholders and update reporting subject areas/dashboards
+    stage: notify
+    component: Notification / Subject Areas
+    purpose: >-
+      Ensure planners, ops, and finance are informed and the change is visible
+      in downstream reports
+  - step: Surface results and audit trail for review and continuous improvement
+    stage: surface
+    component: UI Screen
+    purpose: >-
+      Provide planners with decision rationale, scenario comparisons, and
+      execution status
+branches:
+  - condition: Feasibility PASS within current capacity and inventory buffers
+    response: >-
+      Automatically accept no-change recommendation, update schedule
+      provisioning and communicate confirmation
+    outcome: >-
+      Demand satisfied without resource addition; avoid unnecessary COGS
+      increase
+  - condition: Feasibility FAIL due to capacity or materials constraint
+    response: >-
+      Recommend prioritized actions (OT/subcontract/shift/add resources) and
+      create CWB for planner approval; generate procurement POs where required
+    outcome: >-
+      Planner reviews and approves mitigations; system writes approved changes
+      to S4/Kinaxis and triggers execution
+  - condition: Marginal/uncertain feasibility (cost vs. risk trade-offs unclear)
+    response: >-
+      Invoke rebalancing subprocess with Kinaxis scenario run, surface ranked
+      SKU/plant trade-offs, and escalate to cross-functional team via Action
+      Item
+    outcome: >-
+      Cross-functional decision made with scenario-backed trade-offs; staged
+      actions or temporary mitigations executed

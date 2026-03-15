@@ -1,0 +1,150 @@
+objective: >-
+  Autonomously identify production bottlenecks across multi-site lines and
+  execute corrective actions (line changes, sequencing, buffer adjustments,
+  manpower/equipment reallocation) to improve throughput, reduce COGS, and align
+  capacity with demand signals.
+trigger: >-
+  Scheduled capacity planning run (e.g., daily/weekly) or event-driven trigger
+  when realized throughput drops >10% vs plan or demand forecast variance >15%.
+decision: >-
+  Identify bottlenecks and determine corrective actions (line changes,
+  sequencing, buffer adjustments, manpower/equipment reallocation) that maximize
+  throughput subject to constraints (shift schedules, changeover time,
+  maintenance windows).
+expected_action: >-
+  Rank and select corrective actions; automatically execute low-risk changes
+  (sequencing, buffer tuning, manpower reassignments) via Remote Functions and
+  ERP writeback to SAP S/4HANA, and create CWB Lifecycle recommendations for
+  high-risk or exception actions requiring human approval.
+expected_outcome: >-
+  Improved line throughput and utilization, reduced COGS from lower idle time
+  and reduced overtime/changeover, fewer downstream delays, and closer alignment
+  of available capacity to forecasted demand.
+rationale: >-
+  Deterministic, process-driven orchestration is required to operationalize
+  multi-step capacity adjustments across ERP and shop-floor systems. Process
+  Builder coordinates data ingestion (STREAMS), bottleneck detection
+  (RCA/Rules), and action execution (Remote Functions + CWB Lifecycle) while
+  preserving human-in-the-loop controls for safety/maintenance constraints. This
+  reduces manual analysis time, standardizes corrective actions, and enables
+  repeatable capacity optimization across sites.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    type: Manufacturing Execution System
+    status: tbd
+  - name: SCADA / Equipment Telemetry
+    type: OT / Telemetry
+    status: tbd
+  - name: APS / Scheduling
+    type: Advanced Planning System
+    status: tbd
+  - name: Demand Forecasting Service
+    type: Forecasting
+    status: tbd
+key_inputs:
+  - name: Production Orders & Routing
+    source: SAP S/4HANA
+    purpose: >-
+      Current and planned work orders, operations sequence and standard times
+      used to compute line load and identify sequencing opportunities.
+    preferred_stream_type: batch
+  - name: Capacity Master (line, workcenter, shift)
+    source: SAP S/4HANA
+    purpose: >-
+      Equipment and manpower capacity definitions, shift patterns and available
+      hours for constraint modeling.
+    preferred_stream_type: batch
+  - name: Realized Throughput & OEE
+    source: MES
+    purpose: >-
+      Measured throughput, downtime and efficiency to detect bottlenecks and
+      validate impact of actions.
+    preferred_stream_type: time-series
+  - name: Equipment Status / MTTR / MTBF
+    source: SCADA / Equipment Telemetry
+    purpose: >-
+      Health and availability signals to avoid scheduling through maintenance
+      windows and to prioritize repairs.
+    preferred_stream_type: time-series
+  - name: Demand Forecast
+    source: Demand Forecasting Service
+    purpose: >-
+      Forward demand signals used to align capacity adjustments to expected
+      volumes and urgency.
+    preferred_stream_type: time-series
+  - name: Changeover Times & Sequencing Rules
+    source: SAP S/4HANA
+    purpose: >-
+      Operational constraints and costs for re-sequencing and line change
+      recommendations.
+    preferred_stream_type: batch
+  - name: Inventory Buffer Levels
+    source: SAP S/4HANA
+    purpose: >-
+      Buffer positions to tune to stabilize upstream/downstream flow and
+      minimize stock-related blocking.
+    preferred_stream_type: batch
+happy_path:
+  - step: Consolidate master, orders, telemetry, and forecast into canonical dataset
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Aggregate and validate SAP S/4HANA master data, production orders,
+      MES/telemetry feeds, and demand forecasts for analysis.
+  - step: >-
+      Detect bottlenecks and quantify impact using historical throughput and
+      constraint analysis
+    stage: analyze
+    component: RCA Service + Data Science
+    purpose: >-
+      Identify recurring and emergent bottlenecks, compute lost capacity, and
+      score candidate corrective actions.
+  - step: >-
+      Evaluate corrective action feasibility and rank by benefit/cost under
+      business rules
+    stage: decide
+    component: Process Builder (Rules, IF)
+    purpose: >-
+      Apply deterministic rules (shift availability, changeover limits,
+      maintenance windows) to select actionable changes and rank them.
+  - step: Execute approved low-risk actions and generate approvals for exceptions
+    stage: act
+    component: Process Builder (Remote Functions, Action Item, CWB Lifecycle)
+    purpose: >-
+      Invoke Remote Functions to write sequencing and staffing changes to SAP
+      S/4HANA for low-risk items; open CWB for human approval where required.
+  - step: Surface recommendations, record decisions, and monitor outcome metrics
+    stage: review
+    component: UI Screen + Notification
+    purpose: >-
+      Present recommended actions and KPIs to planners/operators, capture
+      approve/reject, and notify affected teams; track throughput post-change.
+branches:
+  - condition: >-
+      No statistically significant bottleneck detected or candidate actions
+      yield negative net benefit
+    response: >-
+      Mark run as monitoring-only, schedule increased telemetry sampling and
+      re-run analysis on next scheduled cadence.
+    outcome: >-
+      No operational changes applied; additional data collection to improve
+      future detection.
+  - condition: Recommended action passes deterministic business rules and is low-risk
+    response: >-
+      Automatically execute via Remote Functions and writeback changes to SAP
+      S/4HANA; notify execution and expected impact.
+    outcome: >-
+      Changes applied immediately, expected throughput uplift realized and
+      tracked; closed-loop monitoring validates impact.
+  - condition: >-
+      Recommended action conflicts with maintenance windows, safety rules, or
+      exceeds authorization thresholds
+    response: >-
+      Create CWB Lifecycle exception routed to plant planner/maintenance with
+      required supporting evidence and suggested mitigation.
+    outcome: >-
+      Action paused until human approval; maintenance or safety team schedules
+      corrective activities; change executed post-approval.

@@ -1,0 +1,28 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for decision-making.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Generate insights for storage and cycle counting optimization.
+    confidence: inferred
+    capability: Generate insights for storage and cycle counting optimization.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Present recommendations for review and approval.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Implement changes in the ERP system.
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomous rebalancing of stock, maintaining tight cycle counts,
+      discarding obsolete inventory, optimizing warehouse slotting, and ensuring
+      material handling capacity. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

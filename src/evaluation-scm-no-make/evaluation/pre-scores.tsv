@@ -1,0 +1,631 @@
+rank	l4_id	l4_name	l3_name	l2_name	l1_name	financial_signal	ai_suitability	decision_density	impact_order	rating_confidence	archetype_completeness	composite	survived	elimination_reason	red_flags	skill_count	aggregated_max_value
+1	d3da30eb49f2	Manage Purchase Order Changes & Approvals	Conduct Transactional Procurement	Order to "Ok To Pay"	Source & Procure	1.0000	1.0000	0.8500	1.0000	1.0000	0.8571	0.9414	Y			2	21465000
+2	b60144f8d799	Physically Receive And Inspect Goods Or Services	Receive Goods & Services	Order to "Ok To Pay"	Source & Procure	1.0000	1.0000	0.7500	1.0000	1.0000	0.9286	0.9357	Y			2	20000000
+3	d8faf5fc2215	Review Unfulfilled Demand	Monitor Performance and Handle Exceptions	Sales & Operations Execution	Plan	1.0000	1.0000	0.8000	1.0000	1.0000	0.8571	0.9314	Y			2	27000000
+4	18d2bf7b863b	Determine And Simulate Scenarios	Conduct Supply Scenario Planning	Tactical Supply Planning	Plan	1.0000	1.0000	0.6500	1.0000	1.0000	1.0000	0.9300	Y			1	12000000
+5	78a1fd1b3b61	Drp Adjustment And Str Release	Conduct Distribution Requirements Planning	Tactical Supply Planning	Plan	1.0000	1.0000	0.6250	1.0000	1.0000	1.0000	0.9250	Y			1	17703000
+6	75301119f9dc	Review Slow Moving SKU	Prepare and Conduct Portfolio Review	Sales & Operations Planning	Plan	1.0000	1.0000	0.6250	1.0000	1.0000	1.0000	0.9250	Y			1	3762000
+7	59735592bf9e	Understand Business Goals & Current Plans	Identify and Implement Demand Initiatives	Demand Planning for Source & Procure	Source & Procure	1.0000	1.0000	0.6000	1.0000	1.0000	1.0000	0.9200	Y			1	2000000
+8	f22996f8fbf6	Conduct Tactical Sourcing Event	Execute Tactical Sourcing	Sourcing	Source & Procure	1.0000	1.0000	0.7000	1.0000	1.0000	0.8571	0.9114	Y			1	17703000
+9	3c579cd7eb89	Conduct Rfx, Rfp Or Auction	Execute Sourcing	Sourcing	Source & Procure	1.0000	1.0000	0.7000	1.0000	1.0000	0.8571	0.9114	Y			1	6000000
+10	6ee917a52b9a	Manage Negotiations	Author Contract	Contract Management	Source & Procure	1.0000	1.0000	0.7000	1.0000	1.0000	0.8571	0.9114	Y			1	6000000
+11	87200075b4bf	Monitor & Report Supplier Performance	Monitor LSP Spend & Contract Compliance	Logistics Service Provider (LSP) Selection and Management	Fulfill	1.0000	1.0000	0.7000	1.0000	1.0000	0.8571	0.9114	Y			1	6000000
+12	59d45a09c32a	Manage Stress Testing & Digital Twins	Manage Resilience Procurement	Risk & Resiliency	Source & Procure	1.0000	1.0000	0.7000	1.0000	1.0000	0.8571	0.9114	Y			1	3762000
+13	285e9d0a7334	Manage Supply Exceptions	Monitor Performance and Handle Exceptions	Sales & Operations Execution	Plan	1.0000	1.0000	0.6750	1.0000	1.0000	0.8571	0.9064	Y			1	12000000
+14	37a91ea3a26c	Create Receipt of Goods Or Services	Receive Goods & Services	Order to "Ok To Pay"	Source & Procure	1.0000	1.0000	0.6750	1.0000	1.0000	0.8571	0.9064	Y			1	3762000
+15	7484cee93afc	Classify Products	Manage Import / Export	Global Trade Management	Fulfill	1.0000	1.0000	0.6750	1.0000	1.0000	0.8571	0.9064	Y			1	3500000
+16	89ff8be7bcf2	Manage Product Import/Export Valuation	Manage Import / Export	Global Trade Management	Fulfill	1.0000	1.0000	0.6750	1.0000	1.0000	0.8571	0.9064	Y			1	3000000
+17	08680c2d9b9a	Set Up & Manage Global Trade Master Data	Manage Trade Compliance	Global Trade Management	Fulfill	1.0000	1.0000	0.6750	1.0000	1.0000	0.8571	0.9064	Y			1	2500000
+18	2a146ea0f667	Select Supplier	Execute Spot Buy	Order to "Ok To Pay"	Source & Procure	1.0000	1.0000	0.6500	1.0000	1.0000	0.8571	0.9014	Y			1	17703000
+19	a34ce38534de	Maintain Critical Material Data	Manage Supply Planning Data	Supply Strategy & Analytics	Plan	1.0000	1.0000	0.6500	1.0000	1.0000	0.8571	0.9014	Y			1	17703000
+20	a2e25c2bd788	Adjust Purchase Orders	Execute Material Call off	Operational Supply Planning	Plan	1.0000	1.0000	0.6500	1.0000	1.0000	0.8571	0.9014	Y			1	6000000
+21	a0259e77195c	Create Purchase Order	Conduct Transactional Procurement	Order to "Ok To Pay"	Source & Procure	1.0000	1.0000	0.6500	1.0000	1.0000	0.8571	0.9014	Y			1	1500000
+22	6f7498114264	Review SKU Segmentation Rules	Conduct Volume to Value Planning	Sales & Operations Planning	Plan	1.0000	1.0000	0.6250	1.0000	1.0000	0.8571	0.8964	Y			1	7000000
+23	75eea5e9c9dd	Create Drp Planned Volumes	Conduct Distribution Requirements Planning	Tactical Supply Planning	Plan	1.0000	1.0000	0.6250	1.0000	1.0000	0.8571	0.8964	Y			1	6000000
+24	0199b6e731bc	Determine Best Model & Algorithm	Define Statistical Forecast Model	Forecast Analytics	Plan	1.0000	1.0000	0.6250	1.0000	1.0000	0.8571	0.8964	Y			1	5000000
+25	821c78433813	Manage N-Tier Supplier Mapping & Visibility	Manage Resilience Procurement	Risk & Resiliency	Source & Procure	1.0000	1.0000	0.6250	1.0000	1.0000	0.8571	0.8964	Y			1	3762000
+26	8e0064463d4e	Analyse Impact of Change In Safety Stock	Manage Integrated Scenarios	Sales & Operations Planning	Plan	1.0000	1.0000	0.6250	1.0000	1.0000	0.8571	0.8964	Y			1	3762000
+27	a2ea0f932317	Identify Potential Risks	Manage Risk Segmentation & Assessment	Risk & Resiliency	Source & Procure	1.0000	1.0000	0.6250	1.0000	1.0000	0.8571	0.8964	Y			1	3762000
+28	d98747764b64	Analyse & Validate Innovation Initiatives	Manage Category Innovation	Category Management	Source & Procure	1.0000	0.5000	0.7750	1.0000	1.0000	0.8571	0.8514	Y			2	7524000
+29	c1e53820084f	Perform Feasibility Check	Review Supply Capability	Tactical Supply Planning	Plan	1.0000	0.5000	0.6250	1.0000	1.0000	1.0000	0.8500	Y			1	17703000
+30	vf-d711e034	Automated Demand-Promising Coordination	Cross-Functional: Fulfill + Sell + Deliver + Customer	Value Flow	Cross-Functional	1.0000	0.5000	0.7000	1.0000	1.0000	0.8571	0.8364	Y			1	24000000
+31	f0d9d871c6f2	Assess Sourcing Opportunity	Develop Sourcing Profile & Strategy	Sourcing	Source & Procure	1.0000	0.5000	0.6500	1.0000	1.0000	0.8571	0.8264	Y			1	4000000
+32	3b24cf9b813b	Analyse Impact of Increase In Demand	Manage Integrated Scenarios	Sales & Operations Planning	Plan	1.0000	0.5000	0.6250	1.0000	1.0000	0.8571	0.8214	Y			1	15000000
+33	5f0a161ad72d	Manage Negotiations	Execute Spot Buy	Order to "Ok To Pay"	Source & Procure	1.0000	0.5000	0.6250	1.0000	1.0000	0.8571	0.8214	Y			1	12000000
+34	7b3540722b7b	Assess Data for Segmentation	Define Demand Segmentation	Forecast Analytics	Plan	1.0000	0.5000	0.6250	1.0000	1.0000	0.8571	0.8214	Y			1	12000000
+35	8c7c47aec8e6	form Collaboration Agreement With Suppliers	Manage Category Innovation	Category Management	Source & Procure	1.0000	0.5000	0.6250	1.0000	1.0000	0.8571	0.8214	Y			1	8000000
+36	7ebb9bf1d765	Gather Market Inputs	Define Ml Forecast Model	Forecast Analytics	Plan	1.0000	0.5000	0.6250	1.0000	1.0000	0.8571	0.8214	Y			1	6000000
+37	bf56ccdcb3b3	Suggest And Monitor Changes	Manage Supply Planning Data	Supply Strategy & Analytics	Plan	1.0000	0.5000	0.6250	1.0000	1.0000	0.8571	0.8214	Y			1	6000000
+38	a98d7b9f45fd	Implement Results of Assessment	Define Demand Segmentation	Forecast Analytics	Plan	1.0000	0.5000	0.6250	1.0000	1.0000	0.8571	0.8214	Y			1	3762000
+39	a12e86627c80	Review of Production Capacity	Review Supply Capability	Tactical Supply Planning	Plan	1.0000	0.5000	0.6000	1.0000	1.0000	0.8571	0.8164	Y			1	5000000
+40	0f137d085c96	Determine New Features and Update Process	Define Ml Forecast Model	Forecast Analytics	Plan	1.0000	0.5000	0.6000	1.0000	1.0000	0.8571	0.8164	Y			1	4000000
+41	f3e078f3e361	Assess Data	Define Ml Forecast Model	Forecast Analytics	Plan	1.0000	0.5000	0.6000	1.0000	1.0000	0.8571	0.8164	Y			1	4000000
+42	cf-8723a10a	Integrated Demand-Driven Sourcing	Cross-Functional: Plan + Source	Cross Functional	Cross-Functional	1.0000	0.5000	0.7250	1.0000	1.0000	0.7143	0.8129	Y			1	24000000
+43	cf-24ef36c5	Automated Demand-Constrained Production Scheduling	Cross-Functional: Plan + Make + Source	Cross Functional	Cross-Functional	1.0000	0.5000	0.7250	1.0000	1.0000	0.7143	0.8129	Y			1	21000000
+44	vf-5100d701	Automated Channel Margin Coordination	Cross-Functional: Finance + Sell + Customer	Value Flow	Cross-Functional	1.0000	0.5000	0.7000	1.0000	1.0000	0.7143	0.8079	Y			1	26000000
+45	cf-e6d602b4	Automated Demand-Supply Scenario Coordination	Cross-Functional: Plan + Source	Cross Functional	Cross-Functional	1.0000	0.5000	0.7000	1.0000	1.0000	0.7143	0.8079	Y			1	24000000
+46	vf-072c847e	Automated Regional Demand Rebalancing	Cross-Functional: Plan + Fulfill + Sell + Deliver	Value Flow	Cross-Functional	1.0000	0.5000	0.7000	1.0000	1.0000	0.7143	0.8079	Y			1	22000000
+47	vf-0ba5d586	Automated Cross-Functional OTIF-Driven Fulfillment Tradeoff	Cross-Functional: Fulfill + Sell + Finance	Value Flow	Cross-Functional	1.0000	0.5000	0.7000	1.0000	1.0000	0.7143	0.8079	Y			1	21000000
+48	vf-3654664e	Automated Safety Stock Coordination Across Planning and Fulfillment	Cross-Functional: Fulfill + Plan + Finance	Value Flow	Cross-Functional	1.0000	0.5000	0.7000	1.0000	1.0000	0.7143	0.8079	Y			1	21000000
+49	cf-999807ae	Synchronized ATP/CTP with Supplier Readiness	Cross-Functional: Fulfill + Source & Procure	Cross Functional	Cross-Functional	1.0000	0.5000	0.6750	1.0000	1.0000	0.7143	0.8029	Y			1	21000000
+50	cf-820d2938	Cross-Domain Demand-Driven Sequencing	Cross-Functional: Plan + Fulfill	Cross Functional	Cross-Functional	1.0000	0.5000	0.7000	1.0000	1.0000	0.5714	0.7793	Y			1	21000000
+51	50c6ec13c6a1	Manage Warehouse Operations Tools/Platforms	Develop Digital & Automation Strategy	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.7000	1.0000	1.0000	1.0000	0.7400	N			1	3762000
+52	cf-toc-cdb3eb92	Policy-Aligned Supplier Flow Control	Cross-Functional: Procurement + Inventory + Finance	Toc	Cross-Functional	1.0000	1.0000	0.5000	1.0000	1.0000	0.1429	0.7286	N			1	9000000
+53	cf-toc-a8d84582	Demand-to-Procure Alignment Loop	Cross-Functional: Demand + Procurement + Finance	Toc	Cross-Functional	1.0000	1.0000	0.5000	1.0000	1.0000	0.1429	0.7286	N			1	5000000
+54	0d38c72cc18f	Conduct Spot Buy Event	Execute Spot Buy	Order to "Ok To Pay"	Source & Procure	0.5000	1.0000	0.6750	0.2500	1.0000	0.8571	0.7064	N			1	17703000
+55	34c5baf4cd81	Prepare Spot Buy Event	Execute Spot Buy	Order to "Ok To Pay"	Source & Procure	0.5000	1.0000	0.6500	0.2500	1.0000	0.8571	0.7014	N			1	3762000
+56	5dd741b52747	Demand Planning for Source & Procure	Demand Planning for Source & Procure	Demand Planning for Source & Procure	Source & Procure	0.5000	0.5000	0.6250	1.0000	1.0000	0.8571	0.6964	N			1	2000000
+57	895a4ce55f73	Assess Footprint	Manage Supplier Diversity & Inclusion Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.5000	0.6750	0.2500	1.0000	1.0000	0.6600	N			1	3762000
+58	10d68fcb6032	Plan & Execute Special Procedures	Manage Import / Export	Global Trade Management	Fulfill	0.5000	0.5000	0.6750	0.2500	1.0000	1.0000	0.6600	N			1	2000000
+59	029b758f1a0a	Release Tactical Materials Plan	Conduct Tactical Materials Planning	Tactical Supply Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+60	035bf0c36b6d	Finalise Consensus Forecast	Plan And Monitor Demand Scenario	Demand Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+61	0679687c89d5	Develop Sourcing Profile	Develop Sourcing Profile & Strategy	Sourcing	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+62	0722b6551c78	Develop Strategic Category Plan	Develop Category Strategy Plan	Logistics Service Provider (LSP) Selection and Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+63	0e7c44e7274d	Bonded / Customs Warehouse Declarations	Execute Customs Clearance	Global Trade Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+64	129b4a90be6b	Influence Demand Specifications	Manage Continuous Improvement of Demand	Demand Planning for Source & Procure	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+65	1385d47d51a9	Generate Constrained Demand Plan	Prepare and Conduct Supply Review	Sales & Operations Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+66	14928dc5884a	Define Network Improvement Hypothesis	Develop Network Strategy	Fulfilment Strategy	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+67	18cec14f185d	Anticipate On Stock Fluctuations	Define Order Allocations Rules	Order Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+68	18e0d63555ce	Enter Order	Capture Order	Order Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+69	1989e8fd3443	Assess Supply Uncertainties	Monitor Supply Chain Segmentation	Supply Strategy & Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+70	1a89fcbb3486	Manage Drivers	Manage Fleets	Transportation Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+71	1c4b6a79a32c	Manage Workload Capacity	Plan Labour and Workforce Scheduling	Warehouse Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+72	26f1a1a9cf86	Execute Replenishment	Manage Storage Capacity & Inventory	Warehouse Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+73	2703a665a86e	Pick Order	Execute Pick and Pack	Warehouse Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+74	273428d51b97	Process for Payment	Perform Invoice Processing & Payment	Order to "Ok To Pay"	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+75	2de6cd1f428b	Allocate Inventory	Establish Wave Plan	Warehouse Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+76	2f16ec8dcad0	Model Network Optimization Scenarios	Develop Network Strategy	Fulfilment Strategy	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+77	30712d5c8a4c	Define Global Mapping of Categories To Buying Channel	Define Buying Channels	Category Management	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+78	307de0c3b85d	Verify Resource Availability	Conduct Co-Manufacturing Planning	Tactical Supply Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+79	37316ad8655c	Define Impact In Costs, Lead Time And Service Levels	Develop Network Strategy	Fulfilment Strategy	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+80	376ec26f87da	Develop & Negotiate Agreement	Execute Sourcing	Sourcing	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+81	3a2f1723149e	Prepare Production Plan	Prepare and Conduct Supply Review	Sales & Operations Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+82	41e05b7a8a55	Split / Combine Inventory	Manage Storage Capacity & Inventory	Warehouse Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+83	4229aea3f934	Review Supply Shortage	Create Response Plan and Co-Ordinate	Sales & Operations Execution	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+84	439c75b2c83c	Develop And Maintain Cost-To-Serve Tool	Embed Cost-To-Serve Capability	Performance Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+85	4b377fd57b34	Estimate Impact of Activities	Forecast Enrichment	Demand Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+86	4d0875693e4e	Enable Contracts	Enable Buying Channels	Business Intake	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+87	4d4d0a894dc5	Perform Root-Cause Analysis	Measure And Manage Demand Performance & Improvement	Forecast Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+88	4ed78f25256f	Create Demand Plan	Identify and Implement Demand Initiatives	Demand Planning for Source & Procure	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+89	4f12e9233303	Execute Governance & Infrastructure	Execute Governance & Infrastructure	Execute Governance & Infrastructure	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+90	507f791521e1	Identify Products Strategy	Define Steering Model	Supply Strategy & Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+91	51860aa5713e	Identify Tail Spend Opportunities	Define Tail Spend Mgmt. Strategy	Category Management	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+92	55f6c60ca97a	Determine the Targets	Define Steering Model	Supply Strategy & Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+93	57099b33244a	Manage Invoice Processing And Exception Handling	Perform Invoice Processing & Payment	Order to "Ok To Pay"	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+94	5b73107c5849	Track Semi Finished Goods	Manage Production Scheduling	Operational Supply Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+95	606a4d9dbafc	Analyse Sequencing	Intigrate And Optimize Production Parameter	Supply Strategy & Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+96	6263093cc167	Execute Inventory Count/ Cycle Counting	Manage Storage Capacity & Inventory	Warehouse Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+97	62e219e79171	Manage Truck Arrival/Departures	Manage Yards	Warehouse Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+98	66684cf31057	Collect Forecast	Manage Supply Network	Supply Strategy & Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+99	66faab3f91ca	Develop Prescriptive Insights Approach	Define Data & Analytics Strategy	Insight & Analytics	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+100	70cbbd024644	Develop Sourcing Strategy	Develop Sourcing Profile & Strategy	Sourcing	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+101	76bcf008aada	Baseline Demand Practices	Identify and Implement Demand Initiatives	Demand Planning for Source & Procure	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+102	79fbc1805db7	Prepare for Customs Inspection	Execute Customs Clearance	Global Trade Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+103	7af19b04e0d7	Align Supply & Invetory Plans	Prepare and Conduct Supply Review	Sales & Operations Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+104	7fc18600a3f0	Update Supply Parameters	Manage Supply Network	Supply Strategy & Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+105	804ca6163488	Finalize Forecast Parameters	Define Statistical Forecast Model	Forecast Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+106	8483a6e27d17	Confirm Order	Capture Order	Order Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+107	857ffdb49a39	Review Incoming Data	Define Ml Forecast Model	Forecast Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+108	858c590afc3a	Develop And Maintain Service Catalogue	Define Segmentation Strategy	Fulfilment Strategy	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+109	876cc3722d18	Execute & Manage Relationships	Manage Supplier Relationships	Supplier Management	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+110	8838eddae0f1	Calculate Landed Cost	Manage Import / Export	Global Trade Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+111	88cc226a871f	Review Constrained Capacity	Manage Production and Capacity Planning	Tactical Supply Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+112	8ae40aa931f1	Drive Special Programs	Manage Trade Compliance	Global Trade Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+113	8d1eec65fdaf	Resolve Contract Issues	Manage Contract Lifecycle	Contract Management	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+114	95a5014b43ef	Develop Evaluation Criteria	Develop Sourcing Profile & Strategy	Sourcing	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+115	98d84cd1af95	Run Scenario Simulations	Plan And Monitor Demand Scenario	Demand Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+116	9969175db698	Determine Demand Scenarios	Plan And Monitor Demand Scenario	Demand Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+117	9aaa213cd80b	Update/Modify Order	Process Orders	Order Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+118	9b0bb5176d55	Execute Picking & Loading Consolidation	Execute Pick and Pack	Warehouse Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+119	9db673bc0f46	Monitor Service Execution	Administer Third-Party Services	Contract Management	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+120	9eb668272493	Release the Adjusted Demand To Supply	Match Short Term Demand-Supply	Sales & Operations Execution	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+121	a0e87cf46d16	Develop & Negotiate Agreement	Execute Tactical Sourcing	Sourcing	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+122	a2abd03c6c66	Standardize Activities Catalogue	Manage Demand Driver Data	Demand Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+123	a6c5b10e3acc	Execute & Manage Mitigation Actions & Initiatives	Manage Risks	Risk & Resiliency	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+124	a702f11490ed	Identify Tactical Sourcing Suppliers	Execute Tactical Sourcing	Sourcing	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+125	a8aa6bfc706f	Manage Supplier Collaboration & Development Initiatives	Develop And Collaborate With Suppliers	Supplier Management	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+126	aae5f7e0ccf0	Execute Sourcing Approach	Source LSP	Logistics Service Provider (LSP) Selection and Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+127	ab3cfd8f8d4c	Derive Fulfilment Strategy From Sc Strategy And Business Strategy	Develop Strategy and Target Setting	Fulfilment Strategy	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+128	ac4e1865c138	Generate Dependent Demand	Conduct Tactical Materials Planning	Tactical Supply Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+129	af509eaf441c	Administer Contract	Manage Contract Lifecycle	Contract Management	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+130	b200d3dc367b	Plan Outbound Wave	Establish Wave Plan	Warehouse Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+131	b6afe848d180	Confirm New Sales Order	Create Response Plan and Co-Ordinate	Sales & Operations Execution	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+132	b8f0008685e6	Manage Production Capacity	Perform Root-Cause and What-If Analysis	Sales & Operations Execution	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+133	b93d7c0429ab	Identify Demand And Supply Mismatch	Prepare and Conduct Pre-S&Op	Sales & Operations Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+134	ba3a91b5b037	Define & Update Automation & Ai Enablement Strategy	Define Digital Strategy	Define Functional Strategy	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+135	c04c98aa4631	Gather Current Performance Data	Intigrate And Optimize Production Parameter	Supply Strategy & Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+136	c5d5be83d12e	Discuss And Update Plan	Manage Customer Collaborative Planning	Demand Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+137	c76df8e92d23	Perform Negotiations & Develop Contract	Source LSP	Logistics Service Provider (LSP) Selection and Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+138	cdf0ec21fbd9	Analyse Performance & Identify New Value Levers	Identify & Execute Improvement Programs	Performance Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+139	cfd5bad109e6	Review PIPO & NPI Forecast	Forecast Enrichment	Demand Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+140	d4f20a32437d	Co-Manufacturer Plan Release	Conduct Co-Manufacturing Planning	Tactical Supply Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+141	d8c5d533cf2b	Enable Mrp	Enable Buying Channels	Business Intake	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+142	dee72ec190c9	Manage Customs Broker	Execute Customs Clearance	Global Trade Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+143	e5066bfeefad	Optimize Network	Manage Supply Network	Supply Strategy & Analytics	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+144	e55ac08c312f	Estimate Customer Sales Forecast	Manage Customer Collaborative Planning	Demand Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+145	e8321eda4b9b	Monitor & Report Demand	Monitor LSP Spend & Contract Compliance	Logistics Service Provider (LSP) Selection and Management	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+146	ec5aedcba540	Track Shipment of Goods Or Delivery of Service	Receive Goods & Services	Order to "Ok To Pay"	Source & Procure	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+147	f23809244115	Manage Rough-Cut Capacity Planning	Manage Production and Capacity Planning	Tactical Supply Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+148	f55d779681c7	Create Phase-In/Out Profiles	Manage NPI and Phase-In/Out	Demand Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+149	f79920295739	Determine Network Optimization Changes	Develop Network Strategy	Fulfilment Strategy	Fulfill	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+150	ffd49505791e	Create Baseline Scenario	Plan And Monitor Demand Scenario	Demand Planning	Plan	1.0000	1.0000	0.5000	1.0000	0.6000	0.0000	0.6600	N			0	0
+151	cf-fl-04766918	Improve Demand Forecasting Fidelity	Cross-Functional: Demand Domain (Plan) + Inventory Domain (Plan) + Procurement Domain (Source)	Feedback Loop	Cross-Functional	1.0000	0.5000	0.5000	1.0000	1.0000	0.1429	0.6536	N			1	8500000
+152	cf-toc-47d0507a	Contract Coverage Tightening	Cross-Functional: Procurement + Finance	Toc	Cross-Functional	1.0000	0.5000	0.5000	1.0000	1.0000	0.1429	0.6536	N			1	7000000
+153	cf-fl-d9ceaa33	Dynamic Inventory Management	Cross-Functional: Inventory Domain + Fulfill Domain + Finance Domain	Feedback Loop	Cross-Functional	1.0000	0.5000	0.5000	1.0000	1.0000	0.1429	0.6536	N			1	6000000
+154	cf-toc-5230480b	Inventory Policy Harmonization	Cross-Functional: Inventory + Finance	Toc	Cross-Functional	1.0000	0.5000	0.5000	1.0000	1.0000	0.1429	0.6536	N			1	6000000
+155	cf-fl-4f554266	Promotion ROI Optimization	Cross-Functional: Revenue Domain + Demand Domain + Plan Domain	Feedback Loop	Cross-Functional	1.0000	0.5000	0.5000	1.0000	1.0000	0.1429	0.6536	N			1	5200000
+156	0d1c504de366	Optimize Process Performance	Manage Business Processes	Execute Governance & Infrastructure	Source & Procure	0.5000	0.5000	0.6000	0.2500	1.0000	1.0000	0.6450	N			1	2000000
+157	84e2bc250392	Identify & Implement Improvement Opportunities Aligned To Strategy	Manage Sustainability Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.5000	0.6750	0.2500	1.0000	0.8571	0.6314	N			1	3762000
+158	ae49ca0cbf6c	Align With Corporate Responsibility & Ethics Strategies	Develop Responsibility & Ethics Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.5000	0.6500	0.2500	1.0000	0.8571	0.6264	N			1	3762000
+159	ef00df91d609	Manage And Communicate Exceptions	Conduct Distribution Requirements Planning	Tactical Supply Planning	Plan	0.5000	0.5000	0.6250	0.2500	1.0000	0.8571	0.6214	N			1	7000000
+160	57d4fb2cc83b	Manage Purchase Order Cancellation	Conduct Transactional Procurement	Order to "Ok To Pay"	Source & Procure	0.5000	0.5000	0.6250	0.2500	1.0000	0.8571	0.6214	N			1	3762000
+161	fdfd33114a44	Manage Procurement Function Budget	Manage Performance Objectives	Execute Governance & Infrastructure	Source & Procure	0.5000	0.5000	0.6250	0.2500	1.0000	0.8571	0.6214	N			1	3762000
+162	922cc4c29f92	Align Sales Target	Conduct Volume to Value Planning	Sales & Operations Planning	Plan	0.5000	0.5000	0.6000	0.2500	1.0000	0.8571	0.6164	N			1	12000000
+163	cbe6c24ec2c5	Review Demand Plan	Prepare and Conduct Portfolio Review	Sales & Operations Planning	Plan	0.5000	0.5000	0.6000	0.2500	1.0000	0.8571	0.6164	N			1	8000000
+164	45e07c51e6f4	Review Target Achieved	Prepare and Conduct Sales/Activity Review	Sales & Operations Planning	Plan	0.5000	0.5000	0.6000	0.2500	1.0000	0.8571	0.6164	N			1	7000000
+165	558e9fe392a3	Assess Demand Patterns	Define Statistical Forecast Model	Forecast Analytics	Plan	0.5000	0.5000	0.6000	0.2500	1.0000	0.8571	0.6164	N			1	6000000
+166	f5f0082a703d	Review Results	Conduct Distribution Requirements Planning	Tactical Supply Planning	Plan	0.5000	0.5000	0.6000	0.2500	1.0000	0.8571	0.6164	N			1	5000000
+167	433afa53a6fb	Gather Requirements for Customer Experience	Manage Customer Experience	Business Intake	Source & Procure	0.5000	0.5000	0.6000	0.2500	1.0000	0.8571	0.6164	N			1	1500000
+168	03074e996bb1	Execute & Manage Qualifications & Due Diligences	Manage Supplier Lifecycle	Supplier Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+169	03aea5f1bdd0	Review Production Capacity Utilization	Prepare and Conduct Supply Review	Sales & Operations Planning	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+170	0425f91fee0d	Manage Scraps And Obsolete Inventory	Manage Returns	Warehouse Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+171	04b188134659	Define Objectives And Strategy & Set Targets for Suppliers	Develop And Collaborate With Suppliers	Supplier Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+172	05e7e2fc8dfe	Perform Yard capacity planning	Manage time slots	Transportation Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+173	061c21b51f48	Review And Validate Results	Measure And Manage Demand Performance & Improvement	Forecast Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+174	06b3257fcb84	Define Credit & Collection Policy	Manage Credits	Order Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+175	0d192e4aec63	Determine Procurement & Finance Objectives	Conduct Budget Planning	Budget Alignment	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+176	0edab195e348	Perform Dynamic Routing	Execute Shipments	Transportation Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+177	0f84440864a6	Define Vision, Purpose And Objectives	Define Risk & Resilience Strategy & Governance	Risk & Resiliency	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+178	1215c0b232ff	Develop Predictive Insights Approach	Define Data & Analytics Strategy	Insight & Analytics	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+179	2cc774a9ce38	Define Market Intelligence Approach	Define Data & Analytics Strategy	Insight & Analytics	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+180	325cdf63dfd8	Bridge P&L Actuals	Analyse Variance and Mitigate	Control & Monitoring	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+181	356fd8ab8c07	Define Value Realization Framework	Manage Performance Objectives	Execute Governance & Infrastructure	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+182	35f06a0dec84	Evaluate Available Channel	Identify Channel and Execute Request	Business Intake	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+183	3927a5c48b61	Perform Network Risk Assessment	Develop Network Strategy	Fulfilment Strategy	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+184	3e10dede509a	Define Change Roadmap	Define Risk & Resilience Strategy & Governance	Risk & Resiliency	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+185	411cf5dc7f7b	Manage Customer Delivery	Execute Shipments	Transportation Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+186	413fd3b560ac	Assign Request To Correct Channel	Identify Channel and Execute Request	Business Intake	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+187	4679d5259084	Define Tco Model & Other Analytics Models	Develop Category Costs Profile	Category Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+188	47fcbe77922c	Prioritize Production Versions	Intigrate And Optimize Production Parameter	Supply Strategy & Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+189	4eaf56e08e4f	Evaluate Models	Manage Supply Network	Supply Strategy & Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+190	518d4915887a	Consult Category Card	Identify Channel and Execute Request	Business Intake	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+191	543a5dd1d264	Update Footprint	Define Steering Model	Supply Strategy & Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+192	54ad753c4ffb	Analyse Demand Drivers & Develop Recommendations	Identify and Implement Demand Initiatives	Demand Planning for Source & Procure	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+193	5694d61afe48	Put Away	Receive Goods	Warehouse Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+194	57e95902dc0d	Apply Rules And Logic	Define Demand Aggregation Or Disaggregation	Demand Planning	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+195	61148e2c0517	Define Supplier Lifecycle Approach	Manage Supplier Lifecycle	Supplier Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+196	626b2048e6e1	Define Policies & Procedures	Define Risk & Resilience Strategy & Governance	Risk & Resiliency	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+197	63069f38afc2	Analyse KPI Performance	Measure And Manage Demand Performance & Improvement	Forecast Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+198	63aa5637a65a	Conduct Supplier Segmentation	Manage Supplier Segmentation	Supplier Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+199	65a4b94eed81	Track & Report On Benefits & Performance	Report Benefits and Performance	Control & Monitoring	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+200	662538e18330	Evaluate Performance	Manage Supplier Relationships	Supplier Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+201	6683d8154951	Define Procurement Sustainability Goals & Objectives	Develop Sustainability Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+202	68bc640ee7fd	Review Revenue Projections	Prepare and Conduct Demand Review	Sales & Operations Planning	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+203	6b0ce2f06b98	Define KPI'S	Manage Supplier Performance	Supplier Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+204	6eaeb222d492	Calculate Freight Cost	Manage Freight cost	Transportation Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+205	70c1a3bc0499	Define Procurement Sustainability Governance	Develop Sustainability Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+206	74e24e740149	Update Pricing In Finance Model	Integrate Budget to Initiatives	Budget Alignment	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+207	76c12754e1f1	Integrate With Company-Wide Initiatives	Manage Category Governance	Partner With Stakeholders	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+208	7945c8e48c87	Manage Return Orders	Manage Returns	Warehouse Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+209	7967a25f1173	Define Internal Demand Analytics Approach	Define Data & Analytics Strategy	Insight & Analytics	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+210	7cdfcdf0ea23	Align With Broader Supply Chain Risk & Resilience Strategies	Define Risk & Resilience Strategy & Governance	Risk & Resiliency	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+211	7ffa83d5cdcb	Maintain Racks / Mhe / Automation	Manage Warehouse Assets and MHE (Material Handling Equipment'S)	Warehouse Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+212	80b8d366b33e	Review Forecast Accuracy	Prepare and Conduct Demand Review	Sales & Operations Planning	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+213	86055770bc7e	Receive And Generate Goods Receipts	Receive Goods	Warehouse Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+214	868e78cf6e42	Define Goals And Objectives	Define Procurement Vision & Strategic Roadmap	Define Functional Strategy	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+215	87639dd537f1	Conduct Assessment	Manage Supplier Performance	Supplier Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+216	8ce6276537d0	Generate Forecast	Generate Forecast and Manage Exceptions	Forecast Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+217	90850291e761	Adjust Inventory	Manage Returns	Warehouse Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+218	958b2caa6077	Extract Spend Data	Manage Spend Visibility	Insight & Analytics	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+219	961d5ab2a2f6	Define KPI Framework And Definition	Develop Strategy and Target Setting	Fulfilment Strategy	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+220	9a593199573d	Define Diagnostic Insights Approach	Define Data & Analytics Strategy	Insight & Analytics	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+221	9ded1a57c517	Define & Implement Action Plans	Analyse Variance and Mitigate	Control & Monitoring	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+222	9eda02b01f75	Validate Order	Capture Order	Order Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+223	9f1b3209146e	Prioritize Categories	Identify and Implement Demand Initiatives	Demand Planning for Source & Procure	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+224	9fb4eaa963dc	Manage Stock transfers	Execute Shipments	Transportation Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+225	a17c3405c311	Generate Ml Forecast	Define Ml Forecast Model	Forecast Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+226	a7d582d7ae94	Measure & Report Category Performance	Manage Category Governance	Partner With Stakeholders	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+227	a875b2779cea	Manage Fleet Equipment	Manage Fleets	Transportation Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+228	ae2040a73b4a	Monitor Progress On Key Actions	Manage Supplier Performance	Supplier Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+229	b18ffe553c75	Develop & Validate Category Budget Plan	Conduct Budget Planning	Budget Alignment	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+230	b3825475c263	Inspect Returned Goods	Manage Returns	Warehouse Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+231	b7fb3fda1ed3	Implement Demand Management Plan	Identify and Implement Demand Initiatives	Demand Planning for Source & Procure	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+232	bb52815824a5	Check Historical Sales Data	Generate Forecast and Manage Exceptions	Forecast Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+233	c0c49a58e39d	Update Budget Planning & Forecasts	Align Budget	Budget Alignment	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+234	c3a9fba1e137	Analyse Reports	Analyse Variance and Mitigate	Control & Monitoring	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+235	c4e274ce0e66	Define Should Cost Model	Develop Category Costs Profile	Category Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+236	c80b038833e4	Execute Corrective Action Plans	Manage Category Governance	Partner With Stakeholders	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+237	ca554bbf2948	Review Revenue, Cost And Margins	Prepare and Conduct Executive S&Op	Sales & Operations Planning	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+238	cae8d7300a5e	Review Forecast Results	Generate Forecast and Manage Exceptions	Forecast Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+239	cb89f48b12fe	Identify Suppliers & Create Relationship Charter	Develop And Collaborate With Suppliers	Supplier Management	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+240	cb8d2060447f	Assess Gap Closure	Measure And Manage Demand Performance & Improvement	Forecast Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+241	ce5ad4ce3f54	Run Time Series Analysis	Implement Short Term Demand Sensing	Forecast Analytics	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+242	d346da68da2d	Pack Order	Execute Pick and Pack	Warehouse Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+243	d6b86e3b096a	Define And Cascade Targets	Develop and Maintain Reporting, KPI and Scorecards Standards	Performance Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+244	dbdb617f5dca	Clean & Harmonize Spend Data	Manage Spend Visibility	Insight & Analytics	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+245	e2b9527b3797	Perform Restricted Party Screening	Manage Trade Compliance	Global Trade Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+246	e835ba8d3973	Validate Input Data for Finance Model	Integrate Budget to Initiatives	Budget Alignment	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+247	e9e9def63df9	Define Budget Planning Approach	Conduct Budget Planning	Budget Alignment	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+248	f08bbdb31113	Identify Uncertainties	Plan And Monitor Demand Scenario	Demand Planning	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+249	f206da87f2b2	Determine Optimal Location/Slots & Rearrangement/Slots & Rearrangement	Manage Storage Capacity & Inventory	Warehouse Management	Fulfill	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+250	f44b3491f8b4	Enable Catalogues	Enable Buying Channels	Business Intake	Source & Procure	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+251	f9fb8ab9cd64	Identify Gaps In Sales	Prepare and Conduct Sales/Activity Review	Sales & Operations Planning	Plan	1.0000	0.5000	0.5000	1.0000	0.6000	0.0000	0.5850	N			0	0
+252	2e6f5dc95e1c	Maintain Product Master	Manage Demand Planning Data	Forecast Analytics	Plan	1.0000	0.2500	0.5000	1.0000	0.6000	0.0000	0.5475	N			0	0
+253	504eb8c088c4	Load Customer Master	Manage Demand Planning Data	Forecast Analytics	Plan	1.0000	0.2500	0.5000	1.0000	0.6000	0.0000	0.5475	N			0	0
+254	6dbe20214cf2	Develop Methodology for Measuring Performance	Report Benefits and Performance	Control & Monitoring	Source & Procure	1.0000	0.2500	0.5000	1.0000	0.6000	0.0000	0.5475	N			0	0
+255	92d385d08e21	Manage Supplier Data	Manage Supplier Lifecycle	Supplier Management	Source & Procure	1.0000	0.2500	0.5000	1.0000	0.6000	0.0000	0.5475	N			0	0
+256	9b32944aa478	Make Manual Adjustments	Generate Forecast and Manage Exceptions	Forecast Analytics	Plan	1.0000	0.2500	0.5000	1.0000	0.6000	0.0000	0.5475	N			0	0
+257	cf70fced740b	Perform Match & Pay	Manage Freight cost	Transportation Management	Fulfill	1.0000	0.2500	0.5000	1.0000	0.6000	0.0000	0.5475	N			0	0
+258	d336a4f1cd15	Identify & Manage Innovation Initiatives	Manage Supplier Innovation	Supplier Management	Source & Procure	1.0000	0.2500	0.5000	1.0000	0.6000	0.0000	0.5475	N			0	0
+259	e1fee39b5e4c	Manage Control Framework Governance	Manage Control Framework	Execute Governance & Infrastructure	Source & Procure	1.0000	0.2500	0.5000	1.0000	0.6000	0.0000	0.5475	N			0	0
+260	5c560d793854	Define Stock Allocation Rules	Define Order Allocations Rules	Order Management	Fulfill	0.5000	1.0000	0.5000	1.0000	0.6000	0.0000	0.5350	N			0	0
+261	cf-fl-29d34ac6	Risk-Adjusted Supplier Optimization	Cross-Functional: Procurement Domain + Supply Domain + Finance Domain	Feedback Loop	Cross-Functional	0.5000	1.0000	0.5000	0.2500	1.0000	0.1429	0.5286	N			1	4200000
+262	vf-fl-5664204d	Promotional Revenue Alignment Agent	Cross-Functional: Revenue + Plan + Fulfill	Value Flow	Cross-Functional	0.5000	1.0000	0.5000	0.2500	1.0000	0.1429	0.5286	N			1	3500000
+263	cf-fl-4f7d58c5	Smarter Expediting Control	Cross-Functional: Fulfill Domain + Plan Domain + Procurement Domain	Feedback Loop	Cross-Functional	0.5000	1.0000	0.5000	0.2500	1.0000	0.1429	0.5286	N			1	1800000
+264	vf-5w-233304ce	Cross-Functional Exception Orchestration	Cross-Functional: Digital Control Tower + Plan + Fulfill + Source & Procure	Value Flow	Cross-Functional	0.5000	1.0000	0.5000	0.2500	1.0000	0.1429	0.5286	N			1	1500000
+265	cf-5w-33226c51	Real-Time End-to-End Fulfillment Orchestration	Cross-Functional: Plan + Fulfill	Five Whys	Cross-Functional	0.5000	1.0000	0.5000	0.2500	1.0000	0.1429	0.5286	N			1	1200000
+266	cf-5w-d07e690b	Cross-Domain Real-Time Demand Synchronization	Cross-Functional: Plan + Fulfill + Digital Control Tower	Five Whys	Cross-Functional	0.5000	1.0000	0.5000	0.2500	1.0000	0.1429	0.5286	N			1	1200000
+267	cf-5w-fa7f3c4f	Cross-Functional Scenario Planning & EBITDA Guardrails	Cross-Functional: Finance + Plan + Fulfill	Five Whys	Cross-Functional	0.5000	1.0000	0.5000	0.2500	1.0000	0.1429	0.5286	N			1	1100000
+268	cf-5w-c64ed837	Unified Supplier Governance & Real-Time Contract Utilization	Cross-Functional: Procurement + Source & Procure	Five Whys	Cross-Functional	0.5000	1.0000	0.5000	0.2500	1.0000	0.1429	0.5286	N			1	1000000
+269	vf-5w-882c1e87	Integrated Supplier Collaboration Loop	Cross-Functional: Source & Procure + Plan + Procurement	Value Flow	Cross-Functional	0.5000	1.0000	0.5000	0.2500	1.0000	0.1429	0.5286	N			1	1000000
+270	135405fba822	Receive Supplier Commit	Conduct Supplier Collaborative Planning	Tactical Supply Planning	Plan	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+271	1c5a24b863af	Get Visibility of Supplies To Customers	Conduct Customer Collaborative Planning And Vmi( Vendor Managed Inventory)	Tactical Supply Planning	Plan	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+272	2995301f25f9	Finalise Supply Options	Conduct Supply Scenario Planning	Tactical Supply Planning	Plan	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+273	31eab2424e6f	Share Supplier Forecast	Conduct Supplier Collaborative Planning	Tactical Supply Planning	Plan	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+274	382ca7c25f53	Revise tactical transport Plan	Forecast Transport Operations	Transportation Management	Fulfill	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+275	39e8d34a9bdd	Develop load and sequence plan	Plan Transportation	Transportation Management	Fulfill	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+276	3d5cfb1b1a09	Process Payment Write-offs	Manage Payment Collections	Order Management	Fulfill	1.0000	0.5000	0.5000	0.2500	0.6000	0.0000	0.5100	N			0	0
+277	48526f377f6b	Manage Data Update Routines And Communication Approach	Establish Master Data Governance	Fulfilment Strategy	Fulfill	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+278	4878956f3135	Manage Driver & Fleet Scheduling	Plan Transportation	Transportation Management	Fulfill	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+279	4a62073d3817	Execute Planning Run	Conduct Material Requirements Planning	Operational Supply Planning	Plan	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+280	5af4dc4c127f	Load Trucks (Moving the Goods Into the Truck)	Manage Loading & Shipping	Warehouse Management	Fulfill	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+281	5b25e3c28959	Sequencing of Production Plan	Manage Production Scheduling	Operational Supply Planning	Plan	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+282	744b9a2a5967	Co-Plan With Business Stakeholders	Manage Category Governance	Partner With Stakeholders	Source & Procure	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+283	961a9116a87c	Plan Shipments	Plan Transportation	Transportation Management	Fulfill	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+284	abbb3f658ff0	Redline And Author	Author Contract	Contract Management	Source & Procure	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+285	c250acda390b	Review Planned Orders , Pos	Conduct Material Requirements Planning	Operational Supply Planning	Plan	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+286	dc3c9b75f9bb	Identify Partners for Innovation	Manage Supplier Innovation	Supplier Management	Source & Procure	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+287	e2dfc29610a3	Revise operational transport Plan	Forecast Transport Operations	Transportation Management	Fulfill	1.0000	0.0000	0.5000	1.0000	0.6000	0.0000	0.5100	N			0	0
+288	021f45b9c032	Define (Product/Customer/Channels) Segments	Define Segmentation Strategy	Fulfilment Strategy	Fulfill	0.5000	1.0000	0.5000	0.2500	0.6000	0.0000	0.4600	N			0	0
+289	100a49a7dcbb	Identify And Maintain Data Source	Develop Analytics Tools for Performance Improvements	Performance Management	Fulfill	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+290	265847b2125b	Define Ongoing Category Management Analytics Use-Cases	Define Use Cases/ Outcomes	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+291	3e30b1a2849f	Validate Customer Credit Worthiness	Manage Credits	Order Management	Fulfill	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+292	4a9f00fdcd2e	Manage Dock Scheduling	Manage Yards	Warehouse Management	Fulfill	0.5000	1.0000	0.5000	0.2500	0.6000	0.0000	0.4600	N			0	0
+293	4f56679b19a1	Identify & Evaluate Areas of Non-Performance	Govern Monitoring and Data Collection	Control & Monitoring	Source & Procure	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+294	577d781b1c62	Manage Payment Disputes	Manage Payment Collections	Order Management	Fulfill	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+295	6d80fbf89fa1	Establish T&C, Slas, And Obligations	Author Contract	Contract Management	Source & Procure	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+296	73703c7c32fc	Define & Implement Corrective Actions	Govern Monitoring and Data Collection	Control & Monitoring	Source & Procure	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+297	7d9920d31cc3	Manage Product/Shipment Tracking And Monitoring Tools/Platforms	Develop Digital & Automation Strategy	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+298	9033eeaaba9c	Collect Cash	Manage Payment Collections	Order Management	Fulfill	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+299	96031a73b283	Enable Blanket / Limit Order / Framework Order	Enable Buying Channels	Business Intake	Source & Procure	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+300	a92d2691cbf7	Manage Labour and Resource	Plan Labour and Workforce Scheduling	Warehouse Management	Fulfill	0.5000	1.0000	0.5000	0.2500	0.6000	0.0000	0.4600	N			0	0
+301	b3aa1f321cb5	Manage Modelling Tools	Develop Digital & Automation Strategy	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+302	b62ac20b68b7	Receive & Identify Forecast Support Needs	Provide Forecasting Support	Budget Alignment	Source & Procure	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+303	c003ad4072f3	Implement & Monitor Category Plan	Define Category Plan	Category Management	Source & Procure	0.5000	1.0000	0.5000	0.2500	0.6000	0.0000	0.4600	N			0	0
+304	c1423653e37c	Define Capability Strategy	Define Procurement Vision & Strategic Roadmap	Define Functional Strategy	Source & Procure	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+305	d2ab78e6916b	Track, Monitor & Report Supplier Responsibility & Ethics	Manage Responsibility & Ethics Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+306	d82c08e42741	Route Request	Conduct Intelligent Business Intake	Business Intake	Source & Procure	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+307	e65669fe7c77	Manage Insolvent Accounts	Manage Payment Collections	Order Management	Fulfill	0.5000	0.5000	0.5000	1.0000	0.6000	0.0000	0.4600	N			0	0
+308	vf-fl-ab2ce80c	Automated Forecast Parameter Optimization	Cross-Functional: Plan + Source & Procure + Fulfill	Value Flow	Cross-Functional	0.5000	0.5000	0.5000	0.2500	1.0000	0.1429	0.4536	N			1	4000000
+309	cf-fl-19872a05	Deterministic Forecast Parameter Optimization	Cross-Functional: Plan + Source & Procure + Fulfill	Feedback Loop	Cross-Functional	0.5000	0.5000	0.5000	0.2500	1.0000	0.1429	0.4536	N			1	2000000
+310	cf-5w-e6368523	Multi-Echelon Network Inventory Harmonization	Cross-Functional: Plan + Inventory	Five Whys	Cross-Functional	0.5000	0.5000	0.5000	0.2500	1.0000	0.1429	0.4536	N			1	1500000
+311	cf-fl-f80928b7	Deterministic Multi-Echelon Optimization	Cross-Functional: Inventory + Fulfill	Feedback Loop	Cross-Functional	0.5000	0.5000	0.5000	0.2500	1.0000	0.1429	0.4536	N			1	1500000
+312	vf-5w-334983cb	Real-Time Demand Signal Fusion	Cross-Functional: Plan + Demand Planning + Forecast Analytics	Value Flow	Cross-Functional	0.5000	0.5000	0.5000	0.2500	1.0000	0.1429	0.4536	N			1	1200000
+313	cf-5w-686e0fdb	Integrated Trade Promotion & Inventory Alignment	Cross-Functional: Revenue + Plan + Inventory	Five Whys	Cross-Functional	0.5000	0.5000	0.5000	0.2500	1.0000	0.1429	0.4536	N			1	1000000
+314	26f989ded355	Perform Operational Reporting	Manage Performance Objectives	Execute Governance & Infrastructure	Source & Procure	0.5000	0.2500	0.5000	1.0000	0.6000	0.0000	0.4225	N			0	0
+315	6d5bcfd2e57e	Track, Monitor & Report Supplier Diversity & Inclusion	Manage Supplier Diversity & Inclusion Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.2500	0.5000	1.0000	0.6000	0.0000	0.4225	N			0	0
+316	a5b51c9cdfd1	Identify Cross-Functional Team & Business Stakeholders	Define Category Plan	Category Management	Source & Procure	0.5000	0.2500	0.5000	1.0000	0.6000	0.0000	0.4225	N			0	0
+317	bc4f7b789582	Measure Data Collection Governance Effectiveness	Govern Monitoring and Data Collection	Control & Monitoring	Source & Procure	0.5000	0.2500	0.5000	1.0000	0.6000	0.0000	0.4225	N			0	0
+318	0265217cc46a	Receive And Validate Documents	Receive Goods & Services	Order to "Ok To Pay"	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+319	0347bbaddf9c	Define & Validate Approach for On-Going Asset Purchasing & Alternatives	Manage Assets	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+320	07ddecccc953	Define Service Monitoring Approach	Administer Third-Party Services	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+321	0853cc31246a	Assess Forecast	Monitor Supply Chain Segmentation	Supply Strategy & Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+322	09db2436dc1c	Route & Escalate Customer Requests & Inquiries	Manage Customer Interactions	Order Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+323	0a1f5800cf81	Define Contract Management Analytics Use-Cases	Define Use Cases/ Outcomes	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+324	0b3200b916c8	Manage Human Safety Factors In Transport?	Develop Health, Safety and Environment Factors	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+325	0bac941e3637	Review & Validate Request / Negotiated Agreement	Validate Intake & Request	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+326	0cff5b5f4198	Define Category & Sub-Category Strategic Plan	Define Category Plan	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+327	0d91c6803679	Define Procurement Responsibility & Ethics Goals & Objectives	Develop Responsibility & Ethics Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+328	0fffc4758ec2	Define Value Analysis & Engineering Approach	Manage Category Innovation	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+329	1061690cda43	Manage Segmentation Definition	Define Category Segmentation Strategy	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+330	1274b166ac2c	Monitor And Validate Existing Credit Profile	Manage Credits	Order Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+331	15b4602a2c3a	Establish Action Plans for Buying Channel Performance Improvement	Define Buying Channels	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+332	171fc497acf2	Manage Continuous Issue & Risk Monitoring	Manage Risks	Risk & Resiliency	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+333	18a4993cc88a	Define Sla	Manage Customer Experience	Business Intake	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+334	19410b697829	Manage Waste Reduction & Disposal	Manage Logistics Sustainability	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+335	1aa1a44fb28f	Review Periodic Supply	Manage Quota and Allocations	Sales & Operations Execution	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+336	1c363380d090	Define Risk Categories	Manage Risk Segmentation & Assessment	Risk & Resiliency	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+337	1c3b3687c666	Maintain fleets	Manage Fleets	Transportation Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+338	1e7abb9785df	Define Project/Initiative Charters	Identify & Execute Improvement Programs	Performance Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+339	1ec1c57a0684	Track, Monitor & Report Supplier Sustainability	Manage Sustainability Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+340	1f6896043116	Define & Implement Compliance Performance Action Plans	Manage Compliance & Performance	Control & Monitoring	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+341	1fcdc85d8e08	Manage Contract Content	Monitor LSP Spend & Contract Compliance	Logistics Service Provider (LSP) Selection and Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+342	23799306438b	Review Final Demand And Supply Plan	Prepare and Conduct Executive S&Op	Sales & Operations Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+343	277c434e5289	Define Support Approach	Provide Sourcing Support	Sourcing	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+344	29e4b75ae470	Define & Execute Supplier Discovery	Define Category Plan	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+345	350d5694dd54	Integrate 3PL Platform - TMS	Integrate 3PL Platform	Transportation Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+346	354540030fd5	Create Statistics Reports	Execute Customs Clearance	Global Trade Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+347	35ab1242f613	Execute Risk Assessment	Manage Risk Segmentation & Assessment	Risk & Resiliency	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+348	36c0712cde06	Manage Contract Changes	Administer Third-Party Services	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+349	3818897f524f	Define Risk & Resilience Analytics Use-Cases	Define Use Cases/ Outcomes	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+350	3a75507f8ec2	Identify & Implement Improvement Opportunities Aligned To Strategy	Manage Responsibility & Ethics Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+351	3c3532c0f8a2	Manage Intake Status And Steward Routing	Manage Customer Experience	Business Intake	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+352	3f9c7921bb09	Develop Sourcing Project Work Plan	Develop Sourcing Profile & Strategy	Sourcing	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+353	3f9d3f45f0c6	Define Budget Alignment Approach	Align Budget	Budget Alignment	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+354	44a47de15c2a	Manage Talent Lifecycle	Manage People	Execute Governance & Infrastructure	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+355	4505488dc886	Confirm User Specification & Needs	Execute Spot Buy	Order to "Ok To Pay"	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+356	455958d2ddfe	Manage Utilities In Warehouse	Manage Logistics Sustainability	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+357	4736c8177f56	Refine Forecast	Forecast Enrichment	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+358	48c1f9d95224	Run Simulations And What-If Scenarios	Prepare and Conduct Pre-S&Op	Sales & Operations Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+359	49b7d475f901	Define Location Strategy	Define Workforce Strategy	Define Functional Strategy	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+360	4ac591f43cf9	Analyse And Classify Tail Spend	Define Tail Spend Mgmt. Strategy	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+361	4b34be7990ef	Select And Implement Analytics Tool	Develop Analytics Tools for Performance Improvements	Performance Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+362	4f960d2e10fb	Define Payment Collection Plan	Manage Payment Collections	Order Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+363	50dec65792ed	Manage And Track Pallets	Manage Warehouse Assets and MHE (Material Handling Equipment'S)	Warehouse Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+364	5170374529fa	Conduct Contract Performance Reviews	Manage Contract Performance	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+365	52a4ae732887	Perform What-If Analysis And Scenario Evaluation	Provide Sourcing Support	Sourcing	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+366	54e4cdc87684	Manage Supplier On-Boarding	Manage Supplier Lifecycle	Supplier Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+367	555580ebadad	Define Buying Channel Approach & Strategy	Define Buying Channels	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+368	572dc64695d6	Measure Buying Channel Compliance Performance	Define Buying Channels	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+369	592e1d366ee6	Define Procurement Functional Strategic Roadmap	Define Procurement Vision & Strategic Roadmap	Define Functional Strategy	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+370	59882bb84f97	Track Project Outcomes	Identify & Execute Improvement Programs	Performance Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+371	5af6702e2a87	Develop Plan To Improve Demand	Manage Continuous Improvement of Demand	Demand Planning for Source & Procure	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+372	5b11232d3f5c	Develop Implementation Plan	Execute Sourcing	Sourcing	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+373	5bf6c8724e00	Establish Contract Performance Metrics	Author Contract	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+374	602bc79f9082	Define Forecast Support Model & Approach	Provide Forecasting Support	Budget Alignment	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+375	61acc68c02d1	Identify Initiatives for Budget Integrations	Integrate Budget to Initiatives	Budget Alignment	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+376	6238e9588e7c	Manage Human Factors In Warehouse Safety?	Develop Health, Safety and Environment Factors	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+377	63f41b8b8157	Set-Up Governance	Manage Demand Driver Data	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+378	6500c37bf8c9	Execute Stock Lock/Unlock	Manage Storage Capacity & Inventory	Warehouse Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+379	655f42c4a278	Manage License & Permits	Manage Trade Compliance	Global Trade Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+380	6611ad6ac59c	Integrate 3Pl Platform - WMS	Integrate 3Pl Platform - WMS	Warehouse Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+381	67f9316d2df9	Analyse Spend Data Based On Category Structure	Manage Spend Visibility	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+382	6c877183f315	Integrate Promotion, Price Chainge, & Marketing Campaign	Forecast Enrichment	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+383	6e25dcc0000b	Develop Tactical Sourcing Approach	Execute Tactical Sourcing	Sourcing	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+384	6ed678c5ac35	Define Cost Elements & Drivers	Develop Category Costs Profile	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+385	73ca28e92072	Define And Execute Mitigation Plans for Performance Gaps	Manage Performance Objectives	Execute Governance & Infrastructure	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+386	794af77d47f3	Manage Scraps	Manage Storage Capacity & Inventory	Warehouse Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+387	795bbb04394f	Segment Categories On Asset Purchase Needs	Manage Assets	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+388	7975b4dd3d43	Define & Update Digital Governance & Management Strategy	Define Digital Strategy	Define Functional Strategy	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+389	7a16d7acb619	Maintain Warehouse Facility	Manage Warehouse Assets and MHE (Material Handling Equipment'S)	Warehouse Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+390	7c6d21ee58c2	Define Cost Elements, Logic & Allocation	Embed Cost-To-Serve Capability	Performance Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+391	7d0c38c4b061	Identify & Implement Improvement Opportunities Aligned To Strategy	Manage Supplier Diversity & Inclusion Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+392	7e55870e2c95	Manage Supplier Ecosystems	Develop And Collaborate With Suppliers	Supplier Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+393	7f1aa17be056	Share Promotion Activities	Manage Demand Driver Data	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+394	816eecad2a79	Analyse Current Performance	Monitor Supply Chain Segmentation	Supply Strategy & Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+395	8318dae530aa	Perform Receivable Assessment	Manage Payment Collections	Order Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+396	833dcc5f2b9b	Identify Demand Increase/Decrease What-If Scenarios	Perform Root-Cause and What-If Analysis	Sales & Operations Execution	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+397	85615c015b60	Define Plan And Implement Strategies	Define Tail Spend Mgmt. Strategy	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+398	85d0bd909dcb	Update Life Cycle Indicator	Manage NPI and Phase-In/Out	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+399	87cc21867b84	Execute Staging & Sorting	Receive Goods	Warehouse Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+400	899771aaedaf	Monitor Truck Movements(In Yard)	Manage Yards	Warehouse Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+401	8c607df2407b	Manage Invoice Correction Actions	Perform Invoice Processing & Payment	Order to "Ok To Pay"	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+402	8d67020dfd5f	Define Order Cube	Establish Wave Plan	Warehouse Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+403	8db599e1a116	Manage Customer Requests & Inquiries	Manage Customer Interactions	Order Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+404	8fd522f55881	Gather Market Inputs	Define Statistical Forecast Model	Forecast Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+405	901dd884e46a	Manage Functional Strategic Roadmap	Manage Procurement Projects (PMO)	Execute Governance & Infrastructure	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+406	91af2ee83fa6	Define Srm Strategy & Approach	Manage Supplier Relationships	Supplier Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+407	948773341c3a	Define Category Cost Profile Approach & Objectives	Develop Category Costs Profile	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+408	957c2d6e9846	Update Safety Days of Supply	Monitor Inventory Parameter Optimization	Supply Strategy & Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+409	95ad1940f946	Retire Contract	Manage Contract Lifecycle	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+410	98162c8f5b0f	Define Customer Segments	Manage Customer Collaborative Planning	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+411	98b376836f52	Adjust Forecast	Forecast Enrichment	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+412	99a1fb02529b	Define P2P Analytics Use-Cases	Define Use Cases/ Outcomes	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+413	99ae22bcdbc1	Define Scope for Risk & Resilience	Define Risk & Resilience Strategy & Governance	Risk & Resiliency	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+414	9a0a2196c35f	Update Parameters	Intigrate And Optimize Production Parameter	Supply Strategy & Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+415	9a17206d20b0	Establish Action Plans for Contract Performance Improvement	Manage Contract Performance	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+416	9a4947bcba74	Manage Ongoing Project /Initiatives	Identify & Execute Improvement Programs	Performance Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+417	9b84fb8ad1d1	Define Operating Model Blueprint	Define Procurement Vision & Strategic Roadmap	Define Functional Strategy	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+418	9ca6399feedf	Define Assessment Approach	Manage Risk Segmentation & Assessment	Risk & Resiliency	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+419	9e9d38953cee	Manage Organizational Safety Factors In Transport?	Develop Health, Safety and Environment Factors	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+420	9f9ee68e461b	Manage Supplier off-Boarding	Manage Supplier Lifecycle	Supplier Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+421	a384a0c56b62	Review Assessment Results	Manage Supplier Performance	Supplier Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+422	a4173c420b43	Manage Long Term Vendor Declaration	Manage & Execute Preferential Program	Global Trade Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+423	a57bb5c61d74	Manage Customer Portal	Manage Customer Interactions	Order Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+424	a779faabc5b5	Analyse Trade Regulations	Manage Trade Compliance	Global Trade Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+425	a835a3c8a116	Define KPIs	Measure And Manage Demand Performance & Improvement	Forecast Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+426	a8558778c9a7	Define Rules And Logic	Define Demand Aggregation Or Disaggregation	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+427	a8ce77792548	Measure And Report Sla Performance	Manage Customer Experience	Business Intake	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+428	a9f5bc7dcd6f	Define Category Planning Analytics Use-Cases	Define Use Cases/ Outcomes	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+429	aa01feaad14f	Manage & Develop 3Pl LSP Relationships	Manage LSP	Logistics Service Provider (LSP) Selection and Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+430	aa574626e74e	Optimize Service Levels	Monitor Inventory Parameter Optimization	Supply Strategy & Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+431	ab1817badc71	Manage Documentation	Manage Import / Export	Global Trade Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+432	ab4f04fabcdc	Identify Uncertainities	Conduct Supply Scenario Planning	Tactical Supply Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+433	abc07c65f0d5	Execute Corrective Action Plans	Manage Customer Experience	Business Intake	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+434	acfbfe765a16	Define Wave Strategy	Establish Wave Plan	Warehouse Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+435	ad32166c6e74	Measure And Report KPI Performance	Develop and Maintain Reporting, KPI and Scorecards Standards	Performance Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+436	aeb28c25688d	Implement Asset Variation	Manage Assets	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+437	afe42ef450cd	Enable And Maintain Guided Buying/ Portal	Enable Guided Buying / Portal	Business Intake	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+438	b21477033926	Define Spend Taxonomy & Segmentation Strategy	Define Procurement Vision & Strategic Roadmap	Define Functional Strategy	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+439	b40cda058437	Segment Sub-Categories	Define Category Segmentation Strategy	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+440	b544a11c3101	Co-Manufacturers Plan Creation	Conduct Co-Manufacturing Planning	Tactical Supply Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+441	b5a6709eed9e	Understand Past & Expected Changes In Network	Develop Network Strategy	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+442	ba0d55cf80d1	Prequalify Suppliers	Execute Sourcing	Sourcing	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+443	bb6ea8add5c8	Define Innovation Strategy & Objectives	Manage Supplier Innovation	Supplier Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+444	bba5c5648627	Define Sourcing Analytics Use-Cases	Define Use Cases/ Outcomes	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+445	bdd32fb60eb2	Gather Data & Calculate Budget Price	Provide Forecasting Support	Budget Alignment	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+446	be8a52d50df8	Manage Contract Obligations	Manage Contract Performance	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+447	beb1f28fc714	Align & Manage Business Continuity for Procurement	Manage Resilience Procurement	Risk & Resiliency	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+448	c09065071fbf	Define Procurement Responsibility & Ethics Governance	Develop Responsibility & Ethics Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+449	c2b94a4089e7	Fill Customs Declaration	Execute Customs Clearance	Global Trade Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+450	c497f4fdfa26	Monitor & Manage Procurement Shared Services	Manage Control Framework	Execute Governance & Infrastructure	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+451	c59dc988493c	Update & Manage Demand Governance Processes & Policies	Identify Demand Policy Impacts	Demand Planning for Source & Procure	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+452	c6433440893e	Select Sourcing Type	Execute Sourcing	Sourcing	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+453	c72aafde66bb	Define Constraints	Manage Supply Network	Supply Strategy & Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+454	c753a9b5243f	Define the Technology Requirements	Define Data & Analytics Strategy	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+455	ca293cd01d4f	Review And Evaluate Contract Performance Metrics	Manage Contract Performance	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+456	cac2a1837a0c	Define Long Term, And Medium Focus Areas And Priorities	Develop Strategy and Target Setting	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+457	cbf892c9f03d	Calculate Custom Key Figures	Implement Short Term Demand Sensing	Forecast Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+458	cd7af5bfb2f8	Plan Implementation & Follow Up	Manage Continuous Improvement of Demand	Demand Planning for Source & Procure	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+459	ce033e414c07	Review & Reconcile Inventory	Prepare And Conduct S&OE	Sales & Operations Execution	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+460	d199d5673b32	Define & Update Digital Strategy & Roadmap	Define Digital Strategy	Define Functional Strategy	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+461	d3813f1d0bd5	Manage Procurement Transformation Strategic Initiatives	Manage Procurement Projects (PMO)	Execute Governance & Infrastructure	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+462	d52114b2bdae	Set-Up Product Life Cycle	Manage NPI and Phase-In/Out	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+463	d59d3c58064c	Manage Template Selection	Author Contract	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+464	d8f7b0d5880b	Define & Manage External & Internal Data Needs	Define Data & Analytics Strategy	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+465	d96f66340b32	Identify & Define Asset Variation Criteria	Manage Assets	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+466	d9d3b4a67e96	Run Optimization Tool	Intigrate And Optimize Production Parameter	Supply Strategy & Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+467	dafc4bb6cf74	Assign Lifecycle Profiles	Manage NPI and Phase-In/Out	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+468	ddf2a58b705d	Define & Update Technology Architecture	Define Digital Strategy	Define Functional Strategy	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+469	de171f34ad0a	On-Board Services	Administer Third-Party Services	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+470	e16777018b34	Update Baseline Scenario	Conduct Supply Scenario Planning	Tactical Supply Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+471	e18b54e351b3	Mitigate Contract Risks	Manage Contract Lifecycle	Contract Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+472	e1f658fb62d1	Review of Distribution Plan	Conduct Distribution Requirements Planning	Tactical Supply Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+473	e202b50c6838	Manage Organizational Factors In Warehouse Safety?	Develop Health, Safety and Environment Factors	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+474	e61601645f81	Manage Category Segmentation Approach	Define Category Segmentation Strategy	Category Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+475	e72d866fdc41	Review Results	Intigrate And Optimize Production Parameter	Supply Strategy & Analytics	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+476	e85fdbf8cdd5	Execute Outbound Staging	Manage Loading & Shipping	Warehouse Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+477	ea06f79c6088	Implement Innovation Initiatives	Manage Stakeholder Innovation	Partner With Stakeholders	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+478	ec3b4f184a51	Improve LSP Performance	Manage LSP	Logistics Service Provider (LSP) Selection and Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+479	ed0663ff8dd9	Enable Self-Service Vending & Vendor Managed Inventory	Enable Buying Channels	Business Intake	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+480	edfff0817af0	Maintain Parameters	Define Demand Aggregation Or Disaggregation	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+481	eeb684730365	Determine Preferences	Manage & Execute Preferential Program	Global Trade Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+482	f0aa596d3846	Define Responsible Procurement Analytics Use-Cases	Define Use Cases/ Outcomes	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+483	f11e125916fe	Manage Data Collection & Budget Price Calculation	Integrate Budget to Initiatives	Budget Alignment	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+484	f5d03bd29cc0	Define Supplier Performance Approach	Manage Supplier Performance	Supplier Management	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+485	f65c2c253477	Analyse Results	Conduct Tactical Materials Planning	Tactical Supply Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+486	f7c9278cc5d6	Develop Sourcing Calendar & Annual Plan	Develop Category Strategy Plan	Logistics Service Provider (LSP) Selection and Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+487	f7ce0bbedc42	Identify Spend Data Sources	Manage Spend Visibility	Insight & Analytics	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+488	f8c0d0739ef0	Manage Receipt Cancellation	Receive Goods & Services	Order to "Ok To Pay"	Source & Procure	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+489	f8f270e894af	Define Sourcing Approach	Source LSP	Logistics Service Provider (LSP) Selection and Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+490	faa677ccc443	Manage Equipment Factors In Warehouse Safety?	Develop Health, Safety and Environment Factors	Fulfilment Strategy	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+491	fcd8deac30e6	Manage Returns & Refusals	Process Orders	Order Management	Fulfill	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+492	fd9571794829	Review Alerts	Conduct Co-Manufacturing Planning	Tactical Supply Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+493	fe9ec0a21edf	Conduct Post-Promotion Analysis	Forecast Enrichment	Demand Planning	Plan	0.5000	0.5000	0.5000	0.2500	0.6000	0.0000	0.3850	N			0	0
+494	0bab42825531	Check Performance	Generate Forecast and Manage Exceptions	Forecast Analytics	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+495	10a635df3808	Communicate Final Price To Internal Stakeholders	Provide Forecasting Support	Budget Alignment	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+496	158a249a5a3c	Manage Competency Framework	Manage People	Execute Governance & Infrastructure	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+497	1610ed5e7d69	Create Performance Dashboards	Measure And Manage Demand Performance & Improvement	Forecast Analytics	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+498	1b117c2a820d	Define Procurement Supplier Diversity & Inclusion Goals & Objectives	Develop Supplier Diversity & Inclusion Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+499	1d4875fb0055	Evaluate Effectiveness of Routing	Conduct Intelligent Business Intake	Business Intake	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+500	1fea8aae16c6	Assess Footprint	Manage Sustainability Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+501	264bca3893e7	Govern Master Data(Raci, Meeting Cadence And Escalation Routine)	Establish Master Data Governance	Fulfilment Strategy	Fulfill	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+502	275f0152c469	Develop And Maintain Data Validation Rules	Establish Master Data Governance	Fulfilment Strategy	Fulfill	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+503	2b0548ee4360	Define Innovation Roadmap	Manage Stakeholder Innovation	Partner With Stakeholders	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+504	2c5f2f6b8ab0	Maintain Dashboards/Reports & Manage Upgrades	Develop and Maintain Reporting, KPI and Scorecards Standards	Performance Management	Fulfill	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+505	304efa5804be	Define Srm Organizational Model & Stakeholders	Manage Supplier Relationships	Supplier Management	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+506	3372bb76348a	Validate & Socialize Aligned Budget	Align Budget	Budget Alignment	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+507	3436e6374160	Maintain Unit of Measure	Manage Demand Planning Data	Forecast Analytics	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+508	346a1cc97ccd	Track & Report Compliance Performance	Manage Compliance & Performance	Control & Monitoring	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+509	3887df249134	Update Requirements	Manage Supply Planning Data	Supply Strategy & Analytics	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+510	3b192d0da92f	Review Revenue, Cost And Margins.	Prepare And Conduct S&OE	Sales & Operations Execution	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+511	3e748a8429b9	Collect & Analyse Asset Purchasing & Performance Data	Manage Assets	Category Management	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+512	416b114f3a86	Manage Master Data	Manage Technology	Execute Governance & Infrastructure	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+513	42ccd610c33f	Define Descriptive Insights Approach	Define Data & Analytics Strategy	Insight & Analytics	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+514	46363666dcaa	Manage Functional Scorecard & Executive/ C-Level Dashboard	Manage Performance Objectives	Execute Governance & Infrastructure	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+515	465dd20c5939	Synthesize Internal Category Analysis	Define Category Plan	Category Management	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+516	54c5263ddd92	Manage Value Added Services	Execute Pick and Pack	Warehouse Management	Fulfill	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+517	5ff2b58d2951	Synthesize Market Intelligence & Other External Analysis	Define Category Plan	Category Management	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+518	5ff4c822197c	Conduct Standard Data Reporting And Analytics	Generate & Analyse Insights	Insight & Analytics	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+519	629d1219df68	Perform Stakeholder Mapping	Develop Stakeholder Strategy	Partner With Stakeholders	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+520	66c76fdd3675	Develop Methodology for Measuring Benefits	Report Benefits and Performance	Control & Monitoring	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+521	6a963e030d09	Define Procurement & Finance Stakeholders	Conduct Budget Planning	Budget Alignment	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+522	6e18dd094ce4	Identify Innovation Needs Jointly With Business Stakeholders	Manage Category Innovation	Category Management	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+523	6f725314d341	Share the Findings	Manage Customer Collaborative Planning	Demand Planning	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+524	70ee855a8763	Conduct Ad Hoc Data Reporting And Analytics	Generate & Analyse Insights	Insight & Analytics	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+525	7858a4b6dfee	Assess Innovation Capability And Maturity	Manage Stakeholder Innovation	Partner With Stakeholders	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+526	7a70ceaf68af	Monitor Parameters	Manage Customer Collaborative Planning	Demand Planning	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+527	7a883ac24607	Define Compliance Program	Manage Compliance & Performance	Control & Monitoring	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+528	7db0e086cee0	Manage Risk And Value Tracking	Monitor LSP Spend & Contract Compliance	Logistics Service Provider (LSP) Selection and Management	Fulfill	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+529	83319e65ee12	Review Internal & External Insights	Align Budget	Budget Alignment	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+530	87d59e876716	Align Procurement Teams And Governance To Stakeholders Groups	Develop Stakeholder Strategy	Partner With Stakeholders	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+531	9008dd1a8cce	Communicate Initiatives & Strategy	Manage Responsibility & Ethics Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+532	9889933be3f4	Manage Actual Sales Shipment	Manage Sales Order And Sales Pipeline	Demand Planning	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+533	9b0e5e3bc4f0	Align With Corporate Supplier Diversity & Inclusion Strategies	Develop Supplier Diversity & Inclusion Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+534	9e6ef22bd4d9	Capture delivery confirmation	Execute Shipments	Transportation Management	Fulfill	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+535	a50fb1780f57	Generate Self bills	Manage Freight cost	Transportation Management	Fulfill	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+536	aa693be920af	Socialize Budget Plan With Stakeholders	Conduct Budget Planning	Budget Alignment	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+537	aed5ecdbbc34	Measure Innovation Performance	Manage Category Innovation	Category Management	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+538	b6808d64e22b	Communicate Demand Governance Processes And Policies	Identify Demand Policy Impacts	Demand Planning for Source & Procure	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+539	b6d912690301	Develop Engagement Plans	Manage Stakeholder Relationships	Partner With Stakeholders	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+540	b7ab28a73226	Enable P-Cards	Enable Buying Channels	Business Intake	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+541	b847507bb326	Validate Multiyear Performance Plan & Category Strategy With Business	Manage Category Governance	Partner With Stakeholders	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+542	bd16e16d4400	Develop Point of Sales	Manage Sales Order And Sales Pipeline	Demand Planning	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+543	c39b09b8116d	Define Innovation Future State & Strategy	Manage Stakeholder Innovation	Partner With Stakeholders	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+544	c43aeb601087	Define Guided Buying/ Portal Strategy	Enable Guided Buying / Portal	Business Intake	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+545	c764e377b824	Define Guided Buying/ Portal Rules	Enable Guided Buying / Portal	Business Intake	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+546	d2c971519638	Update Parameters	Conduct Distribution Requirements Planning	Tactical Supply Planning	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+547	d342b3f18355	Define Stakeholder Engagement Strategies	Develop Stakeholder Strategy	Partner With Stakeholders	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+548	d4695bdf3a40	Load Customer Product	Manage Demand Planning Data	Forecast Analytics	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+549	d66b9e053fd8	Manage Data Quality And Reporting (Completeness, Accessibility, Accuracy)	Establish Master Data Governance	Fulfilment Strategy	Fulfill	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+550	dac56df6c4da	Enable Category Specific Application	Enable Buying Channels	Business Intake	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+551	e13098323a75	Review Demand Governance Process And Policies	Identify Demand Policy Impacts	Demand Planning for Source & Procure	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+552	e796c935732b	Manage Open Sales Orders	Manage Sales Order And Sales Pipeline	Demand Planning	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+553	e8430e1589fd	Execute Engagement Plans	Manage Stakeholder Relationships	Partner With Stakeholders	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+554	e8c9b408ba4d	Manage Quality Audits	Manage Storage Capacity & Inventory	Warehouse Management	Fulfill	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+555	e8d941339f1f	Manage Stakeholder Relationships & Satisfaction	Manage Stakeholder Relationships	Partner With Stakeholders	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+556	eb037bc8a24c	Manage Inbound Documents	Perform Invoice Processing & Payment	Order to "Ok To Pay"	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+557	edec4d10aa4d	Manage Metrics & Reporting	Manage Risks	Risk & Resiliency	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+558	f294e73e702d	Collect And Analyse Current Data	Manage Supply Planning Data	Supply Strategy & Analytics	Plan	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+559	fa8f5c8fb820	Establish Template And Clause Rules	Template Management	Contract Management	Source & Procure	0.5000	0.2500	0.5000	0.2500	0.6000	0.0000	0.3475	N			0	0
+560	0e0a2efb3fc7	Execute Spot buys	Plan Transportation	Transportation Management	Fulfill	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+561	149412cd3840	Create Planning Profile	Conduct Material Requirements Planning	Operational Supply Planning	Plan	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+562	57b78ec4e147	Handle Exceptions	Plan Transportation	Transportation Management	Fulfill	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+563	63a1fac94074	off-Board Services	Administer Third-Party Services	Contract Management	Source & Procure	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+564	908fd364ec7e	Book Time slots at destination	Manage time slots	Transportation Management	Fulfill	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+565	a6a5eafbad61	Review Deployment Results	Monitor Inventory Deployment	Operational Supply Planning	Plan	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+566	a80bc7714fb3	Manage Disputes	Manage Freight cost	Transportation Management	Fulfill	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+567	ca8e1c86339c	Receive Carrier Confirmation	Plan Transportation	Transportation Management	Fulfill	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+568	ccf3851115e2	Monitor Vehicle Emissions	Manage Logistics Sustainability	Fulfilment Strategy	Fulfill	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+569	f4f1efb29a4f	Book Time slots at origin	Manage time slots	Transportation Management	Fulfill	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+570	fba0dc1a933c	Create Deployment Profile	Monitor Inventory Deployment	Operational Supply Planning	Plan	0.5000	0.0000	0.5000	0.2500	0.6000	0.0000	0.3100	N			0	0
+571	448a1b61a163	Define Vision & Strategy	Define Procurement Vision & Strategic Roadmap	Define Functional Strategy	Source & Procure	0.0000	0.0000	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+572	a3e9ad2f0ce9	Define Organizational Principles And Key Design Decisions	Define Workforce Strategy	Define Functional Strategy	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+573	6adb59f55653	Define Roles And Responsibilities	Define Workforce Strategy	Define Functional Strategy	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+574	981abfe67dc6	Define And Manage Policies	Manage Control Framework	Execute Governance & Infrastructure	Source & Procure	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+575	a6b24ebbcc3e	Manage Spend Taxonomy	Manage Control Framework	Execute Governance & Infrastructure	Source & Procure	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+576	5ae528d6de18	Maintain Processes	Manage Business Processes	Execute Governance & Infrastructure	Source & Procure	0.0000	0.5000	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+577	cc21366f8914	Manage People Performance	Manage People	Execute Governance & Infrastructure	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+578	066eeaaf4eb5	Manage Career Development	Manage People	Execute Governance & Infrastructure	Source & Procure	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+579	01667d504dce	Manage Recruitment & Selection	Manage People	Execute Governance & Infrastructure	Source & Procure	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+580	b3c28f630c9e	Define Change & Communication Strategy & Approach	Manage Change & Communication	Execute Governance & Infrastructure	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+581	c839c6fdbef2	Execute Change & Communication Initiatives	Manage Change & Communication	Execute Governance & Infrastructure	Source & Procure	0.0000	0.5000	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+582	a0874899b79e	Track & Report Change	Manage Change & Communication	Execute Governance & Infrastructure	Source & Procure	0.0000	0.5000	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+583	65bf418d41f2	Manage Internal Tools	Manage Technology	Execute Governance & Infrastructure	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+584	a833d717f74b	Manage 3Rd Party Tools	Manage Technology	Execute Governance & Infrastructure	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+585	687cfe8b2d16	Define Continuous Improvement Program	Manage Continuous Improvement of Demand	Demand Planning for Source & Procure	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+586	8d772d5d56bd	Review And Assess Continuous Improvement Program	Manage Continuous Improvement of Demand	Demand Planning for Source & Procure	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+587	48197f9f045f	Define Segmentation Approach	Manage Supplier Segmentation	Supplier Management	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+588	613d1eb2dbb2	Manage Segmentation Definition	Manage Supplier Segmentation	Supplier Management	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+589	7224ef39e96e	Rollup Sub-Category Segmentation To Category View	Define Category Segmentation Strategy	Category Management	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+590	3399e030fa70	Define Procurement Supplier Diversity & Inclusion Governance	Develop Supplier Diversity & Inclusion Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.0000	0.5000	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+591	33f5632afd6a	Define Supplier Diversity & Inclusion Measurement Approach	Develop Supplier Diversity & Inclusion Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.0000	0.5000	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+592	bec5f0a5d94d	Identify Supplier Diversity & Inclusion Communication Approach	Develop Supplier Diversity & Inclusion Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+593	e3cbec906d85	Communicate Initiatives & Strategy	Manage Supplier Diversity & Inclusion Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+594	e48e62459ec9	Align With Corporate Sustainability Strategies	Develop Sustainability Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+595	878746399b9b	Define Sustainability Measurement Approach	Develop Sustainability Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+596	0e69852d5155	Identify Sustainability Communication Approach	Develop Sustainability Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+597	343f3f23ec01	Communicate Initiatives & Strategy	Manage Sustainability Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+598	0d5388044a21	Define Responsibility & Ethics Measurement Approach	Develop Responsibility & Ethics Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+599	c396c39ab09e	Identify Responsibility & Ethics Communication Approach	Develop Responsibility & Ethics Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+600	a09cf6c07936	Assess Footprint	Manage Responsibility & Ethics Strategy	Responsibility, Sustainability & Supplier Diversity	Source & Procure	0.5000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,CONFIDENCE_GAP	0	0
+601	0759c1a3bc17	Define Invoice Processing Analytics Use-Cases	Define Use Cases/ Outcomes	Insight & Analytics	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+602	c35069f81a91	Enable Travel Tool	Enable Buying Channels	Business Intake	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+603	c9672bfd74b7	Enter Request Details By User	Conduct Intelligent Business Intake	Business Intake	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+604	e5cddf88c25d	Request Help	Conduct Intelligent Business Intake	Business Intake	Source & Procure	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+605	d5ac5381fd60	Request Additional Information From User	Conduct Intelligent Business Intake	Business Intake	Source & Procure	0.5000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,CONFIDENCE_GAP	0	0
+606	5b08bac33519	Perform Internal End User Help Desk Request	Perform Helpdesk Services	Business Intake	Source & Procure	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+607	a107edb2ba36	Perform Supplier Help Desk Request	Perform Helpdesk Services	Business Intake	Source & Procure	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+608	a0627952b8f2	Manage Template Stack	Template Management	Contract Management	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+609	7dc4c659abd4	Maintain Clause Library	Template Management	Contract Management	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+610	8b5260d9210e	Collect Contract Request	Validate Intake & Request	Contract Management	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+611	cb9b73bd8555	Operationalize Contract	Author Contract	Contract Management	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+612	ac92a2644adf	Sign And Store Contract	Author Contract	Contract Management	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+613	1ece5832a0cb	Process Contract Amendments	Manage Contract Lifecycle	Contract Management	Source & Procure	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+614	b8e3a70f4fe3	Develop Segmentation Strategy Approach	Define Segmentation Strategy	Fulfilment Strategy	Fulfill	0.0000	0.5000	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+615	dbdcdfa58dfd	Monitor Compliance	Manage Logistics Sustainability	Fulfilment Strategy	Fulfill	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+616	5a22dee44e67	Manage Hazardous Goods In Warehouse	Develop Health, Safety and Environment Factors	Fulfilment Strategy	Fulfill	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+617	3fa50f3b0751	Manage Transport Operation Tools/Platforms	Develop Digital & Automation Strategy	Fulfilment Strategy	Fulfill	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+618	607553dae6cd	Define Rules for Cost-To-Serve Outliers	Embed Cost-To-Serve Capability	Performance Management	Fulfill	0.0000	0.5000	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+619	8c7a4a9b10eb	Generate Automated Bills/Invoice	Process Customer Invoice	Order Management	Fulfill	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+620	2807b8dd7969	Distribute Bulk Bills/Invoice	Process Customer Invoice	Order Management	Fulfill	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+621	3917ac468152	Manage Delivery And Billing Control	Process Customer Invoice	Order Management	Fulfill	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+622	1468d372b896	Collect Cash Correspondence	Manage Payment Collections	Order Management	Fulfill	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+623	820a4722e6e8	Resolve Claims	Manage Claims	Order Management	Fulfill	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+624	2675f47f0bdd	Settle Claims	Manage Claims	Order Management	Fulfill	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+625	00d88a14b3ca	Execute Customer Support Policies & Procedures	Manage Customer Interactions	Order Management	Fulfill	0.0000	0.0000	0.0000	0.2500	0.2000	0.0000	0.0000	N	DEAD_ZONE	DEAD_ZONE,NO_STAKES,CONFIDENCE_GAP	0	0
+626	e1ab3f85dc21	Resolve Escalated Customer Issues	Manage Customer Interactions	Order Management	Fulfill	0.0000	0.5000	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+627	a1abb38a0514	Track Shipments	Track Shipments	Transportation Management	Fulfill	0.0000	0.2500	0.5000	0.2500	0.6000	0.0000	0.0000	N	NO_STAKES	NO_STAKES	0	0
+628	cf-5w-50a029ca	Automated Demand Data Quality & Cross-Functional Feedback	Cross-Functional: Plan + Forecasting	Five Whys	Cross-Functional	0.0000	0.5000	0.5000	0.2500	1.0000	0.1429	0.0000	N	NO_STAKES	NO_STAKES	1	900000
+629	cf-5w-7f90b504	Unified Real-Time Inventory Optimization	Cross-Functional: Plan + Inventory + Procurement + Digital Control Tower	Five Whys	Cross-Functional	0.0000	0.5000	0.5000	0.2500	1.0000	0.1429	0.0000	N	NO_STAKES	NO_STAKES	1	900000
+630	cf-toc-7f89d4b5	Automated Demand-Supply Alignment	Cross-Functional: Demand Planning + Source & Procure + Fulfill	Toc	Cross-Functional	0.0000	0.5000	0.5000	0.2500	1.0000	0.1429	0.0000	N	NO_STAKES	NO_STAKES	1	100000

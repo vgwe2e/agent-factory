@@ -1,0 +1,84 @@
+objective: >-
+  Automate decisioning across regulatory compliance, environmental packaging,
+  quality defect resolution, safety/emissions adherence, and counterfeit
+  prevention for Ford's service parts.
+trigger: New service part order or compliance check request.
+decision: >-
+  Evaluate and apply compliant trade practices, determine environmental
+  practices, investigate quality defects, ensure safety and emissions
+  compliance, and prevent counterfeit parts.
+expected_action: >-
+  Coordinate end-to-end risk assessment, supplier and part validation, and
+  accelerated remediation actions.
+expected_outcome: >-
+  Reduced COGS from defects, improved working capital through faster issue
+  resolution, and mitigated compliance risk across the service parts network.
+rationale: >-
+  Leverage AI/ML and rule-based systems to automate complex decision-making
+  processes, ensuring compliance and quality assurance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Service Part Order Details
+    source: SAP S/4HANA
+    purpose: Identify parts and associated compliance requirements.
+  - name: Trade Compliance Rules
+    source: SAP S/4HANA
+    purpose: Apply global trade compliance and sanction screening.
+  - name: Environmental Regulations
+    source: SAP S/4HANA
+    purpose: Determine compliant environmental practices.
+  - name: Quality Defect Reports
+    source: SAP S/4HANA
+    purpose: Investigate and resolve quality defects.
+  - name: Safety & Emissions Standards
+    source: SAP S/4HANA
+    purpose: Ensure compliance with safety and emissions regulations.
+  - name: Counterfeit Detection Data
+    source: SAP S/4HANA
+    purpose: Prevent counterfeit parts from entering the supply chain.
+happy_path:
+  - step: Retrieve service part order details from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Collect necessary data for compliance checks.
+  - step: Apply global trade compliance and sanction screening.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Evaluate and apply compliant trade practices.
+  - step: Determine compliant environmental practices for parts and packaging.
+    stage: analyze
+    component: AutoML
+    purpose: Balance regulatory costs with supply chain operations.
+  - step: Investigate quality defects in service parts.
+    stage: analyze
+    component: RCA Service
+    purpose: Identify root causes and remediation actions.
+  - step: Ensure safety and emissions compliance for parts.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Balance regulatory risk, cost, and working capital implications.
+  - step: Implement measures to detect and prevent counterfeit parts.
+    stage: analyze
+    component: AutoML
+    purpose: Balance risk reduction and cost.
+  - step: Present AI recommendations for compliance actions.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Human-in-the-loop decision support.
+  - step: Execute remediation actions and update SAP S/4HANA.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure compliance and quality assurance.
+branches:
+  - condition: Non-compliant trade practice detected.
+    response: Initiate CWB Lifecycle for manual review and override.
+    outcome: Manual intervention to adjust compliance actions.
+  - condition: Significant quality defect identified.
+    response: Trigger RCA Service for detailed investigation.
+    outcome: Detailed root cause analysis and remediation plan.
+  - condition: Potential counterfeit part detected.
+    response: Activate AutoML for advanced detection and prevention.
+    outcome: Enhanced counterfeit prevention measures implemented.

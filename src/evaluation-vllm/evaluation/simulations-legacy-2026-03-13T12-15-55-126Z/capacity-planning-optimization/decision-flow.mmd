@@ -1,0 +1,17 @@
+flowchart TD
+    A[Capacity Planning Trigger] --> B[Cortex: Capacity Modeling]
+    B --> C{Demand Met?}
+    C -->|Yes| D[Cortex: Resource Allocation]
+    C -->|No| E[PB: Adjust Model]
+    E --> C
+    D --> F{Constraints Met?}
+    F -->|Yes| G[Cortex: Bottleneck Identification]
+    F -->|No| H[PB: Adjust Allocation]
+    H --> F
+    G --> I{Bottleneck Identified?}
+    I -->|Yes| J[PB: Apply Resolution]
+    I -->|No| K[UI: Capacity Utilization Report]
+    J --> K
+    K --> L[Cortex: Capital Planning]
+    L --> M[PB: Finalize Plan]
+    M --> End

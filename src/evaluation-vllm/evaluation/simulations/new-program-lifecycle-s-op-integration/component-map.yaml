@@ -1,0 +1,35 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and prepare data for analysis
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Generate forecast and optimize production plans
+    confidence: confirmed
+    capability: Generate forecast and optimize production plans
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Present recommendations for human review and approval
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Execute the chosen plan and update SAP S/4HANA
+    confidence: inferred
+    node_type: act
+  - name: Cortex Monitoring
+    purpose: Track forecast accuracy and plan performance
+    confidence: confirmed
+    node_type: review
+  - name: Notification
+    purpose: Communicate plan progress and outcomes
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unified decision intelligence for s&op integration across lifecycle
+      events and approve the recommended action.
+    confidence: confirmed
+    component_type: display

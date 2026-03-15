@@ -1,0 +1,22 @@
+decision: >-
+  Decide optimal storage locations and methods for all raw materials/components
+  to minimize handling cost and cycle time while meeting service requirements
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: monthly_optimization_cycle
+expected_output:
+  action: >-
+    Reassign high-demand components to near-pick locations and group by demand
+    frequency
+  outcome: >-
+    reduced handling cost by 12% and cycle time by 8% while maintaining 99%
+    service level
+rationale: >-
+  Test uses actual client financials (COGS 158.4B, inventory value 14.95B) to
+  validate optimization impact. Trigger aligns with monthly cycle. Outcome
+  reflects realistic 12% handling cost reduction from COGS baseline, directly
+  supporting opportunity's COGS reduction target.

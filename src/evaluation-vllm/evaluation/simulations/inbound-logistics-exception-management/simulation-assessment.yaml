@@ -1,0 +1,7 @@
+groundednessScore: 67
+integrationConfidenceScore: 100
+ambiguityRiskScore: 17
+implementationReadinessScore: 85
+verdict: ADVANCE
+reasons:
+  - Scenario is grounded, integration-aware, and implementation-ready.

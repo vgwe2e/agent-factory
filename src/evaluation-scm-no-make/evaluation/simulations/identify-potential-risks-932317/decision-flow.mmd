@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled daily risk-scoring pipeline (batch) detects SKU/location cumulative risk score above configurable threshold OR user-initiated risk scan via Agentic AI.]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Consolidate and normalize all risk-related feeds into Subject Areas via DDM/Crawlers and STREAMS]
+  N1 --> N2[Cortex: Cortex RCA Service + Data Science - Perform ML-driven segmentation and root-cause analysis, and generate risk scores and explanations]
+  N2 --> N3{Agent: Process Builder (IF + Rules) + Agent Team - Agentic pipeline ranks items by impact and confidence; Process Builder evaluates rules and routes items to automated mitigation or human review}
+  N3 -->|Primary| N4[PB: Remote Functions + Process Builder Action Item - Execute low-risk automated mitigations and orchestration (ERP writebacks, Kinaxis reprioritize/replan, create expediting via TMS) via Remote Functions and Process Builder actions]
+  N4 --> N5[PB: CWB Lifecycle + UI Screen + Notification - Surface recommendations and outcomes in CWB UI and send notifications; loop back flagged items for human approval or tuning]
+  N5 --> Z1[Outcome: Earlier detection and prioritized mitigation of high-impact risks, fewer inventory write-offs, reduced promotion mispricing exposure, faster supplier-contingency response, and measurable improvement in working capital and margin protection across SKU/location clusters.]
+  N3 -->|Low model confidence or conflicting s...| B1[Agent Team prompts human analyst via CWB Lifecycle with consolidated evidence and recommended actions for approval]
+  B1 --> O1[Outcome: Human-in-the-loop decision ensures high-impact items are validated; case appended to model monitoring for retraining]
+  O1 --> End[End]
+  N3 -->|High-impact risk but mitigation block...| B2[Escalate to procurement with templated negotiation playbook (Agentic AI), trigger Kinaxis replan for reallocation, and create finance alert for WCM provisioning]
+  B2 --> O2[Outcome: Coordinated cross-functional mitigation reduces exposure or secures contingency actions while recording working capital impact]
+  O2 --> End[End]
+  N3 -->|Transient spike flagged as false posi...| B3[Auto-suppress and adjust detection sensitivity for the SKU/location; log event and decrement alert priority]
+  B3 --> O3[Outcome: Reduce analyst workload and alert noise while preserving auditability and the ability to revert sensitivity changes]
+  O3 --> End[End]
+  Z1 --> End[End]

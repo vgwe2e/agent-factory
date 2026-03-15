@@ -1,0 +1,176 @@
+objective: >-
+  Automate end-to-end sourcing decisions—sourcing approach selection, supplier
+  prequalification, RFx execution, contract-aware negotiations, and
+  implementation planning—to minimize COGS, protect margins, and optimize
+  working capital while reducing cycle time and improving supplier resilience.
+trigger: >-
+  Periodic category sourcing window or event-driven signal (high spend cadence,
+  forecasted demand surge, supplier risk alert, or contract expiration) detected
+  in planning or ERP systems.
+decision: >-
+  Select optimal sourcing approach (RFx / RFP / Auction / Direct Negotiation),
+  supplier shortlist, and contract-aware execution plan (timing of RFx,
+  negotiation path, PO timing) that balances price, speed, supplier risk, and
+  working capital impact.
+expected_action: >-
+  Agentic AI (Agent Team) evaluates consolidated spend, demand forecasts,
+  supplier risk, and contract rules, recommends sourcing route and supplier
+  shortlist; Process Builder automates RFx/RFP creation, invokes Remote
+  Functions for contract validation and ERP writeback plans, and routes
+  recommendations through CWB Lifecycle for procurement approvals.
+expected_outcome: >-
+  Reduced COGS (target 2–5%), preserved/expanded margins, improved supplier
+  resilience and reduced supply risk, shortened sourcing cycle times, and
+  optimized working capital via contract-aligned PO timing and smarter payment
+  terms.
+rationale: >-
+  Combining cross-domain data (ERP spend, forecasts, risk, contracts) with
+  agentic AI enables adaptive, rule-guarded sourcing choices that minimize
+  manual cycle time and enforce contract/working-capital constraints while
+  maximizing supplier competition where appropriate.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Kinaxis (general services e.g., rebalancing, expediting, FG safety stock)
+    type: APS/Planning
+    status: identified
+  - name: SAS
+    type: Advanced Forecasting / Analytics
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight / TMS
+    type: TMS/3PL
+    status: identified
+  - name: Contract Management System
+    status: tbd
+  - name: Supplier Risk & Prequalification Platform
+    status: tbd
+  - name: Procurement Portal / Catalog
+    status: tbd
+  - name: Market Pricing / Benchmarking API
+    status: tbd
+key_inputs:
+  - name: Spend History & Open POs
+    source: S4 (SAP S/4HANA)
+    purpose: >-
+      Assess historical spend patterns, supplier spend concentration, incumbent
+      exposure and available PO timing opportunities for working capital
+      optimization.
+    preferred_stream_type: STREAMS
+  - name: Forecasted Demand & Shortage Signals
+    source: SAS / Kinaxis RapidResponse
+    purpose: >-
+      Identify upcoming demand surges or shortages to prioritize sourcing
+      cadence and urgency.
+    preferred_stream_type: DDM/Crawlers
+  - name: Supplier Risk Scores & Prequalification Data
+    source: Supplier Risk & Prequalification Platform
+    purpose: >-
+      Qualify suppliers, flag resilience and financial risk, and drive routing
+      (strategic negotiation vs. broad RFx).
+    preferred_stream_type: DDM/Crawlers
+  - name: Active Contracts & Terms (pricing, volume discounts, payment/PO timing)
+    source: Contract Management System
+    purpose: >-
+      Enforce contract-aware negotiation, reuse existing terms, and optimize PO
+      timing to reduce working capital and capture contractual discounts.
+  - name: Category Profiles & Sourcing Playbooks
+    source: Procurement Portal / Catalog
+    purpose: >-
+      Drive guardrails for sourcing route selection (e.g., category risk,
+      typical auction suitability, preferred supplier lists).
+  - name: Market Pricing / Benchmark Data
+    source: Market Pricing / Benchmarking API
+    purpose: >-
+      Benchmark supplier bids and estimate achievable savings from
+      auctions/RFxs.
+    preferred_stream_type: DDM/Crawlers
+  - name: Inventory & FG Safety Stock Targets
+    source: Kinaxis / Blue Yonder WMS
+    purpose: >-
+      Ensure sourcing timing and awarded terms do not create stockouts or
+      excessive inventory; align with FG safety stock models.
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: >-
+      Consolidate spend, contracts, forecasts, inventory and supplier risk data
+      into the data foundation
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Build a single subject-area view for sourcing decisions and feed
+      downstream models.
+  - step: >-
+      Run analytics: demand signals, supplier risk scoring, contract rule
+      matching, and market benchmarking
+    stage: analyze
+    component: Cortex RCA Service + Cortex Auto Forecast
+    purpose: >-
+      Produce prioritized sourcing opportunities with risk-adjusted demand and
+      contract constraints.
+  - step: >-
+      Agentic AI recommends sourcing route and supplier shortlist, including
+      contract-aware negotiation plan and PO timing
+    stage: decide
+    component: Agent Team (agentic_ai) orchestrated by Process Builder
+    purpose: >-
+      Select RFx / RFP / Auction / Direct negotiation based on multi-criteria
+      optimization and guardrails.
+  - step: >-
+      Automate RFx/RFP creation, contract checks, and schedule negotiation/PO
+      timing; create action items for sourcing team
+    stage: act
+    component: Process Builder (Transaction + Remote Functions)
+    purpose: >-
+      Execute sourcing paperwork, validate contractual reuse, and plan ERP
+      writeback for award/PO timing.
+  - step: >-
+      Human-in-the-loop approval and exception handling for high-impact awards
+      or overrides
+    stage: review
+    component: CWB Lifecycle
+    purpose: >-
+      Allow procurement to accept, reject, or override agent recommendations
+      with audit trail.
+  - step: >-
+      Notify stakeholders and surface sourcing plan, savings estimate, and
+      working-capital impact on UI/dashboard
+    stage: notify
+    component: UI Screen + Notification
+    purpose: >-
+      Communicate decisions, timelines, and financial impact to procurement,
+      finance, and supply planning.
+branches:
+  - condition: >-
+      Supplier risk score above acceptable threshold (financial or resilience
+      risk)
+    response: >-
+      Agentic AI routes opportunity to strategic sourcing & supplier development
+      subprocess (larger due diligence, capacity validation) and excludes from
+      open auction.
+    outcome: >-
+      Longer cycle time but reduced supply and financial risk; higher confidence
+      in supplier selection.
+  - condition: >-
+      Urgent shortfall / expedited demand where lead-time cannot be met by
+      standard RFx cadence
+    response: >-
+      Agent recommends rapid RFP or buy-now direct negotiation with premium
+      terms; Process Builder triggers expedited approval path and Kinaxis
+      expediting workflows.
+    outcome: >-
+      Faster fulfillment at higher procurement cost; prioritized allocation and
+      minimized service disruptions.
+  - condition: Commodity, high-volume, low-risk category with ample supplier competition
+    response: >-
+      Agent recommends open auction (e-auction) with automated bid evaluation
+      and contract templating.
+    outcome: >-
+      Maximized supplier competition, faster cycle, higher probability of
+      achieving lower COGS.

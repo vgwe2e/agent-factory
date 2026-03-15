@@ -1,0 +1,47 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Collect requested change, current PO, contract, budget and recent supplier
+      metrics
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Run rules and short-run simulations using Kinaxis shortage signals and SAS
+      forecasts to score impacts
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Agent Team
+    purpose: >-
+      LLM agent compiles options (approve, escalate, reject), ranks by
+      risk/cost/contract fit, and selects approval route
+    confidence: confirmed
+    node_type: integration
+  - name: Process Builder / CWB Lifecycle
+    purpose: >-
+      Automate approvals (auto-approve thresholds) or create CWB for human
+      review and record decision
+    confidence: confirmed
+    node_type: act
+  - name: Remote Functions / Notification
+    purpose: >-
+      Write updates to S4, send notifications to procurement, supplier, and
+      impacted planners
+    confidence: confirmed
+    node_type: act
+  - name: UI Screen / Subject Areas
+    purpose: Provide a decision log, change history, and KPIs for post-change review
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review manage purchase order (po) changes — quantity, cost, dates,
+      amounts, descriptions, cost objects — and orchestrate approvals and
+      writebacks while balancing immediate spend, delivery risk, and contract
+      terms. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

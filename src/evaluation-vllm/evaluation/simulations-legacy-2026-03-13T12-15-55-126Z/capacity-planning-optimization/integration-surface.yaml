@@ -1,0 +1,43 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: plant_line_capacity_modeling
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+  - stream_name: resource_allocation_events
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: bottleneck_resolution_events
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: capacity_utilization_metrics
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+processing:
+  - component: capacity_modeling_engine
+    type: AI Model
+    function: Predictive capacity modeling from historical and demand signals
+  - component: resource_allocation_optimizer
+    type: AI Agent
+    function: Autonomous manpower/equipment allocation based on real-time constraints
+  - component: bottleneck_resolution_engine
+    type: AI Agent
+    function: Dynamic bottleneck identification and resolution across production lines
+  - component: capacity_planning_advisor
+    type: AI Agent
+    function: Strategic capacity expansion recommendations aligned with demand signals
+ui_surface:
+  - component: capacity_modeling_dashboard
+    screen: Capacity Modeler
+    purpose: Visualize plant/line capacity utilization and predictive gaps
+  - component: resource_allocation_console
+    screen: Resource Planner
+    purpose: Manual override and real-time resource assignment interface
+  - component: bottleneck_resolution_portal
+    screen: Bottleneck Manager
+    purpose: Intervene in active bottleneck resolution workflows
+  - component: capacity_planning_report
+    screen: Strategic Planner
+    purpose: Executive-level capacity expansion and COGS impact analysis

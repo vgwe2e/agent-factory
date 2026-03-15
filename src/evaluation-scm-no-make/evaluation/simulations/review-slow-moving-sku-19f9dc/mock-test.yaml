@@ -1,0 +1,60 @@
+decision: >-
+  Select which slow-moving or at-risk SKUs to de-prioritize, reallocate, adjust
+  safety stock for, or escalate for procurement renegotiation versus which
+  recommendations to auto-execute.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled portfolio review cadence (e.g., weekly/monthly) or threshold-based
+    portfolio risk/turnover signal (forecast bias, excess days of supply,
+    supplier term deviation).
+  parameters:
+    objective: >-
+      Orchestrate a unified demand-inventory-procurement (DI) pipeline that
+      continuously reviews portfolio performance (focus on slow-moving SKUs),
+      aligns demand forecasts, multi-echelon inventory, and supplier terms to
+      optimize EBITDA and COGS while providing auditable autonomous and
+      semi-autonomous recommendations and approvals.
+    key_inputs:
+      - Demand Forecast (statistical + SAS adjustments)
+      - Multi-echelon Inventory Positions (on-hand, in-transit, reserved)
+      - Supplier Terms & Lead Time Profiles
+      - SKU Master & Portfolio Attributes (ABC/XYZ, margin, obsolescence flags)
+      - Portfolio Financial Metrics (COGS, margin, EBITDA contribution)
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS / Advanced Statistical Forecasting (SAS)
+      - Kinaxis RapidResponse
+      - Kinaxis (FG Safety Stock Modeling / Rebalancing / Order Expediting)
+      - Blue Yonder WMS
+      - Uber Freight / 3PL (TMS/Logistics)
+expected_output:
+  action: >-
+    Run deterministic Process Builder pipeline to ingest forecasts and
+    inventory, evaluate portfolio risk/return, generate ranked recommendations
+    (auto-execute low-risk adjustments via Remote Functions; route
+    medium/high-risk changes to CWB Lifecycle for approval), and write approved
+    changes back to S4/Kinaxis.
+  outcome: >-
+    Reduced slow-moving inventory, improved EBITDA/COGS alignment with demand
+    signals, optimized multi-echelon safety stock, auditable decision trail for
+    approvals/overrides, and measurable reduction in excess days-of-supply and
+    procurement cost deltas.
+  affected_components:
+    - STREAMS / DDM/Crawlers
+    - Cortex Auto Forecast + Safety Stock Service
+    - Process Builder (Rules, IF, Data View) + CWB Lifecycle
+    - Remote Functions + Process Builder (Action Item)
+    - UI Screens + Notification (CWB)
+rationale: >-
+  A deterministic Process Builder route ensures reproducible, auditable
+  orchestration across demand, inventory, and procurement systems. Use
+  STREAMS/DDM to centralize and validate inputs; Cortex Auto Forecast and Safety
+  Stock Service to quantify demand and inventory levers; Rules + CWB Lifecycle
+  for controlled human-in-the-loop approvals; Remote Functions for safe ERP/APS
+  writebacks. This blends automated low-risk actions with governed escalation
+  for financial/regulatory sensitivity.

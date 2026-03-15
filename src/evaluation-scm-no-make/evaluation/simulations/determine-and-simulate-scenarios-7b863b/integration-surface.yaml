@@ -1,0 +1,66 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Analytics
+    status: identified
+  - name: >-
+      Kinaxis RapidResponse (APS / Shortage Propagation / Rebalancing / Order
+      Expediting / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS/3PL
+    status: identified
+aera_ingestion:
+  - stream_name: baseline-demand-forecast
+    stream_type: DDM/Crawlers
+    source: SAS (Advanced Statistical Forecasting)
+  - stream_name: on-hand-inventory-location-allocations
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA) and Blue Yonder WMS
+  - stream_name: supply-capacity-lead-times-planned-receipts
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA) and Kinaxis RapidResponse
+  - stream_name: sku-revenue-price-margin-attributes
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA)
+  - stream_name: shortage-propagation-and-downstream-substitution-rules
+    stream_type: STREAMS
+    source: Kinaxis RapidResponse
+  - stream_name: open-orders-shipments-and-expediting-options
+    stream_type: STREAMS
+    source: Blue Yonder WMS, Uber Freight TMS, Kinaxis
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: >-
+      Apply deterministic rules and revenue-impact calculations to create
+      prioritized scenario options
+  - component: Rules
+    type: process_builder
+    function: >-
+      Apply decision thresholds (revenue at risk, service level, working
+      capital) to pick top scenarios to simulate
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Record recommended supply option with rationale, allow human
+      approve/reject/override, and audit decision
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Writeback chosen supply updates to S4 / Kinaxis and trigger notifications
+      to planning, logistics, and finance
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review orchestrate end-to-end supply scenario planning to protect revenue
+      and optimize cash flow by evaluating deterministic supply options,
+      simulating multi-scenario outcomes, and executing auditable supply plan
+      writebacks across skus and locations. and approve the recommended action.

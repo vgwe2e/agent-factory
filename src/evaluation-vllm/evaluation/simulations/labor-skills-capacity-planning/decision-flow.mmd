@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Monthly production planning cycle start.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve current workforce skills and future technology requirements.]
+  N1 --> N2[Agent: Agentic AI - Perform skill gap analysis using agentic AI.]
+  N2 --> N3{Agent: Agentic AI - Optimize shift planning and labor distribution.}
+  N3 -->|Primary| N4{Agent: Agentic AI - Recommend training programs based on cost and effectiveness.}
+  N4 --> N5[Agent: Agentic AI - Evaluate automation investment opportunities.]
+  N5 --> N6[Agent: Agentic AI - Plan for and source contingency labor.]
+  N6 --> Z1[Outcome: Reduced labor-related variances, prevented line stoppages, and improved on-time delivery.]
+  N3 -->|Insufficient budget for recommended t...| B1[Adjust training program recommendations to fit budget constraints.]
+  B1 --> O1[Outcome: Revised training plan with prioritized courses.]
+  O1 --> End[End]
+  N3 -->|Significant increase in demand requir...| B2[Increase contingency labor sourcing efforts.]
+  B2 --> O2[Outcome: Additional labor sourced to meet demand.]
+  O2 --> End[End]
+  N3 -->|Automation investments exceed project...| B3[Re-evaluate automation plans and adjust accordingly.]
+  B3 --> O3[Outcome: Optimized automation strategy with revised labor requirements.]
+  O3 --> End[End]
+  Z1 --> End[End]

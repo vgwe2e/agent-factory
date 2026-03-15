@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled daily batch (end-of-day) ingest plus on-demand when significant demand or supply deviations detected.]
+  A --> N1[Stream: DDM/Crawlers - STREAMS - Ingest operational, demand and financial data]
+  N1 --> N2[Cortex: Cortex Auto Forecast + Safety Stock Service - Generate demand forecasts and compute optimal safety stocks]
+  N2 --> N3{PB: Process Builder (Rules - Data View - IF - CWB Lifecycle) - Evaluate recommendations against policy and S&OP financial impact}
+  N3 -->|Primary| N4[PB: Remote Functions (ERP writeback) - Execute approved rebalances and policy updates]
+  N4 --> N5[PB: UI Screens + Process Builder Notification - Surface results and notify stakeholders]
+  N5 --> Z1[Outcome: Reduction in excess working capital and inventory carrying costs, maintained or improved service levels and revenue protection, synchronized planning horizons between Planning and Finance, and auditable changes with stakeholder approvals for exceptions.]
+  N3 -->|Recommendation within policy threshol...| B1[Auto-apply rebalance and update SAP safety stock; log transaction and notify stakeholders]
+  B1 --> O1[Outcome: Fast reduction in excess stock without human intervention; improved working capital]
+  O1 --> End[End]
+  N3 -->|Recommendation exceeds financial or p...| B2[Open CWB Lifecycle exception, route to Planning + Finance for joint review with required attachments and impact metrics]
+  B2 --> O2[Outcome: Human-in-the-loop decision preserves revenue/EBITDA and ensures cross-functional agreement]
+  O2 --> End[End]
+  N3 -->|Insufficient replenishment capacity o...| B3[Hold automated rebalance, trigger mitigation subprocess (notify procurement, adjust S&OP horizon), and schedule follow-up review]
+  B3 --> O3[Outcome: Prevents stockouts or failed transfers; aligns procurement and planning to resolve constraint]
+  O3 --> End[End]
+  Z1 --> End[End]

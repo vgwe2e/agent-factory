@@ -1,0 +1,25 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for part number decisions.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Process Builder
+    purpose: Decide whether to create or deactivate part numbers.
+    confidence: confirmed
+    capability: Decide whether to create or deactivate part numbers.
+process_builder:
+  - name: Process Builder
+    purpose: Ensure accurate BOM structures.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unify service parts numbering, bom structures, and attribute data
+      with automated quality remediation and supplier cross-reference, enabling
+      end-to-end consistency across parts across ford's service network. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

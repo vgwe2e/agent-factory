@@ -1,0 +1,121 @@
+objective: >-
+  Orchestrate and optimize the return flow of empty returnable containers from
+  plants back to suppliers to minimize COGS and working capital while ensuring
+  container availability and supplier compliance.
+trigger: >-
+  Scheduled daily process run or threshold-trigger (container aging, low
+  availability, or forecasted shortfall) detected in inventory Subject Area.
+decision: >-
+  Determine optimal pickup quantities, timings, and routing for empty container
+  returns balancing turnaround time, plant capacity needs, transport capacity,
+  and working capital constraints.
+expected_action: >-
+  Automatically generate prioritized, consolidated return schedules and
+  execution instructions; write back return movement orders to SAP S/4HANA;
+  initiate transportation bookings or exception workflows when constraints
+  occur.
+expected_outcome: >-
+  Faster container turnover and higher utilization, reduced COGS from fewer idle
+  containers, improved OTIF for inbound containerized materials, and reduced
+  manual scheduling effort.
+rationale: >-
+  Deterministic, process-driven orchestration combining multi-echelon visibility
+  (inventory, movements, supplier capacity) with scheduled optimization and ERP
+  writebacks enables repeatable reductions in working capital and improved
+  service levels while keeping human intervention limited to exceptions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Portal / EDI
+    status: tbd
+  - name: 3PL / TMS
+    status: tbd
+key_inputs:
+  - name: Container inventory & movements (positions, ownership, location, age)
+    source: SAP S/4HANA
+    purpose: >-
+      Current multi-echelon visibility of container locations and aging to
+      identify return candidates and availability
+    preferred_stream_type: batch
+  - name: Plant consumption / production schedules
+    source: SAP S/4HANA
+    purpose: >-
+      Forecast container demand by plant to avoid pulling containers needed for
+      production
+    preferred_stream_type: batch
+  - name: Supplier lead times & return window commitments
+    source: Supplier Portal / EDI
+    purpose: >-
+      Constrain feasible return dates and build supplier compliance rules into
+      scheduling
+  - name: Transport capacity and routing constraints
+    source: 3PL / TMS
+    purpose: Determine consolidation opportunities and feasible pickup windows
+  - name: Container turnover forecast
+    source: Cortex Auto Forecast
+    purpose: Predict container demand and returns cadence to inform optimized schedules
+    preferred_stream_type: time-series
+happy_path:
+  - step: >-
+      Ingest master and transactional container data and schedules from SAP
+      S/4HANA
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Pull inventory positions, movement transactions, POs/GRs and production
+      schedules into the data foundation
+  - step: Validate and aggregate into Subject Areas and run data quality checks
+    stage: analyze
+    component: STREAMS + Subject Areas (Data Quality & Validation)
+    purpose: >-
+      Produce clean, multi-echelon container position, aging, utilization and
+      plant demand metrics
+  - step: Forecast near-term container demand and compute optimized return schedules
+    stage: decide
+    component: >-
+      Process Builder (Process) calling Cortex Auto Forecast + Remote Functions
+      (optimization engine)
+    purpose: >-
+      Combine forecasts with constraints (supplier lead times, transport
+      capacity, service SLAs) to compute pickup quantities/times and
+      consolidation plans
+  - step: 'Execute plans: create return movement orders and book transport'
+    stage: act
+    component: Process Builder (Transaction) + Remote Functions (ERP writeback)
+    purpose: >-
+      Write return orders into SAP S/4HANA and trigger transport bookings or
+      carrier APIs for pickups
+  - step: Surface schedules and exceptions to planners and notify suppliers/carriers
+    stage: notify
+    component: UI Screen + Process Builder Notification
+    purpose: >-
+      Provide visibility of schedules via planner UI, send supplier
+      notifications, and open Action Items for exceptions
+branches:
+  - condition: Insufficient available containers at plant to meet forecasted demand
+    response: >-
+      Optimization engine prioritizes critical plants, postpones non-critical
+      returns, and flags shortage; create expedited pickup options and surplus
+      requisition actions via Remote Functions.
+    outcome: >-
+      Critical production maintains supply at higher cost; non-critical returns
+      deferred, and manual review created for replenishment plans.
+  - condition: >-
+      Supplier rejects proposed return window or cannot accept containers as
+      scheduled
+    response: >-
+      Automatic exception created and routed via CWB Lifecycle (Action Item) to
+      logistics/planner team for renegotiation; system proposes alternate
+      windows and consolidation candidates.
+    outcome: >-
+      Human-in-the-loop resolves supplier non-compliance; updated return plan
+      written back after approval, minimizing disruption.
+  - condition: Transport capacity shortage or carrier cancellation detected
+    response: >-
+      Re-optimize consolidation and routing within Process Builder; if automated
+      rebooking fails, create Notification and Action Item to engage third-party
+      carriers or approve premium service.
+    outcome: >-
+      Returns are consolidated or rebooked to restore schedule where possible;
+      cost and lead-time impact are recorded for review.

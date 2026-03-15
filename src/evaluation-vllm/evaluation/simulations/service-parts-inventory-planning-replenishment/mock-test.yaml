@@ -1,0 +1,39 @@
+decision: >-
+  Generate and adjust service part demand forecasts, set inventory stocking
+  levels, generate replenishment orders, manage obsolescence, and develop
+  critical part stocking strategies.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic inventory review and demand signal update.
+  parameters:
+    objective: >-
+      Autonomous optimization of service part stock levels, replenishment
+      orders, obsolescence handling, and critical part stocking strategies
+      across a multi-echelon service parts network.
+    key_inputs:
+      - Historical Service Part Sales Data
+      - Current Inventory Levels
+      - Lead Times and Supplier Information
+      - Obsolescence and Excess Inventory Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Accurate demand forecasts, optimized inventory levels, timely replenishment
+    orders, effective obsolescence management, and robust critical part stocking
+    strategies.
+  outcome: >-
+    Reduced working capital and COGS, improved availability and OTIF for Ford’s
+    service parts ecosystem.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Automating the service parts inventory planning and replenishment process will
+  enhance efficiency, reduce costs, and ensure optimal service levels.

@@ -1,0 +1,43 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate SAP S/4HANA, dealer sales, market feeds and launch inputs into
+      Subject Areas
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: Cortex Auto Forecast + RCA Service
+    purpose: >-
+      Generate time-series forecasts, uncertainty bands, and root-cause drivers
+      for forecast error
+    confidence: confirmed
+    capability: >-
+      Generate time-series forecasts, uncertainty bands, and root-cause drivers
+      for forecast error
+process_builder:
+  - name: Process Builder + Remote Functions + CWB Lifecycle
+    purpose: >-
+      Apply capacity, profitability and supply constraints to produce
+      recommended production/mix plans and route exceptions to planners
+    confidence: confirmed
+    node_type: decide
+  - name: UI Screens (CWB) + CWB Lifecycle
+    purpose: >-
+      Surface recommendations, allow overrides, capture rationale and approvals
+      for auditability
+    confidence: confirmed
+    node_type: review
+  - name: Remote Functions + Process Builder + Notification
+    purpose: >-
+      Execute writebacks to SAP S/4HANA and broadcast plan changes to supply
+      chain and commercial teams
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Subject Areas + UI Screens (dashboard)
+    purpose: >-
+      Track forecast accuracy, inventory impact, launch adherence and COGS
+      benefits for continuous improvement
+    confidence: confirmed
+    component_type: display

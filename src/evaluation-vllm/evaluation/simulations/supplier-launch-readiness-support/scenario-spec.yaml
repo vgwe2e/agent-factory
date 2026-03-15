@@ -1,0 +1,71 @@
+objective: >-
+  Reduce COGS during new supplier launches by optimizing run-at-rate
+  verification, launch control planning, readiness assessments, and rapid
+  containment of launch issues.
+trigger: New supplier launch initiation.
+decision: >-
+  Choose the specific quality control plan and safe launch strategy that
+  minimizes COGS while ensuring launch readiness, balancing supplier capability,
+  risk, and schedule constraints.
+expected_action: >-
+  Develop and implement specific quality control plans and safe launch
+  strategies for new vehicle programs.
+expected_outcome: >-
+  Improved ramp accuracy, reduced changeover waste, and faster issue resolution
+  across the supplier network.
+rationale: >-
+  The scenario aims to streamline supplier launch readiness through
+  deterministic and agentic decisions, reducing COGS and improving overall
+  launch efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Supplier Capability Data
+    source: SAP S/4HANA
+    purpose: Evaluate supplier process capability
+    preferred_stream_type: STREAMS
+  - name: Launch Schedule
+    source: SAP S/4HANA
+    purpose: Balance launch schedule risk and cost
+    preferred_stream_type: STREAMS
+  - name: Quality Control Plans
+    source: SAP S/4HANA
+    purpose: Develop specific quality control plans
+    preferred_stream_type: STREAMS
+  - name: Run-at-Rate Requirements
+    source: SAP S/4HANA
+    purpose: Allocate run-at-rate verification plans
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Initiate new supplier launch
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect initial supplier data
+  - step: Develop quality control plans
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict optimal quality control strategies
+  - step: Allocate run-at-rate verification plans
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure feasible production start
+  - step: Conduct supplier readiness assessments
+    stage: act
+    component: Remote Functions
+    purpose: Validate supplier readiness
+  - step: Identify and contain launch issues
+    stage: review
+    component: RCA Service
+    purpose: Minimize COGS impact
+branches:
+  - condition: Supplier readiness assessment fails
+    response: Escalate to senior management
+    outcome: Review and adjust launch plan
+  - condition: Quality control plan exceeds budget
+    response: Adjust plan to balance cost and quality
+    outcome: Optimize cost while maintaining quality
+  - condition: Run-at-rate verification fails
+    response: Reallocate resources and reschedule
+    outcome: Ensure feasible production start

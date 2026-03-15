@@ -1,0 +1,32 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: confirmed-vehicle-orders
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-plan
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-availability
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Optimize order sequence based on due dates and resource utilization.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure on-time completion and alignment with production plan.
+  - component: Remote Functions
+    type: process_builder
+    function: Balance throughput and due dates dynamically.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review integrate order sequencing, release/execution monitoring, dynamic
+      schedule changes, and material availability resolution to optimize
+      production throughput, reduce cogs, and improve working capital. and
+      approve the recommended action.

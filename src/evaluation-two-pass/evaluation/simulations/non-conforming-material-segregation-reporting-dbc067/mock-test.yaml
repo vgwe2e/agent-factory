@@ -1,0 +1,56 @@
+decision: >-
+  Determine disposition for received items (accept to inventory,
+  quarantine/segregate for quality disposition, return to supplier) and allocate
+  dock, labor, and putaway path balancing quality risk, cost impact, and
+  downstream throughput.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Inbound ASN arrival + yard arrival event (vehicle docks) detected or
+    receiving inspection failure recorded.
+  parameters:
+    objective: >-
+      Automate end-to-end receiving and putaway orchestration with immediate
+      exception handling for non-conforming materials across yard, inbound
+      unloading, inspection, and segregation to reduce receiving COGS, improve
+      OTIF, and accelerate downstream throughput.
+    key_inputs:
+      - Advance Shipping Notice (ASN) / EDI inbound
+      - Dock & Yard Arrival Events
+      - Receiving Inspection Results (QC scans, photos, operator notes)
+      - WMS Inventory & Putaway Maps
+      - Labor Availability & Skills
+      - Quality Rules & Cost Impact Policies
+    source_systems:
+      - SAP S/4HANA
+      - Yard Management System
+      - Warehouse Management System
+      - Mobile Inspection / Scanner Devices
+expected_output:
+  action: >-
+    Agentic AI evaluates inspection, ASN, and yard/warehouse state then executes
+    automated actions (update SAP S/4HANA/WMS, reserve quarantine locations,
+    dispatch labor, adjust dock schedule) or opens a CWB for human review when
+    required.
+  outcome: >-
+    Faster, consistent segregation of non-conforming materials, fewer receiving
+    errors in inventory, reduced rework/returns costs, improved OTIF, and lower
+    working capital via optimal immediate inventory positioning.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Agent Team
+    - Process Builder + Remote Functions
+    - UI Screen + Notification
+    - Dashboard
+rationale: >-
+  Agentic AI coordinates multi-source real-time inputs and tradeoffs (quality
+  risk vs cost vs throughput) where adaptive reasoning and multi-step
+  orchestration outperform static rules. Process Builder provides deterministic
+  orchestration and Remote Functions handle ERP writebacks; CWB Lifecycle
+  captures human-in-the-loop exceptions. This hybrid ensures automated low-risk
+  actions and controlled escalation for ambiguous/high-risk cases.

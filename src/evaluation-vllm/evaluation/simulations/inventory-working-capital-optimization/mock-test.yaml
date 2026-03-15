@@ -1,0 +1,41 @@
+decision: >-
+  Set and enforce inventory targets, compute safety stock levels, identify
+  excess/obsolete inventory, develop deployment/rebalancing strategies, and
+  evaluate working capital impact.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic inventory review and demand forecast update.
+  parameters:
+    objective: >-
+      Optimize global inventory targets, safety stock, excess/obsolete inventory
+      mitigation, deployment/rebalancing, and working capital impact analysis
+      across Ford’s multi-echelon network.
+    key_inputs:
+      - Inventory Levels
+      - Demand Forecasts
+      - Service Level Requirements
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Adjust inventory targets, safety stock levels, and deployment strategies to
+    optimize working capital while maintaining service levels.
+  outcome: >-
+    Reduced working capital and COGS with maintained or improved service levels
+    and OTIF.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Safety Stock Service
+    - Remote Functions
+    - Process Builder
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  Coordinating stock positioning, safety stock targets, and proactive
+  excess/obsolete reduction with finance-aligned decision metrics can
+  significantly improve overall efficiency and financial performance.

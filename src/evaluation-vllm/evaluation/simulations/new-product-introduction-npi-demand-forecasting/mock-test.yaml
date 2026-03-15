@@ -1,0 +1,37 @@
+decision: >-
+  Adjust demand plan based on pre-launch order bank analysis, pilot program
+  simulation, ramp-up projection, and feature/trim level demand segmentation.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New product introduction (NPI) announcement.
+  parameters:
+    objective: >-
+      Coordinated NPI demand forecasting across pre-launch, pilot, ramp-up, and
+      feature/trim segmentation to enable autonomous adjustments to production,
+      supplier replenishment, and capacity planning.
+    key_inputs:
+      - Pre-orders and Reservations
+      - Early Production Builds
+      - Ramp-Up Volumes
+      - Feature and Trim Level Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate adjustments to production, supplier replenishment, and capacity
+    planning based on forecasted demand.
+  outcome: >-
+    Reduced working capital tied to NPI stock, improved launch OTIF, and better
+    alignment of supplier and plant capacities with market reception.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  Unify forecasting inputs and automate ramp decisions to optimize production
+  and inventory management.

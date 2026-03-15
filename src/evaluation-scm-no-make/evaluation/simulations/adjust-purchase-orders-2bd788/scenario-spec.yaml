@@ -1,0 +1,152 @@
+objective: >-
+  Autonomously optimize and orchestrate PO call-offs across suppliers and
+  materials to consolidate deliveries, minimize COGS, reduce working capital,
+  and protect revenue while respecting supplier constraints and multi-echelon
+  inventory needs.
+trigger: >-
+  Daily scheduled orchestration run or inventory/demand trigger (significant
+  forecast delta, stockout risk, or supplier capacity change).
+decision: >-
+  Select which supplier POs and quantities to adjust (consolidate, advance,
+  delay, or cancel) to optimize cost and service given demand signals, inventory
+  positions, transport capacity, and supplier delivery certainty.
+expected_action: >-
+  Automatically generate and execute PO change transactions to the selected
+  supplier(s) in S4 via Remote Functions, update internal planning stores, and
+  publish notifications and dashboard updates to stakeholders.
+expected_outcome: >-
+  Reduced COGS through supplier consolidation and freight optimization, lower
+  working capital via reduced inbound inventory variance, maintained or improved
+  service levels (revenue protection), and auditable PO change transactions with
+  exception routing.
+rationale: >-
+  A deterministic, process-driven orchestration combining demand, inventory,
+  supplier performance, and transport constraints enables repeatable, auditable
+  PO tuning at L4. Using STREAMS for data consolidation, Process Builder for
+  orchestration and rules, and Remote Functions for ERP writeback provides
+  scalable, enterprise-grade automation while preserving exception handling and
+  stakeholder visibility.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Forecasting / Analytics
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting Service
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / Planning
+    status: identified
+  - name: Kinaxis (Order Expediting / Rebalancing / Shortage Propagation)
+    type: Planning / Orchestration
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Frieght
+    type: Third-party transport
+    status: identified
+key_inputs:
+  - name: Demand Forecast (SKU-location-time)
+    source: Advanced Statistical Forecasting in SAS
+    purpose: Baseline demand signal for call-off sizing and net requirements
+    preferred_stream_type: Report Data
+  - name: Open Purchase Orders & PO Line Details
+    source: S4 (SAP S/4HANA)
+    purpose: >-
+      Current commitments, lead times, price, supplier, and change history for
+      writeback and consolidation decisions
+    preferred_stream_type: Report Data
+  - name: Inventory Position (on-hand, in-transit, reserved)
+    source: Blue Yonder WMS / S4
+    purpose: >-
+      Multi-echelon inventory state to evaluate need and consolidation
+      opportunity
+    preferred_stream_type: Report Data
+  - name: Supplier Capacity, Delivery Certainty, Performance Scores
+    source: Kinaxis (Order Expediting) / S4
+    purpose: >-
+      Assess supplier ability to accept consolidated quantities and delivery
+      reliability
+    preferred_stream_type: Report Data
+  - name: Transportation Capacity & Cost (TMS / 3PL rates)
+    source: Uber Freight TMS / 3PL Uber Frieght
+    purpose: Estimate freight impact of consolidation and feasibility constraints
+    preferred_stream_type: Report Data
+  - name: Cost & Pricing (unit cost, landed cost components)
+    source: S4 (SAP S/4HANA)
+    purpose: Calculate COGS impact and tradeoffs for consolidation vs. split deliveries
+    preferred_stream_type: Report Data
+  - name: Shortage Propagation & Rebalancing Signals
+    source: Kinaxis RapidResponse / Kinaxis for Rebalancing
+    purpose: >-
+      Identify downstream constraints and revenue risk to prioritize PO
+      adjustments
+happy_path:
+  - step: >-
+      Ingest consolidated inputs (demand, open POs, inventory, supplier &
+      transport constraints)
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Aggregate and validate all upstream signals into a subject area for
+      orchestration
+  - step: Score consolidation opportunities and compute cost/service tradeoffs
+    stage: analyze
+    component: 'Process Builder: Rules + Remote Functions'
+    purpose: >-
+      Apply deterministic business rules and run cost calculations to rank PO
+      adjustment candidates
+  - step: >-
+      Select PO adjustments (which PO(s) to consolidate, advance, delay, or
+      split)
+    stage: decide
+    component: 'Process Builder: IF (decision) + Remote Functions'
+    purpose: >-
+      Apply decision logic to pick the optimal supplier/PO action per
+      opportunity
+  - step: Execute PO changes and persist transactions to ERP
+    stage: act
+    component: 'Remote Functions (ERP writeback to S4) + Process Builder: Transaction'
+    purpose: Create/update/cancel PO call-offs in S4 and capture audit trail
+  - step: Publish change summary and exceptions
+    stage: notify
+    component: 'Process Builder: Notification'
+    purpose: >-
+      Alert procurement, suppliers (via integrations), and logistics teams about
+      executed changes
+  - step: Surface updated plan and KPIs (COGS impact, WC, service level)
+    stage: surface
+    component: UI Screen (dashboard)
+    purpose: >-
+      Provide stakeholders a dashboard view of results, metrics, and recent
+      changes
+branches:
+  - condition: >-
+      Selected supplier reports inability to accept consolidated quantity
+      (capacity or lead-time constraint)
+    response: >-
+      Fallback to next-ranked supplier or schedule split deliveries; update
+      decision with transport constraints and re-run cost calc
+    outcome: >-
+      Partial consolidation with preserved service level; updated PO changes
+      executed and documented
+  - condition: Transportation capacity/cost makes consolidation uneconomic
+    response: >-
+      Retain split delivery plan or identify alternate transport option via TMS;
+      mark opportunity as rejected and record rationale
+    outcome: >-
+      No detrimental COGS or service impact; decision logged for audit and
+      future tuning
+  - condition: Procurement exception (policy override or manual approval required)
+    response: >-
+      Create CWB exception (Action Item) and route to procurement team for
+      approval before ERP writeback
+    outcome: >-
+      Human-in-the-loop approval prevents risky automated changes; approved
+      actions proceed, rejected actions are rolled back

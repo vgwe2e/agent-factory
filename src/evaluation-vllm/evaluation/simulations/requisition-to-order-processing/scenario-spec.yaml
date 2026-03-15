@@ -1,0 +1,77 @@
+objective: >-
+  Reduce COGS, accelerate PO lifecycle, and improve working capital through
+  touchless, compliant, and optimized PO creation, amendment, and goods receipt
+  workflows.
+trigger: Requisition creation by internal stakeholders.
+decision: >-
+  Should a requisition for indirect goods/services be created and approved,
+  selecting quantities, scopes, and approval routing to optimize indirect spend
+  and reduce lead times.
+expected_action: >-
+  Automatically create and approve requisitions, issue POs, manage catalogs,
+  process goods receipts, and handle PO amendments/cancellations.
+expected_outcome: >-
+  Reduced manual touchpoints, accelerated cash-to-cargo cycle, and optimized
+  indirect spend.
+rationale: >-
+  Automate end-to-end requisition-to-order processing to minimize human
+  intervention, ensure compliance, and enhance operational efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Requisition Details
+    source: SAP S/4HANA
+    purpose: To initiate the requisition creation process.
+  - name: Supplier Information
+    source: SAP S/4HANA
+    purpose: To determine supplier terms and contract coverage.
+  - name: Catalog Data
+    source: SAP S/4HANA
+    purpose: To maintain and optimize indirect item catalogs.
+  - name: Goods Receipt Data
+    source: SAP S/4HANA
+    purpose: To process goods receipts and service entry sheets.
+  - name: PO Amendment Requests
+    source: SAP S/4HANA
+    purpose: To handle PO amendments and cancellations.
+happy_path:
+  - step: Requisition Creation
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Capture requisition details from SAP S/4HANA.
+  - step: Requisition Approval
+    stage: analyze
+    component: Agentic AI
+    purpose: >-
+      Analyze requisition details and automatically approve based on predefined
+      rules.
+  - step: PO Creation
+    stage: decide
+    component: Agentic AI
+    purpose: Generate and issue POs based on supplier terms and contract coverage.
+  - step: Catalog Management
+    stage: act
+    component: Agentic AI
+    purpose: Update and maintain e-procurement catalogs and punchout integrations.
+  - step: Goods Receipt Processing
+    stage: review
+    component: Agentic AI
+    purpose: Recognize and process goods receipts and service entry sheets.
+  - step: PO Amendments
+    stage: notify
+    component: Agentic AI
+    purpose: >-
+      Handle PO amendments and cancellations based on contract terms and
+      approvals.
+branches:
+  - condition: Requisition exceeds budget threshold
+    response: Escalate to human approver
+    outcome: Manual approval required.
+  - condition: Supplier contract is expired
+    response: Notify procurement team
+    outcome: Contract renewal process initiated.
+  - condition: Goods receipt data is missing
+    response: Trigger data validation process
+    outcome: Data validation and correction before processing.

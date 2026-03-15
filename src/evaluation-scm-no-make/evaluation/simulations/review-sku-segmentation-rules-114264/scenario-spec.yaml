@@ -1,0 +1,127 @@
+objective: >-
+  Review and update SKU segmentation (ABC/XYZ) rules to optimize portfolio mix
+  against demand variability and service targets.
+trigger: >-
+  Scheduled monthly review or ad-hoc when segment performance deviates beyond
+  threshold or planned demand changes are detected.
+decision: >-
+  Choosing SKU segmentation rule adjustments (ABC/XYZ) to rebalance portfolio
+  mix and align service/cost targets.
+expected_action: >-
+  Automatically compute ABC/XYZ metrics, propose rule adjustments via Process
+  Builder, present recommendations in a CWB for approvers, and on approval
+  execute Remote Functions to persist new segment tags back to S4 (and
+  downstream systems).
+expected_outcome: >-
+  Updated SKU segmentation rules applied to master data, improved alignment of
+  stock/service levels with demand variability, audit trail of changes and
+  approvals, and downstream systems updated (S4, RapidResponse, WMS) within the
+  planning window.
+rationale: >-
+  Deterministic rule adjustments based on established metrics (volume, value,
+  demand variability, forecast error) reduce manual effort, ensure consistent
+  classification, and enable downstream planning tools (APS, safety stock) to
+  act on current segments.
+source_systems:
+  - name: S4
+    type: ERP
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS / 3PL
+    type: TMS/3PL
+    status: identified
+key_inputs:
+  - name: SKU master (product attributes, current ABC/XYZ tags)
+    source: S4
+    purpose: >-
+      Baseline segmentation tags and master attributes for classification and
+      writeback targets.
+    preferred_stream_type: Report Data
+  - name: Historical sales / shipments
+    source: Advanced Statistical Forecasting in SAS
+    purpose: Calculate value (ABC) and variability/turnover metrics (XYZ).
+    preferred_stream_type: Report Data
+  - name: Statistical forecast and forecast error (MAPE)
+    source: Advanced Statistical Forecasting in SAS
+    purpose: Input for demand variability and classification (XYZ).
+    preferred_stream_type: Data View
+  - name: On-hand inventory and replenishment lead time
+    source: S4
+    purpose: >-
+      Assess service/cost impact of segment changes and calculate risk
+      thresholds.
+    preferred_stream_type: Report Data
+  - name: >-
+      Operational constraints and business policy thresholds (e.g., service
+      targets, ABC value cutoffs)
+    source: Manual / Policy repository
+    purpose: Govern classification boundaries and approval criteria.
+  - name: Downstream impact indicators (APS alerts, shortage propagation)
+    source: Kinaxis RapidResponse
+    purpose: Estimate operational impact of proposed segmentation changes.
+    preferred_stream_type: Report Data
+happy_path:
+  - step: Extract SKU master, historical sales, forecasts and inventory data
+    stage: ingest
+    component: STREAMS
+    purpose: Consolidate and cleanse inputs for segmentation analysis.
+  - step: Compute ABC value and XYZ variability metrics and apply current rule logic
+    stage: analyze
+    component: Process Builder - Rules
+    purpose: >-
+      Generate baseline classifications and identify SKUs near rule boundaries
+      or showing performance drift.
+  - step: >-
+      Generate proposed rule adjustments and ranking of impacted SKUs; create
+      approval CWB
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      Present deterministic recommendations with rationale and impact estimates
+      for human approval.
+  - step: >-
+      On approver acceptance, execute writeback of updated segment tags and
+      notes
+    stage: act
+    component: Remote Functions
+    purpose: Persist approved segmentation changes to S4 and notify downstream systems.
+  - step: >-
+      Notify stakeholders and surface change details and expected downstream
+      impacts
+    stage: notify
+    component: Process Builder - Notification / UI Screen
+    purpose: >-
+      Inform planners, inventory owners, and APS teams and provide a link to
+      review results.
+branches:
+  - condition: >-
+      Proposed rule changes impact > X% of SKUs or increase forecasted supply
+      risk above threshold
+    response: >-
+      Escalate to cross-functional review via Process Builder Subprocess and
+      require extended approval (multi-stage CWB).
+    outcome: >-
+      Delay automatic writeback; multi-stakeholder review conducted and a
+      controlled rollout plan created.
+  - condition: Insufficient historical data or high forecast uncertainty for a SKU
+    response: >-
+      Flag SKU as 'insufficient data' and exclude from automatic
+      reclassification; route to data enrichment task/agent.
+    outcome: >-
+      No automatic change for low-confidence SKUs; tasks generated to collect
+      more data or apply manual review.
+  - condition: Business override requested by approver (manual policy exception)
+    response: >-
+      Capture override reason in CWB, persist override metadata, and exclude SKU
+      from automated reclassification for configured period.
+    outcome: >-
+      Override recorded with audit trail; segmentation for SKU remains as
+      manually specified until expiration.

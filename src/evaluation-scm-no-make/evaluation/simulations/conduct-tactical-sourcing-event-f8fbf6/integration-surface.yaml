@@ -1,0 +1,63 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS
+    status: identified
+  - name: External Market Data (benchmarks, spot rates, commodity indexes)
+    type: market_data
+    status: tbd
+  - name: Procurement/P2P system
+    type: procurement
+    status: tbd
+aera_ingestion:
+  - stream_name: material-master-bom
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA)
+  - stream_name: supplier-master-past-po-history
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA)
+  - stream_name: demand-promotional-forecast
+    stream_type: STREAMS
+    source: Advanced Statistical Forecasting in SAS / Kinaxis
+  - stream_name: inventory-shortage-expediting-signals
+    stream_type: STREAMS
+    source: Kinaxis RapidResponse
+  - stream_name: market-pricing-commodity-indices
+    stream_type: DDM/Crawlers
+    source: External Market Data
+  - stream_name: procurement-policy-compliance-rules-and-target-savings
+    stream_type: Event Stream
+    source: Procurement/P2P system
+processing:
+  - component: Agent Team
+    type: process_builder
+    function: >-
+      identify and rank suppliers by capability, cost, lead time, risk, and
+      strategic fit
+  - component: Process (Process Builder) - IF
+    type: process_builder
+    function: >-
+      select multi-bid vs single-source, set bid timelines and evaluation
+      criteria
+  - component: Process (Action Item) + Agent Team
+    type: agent_teams
+    function: >-
+      collect bids, perform multi-round negotiation to meet target EBITDA/cost
+      goals, and capture counteroffers
+ui_surface:
+  - component: CWB Lifecycle + Remote Functions
+    screen: Primary
+    purpose: >-
+      present human-reviewable recommendation, obtain approvals, and persist
+      agreed terms in S4

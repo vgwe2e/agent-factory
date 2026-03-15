@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled daily process run or threshold-trigger (container aging, low availability, or forecasted shortfall) detected in inventory Subject Area.]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Ingest master and transactional container data and schedules from SAP S/4HANA]
+  N1 --> N2[Stream: STREAMS + Subject Areas (Data Quality & Validation) - Validate and aggregate into Subject Areas and run data quality checks]
+  N2 --> N3{PB: Process Builder (Process) calling Cortex Auto Forecast + Remote Functions (optimization engine) - Forecast near-term container demand and compute optimized return schedules}
+  N3 -->|Primary| N4[PB: Process Builder (Transaction) + Remote Functions (ERP writeback) - Execute plans: create return movement orders and book transport]
+  N4 --> N5[PB: UI Screen + Process Builder Notification - Surface schedules and exceptions to planners and notify suppliers/carriers]
+  N5 --> Z1[Outcome: Faster container turnover and higher utilization, reduced COGS from fewer idle containers, improved OTIF for inbound containerized materials, and reduced manual scheduling effort.]
+  N3 -->|Insufficient available containers at ...| B1[Optimization engine prioritizes critical plants, postpones non-critical returns, and flags shortage; create expedited pickup options and surplus requisition actions via Remote Functions.]
+  B1 --> O1[Outcome: Critical production maintains supply at higher cost; non-critical returns deferred, and manual review created for replenishment plans.]
+  O1 --> End[End]
+  N3 -->|Supplier rejects proposed return wind...| B2[Automatic exception created and routed via CWB Lifecycle (Action Item) to logistics/planner team for renegotiation; system proposes alternate windows and consolidation candidates.]
+  B2 --> O2[Outcome: Human-in-the-loop resolves supplier non-compliance; updated return plan written back after approval, minimizing disruption.]
+  O2 --> End[End]
+  N3 -->|Transport capacity shortage or carrie...| B3[Re-optimize consolidation and routing within Process Builder; if automated rebooking fails, create Notification and Action Item to engage third-party carriers or approve premium service.]
+  B3 --> O3[Outcome: Returns are consolidated or rebooked to restore schedule where possible; cost and lead-time impact are recorded for review.]
+  O3 --> End[End]
+  Z1 --> End[End]

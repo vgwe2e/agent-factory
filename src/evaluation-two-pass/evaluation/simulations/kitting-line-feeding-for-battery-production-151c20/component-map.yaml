@@ -1,0 +1,47 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Collect inbound shipment, SKU, lot and staging capacity data for upcoming
+      receipts.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Create consolidated dataset of available components, arrival ETAs, lot
+      attributes and staging constraints.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Agent Team
+    purpose: >-
+      Produce prioritized kitting plan and line-feed schedule optimizing feed
+      rates and buffer targets.
+    confidence: confirmed
+    node_type: integration
+  - name: Remote Functions
+    purpose: >-
+      Trigger WES pick/putaway, create kit assemblies, and record reservations
+      in SAP for traceability.
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: Provide human-in-the-loop approval for high-risk changes or exceptions.
+    confidence: confirmed
+    node_type: review
+  - name: Process Builder
+    purpose: >-
+      Close the loop with notifications and update planning data for continuous
+      adjustment.
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously orchestrate inbound material receipt, quality
+      screening, kitting, and timed line-feeding for battery assembly lines to
+      reduce cogs, minimize stockouts, and improve otif across multi-echelon
+      suppliers and warehouses. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

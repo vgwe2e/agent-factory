@@ -1,0 +1,53 @@
+decision: >-
+  Produce a cost-optimized, conflict-free production schedule for 12-24 month
+  horizon and weekly rolling MPS that balances demand, capacity, supplier
+  constraints, inventory targets, and capital limits.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Weekly MPS run (scheduled) or event-driven when demand forecast, capacity,
+    or supplier lead-time data changes beyond thresholds.
+  parameters:
+    objective: >-
+      Autonomously generate conflict-free, multi-horizon MPS schedules that
+      minimize COGS while honoring multi-echelon constraints (capacity, supplier
+      lead times, inventory targets) across Ford vehicle platforms and
+      components.
+    key_inputs:
+      - Demand forecasts (12-24 months, weekly roll)
+      - Current orders & sales confirmations
+      - Capacity & routing constraints (work centers, line rates)
+      - Supplier lead times & lot constraints
+      - Cost parameters (material, labor, changeover, inventory carrying)
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Process Builder orchestrates ingestion (DDM/Crawlers), data transformations
+    (STREAMS -> Subject Areas), calls Remote Functions optimization solver to
+    generate schedules, validates outputs, and writes approved schedules back to
+    SAP S/4HANA via Remote Functions; surfaces results on UI Screens and updates
+    monitoring.
+  outcome: >-
+    Automatically generated, executable production schedules that reduce COGS,
+    eliminate schedule conflicts, increase line efficiency, and improve on-time
+    delivery; measurable reductions in production cost and inventory carrying,
+    with KPIs tracked in Cortex Monitoring.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Remote Functions (optimization solver)
+    - Remote Functions
+    - UI Screen
+    - Cortex Monitoring
+    - Dashboard
+rationale: >-
+  Deterministic, process-driven orchestration ensures repeatable optimization
+  across planning horizons. Combining robust ETL (DDM/STREAMS), a solver via
+  Remote Functions, and ERP writeback to SAP S/4HANA enables end-to-end
+  coordination across echelons to realize COGS and service improvements while
+  preserving auditability and manual override paths.

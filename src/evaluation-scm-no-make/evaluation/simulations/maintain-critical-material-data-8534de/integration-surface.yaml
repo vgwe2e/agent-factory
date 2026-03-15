@@ -1,0 +1,66 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Frieght
+    type: 3PL
+    status: identified
+aera_ingestion:
+  - stream_name: sku-location-master-material-attributes-pack-shelf-life-criticality-flags
+    stream_type: STREAMS
+    source: S4 (master data)
+  - stream_name: demand-forecasts-baseline-and-promotion-adjusted
+    stream_type: DDM/Crawlers
+    source: SAS (Advanced Statistical Forecasting)
+  - stream_name: inventory-on-hand-and-location-balances
+    stream_type: STREAMS
+    source: Blue Yonder WMS / S4
+  - stream_name: open-pos-and-supplier-lead-times
+    stream_type: STREAMS
+    source: S4 / Kinaxis
+  - stream_name: shortage-constraint-signals-and-aps-recommendations
+    stream_type: DDM/Crawlers
+    source: Kinaxis RapidResponse
+  - stream_name: promotions-calendar-and-changes
+    stream_type: DDM/Crawlers
+    source: Marketing/Promotion feeds (integrated via DDM)
+  - stream_name: safety-stock-and-fg-model-parameters
+    stream_type: STREAMS
+    source: Kinaxis (safety stock models) / Subject Areas
+processing:
+  - component: Process Builder (IF / Rules)
+    type: process_builder
+    function: >-
+      Apply business thresholds (COGS impact, data confidence, safety-stock
+      bounds) to choose action
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Perform authorized system updates and notify downstream APS for supply
+      adjustments
+  - component: CWB Lifecycle / Notification
+    type: process_builder
+    function: >-
+      Route high-impact or low-confidence cases for human approval with context
+      and action items
+ui_surface:
+  - component: Data View / UI Screen / dashboard
+    screen: Primary
+    purpose: >-
+      Provide planners and leadership visibility into outcomes and outstanding
+      exceptions

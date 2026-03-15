@@ -1,0 +1,31 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Extract NPI component data from SAP S/4HANA
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Remote Functions
+    purpose: Calculate and allocate target costs for NPI components
+    confidence: inferred
+    capability: Calculate and allocate target costs for NPI components
+  - name: AutoML
+    purpose: Develop and apply should-cost models for component cost comparisons
+    confidence: inferred
+    capability: Develop and apply should-cost models for component cost comparisons
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Engage engineering team for cost-optimized design options
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Capture, prioritize, and track cost-saving ideas from suppliers
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review cost & value optimization (sourcing phase) and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

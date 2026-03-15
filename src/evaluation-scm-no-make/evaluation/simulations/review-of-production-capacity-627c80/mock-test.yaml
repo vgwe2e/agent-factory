@@ -1,0 +1,55 @@
+decision: >-
+  Choose DRP capacity adjustment plan (increase capacity vs maintain &
+  rebalance) that balances incremental COGS impact, service level risk, and
+  feasible production actions.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled daily/shift batch or event-driven when projected plant utilization
+    or demand variance exceeds thresholds (e.g., projected utilization > 85% or
+    demand upside/downside > 15%).
+  parameters:
+    objective: >-
+      Automate end-to-end production capacity review and feasibility checks
+      across SKUs and plants to optimize capacity utilization, reduce waste,
+      protect margins, and accelerate decision cycles.
+    key_inputs:
+      - Master demand forecast (SKU x location x horizon)
+      - Current production capacity & constraints (plant, line, shift, skill)
+      - Production schedule / load and projected utilization
+      - Inventory on-hand, FG safety stock targets
+      - Open POs, lead times, procurement constraints
+      - Shortage/expedite signals and rebalancing recommendations
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS / Advanced Statistical Forecasting (SAS)
+      - Kinaxis RapidResponse / Kinaxis (APS)
+      - Blue Yonder WMS
+      - Uber Freight (3PL / TMS)
+expected_output:
+  action: >-
+    Produce a ranked set of executable capacity actions (increase capacity via
+    overtime/subcontracting/shift change, or maintain and rebalance across
+    plants) and execute approved actions via ERP/APS writeback or Kinaxis
+    rebalancing.
+  outcome: >-
+    Capacity plan aligned to demand across SKUs/locations with reduced stockouts
+    and waste, improved fill rate and on-time service, and controlled
+    incremental COGS from chosen capacity actions.
+  affected_components:
+    - STREAMS
+    - Process Builder (Process) + Rules
+    - Process Builder (IF) + Action Item / CWB Lifecycle
+    - Remote Functions
+    - Subject Areas + Report Data
+    - UI Screen (dashboard) + Process Builder (Notification)
+rationale: >-
+  Deterministic process-based orchestration leverages existing forecasts,
+  inventory, and supply constraints to operationalize capacity decisions at
+  scale. Using Process Builder for orchestration, STREAMS for data
+  consolidation, and Remote Functions/ERP writebacks enables repeatable,
+  auditable decisions and faster cycle times.

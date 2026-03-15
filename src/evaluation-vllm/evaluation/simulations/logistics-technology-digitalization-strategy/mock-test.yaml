@@ -1,0 +1,39 @@
+decision: >-
+  Define phased IT system rollout for logistics tooling to maximize future-state
+  integration and data integrity.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Initiate logistics technology and digitalization strategy program.
+  parameters:
+    objective: >-
+      Reduce COGS and working capital while increasing revenue through higher
+      OTIF and order capture by dynamically selecting plants, carriers, and
+      carriers, and by aligning safety stock and stock rebalancing across a
+      multi-echelon automotive parts network.
+    key_inputs:
+      - Inventory Levels
+      - Order Fulfillment Data
+      - Carrier Performance Metrics
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Plan the phased implementation and integration of logistics IT systems and
+    tools.
+  outcome: >-
+    Enhanced network efficiency, reduced COGS, and increased revenue through
+    optimized logistics operations.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - Safety Stock Service
+    - Process Builder
+    - Agentic AI
+    - Dashboard
+rationale: >-
+  Combining deterministic optimization with agentic orchestration will enable
+  dynamic decision-making and improve overall logistics performance.

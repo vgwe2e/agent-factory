@@ -1,0 +1,56 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: master-production-schedule-mps
+    stream_type: STREAM
+    source: SAP S/4HANA
+  - stream_name: bill-of-materials-bom-bom-release
+    stream_type: STREAM
+    source: SAP S/4HANA
+  - stream_name: on-hand-inventory-reservations
+    stream_type: STREAM
+    source: SAP S/4HANA
+  - stream_name: open-purchase-orders-supplier-commitments
+    stream_type: STREAM
+    source: SAP S/4HANA
+  - stream_name: supplier-lead-times-constraints
+    stream_type: Event Stream
+    source: SAP S/4HANA or supplier portal (tbd)
+  - stream_name: inventory-policy-safety-stock-targets
+    stream_type: Event Stream
+    source: Configured policy tables / Safety Stock Service (optional)
+  - stream_name: lot-sizing-procurement-rules-min-max-eoq-multiples
+    stream_type: STREAM
+    source: SAP S/4HANA
+  - stream_name: demand-forecast-if-used-to-supplement-mps
+    stream_type: Event Stream
+    source: Cortex Auto Forecast (optional)
+processing:
+  - component: Process (Process Builder) -> Remote Functions
+    type: cortex
+    function: >-
+      Compute recommended release quantities and timing minimizing cost/shortage
+      risk while respecting constraints
+  - component: CWB Lifecycle + UI Screen
+    type: process_builder
+    function: Enable accept/override/adjust decisions with human governance
+  - component: Remote Functions (ERP Writeback)
+    type: process_builder
+    function: >-
+      Ensure SAP reflects executed MRP decisions and suppliers receive confirmed
+      release information
+  - component: Process (Notification) -> Safety Stock Service (or Data View)
+    type: process_builder
+    function: >-
+      Close the loop: surface performance, trigger follow-ups, and update
+      policies based on execution variance
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end mrp decisions across bom release, component
+      requirements calculation, supplier release, and dynamic safety stock to
+      reduce cogs, improve otif, and optimize working capital in a multi-echelon
+      automotive network. and approve the recommended action.

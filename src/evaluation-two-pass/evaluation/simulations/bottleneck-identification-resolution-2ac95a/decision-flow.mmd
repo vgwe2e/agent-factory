@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled capacity planning run (e.g., daily/weekly) or event-driven trigger when realized throughput drops 10% vs plan or demand forecast variance 15%.]
+  A --> N1[Stream: STREAMS - Consolidate master, orders, telemetry, and forecast into canonical dataset]
+  N1 --> N2[Cortex: RCA Service + Data Science - Detect bottlenecks and quantify impact using historical throughput and constraint analysis]
+  N2 --> N3{PB: Process Builder (Rules, IF) - Evaluate corrective action feasibility and rank by benefit/cost under business rules}
+  N3 -->|Primary| N4[PB: Process Builder (Remote Functions, Action Item, CWB Lifecycle) - Execute approved low-risk actions and generate approvals for exceptions]
+  N4 --> N5[PB: UI Screen + Notification - Surface recommendations, record decisions, and monitor outcome metrics]
+  N5 --> Z1[Outcome: Improved line throughput and utilization, reduced COGS from lower idle time and reduced overtime/changeover, fewer downstream delays, and closer alignment of available capacity to forecasted demand.]
+  N3 -->|No statistically significant bottlene...| B1[Mark run as monitoring-only, schedule increased telemetry sampling and re-run analysis on next scheduled cadence.]
+  B1 --> O1[Outcome: No operational changes applied; additional data collection to improve future detection.]
+  O1 --> End[End]
+  N3 -->|Recommended action passes determinist...| B2[Automatically execute via Remote Functions and writeback changes to SAP S/4HANA; notify execution and expected impact.]
+  B2 --> O2[Outcome: Changes applied immediately, expected throughput uplift realized and tracked; closed-loop monitoring validates impact.]
+  O2 --> End[End]
+  N3 -->|Recommended action conflicts with mai...| B3[Create CWB Lifecycle exception routed to plant planner/maintenance with required supporting evidence and suggested mitigation.]
+  B3 --> O3[Outcome: Action paused until human approval; maintenance or safety team schedules corrective activities; change executed post-approval.]
+  O3 --> End[End]
+  Z1 --> End[End]

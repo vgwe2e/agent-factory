@@ -1,0 +1,34 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Generate accurate demand forecasts.
+    confidence: confirmed
+    capability: Generate accurate demand forecasts.
+  - name: Safety Stock Service
+    purpose: Ensure optimal inventory levels.
+    confidence: inferred
+    capability: Ensure optimal inventory levels.
+process_builder:
+  - name: Process Builder
+    purpose: Automate logistics planning and execution.
+    confidence: confirmed
+    node_type: decide
+agent_teams:
+  - name: Agentic AI
+    purpose: Adapt to changing conditions dynamically.
+    confidence: inferred
+    role: Adapt to changing conditions dynamically.
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce cogs and working capital while increasing revenue through
+      higher otif and order capture by dynamically selecting plants, carriers,
+      and carriers, and by aligning safety stock and stock rebalancing across a
+      multi-echelon automotive parts network. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

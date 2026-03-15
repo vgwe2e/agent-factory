@@ -1,0 +1,69 @@
+objective: Cost & Value Optimization (Sourcing Phase)
+trigger: New product introduction (NPI) initiation
+decision: >-
+  Establish and cascade target costs for NPI components during sourcing, guide
+  supplier negotiation, and cost-to-value alignment
+expected_action: >-
+  Automate target cost setting, DtC collaboration, VA/VE workshops, should-cost
+  modeling, cost reduction idea tracking, and component localization strategy
+  evaluation
+expected_outcome: >-
+  Reduced COGS, improved cash flow, and measurable EBITDA and working capital
+  improvements
+rationale: >-
+  Synchronize target costing, DtC collaboration, VA/VE workshops, and
+  localization cost analyses to achieve multi-site supplier cost reductions and
+  schedule-driven production savings
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: NPI Components
+    source: SAP S/4HANA
+    purpose: Establish target costs for new product components
+  - name: Cost Reduction Ideas
+    source: Suppliers
+    purpose: Track and implement cost-saving ideas
+  - name: Component Costs
+    source: Industry Benchmarks
+    purpose: Compare against benchmarks for should-cost modeling
+happy_path:
+  - step: Initiate NPI process
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Extract NPI component data from SAP S/4HANA
+  - step: Set target costs
+    stage: analyze
+    component: Remote Functions
+    purpose: Calculate and allocate target costs for NPI components
+  - step: Collaborate on design-to-cost
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Engage engineering team for cost-optimized design options
+  - step: Conduct VA/VE workshops
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Approve or adjust cost-reduction initiatives
+  - step: Implement should-cost modeling
+    stage: analyze
+    component: AutoML
+    purpose: Develop and apply should-cost models for component cost comparisons
+  - step: Generate and track cost-reduction ideas
+    stage: act
+    component: Remote Functions
+    purpose: Capture, prioritize, and track cost-saving ideas from suppliers
+  - step: Evaluate localization strategy
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Assess and select localization options to reduce total landed cost
+branches:
+  - condition: Cost-reduction initiative fails to meet criteria
+    response: Reject and request reevaluation
+    outcome: Return to VA/VE workshop for further analysis
+  - condition: Supplier does not provide cost-reduction ideas
+    response: Escalate to supplier management
+    outcome: Ensure supplier engagement and participation
+  - condition: Localization strategy exceeds budget
+    response: Adjust strategy or seek alternative options
+    outcome: Optimize localization plan within budget constraints

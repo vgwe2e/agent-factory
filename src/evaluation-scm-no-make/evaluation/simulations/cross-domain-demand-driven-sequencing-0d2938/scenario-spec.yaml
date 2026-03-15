@@ -1,0 +1,161 @@
+objective: >-
+  Automatically coordinate demand segmentation outputs with production
+  sequencing and line allocation to minimize stockouts and excess across SKUs
+  and locations, aligning Plan and Make with near-term demand signals to protect
+  revenue and optimize COGS.
+trigger: >-
+  New/updated near-term demand segmentation and short-term forecast roll
+  produced (scheduled or delta) indicating changes to SKU-level demand priority
+  or shape within the next 0-14 day horizon.
+decision: >-
+  Dynamically allocate production capacity and sequence work across lines
+  (including automatic line reallocation) to balance service levels and COGS
+  while respecting capacity and material constraints.
+expected_action: >-
+  Process Builder orchestrates ingestion of segmentation and forecast signals,
+  runs deterministic rules and remote calculations to produce an optimized
+  sequencing and line-allocation plan, then writes allocations to S4 (Advanced
+  ATP) and issues sequencing updates to MES / production execution, while
+  notifying planners and propagating shortages to Kinaxis and logistics
+  partners.
+expected_outcome: >-
+  Short-term alignment of Plan and Make: reduced SKU stockouts and excess,
+  improved service levels for prioritized demand segments, fewer emergency
+  expediting events, and measurable COGS improvement from more efficient line
+  utilization and fewer rush logistics.
+rationale: >-
+  Deterministic process route lets Process Builder enforce business rules and
+  constraints, use STREAMS/Subject Areas to consolidate data, and Remote
+  Functions for ERP/MES writebacks. Integrating segmentation and short-term
+  forecasts with APS and ATP minimizes reactive firefighting; medium complexity
+  matches multiple enterprise integrations (S4, Kinaxis, WMS, TMS) without
+  requiring advanced ML retraining.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP (Advanced ATP / production master)
+    status: identified
+  - name: SAS
+    type: Analytics/Segmentation
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / short-term planning
+    status: identified
+  - name: Kinaxis (FG Safety Stock / Rebalancing / Order Expediting)
+    type: APS / inventory modeling
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS / 3PL
+    status: identified
+  - name: MES
+    type: MES (production execution / line sequencing)
+    status: tbd
+key_inputs:
+  - name: Demand segmentation outputs (SKU x location x segment)
+    source: SAS / Advanced Forecasting outputs
+    purpose: >-
+      Identify SKU priorities, service-level targets, demand volatility and
+      segmentation used to prioritize production and allocation
+    preferred_stream_type: delta batch
+  - name: Short-term forecasts (0-14 day horizon)
+    source: Advanced Statistical Forecasting in SAS / Kinaxis short-term forecasts
+    purpose: >-
+      Provide near-term demand shape and quantities to inform sequencing and
+      capacity allocation decisions
+    preferred_stream_type: delta batch
+  - name: Available production capacity and line configurations
+    source: S4 (capacity master) + MES (line states)
+    purpose: >-
+      Constrain feasible sequencing and line allocation; determine reallocation
+      opportunities
+    preferred_stream_type: batch
+  - name: Inventory on-hand by SKU and location
+    source: Blue Yonder WMS
+    purpose: Assess urgency for production and replenishment to avoid stockouts/excess
+    preferred_stream_type: delta batch
+  - name: Shortage/expediting signals
+    source: Kinaxis RapidResponse / Kinaxis Order Expediting
+    purpose: >-
+      Trigger sequencing changes or emergency reallocation to protect revenue /
+      critical service levels
+  - name: Logistics constraints and outbound windows
+    source: Uber Freight TMS / 3PL
+    purpose: >-
+      Ensure sequencing respects shipping cutoffs and minimizes expedited
+      freight cost
+    preferred_stream_type: batch
+happy_path:
+  - step: >-
+      Ingest segmentation, short-term forecast, inventory, capacity and shortage
+      signals
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate authoritative inputs (SAS, Advanced Forecasting, WMS, S4,
+      Kinaxis) into Aera Subject Areas
+  - step: Validate and surface consolidated short-horizon demand and constraints
+    stage: analyze
+    component: STREAMS + Subject Areas
+    purpose: >-
+      Normalize and apply data quality checks, produce SKU x location x line
+      views for decision logic
+  - step: >-
+      Compute optimized sequencing and line allocation plan using deterministic
+      rules and business constraints
+    stage: decide
+    component: Process Builder (Rules + Remote Functions)
+    purpose: >-
+      Apply prioritization, capacity, and cost rules to produce actionable
+      sequence and allocation recommendations
+  - step: >-
+      Execute allocations and sequencing updates to execution systems and
+      propagate shortages
+    stage: act
+    component: Remote Functions (ERP/MES writeback) + Process Builder
+    purpose: >-
+      Write plans to S4 (ATP/capacity), send sequencing to MES, and push
+      shortage/exchange notifications to Kinaxis
+  - step: >-
+      Notify production planners and create action items for
+      exceptions/overrides
+    stage: notify
+    component: CWB Lifecycle (Action Item) + Notification
+    purpose: >-
+      Surface recommendations and exceptions for human review or override where
+      rules mark manual intervention
+  - step: Review outcomes and surface KPIs to planners and supply chain ops
+    stage: review
+    component: UI Screens + Subject Areas (dashboard)
+    purpose: >-
+      Track service level, stockouts, line utilization, and COGS impact for
+      continuous improvement
+branches:
+  - condition: >-
+      Capacity constraints prevent satisfying prioritized demand even after
+      reallocation
+    response: >-
+      Create CWB Lifecycle exception routing to planner team with recommended
+      expediting and order re-prioritization; flag orders for Kinaxis escalation
+    outcome: >-
+      Human-in-the-loop approval for overtime/expedite; Kinaxis propagates
+      shortage and shipping adjustments to minimize service impact
+  - condition: Forecast uncertainty or segmentation conflict exceeds threshold
+    response: >-
+      Trigger wait node + request additional confirmatory signals (shorter
+      horizon forecasts or recent sales pull-in) and surface alternative
+      conservative sequencing options
+    outcome: >-
+      Defer automatic heavy reallocation; present safe fallback plan to avoid
+      overreaction and protect COGS
+  - condition: MES/ERP writeback fails or returns constraint violations
+    response: >-
+      Rollback transaction in Process Builder, generate Action Item via CWB
+      Lifecycle for manual resolution and re-run pre-flight validations
+    outcome: >-
+      Safe failure mode preventing invalid orders; planners resolve root cause
+      and reapply sequencing with corrected data

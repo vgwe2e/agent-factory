@@ -1,0 +1,70 @@
+objective: >-
+  Automate end-to-end supplier quality assessment and selection to optimize
+  COGS, reduce supplier qualification cycles, and accelerate onboarding.
+trigger: >-
+  New supplier registration or initiation of supplier quality assessment
+  process.
+decision: >-
+  Select and onboard suppliers based on quality systems, manufacturing
+  capabilities, and risk assessment.
+expected_action: >-
+  Evaluate potential suppliers, perform risk-based quality assessments, onboard
+  selected suppliers, and analyze assessment results.
+expected_outcome: >-
+  Reduced COGS, shortened supplier qualification cycles, accelerated onboarding,
+  and improved yield and delivery reliability.
+rationale: >-
+  Automating supplier quality assessment and selection improves efficiency,
+  reduces costs, and enhances supply chain reliability.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Supplier Registration Data
+    source: SAP S/4HANA
+    purpose: Identify new suppliers for assessment
+  - name: Quality Systems Evaluation
+    source: SAP S/4HANA
+    purpose: Assess supplier quality systems and manufacturing capabilities
+  - name: Part Criticality and Complexity Data
+    source: SAP S/4HANA
+    purpose: Prioritize risk-based quality assessments
+  - name: Supplier Assessment Results
+    source: SAP S/4HANA
+    purpose: Analyze supplier strengths and weaknesses
+happy_path:
+  - step: Retrieve new supplier registration data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest new supplier data from SAP S/4HANA
+  - step: Evaluate supplier quality systems and capabilities
+    stage: analyze
+    component: AutoML
+    purpose: Classify suppliers based on quality systems and capabilities
+  - step: Perform risk-based quality assessment
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict risk levels based on part criticality and complexity
+  - step: Decide on supplier selection
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Present AI recommendations for supplier selection
+  - step: Initiate supplier onboarding process
+    stage: act
+    component: Process Builder
+    purpose: Automate onboarding workflow including resource allocation and training
+  - step: Analyze supplier assessment results
+    stage: review
+    component: RCA Service
+    purpose: Identify strengths and weaknesses for supplier development
+branches:
+  - condition: Supplier fails quality assessment
+    response: Notify procurement team to reject supplier
+    outcome: Supplier is not onboarded and removed from consideration
+  - condition: Supplier meets minimum quality standards but has high risk
+    response: Initiate additional training and monitoring
+    outcome: Supplier is onboarded with enhanced oversight
+  - condition: Supplier exceeds quality expectations
+    response: Expedite onboarding process
+    outcome: Supplier is quickly integrated into Ford's supply network

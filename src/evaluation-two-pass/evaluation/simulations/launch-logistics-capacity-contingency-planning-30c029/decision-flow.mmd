@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Launch program entry + detection of inbound/outbound disruption (carrier ETA slip, port delay, capacity shortfall) within pre-launch or launch window.]
+  A --> N1[Stream: Process Builder - Stream (STREAMS / DDM) - Ingest all launch, inventory, transport, capacity, and external risk feeds on scheduled cadence and on disruption events.]
+  N1 --> N2[Cortex: Process Builder - Rules + Remote Functions (cost/lead-time calcs) - Analyze multi-echelon availability, transport impact, packaging constraints and compute alternative contingency options with cost and lead-time estimates.]
+  N2 --> N3{PB: Process Builder - IF + CWB Lifecycle - Decide the recommended contingency plan using IF branching and policy thresholds; escalate to CWB if policy limits exceeded.}
+  N3 -->|Primary| N4[PB: Remote Functions (ERP writeback) + Process Builder - Transaction - Act: execute selected plan—create transport orders, inventory reservations, and packaging sequence updates with writebacks to SAP S/4HANA and notify carriers/3PLs.]
+  N4 --> N5[PB: Process Builder - Notification + UI Screen (dashboard) - Notify operations, launch management, and carriers and surface decision rationale and key KPIs on launch dashboard for review.]
+  N5 --> Z1[Outcome: Activated contingency minimizes OTIF impact while constraining incremental logistics cost; multi-echelon stock repositions and sequencing adjustments executed in SAP S/4HANA; operations and carrier partners notified; launch timeline preserved or minimally impacted.]
+  N3 -->|Insufficient warehouse or transport c...| B1[Activate split shipments with prioritized SKUs and schedule staggered inbound; adjust packaging sequence to reduce throughput demand.]
+  B1 --> O1[Outcome: Service level maintained for highest priority SKUs; incremental cost controlled via predefined policy.]
+  O1 --> End[End]
+  N3 -->|Cost delta to meet OTIF exceeds polic...| B2[Route decision to CWB Lifecycle for human approval; include recommended alternative with full cost/service trade-off and escalate to launch leadership.]
+  B2 --> O2[Outcome: Human-in-the-loop accepts higher-cost contingency or selects alternative (e.g., delayed shipment) with documented rationale.]
+  O2 --> End[End]
+  N3 -->|No feasible contingency (carrier capa...| B3[Trigger exception workflow to enact launch mitigation plan: prioritize production sequencing changes, invoke external buffer suppliers, and update launch timeline scenarios.]
+  B3 --> O3[Outcome: Launch plan adjusted with minimized customer impact; executive stakeholders informed and contingency recovery plan initiated.]
+  O3 --> End[End]
+  Z1 --> End[End]

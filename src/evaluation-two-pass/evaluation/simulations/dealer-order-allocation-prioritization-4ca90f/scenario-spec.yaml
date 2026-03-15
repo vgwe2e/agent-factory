@@ -1,0 +1,135 @@
+objective: >-
+  Autonomously generate conflict-free, cost-optimized multi-scroll Master
+  Production Schedules (weekly + long-range) that allocate production slots to
+  dealer and fleet orders while respecting multi-echelon constraints to reduce
+  COGS, improve line efficiency, and increase OTIF across vehicle platforms and
+  components.
+trigger: >-
+  Nightly/weekly batch or on-demand planning run initiated by Process Builder
+  when new dealer/fleet orders or updated capacity/components are ingested.
+decision: >-
+  Allocate available production slots to dealer and fleet orders under business
+  rules, balancing revenue capture, OTIF, and line efficiency; accept agentic
+  schedule recommendations or route prioritized exceptions for planner override.
+expected_action: >-
+  Agent Team (multi-agent pipeline) synthesizes orders, constraints, and cost
+  signals to propose an optimized multi-scroll MPS; Process Builder applies
+  business rules, routes exceptions to CWB Lifecycle if needed, and Remote
+  Functions write approved schedule back to SAP S/4HANA.
+expected_outcome: >-
+  Conflict-free production schedules committed to SAP S/4HANA that lower COGS
+  via optimized sequencing and component utilization, increase line efficiency,
+  and improve on-time delivery for dealer/fleet allocations with minimal manual
+  intervention.
+rationale: >-
+  Coordinating weekly planning, long-range capacity, dealer allocation,
+  sequencing, and master data via agentic multi-agent orchestration enables
+  global constraint negotiation and cost-aware tradeoffs that are not achievable
+  with isolated planning silos—driving measurable COGS and OTIF improvements.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer Order Feed
+    type: API/EDI
+    status: tbd
+  - name: Component Supplier Inventory
+    type: EDI/API
+    status: tbd
+  - name: Manufacturing Execution System (MES)
+    status: tbd
+key_inputs:
+  - name: Dealer orders (firm & requested)
+    source: Dealer Order Feed
+    purpose: Allocate production slots and prioritize revenue/OTIF tradeoffs
+    preferred_stream_type: STREAMS
+  - name: Fleet orders and commitments
+    source: Dealer Order Feed
+    purpose: Include fleet allocations in slot prioritization and sequencing
+    preferred_stream_type: STREAMS
+  - name: Current MPS / master schedule
+    source: SAP S/4HANA
+    purpose: Baseline schedule and net production targets for optimization
+    preferred_stream_type: Subject Areas
+  - name: Plant capacity by line/shift/skill
+    source: SAP S/4HANA
+    purpose: Hard constraints for feasible scheduling and multi-scroll balancing
+    preferred_stream_type: Subject Areas
+  - name: Component availability / BOM lead times
+    source: SAP S/4HANA
+    purpose: Ensure component-level feasibility and avoid build conflicts
+    preferred_stream_type: Subject Areas
+  - name: Cost drivers (labor rates, material costs, changeover penalties)
+    source: SAP S/4HANA
+    purpose: Objective function inputs to minimize COGS and sequence costs
+  - name: Line efficiency & historical throughput
+    source: Manufacturing Execution System (MES)
+    purpose: Calibrate realistic throughput and sequencing impacts
+    preferred_stream_type: STREAMS
+  - name: Delivery windows / OTIF commitments
+    source: Dealer Order Feed
+    purpose: Hard/soft service level constraints for allocation and sequencing
+happy_path:
+  - step: >-
+      Ingest orders, capacity, BOM, cost and MES telemetry into Aera data
+      foundation
+    stage: ingest
+    component: STREAMS
+    purpose: Consolidate and validate inputs for planning run
+  - step: Orchestrate multi-agent optimization to generate multi-scroll MPS
+    stage: analyze
+    component: Agent Team
+    purpose: >-
+      Run constraint negotiation, cost optimization, and conflict resolution
+      across echelons
+  - step: >-
+      Apply business rules and auto-approve recommendations where thresholds
+      satisfied; surface exceptions
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      Enforce allocation policies and enable human overrides for prioritized
+      exceptions
+  - step: Commit approved schedule and slot allocations back to ERP
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Writeback MPS, create/adjust production orders, and update allocations in
+      SAP S/4HANA
+  - step: Notify planners and stakeholders and present schedule with drill-down
+    stage: notify
+    component: Notification
+    purpose: Alert impacted teams of committed schedule and highlight exceptions
+  - step: Surface interactive schedule and exception dashboard for review and re-run
+    stage: surface
+    component: UI Screen
+    purpose: >-
+      Enable planners to inspect, simulate overrides, and trigger
+      re-optimization
+branches:
+  - condition: >-
+      Capacity shortfall or supplier component shortage prevents meeting
+      baseline commitments
+    response: >-
+      Agent Team generates prioritized alternative scenarios; System routes
+      highest-impact exceptions to planner via CWB Lifecycle with recommended
+      tradeoffs and revenue/OTIF impact
+    outcome: >-
+      Planner accepts prioritized allocation or applies overrides; fallback
+      schedule minimizes OTIF/COST impact and is committed via Remote Functions
+  - condition: >-
+      Automated recommendations violate governance thresholds (e.g., excessive
+      cost delta from baseline)
+    response: >-
+      Hold recommendations in CWB Lifecycle for mandatory human approval and
+      provide cost/benefit explainability from agent outputs
+    outcome: >-
+      Manual approval path ensures governance; unapproved changes are reverted
+      and logged
+  - condition: Critical data latency or missing BOM/component data during run
+    response: >-
+      Process Builder triggers wait and incremental re-ingest, or marks affected
+      SKUs for conservative scheduling and planner review
+    outcome: >-
+      Conservative schedules prevent downstream failures; flagged items are
+      queued for data remediation and re-optimization

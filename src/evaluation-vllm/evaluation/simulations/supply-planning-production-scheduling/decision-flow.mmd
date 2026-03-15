@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Monthly production planning cycle initiation.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve production volume data from SAP S/4HANA.]
+  N1 --> N2[Stream: STREAMS - Generate long-term material requirements based on build plans.]
+  N2 --> N3[Stream: STREAMS - Assess supplier capacity and integrate into feasibility assessments.]
+  N3 --> N4{PB: CWB Lifecycle - Identify and resolve critical supply constraints.}
+  N4 -->|Primary| N5{PB: CWB Lifecycle - Validate aggregated build plan feasibility across divisions.}
+  N5 --> N6[PB: Notification - Notify relevant stakeholders of the finalized production plan.]
+  N6 --> Z1[Outcome: Reduced working capital, lower COGS, improved on-time delivery, and enhanced order fulfillment for multiple vehicle platforms.]
+  N4 -->|Insufficient supplier capacity identi...| B1[Adjust material requirements and re-assess feasibility.]
+  B1 --> O1[Outcome: Updated material requirements and validated build plan.]
+  O1 --> End[End]
+  N4 -->|Critical supply constraints cannot be...| B2[Escalate to senior management for manual intervention.]
+  B2 --> O2[Outcome: Manual resolution of supply constraints.]
+  O2 --> End[End]
+  N4 -->|Build plan feasibility validation fails| B3[Reallocate production volumes and reassess feasibility.]
+  B3 --> O3[Outcome: Revised production volumes and validated build plan.]
+  O3 --> End[End]
+  Z1 --> End[End]

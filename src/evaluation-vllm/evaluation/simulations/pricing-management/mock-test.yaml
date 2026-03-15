@@ -1,0 +1,44 @@
+decision: >-
+  Determine initial piece prices, annual price review and renegotiation, raw
+  material indexing and adjustment processing, should cost modeling and
+  validation, tooling and capital equipment payment management.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New production component introduction, annual review cycle, raw material
+    index update, should-cost model update, tooling/capital equipment purchase
+    request.
+  parameters:
+    objective: >-
+      Automate price setting, negotiation, and cost validation across various
+      pricing scenarios to optimize COGS and sustain margin integrity.
+    key_inputs:
+      - New Production Component Data
+      - Annual Review Data
+      - Raw Material Indices
+      - Should-Cost Models
+      - Tooling and Capital Equipment Requests
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Set initial piece prices, renegotiate annual prices, adjust prices based on
+    raw material indices, validate supplier pricing against should-cost models,
+    approve and manage tooling and capital equipment payments.
+  outcome: >-
+    Reduced COGS, improved EBITDA, and sustained margin integrity across
+    platforms and regions.
+  affected_components:
+    - DDM/Crawler
+    - AutoML
+    - CWB Lifecycle
+    - Remote Functions
+    - UI Screens
+    - Dashboard
+rationale: >-
+  Automating pricing decisions ensures alignment with multi-echelon cost
+  structures and supplier terms, leading to optimized financial outcomes.

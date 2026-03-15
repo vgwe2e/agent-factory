@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New field quality data and warranty claims are available in SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawlers - Ingest field quality and warranty claims data from SAP S/4HANA.]
+  N1 --> N2[Cortex: RCA Service - Analyze field quality data using RCA Service to identify root causes.]
+  N2 --> N3{PB: AutoML - Select corrective action plans using AutoML to balance cost and impact.}
+  N3 -->|Primary| N4{PB: Remote Functions - Determine supplier recovery actions using Remote Functions.}
+  N4 --> N5[PB: Process Builder - Manage communication and resolution processes with suppliers using Process Builder.]
+  N5 --> Z1[Outcome: Reduced COGS related to warranty, shortened resolution cycles, improved OTIF, and enhanced supplier relationships.]
+  N3 -->|High severity supplier issue identified| B1[Escalate to senior management for immediate action.]
+  B1 --> O1[Outcome: Accelerated resolution timeline and minimized COGS impact.]
+  O1 --> End[End]
+  N3 -->|Supplier refuses to commit to remedia...| B2[Initiate legal action through Remote Functions.]
+  B2 --> O2[Outcome: Ensured financial recovery and maintained supplier accountability.]
+  O2 --> End[End]
+  N3 -->|Insufficient data for root cause iden...| B3[Request additional data from suppliers via UI Screens.]
+  B3 --> O3[Outcome: Enhanced data completeness for future analysis.]
+  O3 --> End[End]
+  Z1 --> End[End]

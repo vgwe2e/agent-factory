@@ -1,0 +1,84 @@
+objective: >-
+  Unify and automate exception handling across Production Stop & Hold,
+  Rework/Repair, Deviation & ECAs, Critical Issue Escalation, Scrap Disposition,
+  and Root Cause analyses to reduce COGS and improve OTIF and line efficiency.
+trigger: Detection of a critical issue or non-conformance in production.
+decision: >-
+  Determine the appropriate action for handling the exception based on
+  predefined criteria and business rules.
+expected_action: >-
+  Execute the selected action, such as halting production, initiating rework,
+  approving deviations, escalating issues, disposing of scrap, or conducting
+  root cause analysis.
+expected_outcome: >-
+  Faster containment, optimized rework, minimized scrap, and accelerated
+  root-cause remediation leading to reduced COGS and improved OTIF and line
+  efficiency.
+rationale: >-
+  Automating exception handling reduces manual intervention, ensures
+  consistency, and accelerates decision-making, leading to better operational
+  outcomes.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Critical Issues
+    source: SAP S/4HANA
+    purpose: Identify production stop and hold scenarios.
+  - name: Non-Conformances
+    source: SAP S/4HANA
+    purpose: Identify rework and repair scenarios.
+  - name: Deviation Requests
+    source: SAP S/4HANA
+    purpose: Identify deviation requests for approval.
+  - name: High-Priority Issues
+    source: SAP S/4HANA
+    purpose: Identify critical issues for escalation.
+  - name: Scrap Parts
+    source: SAP S/4HANA
+    purpose: Identify scrap parts for disposition.
+  - name: Production Disruptions
+    source: SAP S/4HANA
+    purpose: Identify major production disruptions for root cause analysis.
+happy_path:
+  - step: Detect critical issue or non-conformance
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and ingest critical issue data from SAP S/4HANA.
+  - step: Analyze issue severity and context
+    stage: analyze
+    component: Cortex Monitoring
+    purpose: Evaluate the severity and context of the detected issue.
+  - step: Determine appropriate action
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      Decide the best course of action based on predefined rules and business
+      logic.
+  - step: Execute selected action
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Implement the selected action, such as halting production or initiating
+      rework.
+  - step: Monitor and validate action effectiveness
+    stage: review
+    component: Cortex Monitoring
+    purpose: Ensure the action taken is effective and monitor for any further issues.
+  - step: Notify stakeholders
+    stage: notify
+    component: Notification
+    purpose: Inform relevant stakeholders about the action taken and its outcome.
+branches:
+  - condition: Issue severity exceeds predefined threshold
+    response: Escalate to higher management
+    outcome: Higher management reviews and approves further actions.
+  - condition: Insufficient data for decision
+    response: Request additional information
+    outcome: Additional data is collected and re-evaluated.
+  - condition: Action fails or does not resolve issue
+    response: Initiate root cause analysis
+    outcome: >-
+      Conduct RCA to identify underlying causes and implement corrective
+      actions.

@@ -1,0 +1,41 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Collect authoritative data from S4, SAS, Kinaxis, WMS, and TMS for
+      orchestration
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Standardize schemas, run data-quality rules and derive requirement records
+      for decisioning
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder (IF / Rules)
+    purpose: >-
+      Apply business thresholds (COGS impact, data confidence, safety-stock
+      bounds) to choose action
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Perform authorized system updates and notify downstream APS for supply
+      adjustments
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle / Notification
+    purpose: >-
+      Route high-impact or low-confidence cases for human approval with context
+      and action items
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Data View / UI Screen / dashboard
+    purpose: >-
+      Provide planners and leadership visibility into outcomes and outstanding
+      exceptions
+    confidence: confirmed
+    component_type: display

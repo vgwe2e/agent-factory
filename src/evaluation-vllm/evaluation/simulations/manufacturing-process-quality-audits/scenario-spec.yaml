@@ -1,0 +1,82 @@
+objective: >-
+  Unify and automate end-to-end manufacturing quality audits to reduce scrap and
+  rework, accelerate issue resolution, and sustain regulatory and process
+  standards.
+trigger: Daily audit schedule and identified anomalies in manufacturing processes.
+decision: >-
+  Execute Layered Process Audits (LPA) and determine escalation criteria;
+  prioritize process capability improvements based on CpK/PpK analysis; verify
+  SOP adherence and determine corrective actions; evaluate error-proofing
+  effectiveness and adjust strategies; schedule immediate corrective actions for
+  safety and environmental issues.
+expected_action: >-
+  Conduct LPAs and escalate findings to corrective actions; perform CpK/PpK
+  analysis and prioritize process improvements; coach operators and implement
+  corrective actions for SOP non-compliance; adjust error-proofing measures to
+  minimize defects; address safety and environmental audit findings promptly.
+expected_outcome: >-
+  Reduced scrap and rework, improved defect rates, enhanced first-pass yield,
+  and sustained regulatory compliance.
+rationale: >-
+  Automating and unifying quality audits improves efficiency, reduces costs, and
+  ensures consistent adherence to standards.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: LPA Results
+    source: SAP S/4HANA
+    purpose: Identify process anomalies
+    preferred_stream_type: STREAMS
+  - name: Process Data
+    source: SAP S/4HANA
+    purpose: Perform CpK/PpK analysis
+    preferred_stream_type: STREAMS
+  - name: Operator Logs
+    source: SAP S/4HANA
+    purpose: Verify SOP compliance
+    preferred_stream_type: STREAMS
+  - name: Error-Proofing Data
+    source: SAP S/4HANA
+    purpose: Evaluate error-proofing effectiveness
+    preferred_stream_type: STREAMS
+  - name: Safety & Environmental Logs
+    source: SAP S/4HANA
+    purpose: Ensure compliance
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Collect LPA results
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Gather audit data
+  - step: Analyze CpK/PpK
+    stage: analyze
+    component: AutoML
+    purpose: Identify process capability gaps
+  - step: Verify SOP compliance
+    stage: analyze
+    component: Remote Functions
+    purpose: Check operator adherence
+  - step: Evaluate error-proofing
+    stage: analyze
+    component: AutoML
+    purpose: Assess effectiveness
+  - step: Review safety & environmental logs
+    stage: analyze
+    component: Remote Functions
+    purpose: Ensure compliance
+  - step: Route corrective actions
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Escalate findings
+branches:
+  - condition: High CpK/PpK gap identified
+    response: Initiate process improvement plan
+    outcome: Enhanced process capability
+  - condition: SOP non-compliance detected
+    response: Coach operator and document
+    outcome: Improved operator adherence
+  - condition: Immediate safety hazard
+    response: Trigger emergency corrective action
+    outcome: Ensured safety compliance

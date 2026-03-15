@@ -1,0 +1,64 @@
+objective: Drive Unit Final Assembly & Testing
+trigger: Start of final assembly line cycle
+decision: >-
+  Autonomous scheduling and coordination of end-to-end final-drive assembly,
+  integration with inverter/cooling, end-of-line testing, and automated
+  flash/configuration
+expected_action: Optimized scheduling and execution of L4 activities
+expected_outcome: Reduced COGS, improved line throughput, enhanced OTIF
+rationale: >-
+  Coupling deterministic optimization for sequencing and capacity with agentic
+  orchestration for cross-station decision execution to align plant, supplier,
+  and test-station operations in real-time
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Production Schedule
+    source: SAP S/4HANA
+    purpose: To determine the sequence and timing of drive unit assembly activities
+    preferred_stream_type: ETL
+  - name: Component Availability
+    source: SAP S/4HANA
+    purpose: To ensure all necessary components are available for assembly
+    preferred_stream_type: ETL
+  - name: Test Station Status
+    source: Real-Time Monitoring Systems
+    purpose: To dynamically schedule tests based on station availability
+    preferred_stream_type: ETL
+happy_path:
+  - step: Retrieve production schedule and component availability
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To gather necessary data for scheduling
+  - step: Determine optimal integration plan for motor-to-gearbox casing
+    stage: analyze
+    component: AutoML
+    purpose: To balance manufacturing feasibility, cost, and COGS impact
+  - step: Schedule and sequence inverter & cooling system integration
+    stage: decide
+    component: Process Builder
+    purpose: To optimize cost, reliability, and timing
+  - step: Schedule dynamometer testing within final assembly
+    stage: decide
+    component: Process Builder
+    purpose: To meet throughput and test cost constraints
+  - step: Configure dynamic software flash and configuration steps
+    stage: decide
+    component: Process Builder
+    purpose: To optimize throughput and minimize defect risk
+  - step: Execute scheduled activities and monitor progress
+    stage: act
+    component: Agentic AI
+    purpose: To ensure real-time alignment and execution
+branches:
+  - condition: Insufficient component availability detected
+    response: Trigger alert and reroute production schedule
+    outcome: Adjusted production schedule to avoid delays
+  - condition: Test station unavailable during scheduled time
+    response: Reschedule test and update production schedule
+    outcome: Updated production schedule with new test times
+  - condition: Unexpected defect detected during testing
+    response: Initiate exception management workflow
+    outcome: Defect addressed and production resumed

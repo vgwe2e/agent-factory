@@ -1,0 +1,72 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting/Analytics
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight / 3PL integrations
+    type: TMS/3PL
+    status: identified
+  - name: >-
+      Third-party Market Signals (promotions, competitor pricing, weather,
+      macro)
+    status: tbd
+  - name: Planner inputs (CWB / UI Screens)
+    status: tbd
+aera_ingestion:
+  - stream_name: historical-sales-pos-time-series
+    stream_type: time-series
+    source: S4 (or POS feeds ingested via DDM)
+  - stream_name: inventory-on-hand-movements
+    stream_type: timeseries
+    source: Blue Yonder WMS / S4
+  - stream_name: promotions-and-marketing-events
+    stream_type: Event Stream
+    source: Marketing systems / SAS / third-party feeds
+  - stream_name: cogs-and-pricing
+    stream_type: snapshot
+    source: S4
+  - stream_name: market-signals-competitor-price-weather-macro-indicators
+    stream_type: Event Stream
+    source: Third-party Market Signals
+  - stream_name: planner-adjustments-model-selection-input
+    stream_type: Event Stream
+    source: CWB Lifecycle / UI Screens
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Produce time-series forecasts, algorithm selection, and SHAP-based feature
+      explainability
+  - component: Process Builder (IF / Rules) + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Select model config balancing accuracy vs complexity; surface exceptions
+      and create CWB items for planner review
+  - component: Safety Stock Service + Remote Functions
+    type: process_builder
+    function: >-
+      Translate forecasts into inventory targets and ERP/APS updates; perform
+      COGS-aware revenue impact calculations and write to S4/Kinaxis
+  - component: CWB Lifecycle + UI Screens + Process Builder Notification
+    type: process_builder
+    function: >-
+      Human-in-the-loop approval, capture audit trail, trigger notifications and
+      downstream execution
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review deliver an end-to-end demand forecasting and forecast-driven
+      inventory & revenue optimization stack that unifies ml forecasts,
+      autonomous data validation, cogs-aware features, and lifecycle-driven
+      review across multi-sku, multi-location cpg network to improve forecast
+      accuracy, reduce stockouts/waste, and protect revenue. and approve the
+      recommended action.

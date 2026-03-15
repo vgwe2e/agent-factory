@@ -1,0 +1,144 @@
+objective: >-
+  Provide a unified Exception Control Tower that continuously monitors demand
+  and supply KPIs, autonomously detects deviations (unfulfilled demand and
+  supply exceptions), and prescriptively executes guard-railed adjustments to
+  allocations, sourcing, and production to minimize stockouts, reduce waste, and
+  protect margins.
+trigger: >-
+  Scheduled hourly data refresh (or on ingestion of new order/shipment/supply
+  status events) where demand vs supply KPIs breach configured thresholds or
+  predicted shortfall/overage is detected.
+decision: >-
+  Choose whether to auto-apply prescriptive mitigations (reallocate inventory,
+  expedite orders, reroute shipments, adjust production/sourcing) within defined
+  guardrails or escalate to human review when guardrails/exceptions require
+  approval (balance COGS impact vs service levels).
+expected_action: >-
+  Automatically detect exceptions via rule-based checks, generate ranked
+  prescriptive actions, execute touchless actions when within guardrails via
+  Remote Functions (writebacks to S4/Kinaxis/3PL/TMS), and open CWB Lifecycle
+  review items when human override or approval is required.
+expected_outcome: >-
+  Reduced stockouts and expedited fulfillment for prioritized demand, minimized
+  waste through proactive rebalancing, controlled COGS impact via guardrails,
+  faster exception resolution, and auditable decision trail for all automated
+  and manual interventions.
+rationale: >-
+  Deterministic rule-based detection and prescriptive actions allow scalable,
+  auditable control over frequent demand-supply deviations. Integrating ETL,
+  subject areas, Process Builder rules, Remote Functions and CWB Lifecycle
+  enables touchless resolution where safe and human-in-the-loop when required,
+  leveraging existing ERP/APS/WMS/TMS investments.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (Order Expediting / Rebalancing / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting in SAS
+    type: Forecasting Engine
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight / 3PL (carrier events)
+    type: TMS / 3PL
+    status: identified
+  - name: Kinaxis Rapid Response for APS supply chain planning
+    type: APS
+    status: identified
+key_inputs:
+  - name: Demand signals (statistical forecasts + recent orders)
+    source: SAS forecasts + S4 order history
+    purpose: >-
+      Baseline demand and short-term signal to detect unfulfilled demand and
+      priority SKUs
+    preferred_stream_type: delta_batch
+  - name: Inventory position and location-level availability
+    source: S4 + Blue Yonder WMS
+    purpose: >-
+      Determine available-to-promise, safety stock breaches, and rebalancing
+      opportunities
+    preferred_stream_type: delta_batch
+  - name: Supply status and constraints (POs, shipments, supplier allocations)
+    source: Kinaxis RapidResponse + S4
+    purpose: >-
+      Detect supply delays, shortages, or capacity constraints for prescriptive
+      action
+    preferred_stream_type: delta_batch
+  - name: Shipment/transport status and ETA
+    source: Uber Freight / TMS
+    purpose: Identify in-transit delays for reroute/expedite decisions
+    preferred_stream_type: delta_batch
+  - name: Safety stock & allocation policy parameters
+    source: Kinaxis FG Safety Stock models + Business policy tables
+    purpose: Guardrails for automated reallocation and replenishment actions
+happy_path:
+  - step: >-
+      Ingest consolidated demand, inventory, supply and transport feeds into
+      platform subject areas
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate source-system records and transform into unified measures
+      (on-hand, forecast, PO status, ETA, allocation rules)
+  - step: >-
+      Compute KPIs and run deterministic rules to detect exceptions and
+      predicted shortfalls/overages
+    stage: analyze
+    component: Subject Areas + Data Quality & Validation (STREAMS rules)
+    purpose: >-
+      Generate exception flags (stockout risk, overstock, delayed supply) and
+      rank by business impact
+  - step: >-
+      Apply Process Builder rules/IF logic to generate ranked prescriptive
+      actions and evaluate guardrail compliance
+    stage: decide
+    component: Process Builder (Rules + IF) + CWB Lifecycle
+    purpose: >-
+      Select touchless action when within guardrails or create CWB for human
+      approval when outside guardrails
+  - step: >-
+      Execute approved touchless actions via secure integrations and create
+      action items for manual tasks
+    stage: act
+    component: Remote Functions + Process Builder (Action Item / Transaction)
+    purpose: >-
+      Writeback adjustments to S4/Kinaxis (reallocations, expedite POs,
+      reprioritize production) and push transport instructions to TMS/3PL
+  - step: >-
+      Surface results and open exceptions dashboard with audit trail and
+      notifications for impacted teams
+    stage: surface
+    component: UI Screens (Control Tower dashboard) + Notification
+    purpose: >-
+      Provide planners and managers visibility, action history, and allow
+      overrides via CWB Lifecycle
+branches:
+  - condition: >-
+      Prescriptive action violates guardrail thresholds (e.g., COGS impact or
+      service-level limit exceeded)
+    response: >-
+      Create CWB Lifecycle task routed to assigned planner/team for approval
+      with recommended options and SHAP-like explanation
+    outcome: >-
+      Human-in-the-loop decision; system pauses automated writeback until
+      approval or modified instruction
+  - condition: Sufficient inventory exists in alternate locations to cover shortfall
+    response: >-
+      Auto-generate reallocation transaction and update shipments via Remote
+      Functions; notify receiving DCs and carriers
+    outcome: >-
+      Touchless rebalancing reduces local stockouts without changing sourcing or
+      production plans
+  - condition: Severe supplier outage or multi-SKU shock beyond auto-remediation
+    response: >-
+      Escalate to supply planning via Process Builder Subprocess + Agent Team
+      (planner) and create prioritized mitigation plan in Kinaxis
+    outcome: >-
+      Coordinated human-led replanning with tracked mitigation steps and
+      downstream impacts surfaced

@@ -1,0 +1,55 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Manufacturing Execution System (MES)
+    status: tbd
+  - name: Supplier Portal / SRM
+    status: tbd
+  - name: Plant Capacity Master / Line Config DB
+    status: tbd
+  - name: Planning Data Warehouse / Subject Area
+    status: tbd
+aera_ingestion:
+  - stream_name: launch-volume-targets-by-model-variant-timebucket
+    stream_type: batch (daily)
+    source: SAP S/4HANA Sales / Launch orders
+  - stream_name: bill-of-materials-bom-routings
+    stream_type: batch (daily)
+    source: SAP S/4HANA (MM/PP)
+  - stream_name: plant-line-capacity-and-shift-schedules
+    stream_type: delta-batch
+    source: Plant Capacity Master / MES
+  - stream_name: supplier-readiness-lead-times
+    stream_type: delta-batch
+    source: Supplier Portal / SRM
+  - stream_name: historical-ramp-profiles-pilot-build-outcomes
+    stream_type: Event Stream
+    source: Planning Data Warehouse / Subject Areas
+  - stream_name: cost-structures-and-cogs-drivers
+    stream_type: batch (weekly)
+    source: SAP S/4HANA Costing / Finance
+processing:
+  - component: Remote Functions (optimizer)
+    type: cortex
+    function: Generate feasible, cost-aware ramp plans and alternative scenarios
+  - component: Process Builder + CWB Lifecycle + UI Screen
+    type: process_builder
+    function: Enable human-in-the-loop approval and capture exceptions/overrides
+  - component: Remote Functions (ERP writeback)
+    type: process_builder
+    function: Operationalize plan across ERP and supplier systems
+  - component: Notification + UI Screen (dashboard)
+    type: process_builder
+    function: >-
+      Provide transparency and trigger exception workflows when performance
+      deviates
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously plan and coordinate end-to-end npi production
+      activities (pre-production, ramp-up, supplier readiness, pilot builds,
+      end-of-life) to minimize cogs, accelerate time-to-market, improve otif and
+      optimize working capital during vehicle launch cycles. and approve the
+      recommended action.

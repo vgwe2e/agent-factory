@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Inbound ASN, WMS receiving event, or carrier delivery confirmation for a PO line]
+  A --> N1[Stream: STREAMS - Ingest PO, ASN, WMS receiving events and carrier confirmations via ETL]
+  N1 --> N2[Cortex: Data Quality & Validation - Validate and match ASN/receiving events to PO lines; apply tolerance checks and QA rule lookups]
+  N2 --> N3{PB: Process Builder (IF / Rules) - Apply routing rules to decide auto-create vs manual acknowledgment}
+  N3 -->|Primary| N4[PB: Remote Functions - Auto-create goods receipt and post to ERP/WMS when rules pass]
+  N4 --> N5[PB: UI Screen / Notification - Surface confirmation and notify stakeholders]
+  N5 --> Z1[Outcome: Receipts recorded in S4 and reflected in WMS; inventory and financial receipts updated for accepted shipments; exceptions surfaced to receiving/QA teams for resolution; suppliers and carriers notified of receipt status.]
+  N3 -->|Quantity mismatch beyond configured t...| B1[Create exception Action Item and route to receiving team for manual acknowledgement and discrepancy resolution; flag PO lines and create discrepancy record]
+  B1 --> O1[Outcome: Receipt held or partially recorded pending adjustment/resolution; manual decision to accept/short-close or reject]
+  O1 --> End[End]
+  N3 -->|QA inspection failed for received goods| B2[Place QA hold, open QA Action Item, and prevent auto-create; route to QA team for disposition (reject, return, rework, partial accept)]
+  B2 --> O2[Outcome: Inventory held and receipt not posted to financials until QA disposition; supplier and procurement notified]
+  O2 --> End[End]
+  N3 -->|ERP writeback (S4) fails or integrati...| B3[Enqueue writeback retry via Remote Functions with backoff and raise a notification to integration/support team]
+  B3 --> O3[Outcome: Receipt remains in retry/failure queue; alert created for manual intervention until successful post]
+  O3 --> End[End]
+  Z1 --> End[End]

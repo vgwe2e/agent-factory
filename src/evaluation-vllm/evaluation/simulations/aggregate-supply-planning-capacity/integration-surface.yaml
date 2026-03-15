@@ -1,0 +1,34 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: monthly-demand-forecast
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supplier-capacity-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-availability-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: logistics-network-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: To determine optimal capacity utilization.
+  - component: AutoML
+    type: cortex
+    function: To ensure sufficient inventory for future production.
+  - component: Process Builder
+    type: process_builder
+    function: To balance capital expenditure, capacity, and cost-to-serve.
+  - component: Remote Functions
+    type: process_builder
+    function: To match demand with available supply and resources.
+ui_surface:
+  - component: UI Screens
+    screen: Primary
+    purpose: To enable human-in-the-loop review and approval.

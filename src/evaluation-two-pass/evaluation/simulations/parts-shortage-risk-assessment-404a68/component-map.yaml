@@ -1,0 +1,37 @@
+streams:
+  - name: STREAMS
+    purpose: Normalize and stage master and transactional inputs for analysis.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast + Safety Stock Service + RCA Service
+    purpose: >-
+      Forecast demand, compute dynamic safety stock, and surface root-cause
+      drivers of potential shortages.
+    confidence: confirmed
+    capability: >-
+      Forecast demand, compute dynamic safety stock, and surface root-cause
+      drivers of potential shortages.
+process_builder:
+  - name: Remote Functions
+    purpose: >-
+      Write changes back to SAP S/4HANA and trigger supplier communications or
+      MES schedule updates.
+    confidence: inferred
+    node_type: act
+agent_teams:
+  - name: Process Builder (Agent Team / agentic_ai) + Rules
+    purpose: >-
+      Apply decision logic and agent reasoning to pick the optimal mitigation
+      action balancing cost vs. service.
+    confidence: confirmed
+    role: >-
+      Apply decision logic and agent reasoning to pick the optimal mitigation
+      action balancing cost vs. service.
+ui:
+  - name: UI Screen / CWB Lifecycle / Notification
+    purpose: >-
+      Provide transparency, allow manual overrides where required, and notify
+      stakeholders of executed changes.
+    confidence: confirmed
+    component_type: display

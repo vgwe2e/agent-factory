@@ -1,0 +1,68 @@
+objective: >-
+  Execute three-way match, detect invoice discrepancies, streamline goods
+  receipt corrections, and authorize supplier payments to reduce working capital
+  blocks and lower COGS leakage.
+trigger: New invoice received and goods receipt recorded in SAP S/4HANA.
+decision: >-
+  Perform three-way match decisions (PO, GR, Invoice) including hold or release
+  actions based on discrepancy severity and finance policies.
+expected_action: >-
+  Automate three-way match, resolve invoice discrepancies, correct goods receipt
+  errors, and authorize supplier payments.
+expected_outcome: Reduced working capital blocks, lower COGS leakage, and streamlined cash flow.
+rationale: >-
+  The solution automates the validation process across PO, GR, and invoice,
+  reducing manual intervention and improving financial efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Purchase Order Details
+    source: SAP S/4HANA
+    purpose: Validate against goods receipt and invoice
+  - name: Goods Receipt Records
+    source: SAP S/4HANA
+    purpose: Validate against purchase order and invoice
+  - name: Invoices
+    source: SAP S/4HANA
+    purpose: Validate against purchase order and goods receipt
+happy_path:
+  - step: Retrieve purchase order details from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Fetch necessary data for three-way match
+  - step: Retrieve goods receipt records from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Fetch necessary data for three-way match
+  - step: Retrieve invoices from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Fetch necessary data for three-way match
+  - step: Perform three-way match using retrieved data
+    stage: analyze
+    component: STREAMS
+    purpose: Validate PO, GR, and invoice consistency
+  - step: Identify and resolve invoice discrepancies
+    stage: decide
+    component: Process Builder
+    purpose: Determine hold or payment actions
+  - step: Correct goods receipt errors if any
+    stage: act
+    component: Remote Functions
+    purpose: Ensure accurate goods receipt records
+  - step: Authorize supplier payments after successful verification
+    stage: act
+    component: Remote Functions
+    purpose: Release payment to suppliers
+branches:
+  - condition: Invoice discrepancies detected
+    response: Hold invoice and initiate discrepancy resolution process
+    outcome: Invoice held for further review and resolution
+  - condition: Goods receipt errors identified
+    response: Initiate error correction workflow
+    outcome: Errors corrected and records updated
+  - condition: Successful three-way match
+    response: Authorize payment to supplier
+    outcome: Supplier payment authorized and processed

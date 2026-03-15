@@ -1,0 +1,137 @@
+objective: >-
+  Autonomously detect multi-plant production constraints and supplier shortages,
+  simulate mitigation trade-offs across procurement, production scheduling, and
+  logistics, and execute coordinated actions to minimize COGS and improve
+  on-time delivery with measurable P&L impact.
+trigger: >-
+  Scheduled detection run (e.g., 30-minute cycle) or event: production line
+  utilization > threshold OR supplier shortage/late shipment alert from ERP/EDI.
+decision: >-
+  Select an optimal mitigation plan (reallocate lines, adjust schedules,
+  expedite supplier orders, reroute logistics) and decide whether to
+  auto-execute changes or escalate for human approval.
+expected_action: >-
+  Process Builder ingests cross-system data, invokes RCA Service and Remote
+  Functions to identify bottlenecks and simulate mitigation scenarios, applies
+  deterministic rules to select the best plan, executes writebacks to SAP
+  S/4HANA via Remote Functions (scheduling/Purchase Order updates), and surfaces
+  recommendations/changes via CWB/UI and notifications.
+expected_outcome: >-
+  Faster resolution of emergent constraints, improved on-time in-full (OTIF),
+  reduced expedited costs and COGS, measurable throughput gains and P&L
+  improvement versus baseline within defined evaluation window.
+rationale: >-
+  Deterministic, process-driven orchestration is required to coordinate
+  repeatable cross-functional actions (procurement, scheduling, logistics).
+  Process Builder provides visual orchestration and rules/IF branching;
+  STREAMS/DDM ingest authoritative SAP data; RCA Service identifies bottlenecks;
+  Remote Functions run simulation and perform safe ERP writebacks; CWB
+  Lifecycle/UI provide human-in-the-loop when exceptions or approvals are
+  required. This enables automated, auditable, and measurable execution across
+  the enterprise.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant MES / SCADA
+    type: MES
+    status: tbd
+  - name: Supplier EDI / Portal
+    type: Supplier Portal / EDI
+    status: tbd
+  - name: TMS / Logistics Provider
+    type: TMS
+    status: tbd
+key_inputs:
+  - name: Production orders & routings
+    source: SAP S/4HANA
+    purpose: >-
+      Determine scheduled work, capacities, lead times and dependencies for each
+      plant/line.
+    preferred_stream_type: DDM/Crawlers
+  - name: Equipment utilization & capacity telemetry
+    source: Plant MES / SCADA
+    purpose: >-
+      Identify real-time line utilization, downtime, and emerging capacity
+      constraints.
+    preferred_stream_type: STREAMS
+  - name: Supplier shortages & PO status
+    source: SAP S/4HANA / Supplier EDI
+    purpose: >-
+      Detect inbound part shortages, late shipments, and supplier capacity
+      limits affecting production.
+    preferred_stream_type: DDM/Crawlers
+  - name: Inventory on-hand and safety stock
+    source: SAP S/4HANA
+    purpose: >-
+      Assess available cushion inventory to enable reallocation or sequencing
+      changes.
+    preferred_stream_type: DDM/Crawlers
+  - name: Logistics ETAs and shipment status
+    source: TMS / Logistics Provider
+    purpose: Evaluate transport lead-time options and reroute/expedite feasibility.
+    preferred_stream_type: DDM/Crawlers
+  - name: Demand forecast & priority signals
+    source: Cortex Auto Forecast
+    purpose: Inform trade-off simulations with demand patterns and SKU prioritization.
+happy_path:
+  - step: >-
+      Consolidate cross-system data (production, inventory, suppliers,
+      logistics) into the decision subject area
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: Create unified, validated dataset for constraint analysis and simulation.
+  - step: Detect emergent bottlenecks and rank root causes across plants and SKUs
+    stage: analyze
+    component: RCA Service + Cortex Auto Forecast
+    purpose: Identify highest-impact constraints and quantify demand/lead-time drivers.
+  - step: >-
+      Simulate mitigation scenarios and select optimal plan via rules and
+      scorecard
+    stage: decide
+    component: Process Builder (IF, Rules) + Remote Functions (simulation)
+    purpose: >-
+      Compare trade-offs (throughput, OTIF, cost) and pick the plan meeting
+      business goals.
+  - step: >-
+      Execute coordinated actions (schedule updates, PO expedites, logistics
+      reroutes) and persist changes
+    stage: act
+    component: Remote Functions -> SAP S/4HANA (Transaction)
+    purpose: >-
+      Apply changes atomically to ERP and downstream systems to resolve the
+      constraint.
+  - step: >-
+      Surface results, monitor impact, and notify stakeholders for closure or
+      escalation
+    stage: review
+    component: UI Screens (dashboard & CWB) + Notification
+    purpose: >-
+      Provide audit trail, KPI impact (throughput, OTIF, cost) and human
+      approvals if required.
+branches:
+  - condition: >-
+      Supplier capacity cannot be increased or expedited (long lead-time, no
+      alternates)
+    response: >-
+      Process Builder routes to contingency plan: re-sequence production,
+      prioritize alternate SKUs, or trigger substitution rules; create exception
+      CWB for procurement to source alternatives.
+    outcome: >-
+      Production rescheduled to minimize OTIF impact; exception tracked for
+      procurement follow-up; partial mitigation applied.
+  - condition: Simulated mitigation does not meet on-time delivery or cost thresholds
+    response: >-
+      Hold automated execution and create CWB Lifecycle recommendations for
+      cross-functional approval (S&OP/Plant/Procurement).
+    outcome: >-
+      Human decision required; changes executed only after approval to avoid
+      adverse cost/P&L impact.
+  - condition: Automated execution encounters transactional failure on ERP writeback
+    response: >-
+      Rollback Transaction node in Process Builder, create incident
+      notification, and route to operator via Action Item and Agent Team if
+      needed.
+    outcome: >-
+      System state remains consistent; operators are alerted to resolve
+      underlying issue and retry execution.

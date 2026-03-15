@@ -1,0 +1,83 @@
+objective: >-
+  Automate end-to-end demand forecasting, market-intelligent mix planning, and
+  model-launch volume alignment to improve revenue capture, reduce working
+  capital tied to over/under forecasting, and optimize COGS.
+trigger: Monthly sales data update in SAP S/4HANA.
+decision: >-
+  Aggregate regional forecasts into a global view, balance mix profitability,
+  incorporate market intelligence, measure forecast accuracy, and plan new model
+  launch volumes.
+expected_action: >-
+  Generate accurate global sales forecasts, optimized vehicle configuration mix
+  plans, integrated market intelligence, forecast accuracy reports, and new
+  model launch volume plans.
+expected_outcome: >-
+  Improved revenue capture, reduced working capital, optimized COGS, and better
+  production and launch alignment.
+rationale: >-
+  Unify global sales forecast, vehicle configuration mix, market intelligence,
+  forecast accuracy, and new model launch volume planning to enhance overall
+  demand forecasting accuracy and operational efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Regional Sales Forecasts
+    source: SAP S/4HANA
+    purpose: To aggregate into a global sales forecast.
+  - name: Vehicle Configuration Data
+    source: SAP S/4HANA
+    purpose: To forecast demand for specific vehicle configurations.
+  - name: External Market Data
+    source: External Data Sources
+    purpose: To integrate into demand forecasting for improved accuracy.
+  - name: Production and Sales Data
+    source: SAP S/4HANA
+    purpose: To measure and report forecast accuracy.
+  - name: New Model Launch Data
+    source: SAP S/4HANA
+    purpose: >-
+      To determine initial production volumes and ramp-up profiles for new
+      models.
+happy_path:
+  - step: Retrieve regional sales forecasts from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To collect regional sales data for global aggregation.
+  - step: >-
+      Aggregate regional sales forecasts into a global view using Cortex Auto
+      Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: To generate a unified global sales forecast.
+  - step: Forecast demand for specific vehicle configurations using AutoML.
+    stage: analyze
+    component: AutoML
+    purpose: >-
+      To optimize the vehicle configuration mix based on profitability and
+      supply constraints.
+  - step: Integrate external market data into the demand forecasting process.
+    stage: analyze
+    component: DDM/Crawlers
+    purpose: To enhance forecast accuracy with market intelligence.
+  - step: Measure and report forecast accuracy against production and sales data.
+    stage: analyze
+    component: Cortex Monitoring
+    purpose: To evaluate forecast performance and identify areas for improvement.
+  - step: Plan initial production volumes and ramp-up profiles for new models.
+    stage: decide
+    component: Remote Functions
+    purpose: >-
+      To optimize COGS and capacity utilization based on demand signals and ramp
+      timelines.
+branches:
+  - condition: Forecast accuracy falls below a predefined threshold.
+    response: Trigger a corrective action workflow to adjust the forecast.
+    outcome: Improved forecast accuracy through iterative adjustments.
+  - condition: Market data indicates significant changes in demand trends.
+    response: Update the global sales forecast and vehicle configuration mix plans.
+    outcome: Adjusted plans that reflect current market conditions.
+  - condition: New model launch data indicates a need for rapid production scaling.
+    response: Expedite the ramp-up profile and adjust production schedules.
+    outcome: Optimized production and launch alignment for new models.

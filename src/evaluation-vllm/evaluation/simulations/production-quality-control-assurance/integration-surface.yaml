@@ -1,0 +1,47 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: production-stage-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: end-of-line-audit-results
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: non-conformance-reports
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: quality-control-plans
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: incoming-material-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Monitoring
+    type: cortex
+    function: Analyze production data for quality issues
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Decide on quality gate inspections and rework management
+  - component: Remote Functions
+    type: process_builder
+    function: Execute quality checks and rework actions
+  - component: UI Screens
+    type: process_builder
+    function: Review quality control plans and adherence
+  - component: Notification
+    type: process_builder
+    function: Notify stakeholders of quality issues and actions
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce waste, prevent rework delays, and improve first-pass yields
+      through coordinated automated inspection decisions, defect-root-cause
+      actions, and adaptive rework/no-rework routing. and approve the
+      recommended action.

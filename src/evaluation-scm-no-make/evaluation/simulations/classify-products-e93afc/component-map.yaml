@@ -1,0 +1,41 @@
+streams:
+  - name: STREAMS (ETL)
+    purpose: Ingest and normalize product attributes from S4 / WMS into Subject Area
+    confidence: confirmed
+    type: STREAMS (ETL)
+cortex:
+  - name: Process Builder - Rules node
+    purpose: Run rule-based classification logic and calculate confidence/risk score
+    confidence: confirmed
+    capability: Run rule-based classification logic and calculate confidence/risk score
+process_builder:
+  - name: Remote Functions (tariff API lookup)
+    purpose: Confirm official HS metadata and detect conflicts or disallowed mappings
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (S4 writeback) + Process Builder Transaction
+    purpose: >-
+      Persist HS code and audit metadata to S4 or create an exception when
+      escalation needed
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle (Action Item) + UI Screen
+    purpose: >-
+      Customs team reviews ambiguous/high-risk cases, accepts/overrides
+      classification
+    confidence: confirmed
+    node_type: review
+  - name: Process Builder - Notification / UI Screen (report)
+    purpose: Alert customs/compliance, update dashboards and finalize audit trail
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically assign the appropriate customs (hs) classification to
+      imported and exported products using deterministic rules, minimize manual
+      review and audit risk, and write validated classifications back to the
+      product master. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

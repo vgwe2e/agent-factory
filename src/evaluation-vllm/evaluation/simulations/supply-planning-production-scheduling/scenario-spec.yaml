@@ -1,0 +1,76 @@
+objective: >-
+  To optimize supply planning and production scheduling by allocating production
+  volumes across globally dispersed plants, translating build plans into
+  long-term material requirements, assessing supplier capacity, resolving supply
+  constraints, and validating build plan feasibility across divisions.
+trigger: Monthly production planning cycle initiation.
+decision: >-
+  Allocation of production volumes, translation of build plans into material
+  requirements, supplier capacity assessment, constraint resolution, and build
+  plan feasibility validation.
+expected_action: >-
+  Automated allocation of production volumes, generation of long-term material
+  requirements, integration of supplier capacity plans, identification and
+  resolution of supply constraints, and validation of build plan feasibility.
+expected_outcome: >-
+  Reduced working capital, lower COGS, improved on-time delivery, and enhanced
+  order fulfillment for multiple vehicle platforms.
+rationale: >-
+  By leveraging deterministic optimization and agentic orchestration, this
+  solution will enable Ford to efficiently manage its supply chain, ensuring
+  optimal resource utilization and timely production.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Production Volume Data
+    source: SAP S/4HANA
+    purpose: To determine available plant capacities and current production volumes.
+  - name: Material Requirements Data
+    source: SAP S/4HANA
+    purpose: To translate build plans into long-term material requirements.
+  - name: Supplier Capacity Data
+    source: SAP S/4HANA
+    purpose: To assess supplier capacity and integrate it into feasibility assessments.
+  - name: Supply Constraints Data
+    source: SAP S/4HANA
+    purpose: To identify and resolve critical supply constraints.
+  - name: Build Plan Data
+    source: SAP S/4HANA
+    purpose: To validate the aggregated build plan across divisions.
+happy_path:
+  - step: Retrieve production volume data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To gather current production volumes and plant capacities.
+  - step: Generate long-term material requirements based on build plans.
+    stage: analyze
+    component: STREAMS
+    purpose: To translate build plans into detailed material requirements.
+  - step: Assess supplier capacity and integrate into feasibility assessments.
+    stage: analyze
+    component: STREAMS
+    purpose: To ensure supplier capacity aligns with material requirements.
+  - step: Identify and resolve critical supply constraints.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: To address any supply constraints that may affect production.
+  - step: Validate aggregated build plan feasibility across divisions.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: To ensure build plans are feasible and aligned with divisional goals.
+  - step: Notify relevant stakeholders of the finalized production plan.
+    stage: notify
+    component: Notification
+    purpose: To communicate the optimized production plan to all involved parties.
+branches:
+  - condition: Insufficient supplier capacity identified
+    response: Adjust material requirements and re-assess feasibility.
+    outcome: Updated material requirements and validated build plan.
+  - condition: Critical supply constraints cannot be resolved
+    response: Escalate to senior management for manual intervention.
+    outcome: Manual resolution of supply constraints.
+  - condition: Build plan feasibility validation fails
+    response: Reallocate production volumes and reassess feasibility.
+    outcome: Revised production volumes and validated build plan.

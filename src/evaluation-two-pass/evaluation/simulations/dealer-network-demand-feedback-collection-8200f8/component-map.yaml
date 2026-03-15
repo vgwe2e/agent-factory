@@ -1,0 +1,39 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: Create a consistent, validated dataset for analysis and agent consumption
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+  - name: Cortex Auto Forecast + STREAMS
+    purpose: >-
+      Provide algorithmic baseline forecasts with confidence metrics and
+      explainability
+    confidence: confirmed
+    type: Cortex Auto Forecast + STREAMS
+cortex: []
+process_builder:
+  - name: Remote Functions + CWB Lifecycle
+    purpose: >-
+      Perform controlled SAP S/4HANA writeback or route exceptions for
+      human-in-the-loop approval
+    confidence: confirmed
+    node_type: act
+  - name: Notification + UI Screen (Action Item / CWB view)
+    purpose: Ensure cross-functional visibility and allow fast overrides when needed
+    confidence: confirmed
+    node_type: notify
+agent_teams:
+  - name: Process Builder + Agent Team (Agentic AI)
+    purpose: >-
+      Apply multi-agent reasoning and rule-based guardrails to produce a
+      reconciled plan and confidence score
+    confidence: confirmed
+    role: >-
+      Apply multi-agent reasoning and rule-based guardrails to produce a
+      reconciled plan and confidence score
+ui:
+  - name: Data View / Dashboard
+    purpose: >-
+      Provide traceability, performance tracking (stockouts, excess, working
+      capital) and inputs for model refinement
+    confidence: confirmed
+    component_type: display

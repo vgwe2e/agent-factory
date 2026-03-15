@@ -1,0 +1,60 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting (SAS)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse / Kinaxis (APS)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: TMS/3PL
+    status: identified
+aera_ingestion:
+  - stream_name: master-demand-forecast-sku-x-location-x-horizon
+    stream_type: STREAMS
+    source: SAS / Advanced Statistical Forecasting
+  - stream_name: current-production-capacity-constraints-plant-line-shift-skill
+    stream_type: Data View
+    source: S4 (SAP S/4HANA)
+  - stream_name: production-schedule-load-and-projected-utilization
+    stream_type: Report Data
+    source: Kinaxis RapidResponse
+  - stream_name: inventory-on-hand-fg-safety-stock-targets
+    stream_type: STREAMS
+    source: Blue Yonder WMS / Kinaxis FG Safety Stock Modeling
+  - stream_name: open-pos-lead-times-procurement-constraints
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA)
+  - stream_name: shortage-expedite-signals-and-rebalancing-recommendations
+    stream_type: Report Data
+    source: Kinaxis (Order Expediting / Rebalancing)
+processing:
+  - component: Process Builder (Process) + Rules
+    type: cortex
+    function: >-
+      Run deterministic rules to detect capacity shortfalls and feasible
+      mitigation options
+  - component: Process Builder (IF) + Action Item / CWB Lifecycle
+    type: process_builder
+    function: >-
+      Select best action by COGS impact, service uplift, and feasibility;
+      surface for approval when needed
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Writeback capacity adjustments and trigger Kinaxis rebalancing or S4
+      capacity updates
+  - component: Subject Areas + Report Data
+    type: process_builder
+    function: Assess realized service levels, COGS delta, and adjust rules/thresholds
+ui_surface:
+  - component: UI Screen (dashboard) + Process Builder (Notification)
+    screen: Primary
+    purpose: >-
+      Provide visibility into executed decisions, updated utilization, cost
+      impact, and follow-up actions

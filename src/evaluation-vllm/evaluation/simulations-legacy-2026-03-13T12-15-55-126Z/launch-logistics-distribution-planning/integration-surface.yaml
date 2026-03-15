@@ -1,0 +1,52 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: inbound_logistics_network_design
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: outbound_vehicle_logistics_planning
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: packaging_containerization_strategy
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+  - stream_name: customs_trade_compliance_planning
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+  - stream_name: launch_capacity_contingency_planning
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: agentic_ai_inbound_network_optimizer
+    type: AGENTIC
+    function: Optimize Inbound Logistics Network Design for New Programs
+  - component: agentic_ai_outbound_routing_planner
+    type: AGENTIC
+    function: Optimize Outbound Vehicle Logistics Planning for New Models
+  - component: agentic_ai_packaging_compliance_engine
+    type: AGENTIC
+    function: Develop Packaging & Containerization Strategy with Compliance Validation
+  - component: agentic_ai_compliance_validator
+    type: AGENTIC
+    function: Ensure Customs & Trade Compliance Planning for Global Launches
+  - component: agentic_ai_capacity_orchestrator
+    type: AGENTIC
+    function: Execute Launch Logistics Capacity Contingency Planning
+ui_surface:
+  - component: agentic_ai_inbound_network_optimizer
+    screen: Inbound Network Design Dashboard
+    purpose: Visualize and adjust inbound logistics network for new programs
+  - component: agentic_ai_outbound_routing_planner
+    screen: Outbound Routing Planner
+    purpose: Configure and monitor outbound vehicle logistics sequences
+  - component: agentic_ai_packaging_compliance_engine
+    screen: Packaging Strategy Studio
+    purpose: Develop and validate packaging/containerization strategies
+  - component: agentic_ai_compliance_validator
+    screen: Global Compliance Monitor
+    purpose: Track and ensure customs/trade compliance across regions
+  - component: agentic_ai_capacity_orchestrator
+    screen: Capacity Contingency Hub
+    purpose: Manage and adjust logistics capacity planning during launches

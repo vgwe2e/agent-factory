@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Detection of vehicles off the road requiring critical parts.]
+  A --> N1[Stream: DDM/Crawlers - Detect off-road vehicles requiring critical parts.]
+  N1 --> N2[Cortex: AutoML - Prioritize critical parts based on urgency.]
+  N2 --> N3{PB: CWB Lifecycle - Allocate stock from designated locations.}
+  N3 -->|Primary| N4[PB: Remote Functions - Arrange for expedited shipping and special handling.]
+  N4 --> N5[UI: UI Screens - Enhance visibility and track shipments.]
+  N5 --> Z1[Outcome: Maximized on-time-in-full (OTIF) delivery of critical parts with minimized working capital.]
+  N3 -->|Insufficient stock for critical parts.| B1[Trigger production or procurement of additional parts.]
+  B1 --> O1[Outcome: Ensure continuous stock availability for critical parts.]
+  O1 --> End[End]
+  N3 -->|Carrier delays or issues.| B2[Reallocate parts to alternative carriers.]
+  B2 --> O2[Outcome: Maintain on-time delivery despite carrier issues.]
+  O2 --> End[End]
+  N3 -->|Part prioritization conflicts.| B3[Manual review and override through CWB Lifecycle.]
+  B3 --> O3[Outcome: Resolve conflicts and ensure optimal part allocation.]
+  O3 --> End[End]
+  Z1 --> End[End]

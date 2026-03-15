@@ -1,0 +1,39 @@
+decision: >-
+  Forecast service parts demand for aftermarket, warranty claims, consumables,
+  Ford Pro uptime, global service parts, new models, and EV components.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic data refresh from SAP S/4HANA and real-time demand signals.
+  parameters:
+    objective: >-
+      Unify six service-parts demand processes into a single, end-to-end
+      decision engine for precise SKU-level forecasts, real-time input
+      adjustments, and lifecycle-driven demand modeling.
+    key_inputs:
+      - Historical Sales Data
+      - Reliability Trends
+      - Market Trends
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automatically generate SKU-level forecasts, adjust inputs in real time,
+    mitigate excess/obsolete parts, plan for recalls/campaigns, and model
+    lifecycle-driven demand.
+  outcome: >-
+    Continuous alignment of inventory and procurement with demand signals,
+    reducing working capital while increasing on-time availability and COGS
+    efficiency.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - Remote Functions
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  Unifying demand forecasting processes improves forecast accuracy, reduces
+  excess inventory, and optimizes working capital.

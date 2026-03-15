@@ -1,0 +1,55 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant MES
+    type: MES
+    status: tbd
+  - name: Workforce Management / Time & Attendance
+    type: HR/WFM
+    status: tbd
+aera_ingestion:
+  - stream_name: production-schedule-orders
+    stream_type: STREAMS
+    source: SAP S/4HANA (via DDM/Crawlers -> STREAMS)
+  - stream_name: resource-master-labor-skills-equipment-specs-rates
+    stream_type: STREAMS
+    source: SAP S/4HANA (HR module) / WFM
+  - stream_name: demand-forecast-signal
+    stream_type: Cortex Auto Forecast
+    source: Cortex Auto Forecast (subject area)
+  - stream_name: line-capacity-oee-utilization-metrics
+    stream_type: DDM/Crawlers
+    source: Plant MES / telemetry
+  - stream_name: allocation-rules-constraints
+    stream_type: Event Stream
+    source: Process Builder Rules / Data Views
+processing:
+  - component: Process Builder (Process -> Rules -> Remote Functions)
+    type: process_builder
+    function: >-
+      Execute deterministic optimization rules (Remote Functions) to allocate
+      manpower and equipment respecting constraints and cost objectives.
+  - component: Remote Functions (Transaction)
+    type: process_builder
+    function: >-
+      Write resource assignments/work orders back to SAP S/4HANA and update
+      schedule transactions.
+  - component: Process Builder (Notification)
+    type: process_builder
+    function: >-
+      Send assignment and change notifications to supervisors, maintenance, and
+      shift planners.
+  - component: UI Screens (dashboard & CWB lifecycle)
+    type: process_builder
+    function: >-
+      Display allocation, bottleneck view, KPIs and provide accept/override
+      workflow for planners.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously allocate manpower and equipment across multi-site
+      production lines to resolve bottlenecks, maximize throughput, and reduce
+      cogs by aligning capacity with demand signals. and approve the recommended
+      action.

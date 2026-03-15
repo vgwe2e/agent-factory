@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Weekly pipeline run or detection of statistically significant demand pattern shift from Cortex Auto Forecast; or network constraint event from Kinaxis.]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Collect and consolidate data (sales, forecasts, inventory, network constraints)]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Detect demand pattern shifts and generate weekly forecast]
+  N2 --> N3{PB: Safety Stock Service - Compute safety stock and sequencing recommendations constrained by network}
+  N3 -->|Primary| N4[PB: Process Builder + Remote Functions - Orchestrate deterministic business rules and apply updates]
+  N4 --> N5[PB: CWB Lifecycle + UI Screens (dashboard/notification) - Surface results and notify planners for exceptions or review]
+  N5 --> Z1[Outcome: Weekly aligned safety stock and sequencing across PLAN and FULFILL: improved service levels, reduced excess working capital from misallocated stock, faster response to demand volatility, and operationalized updates in S4, Kinaxis, and WMS/TMS with human-in-the-loop for high-risk changes.]
+  N3 -->|Forecast signal shows no statisticall...| B1[Skip parameter writebacks; log decision and schedule next weekly evaluation]
+  B1 --> O1[Outcome: Maintain current safety stock and sequencing; avoid unnecessary perturbation]
+  O1 --> End[End]
+  N3 -->|Safety Stock Service recommends chang...| B2[Create CWB Lifecycle for human review/approval and pause automatic writeback until approval]
+  B2 --> O2[Outcome: Human-in-the-loop for high-risk updates; audit trail preserved and changes applied only after approval]
+  O2 --> End[End]
+  N3 -->|Data quality issues detected (missing...| B3[Pause automation, generate exception via Process Builder, and notify data steward/team to remediate]
+  B3 --> O3[Outcome: Prevent unsafe automated updates; resume run after data is corrected and validated]
+  O3 --> End[End]
+  Z1 --> End[End]

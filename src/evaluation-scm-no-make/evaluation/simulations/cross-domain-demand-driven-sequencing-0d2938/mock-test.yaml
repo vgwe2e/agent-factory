@@ -1,0 +1,64 @@
+decision: >-
+  Dynamically allocate production capacity and sequence work across lines
+  (including automatic line reallocation) to balance service levels and COGS
+  while respecting capacity and material constraints.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    New/updated near-term demand segmentation and short-term forecast roll
+    produced (scheduled or delta) indicating changes to SKU-level demand
+    priority or shape within the next 0-14 day horizon.
+  parameters:
+    objective: >-
+      Automatically coordinate demand segmentation outputs with production
+      sequencing and line allocation to minimize stockouts and excess across
+      SKUs and locations, aligning Plan and Make with near-term demand signals
+      to protect revenue and optimize COGS.
+    key_inputs:
+      - Demand segmentation outputs (SKU x location x segment)
+      - Short-term forecasts (0-14 day horizon)
+      - Available production capacity and line configurations
+      - Inventory on-hand by SKU and location
+      - Shortage/expediting signals
+      - Logistics constraints and outbound windows
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Advanced Statistical Forecasting in SAS
+      - Kinaxis RapidResponse
+      - Kinaxis (FG Safety Stock / Rebalancing / Order Expediting)
+      - Blue Yonder WMS
+      - Uber Freight (TMS / 3PL)
+      - MES
+expected_output:
+  action: >-
+    Process Builder orchestrates ingestion of segmentation and forecast signals,
+    runs deterministic rules and remote calculations to produce an optimized
+    sequencing and line-allocation plan, then writes allocations to S4 (Advanced
+    ATP) and issues sequencing updates to MES / production execution, while
+    notifying planners and propagating shortages to Kinaxis and logistics
+    partners.
+  outcome: >-
+    Short-term alignment of Plan and Make: reduced SKU stockouts and excess,
+    improved service levels for prioritized demand segments, fewer emergency
+    expediting events, and measurable COGS improvement from more efficient line
+    utilization and fewer rush logistics.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - STREAMS + Subject Areas
+    - Process Builder (Rules + Remote Functions)
+    - Remote Functions (ERP/MES writeback) + Process Builder
+    - CWB Lifecycle (Action Item) + Notification
+    - UI Screens + Subject Areas (dashboard)
+    - Dashboard
+rationale: >-
+  Deterministic process route lets Process Builder enforce business rules and
+  constraints, use STREAMS/Subject Areas to consolidate data, and Remote
+  Functions for ERP/MES writebacks. Integrating segmentation and short-term
+  forecasts with APS and ATP minimizes reactive firefighting; medium complexity
+  matches multiple enterprise integrations (S4, Kinaxis, WMS, TMS) without
+  requiring advanced ML retraining.

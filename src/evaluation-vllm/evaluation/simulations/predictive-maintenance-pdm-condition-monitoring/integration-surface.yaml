@@ -1,0 +1,27 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: sensor-data
+    stream_type: real-time
+    source: IoT Devices
+  - stream_name: anomaly-detection-model-outputs
+    stream_type: batch
+    source: Cortex Auto Forecast
+processing:
+  - component: AutoML
+    type: cortex
+    function: Predictive model deployment
+  - component: Notification
+    type: process_builder
+    function: Proactive intervention
+  - component: Remote Functions
+    type: process_builder
+    function: Maintenance scheduling and execution
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review predictive maintenance (pdm) & condition monitoring and approve the
+      recommended action.

@@ -1,0 +1,37 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Create unified SKU x location subject area and validated historical demand
+      dataset
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: Cortex Auto Forecast + SAS integration (Data Science)
+    purpose: >-
+      Produce touchless baseline forecasts and identify short-term deviations
+      requiring action
+    confidence: confirmed
+    capability: >-
+      Produce touchless baseline forecasts and identify short-term deviations
+      requiring action
+process_builder:
+  - name: Process Builder (Rules + CWB Lifecycle)
+    purpose: >-
+      Select initiatives and approve demand plan balancing revenue, margin, and
+      inventory impact
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder + Remote Functions
+    purpose: >-
+      Write back approved orders/allocations to S4/Kinaxis and trigger
+      transportation actions
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screens + Subject Areas
+    purpose: >-
+      Provide visibility, human-in-the-loop for exceptions, and measure plan vs.
+      execution KPIs
+    confidence: confirmed
+    component_type: display

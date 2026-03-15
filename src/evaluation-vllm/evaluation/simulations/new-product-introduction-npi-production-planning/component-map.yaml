@@ -1,0 +1,24 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect initial NPI data from SAP S/4HANA.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Optimize pre-production build schedules and resource allocation.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Validate manufacturing processes through pilot builds.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomous planning and coordination of npi production activities
+      across multiple phases to reduce cogs, improve time-to-market, and enhance
+      otif. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

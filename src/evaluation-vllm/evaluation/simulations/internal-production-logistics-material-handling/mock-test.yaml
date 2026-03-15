@@ -1,0 +1,38 @@
+decision: >-
+  Optimize material delivery, kitting, inventory management, equipment
+  maintenance, empty container management, and point-of-use replenishment.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Daily inventory levels and production schedules.
+  parameters:
+    objective: >-
+      Reduce working capital and COGS while improving OTIF by automating
+      end-to-end material flow decisions across plants, suppliers, and DCs.
+    key_inputs:
+      - Inventory Levels
+      - Production Schedules
+      - Equipment Status
+      - Empty Container Availability
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate and sequence material delivery, manage inventory levels, schedule
+    equipment maintenance, allocate empty containers, and set replenishment
+    thresholds.
+  outcome: >-
+    Reduced carrying and expediting costs, improved line uptime, and increased
+    on-time delivery to customers and production lines.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  By automating and optimizing material flow decisions, the solution will
+  streamline logistics, reduce waste, and enhance overall operational
+  efficiency.

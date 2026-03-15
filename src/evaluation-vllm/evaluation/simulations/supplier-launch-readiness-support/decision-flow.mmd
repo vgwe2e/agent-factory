@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New supplier launch initiation.]
+  A --> N1[Stream: DDM/Crawlers - Initiate new supplier launch]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Develop quality control plans]
+  N2 --> N3{PB: CWB Lifecycle - Allocate run-at-rate verification plans}
+  N3 -->|Primary| N4[PB: Remote Functions - Conduct supplier readiness assessments]
+  N4 --> N5[PB: RCA Service - Identify and contain launch issues]
+  N5 --> Z1[Outcome: Improved ramp accuracy, reduced changeover waste, and faster issue resolution across the supplier network.]
+  N3 -->|Supplier readiness assessment fails| B1[Escalate to senior management]
+  B1 --> O1[Outcome: Review and adjust launch plan]
+  O1 --> End[End]
+  N3 -->|Quality control plan exceeds budget| B2[Adjust plan to balance cost and quality]
+  B2 --> O2[Outcome: Optimize cost while maintaining quality]
+  O2 --> End[End]
+  N3 -->|Run-at-rate verification fails| B3[Reallocate resources and reschedule]
+  B3 --> O3[Outcome: Ensure feasible production start]
+  O3 --> End[End]
+  Z1 --> End[End]

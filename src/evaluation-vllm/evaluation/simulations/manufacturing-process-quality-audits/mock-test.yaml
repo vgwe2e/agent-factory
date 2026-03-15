@@ -1,0 +1,44 @@
+decision: >-
+  Execute Layered Process Audits (LPA) and determine escalation criteria;
+  prioritize process capability improvements based on CpK/PpK analysis; verify
+  SOP adherence and determine corrective actions; evaluate error-proofing
+  effectiveness and adjust strategies; schedule immediate corrective actions for
+  safety and environmental issues.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Daily audit schedule and identified anomalies in manufacturing processes.
+  parameters:
+    objective: >-
+      Unify and automate end-to-end manufacturing quality audits to reduce scrap
+      and rework, accelerate issue resolution, and sustain regulatory and
+      process standards.
+    key_inputs:
+      - LPA Results
+      - Process Data
+      - Operator Logs
+      - Error-Proofing Data
+      - Safety & Environmental Logs
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Conduct LPAs and escalate findings to corrective actions; perform CpK/PpK
+    analysis and prioritize process improvements; coach operators and implement
+    corrective actions for SOP non-compliance; adjust error-proofing measures to
+    minimize defects; address safety and environmental audit findings promptly.
+  outcome: >-
+    Reduced scrap and rework, improved defect rates, enhanced first-pass yield,
+    and sustained regulatory compliance.
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - Remote Functions
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  Automating and unifying quality audits improves efficiency, reduces costs, and
+  ensures consistent adherence to standards.

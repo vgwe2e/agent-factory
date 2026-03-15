@@ -1,0 +1,40 @@
+decision: >-
+  Choose optimal basecoat and clearcoat application plans, manage paint booth
+  conditions, verify color matches, and adjust curing oven temperatures.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Start of the topcoat application process for a new batch of vehicles.
+  parameters:
+    objective: >-
+      Increase revenue by improving paint yield and finish quality, reduce COGS
+      through optimized energy and material usage, and improve OTIF by ensuring
+      correct sequences and precise environmental control.
+    key_inputs:
+      - Vehicle Batch Details
+      - Environmental Parameters
+      - Color Standards
+      - Curing Oven Temperatures
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Autonomous scheduling, optimization, and execution of basecoat/clearcoat
+    application, color matching, airflow/temperature control, and curing cost
+    controls.
+  outcome: >-
+    Improved paint yield and finish quality, reduced rework, optimized energy
+    and material usage, and improved on-time in-full (OTIF) delivery.
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - Remote Functions
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  Automating and optimizing the topcoat application process will lead to higher
+  efficiency, better quality, and lower costs, directly impacting revenue and
+  operational excellence.

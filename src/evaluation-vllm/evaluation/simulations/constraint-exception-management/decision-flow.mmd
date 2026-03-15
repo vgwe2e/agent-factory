@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Detection of production constraints, supply disruptions, quality holds, or other critical issues.]
+  A --> N1[Stream: DDM/Crawlers - Detect production constraints]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze constraints and demand signals]
+  N2 --> N3{PB: CWB Lifecycle - Decide on production line actions}
+  N3 -->|Primary| N4[Cortex: AutoML - Simulate supply disruption scenarios]
+  N4 --> N5[PB: Process Builder - Implement recovery actions]
+  N5 --> N6{PB: CWB Lifecycle - Adjust production plans for quality holds}
+  N6 --> Z1[Outcome: Reduced COGS, minimized downtime, and maintained OTIF and availability through optimized line sequencing and rapid recovery.]
+  N3 -->|High risk of missed throughput| B1[Recommend production start]
+  B1 --> O1[Outcome: Minimize downtime]
+  O1 --> End[End]
+  N3 -->|Severe supply disruption| B2[Escalate to management]
+  B2 --> O2[Outcome: Rapid resolution]
+  O2 --> End[End]
+  N3 -->|Quality hold exceeds threshold| B3[Initiate rework plan]
+  B3 --> O3[Outcome: Maintain OTIF]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,128 @@
+objective: >-
+  Autonomously detect, simulate, and resolve production constraints and
+  exceptions across scheduling, supply disruptions, and quality holds to
+  minimize COGS while preserving OTIF and availability.
+trigger: >-
+  Detection of a production constraint or exception (schedule slippage, supply
+  disruption, machine fault, or quality hold) from operational feeds or operator
+  input.
+decision: >-
+  Select and execute the recovery action (reschedule, stop/start, re-sequencing,
+  substitute supply, or quality quarantine) that minimizes incremental COGS
+  impact while meeting OTIF and availability constraints.
+expected_action: >-
+  Continuously ingest schedule, inventory, OT & quality signals; run RCA to
+  identify root cause and impact; run multi-agent simulations of recovery
+  alternatives; rank alternatives by COGS and service impact; automatically
+  execute low-risk actions with Remote Functions (writeback to SAP S/4HANA /
+  MES) and escalate high-risk or low‑confidence actions into a CWB Lifecycle for
+  human approval; notify stakeholders and persist decision telemetry.
+expected_outcome: >-
+  Faster recovery from disruptions, fewer and shorter downtime events, reduced
+  waste and expedited recovery scheduling, maintained or improved OTIF and
+  availability, and measurable reduction in COGS impact per disruption.
+rationale: >-
+  Agentic AI coordinates multi-step reasoning and simulation across structured
+  and semi-structured data. STREAMS provides robust batch ETL of
+  schedule/inventory/quality data; RCA Service surfaces root causes and impacts;
+  Remote Functions perform constrained simulations and writebacks to SAP
+  S/4HANA; Process Builder orchestrates agentic workflows and approval routing.
+  This hybrid autonomous + human-in-loop design balances speed (auto-execute
+  low-risk fixes) with control (CWB for high-impact decisions).
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    type: Manufacturing Execution System
+    status: tbd
+  - name: SCADA/OT
+    type: Operational Technology/SCADA
+    status: tbd
+  - name: Quality Lab / LIMS
+    type: LIMS
+    status: tbd
+  - name: Workforce / Labor Planning
+    type: Workforce Management
+    status: tbd
+key_inputs:
+  - name: Production schedule (planned orders, sequencing, takt times)
+    source: SAP S/4HANA
+    purpose: Baseline schedule, impacted operations, rescheduling targets
+    preferred_stream_type: STREAMS
+  - name: Inventory & component availability (on-hand, inbound receipts, lead times)
+    source: SAP S/4HANA
+    purpose: Determine substitution options and supply constraints
+    preferred_stream_type: STREAMS
+  - name: Shop-floor events (machine status, downtime events, throughput)
+    source: MES
+    purpose: Detect real-time constraints and validate recovery feasibility
+  - name: Quality holds / test results
+    source: Quality Lab / LIMS
+    purpose: Identify quarantined lots, inspect hold causes, decide rework vs scrap
+  - name: OT telemetry (sensor alarms, process deviations)
+    source: SCADA/OT
+    purpose: Detect emergent equipment faults and severity
+  - name: Labor availability & skills
+    source: Workforce / Labor Planning
+    purpose: Assess whether alternative sequences or overtime are feasible
+  - name: Operator inputs / Incident reports
+    source: Operator Input (UI)
+    purpose: Provide contextual details, manual interventions, and approvals
+happy_path:
+  - step: Ingest operational & planning data on disruption
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Consolidate schedule, inventory, quality, OT, and workforce feeds into
+      Subject Areas for analysis
+  - step: Detect constraint and diagnose root cause and impact
+    stage: analyze
+    component: RCA Service
+    purpose: >-
+      Identify root cause, impacted orders, severity, and estimated COGS / OTIF
+      impact
+  - step: Simulate recovery alternatives and rank by COGS/OTIF
+    stage: decide
+    component: Process Builder (Agent Team + Remote Functions)
+    purpose: >-
+      Agentic pipeline runs multi-agent simulations, applies business rules and
+      risk thresholds, and selects a preferred recovery plan
+  - step: Execute approved low-risk recovery actions
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Perform reschedule writeback to SAP S/4HANA and send control commands or
+      work orders to MES; log actions
+  - step: Human review for high-impact or low-confidence plans
+    stage: review
+    component: CWB Lifecycle
+    purpose: >-
+      Present recommendation for approve/reject/override with explainability and
+      allow manual adjustments
+branches:
+  - condition: >-
+      Recommended recovery has low risk and high confidence (below configured
+      COGS and service thresholds)
+    response: >-
+      Auto-execute plan via Remote Functions and writeback to SAP S/4HANA;
+      create audit record
+    outcome: >-
+      Rapid automated recovery; schedule updated and actions propagated to
+      downstream systems
+  - condition: Recommended recovery is high-impact or model confidence is low
+    response: >-
+      Create CWB Lifecycle recommendation and route to responsible planner/ops
+      for approval with attached simulations and SHAP-like explanations
+    outcome: >-
+      Human-in-the-loop decision ensures control for high-risk changes; prevents
+      unintended high-cost actions
+  - condition: >-
+      Critical data missing or conflicting (inventory, machine state, quality
+      result)
+    response: >-
+      Pause execution; generate data request via DDM/Crawlers and operator UI
+      Screen; optionally escalate to operations manager
+    outcome: >-
+      Prevents unsafe actions; resumes simulation and decision after data
+      reconciliation or escalation

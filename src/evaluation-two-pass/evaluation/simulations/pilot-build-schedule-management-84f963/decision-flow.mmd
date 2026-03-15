@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New NPI program enters pilot phase or a status update (supplier readiness, design freeze, or pilot request) is recorded in SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawlers - Ingest authoritative ERP and supplier data for the NPI program (BOMs, master data, inventory, pilot specs, supplier readiness).]
+  N1 --> N2[Stream: STREAMS - Transform, validate and consolidate inputs into subject-area tables; run data quality checks (part mappings, routing completeness, lead time consistency).]
+  N2 --> N3[Cortex: Remote Functions - Execute deterministic production optimizer to generate pilot build schedule and sequencing with resource allocations and alternative scenarios.]
+  N3 --> N4{PB: Process Builder (IF / Rules) + CWB Lifecycle - Evaluate optimized schedule against business rules; auto-approve if within thresholds or create CWB exceptions for human review.}
+  N4 -->|Primary| N5[PB: Remote Functions + Notification + UI Screen - Write approved schedule into SAP S/4HANA, notify suppliers and plant stakeholders, and surface schedule in UI for execution/tracking.]
+  N5 --> Z1[Outcome: Faster validated pilot execution with optimized sequencing and resource utilization, improved OTIF for NPI launches, lower pilot-related COGS and inventory holding, and timely escalation of unresolved constraints to stakeholders.]
+  N4 -->|Optimizer produces schedule that viol...| B1[Create high-priority CWB with exception details and recommended mitigation scenarios; assign to NPI Program Manager or Agent Team for manual resolution.]
+  B1 --> O1[Outcome: Human-in-the-loop reviews constraints, approves revised plan or authorizes resource changes; prevents unsafe or infeasible pilot execution.]
+  O1 --> End[End]
+  N4 -->|Critical supplier readiness flagged a...| B2[Process Builder triggers alternative plan generation (defer, reschedule, source substitution) and notifies procurement + supplier owners via CWB and Notification.]
+  B2 --> O2[Outcome: Either supplier remediation is scheduled or pilot is rescheduled with minimized downstream impact; visibility on working capital and lead-time changes.]
+  O2 --> End[End]
+  N4 -->|Minor deviation within configurable t...| B3[Auto-adjust schedule within thresholds and surface change log in UI; send informational notifications to stakeholders.]
+  B3 --> O3[Outcome: Maintains momentum for pilot builds while ensuring auditable adjustments and stakeholder awareness.]
+  O3 --> End[End]
+  Z1 --> End[End]

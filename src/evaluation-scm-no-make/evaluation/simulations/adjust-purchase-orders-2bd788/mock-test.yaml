@@ -1,0 +1,60 @@
+decision: >-
+  Select which supplier POs and quantities to adjust (consolidate, advance,
+  delay, or cancel) to optimize cost and service given demand signals, inventory
+  positions, transport capacity, and supplier delivery certainty.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Daily scheduled orchestration run or inventory/demand trigger (significant
+    forecast delta, stockout risk, or supplier capacity change).
+  parameters:
+    objective: >-
+      Autonomously optimize and orchestrate PO call-offs across suppliers and
+      materials to consolidate deliveries, minimize COGS, reduce working
+      capital, and protect revenue while respecting supplier constraints and
+      multi-echelon inventory needs.
+    key_inputs:
+      - Demand Forecast (SKU-location-time)
+      - Open Purchase Orders & PO Line Details
+      - Inventory Position (on-hand, in-transit, reserved)
+      - Supplier Capacity, Delivery Certainty, Performance Scores
+      - Transportation Capacity & Cost (TMS / 3PL rates)
+      - Cost & Pricing (unit cost, landed cost components)
+      - Shortage Propagation & Rebalancing Signals
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Advanced Statistical Forecasting in SAS
+      - Kinaxis RapidResponse
+      - Kinaxis (Order Expediting / Rebalancing / Shortage Propagation)
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Frieght
+expected_output:
+  action: >-
+    Automatically generate and execute PO change transactions to the selected
+    supplier(s) in S4 via Remote Functions, update internal planning stores, and
+    publish notifications and dashboard updates to stakeholders.
+  outcome: >-
+    Reduced COGS through supplier consolidation and freight optimization, lower
+    working capital via reduced inbound inventory variance, maintained or
+    improved service levels (revenue protection), and auditable PO change
+    transactions with exception routing.
+  affected_components:
+    - STREAMS
+    - 'Process Builder: Rules + Remote Functions'
+    - 'Process Builder: IF (decision) + Remote Functions'
+    - 'Remote Functions (ERP writeback to S4) + Process Builder: Transaction'
+    - 'Process Builder: Notification'
+    - UI Screen (dashboard)
+rationale: >-
+  A deterministic, process-driven orchestration combining demand, inventory,
+  supplier performance, and transport constraints enables repeatable, auditable
+  PO tuning at L4. Using STREAMS for data consolidation, Process Builder for
+  orchestration and rules, and Remote Functions for ERP writeback provides
+  scalable, enterprise-grade automation while preserving exception handling and
+  stakeholder visibility.

@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect demand data
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Forecast demand and assess capacity
+    confidence: confirmed
+    capability: Forecast demand and assess capacity
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Human-in-the-loop decision for order placement
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Automate agreement management
+    confidence: inferred
+    node_type: act
+  - name: Exception Management
+    purpose: Resolve shortages efficiently
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize service parts production ordering, supplier capacity
+      planning, aftermarket sourcing, and shortage escalation to reduce cogs,
+      prevent stockouts, and improve ebitda and working capital. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Daily scheduled run (overnight) plus event-driven triggers from Kinaxis RapidResponse for shortage or capacity breach events.]
+  A --> N1[Stream: STREAMS - Ingest master and transactional data (orders, inventory, contracts, WMS/TMS feeds, forecasts, shortage signals).]
+  N1 --> N2[Cortex: Cortex Auto Forecast + Remote Functions - Generate consensus forecasts and quantify OTIF vs cost tradeoffs across scenarios.]
+  N2 --> N3{PB: Process Builder (Rules + IF) + CWB Lifecycle - Orchestrate decision logic to select replenishment targets, rebalancing actions, and network changes; flag exceptions over thresholds.}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute approved changes: write replenishment orders to S4, push rebalancing to Kinaxis, and schedule transport with TMS.]
+  N4 --> N5[PB: Process Builder (Notification) + Subject Areas (dashboard) - Notify stakeholders and surface results in dashboards; capture decisions and overrides for RCA and finance reporting.]
+  N5 --> Z1[Outcome: Improved OTIF consistent with customer SLAs while keeping cost-to-serve within configured thresholds; automated, auditable decisions and writebacks reduce manual cycle time and provide traceability for finance and operations.]
+  N3 -->|Recommended plan increases cost-to-se...| B1[Process Builder holds automated apply, notifies Finance and planners via Notification, and generates lower-cost alternative scenarios for approval.]
+  B1 --> O1[Outcome: Decision deferred; lower-cost candidate applied after approval or routed to executive signoff.]
+  O1 --> End[End]
+  N3 -->|Capacity or supply constraints preven...| B2[Trigger Kinaxis shortage propagation and prioritization rules; automatically prioritize customers by SLA, adjust replenishment targets and update consensus forecast; notify account teams.]
+  B2 --> O2[Outcome: Partial fulfillment prioritized per SLA; affected customers flagged and communications issued; alternative mitigation tracked.]
+  O2 --> End[End]
+  N3 -->|Planner manually overrides automated ...| B3[Record override in CWB Lifecycle, require justification, and apply manual targets via Remote Functions; schedule RCA for posterior analysis.]
+  B3 --> O3[Outcome: Manual plan enacted and tracked for performance and financial reconciliation.]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,142 @@
+objective: >-
+  Automate deterministic carrier selection and onboarding to optimize total
+  transport cost, enforce SLA compliance, and continuously govern carrier
+  performance across the automotive supply network.
+trigger: >-
+  New carrier bid submission, contract renewal event, or flagged lane
+  capacity/coverage gap.
+decision: >-
+  Select and onboard new carriers by evaluating bids, terms, and integration
+  readiness to minimize COGS while meeting service and SLA requirements.
+expected_action: >-
+  Run rule-based scoring and policy checks to auto-select compliant carriers;
+  surface exceptions to reviewers via CWB lifecycle; execute onboarding steps
+  and writebacks to SAP S/4HANA; create notifications and action items for
+  procurement/onboarding teams.
+expected_outcome: >-
+  Reduced freight COGS, improved on-time delivery performance (OTIF), stronger
+  working capital via better transport efficiency, faster carrier onboarding,
+  and continuous performance governance.
+rationale: >-
+  Coordinating bid evaluation, contract compliance, integration readiness, and
+  live performance signals in a deterministic process reduces manual negotiation
+  delays and mismatch between contracted terms and operational execution.
+  Process Builder orchestrates deterministic rules, Remote Functions handle SAP
+  writebacks and integrations, and CWB lifecycle routes exceptions for human
+  review.
+source_systems:
+  - name: SAP S/4HANA
+    status: identified
+  - name: Transportation Management System (TMS)
+    status: tbd
+  - name: Carrier Portal / Bidding Platform
+    status: tbd
+  - name: Freight Audit & Payment / Finance
+    status: tbd
+  - name: Carrier Performance DB / Claims System
+    status: tbd
+key_inputs:
+  - name: Carrier Bids (rates, transit times, capacity commitments)
+    source: Carrier Portal / Procurement
+    purpose: >-
+      Evaluate cost, transit time, capacity and commercial terms against lane
+      requirements
+  - name: Contract Terms & Approved Rate Cards
+    source: SAP S/4HANA
+    purpose: >-
+      Validate contractual compliance, billing rules, penalty clauses and
+      approved rates
+    preferred_stream_type: Data View
+  - name: Historical Carrier Performance (OTIF, claims, dwell time)
+    source: Carrier Performance DB / TMS
+    purpose: Score carriers for reliability and SLA risk; identify improvement plans
+    preferred_stream_type: STREAM
+  - name: Integration Readiness (EDI/API capability, onboarding status)
+    source: Carrier Portal / Integration Team
+    purpose: >-
+      Assess ability to integrate operationally (EDI/API, labels, ASN) and
+      estimate onboarding effort
+  - name: Lane Demand & Shipment Schedules
+    source: SAP S/4HANA
+    purpose: >-
+      Match carrier capacity and schedules to planned shipments and critical
+      lanes
+    preferred_stream_type: STREAM
+  - name: SLA & Compliance Rules (safety, security, regional requirements)
+    source: SAP S/4HANA / Legal
+    purpose: Enforce mandatory SLA and regulatory constraints in selection
+happy_path:
+  - step: >-
+      Ingest carrier bids, contracts, lane schedules, and historical performance
+      into the DI platform
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Centralize external bids and internal master data for processing and audit
+      trail
+  - step: >-
+      Normalize and score carriers on cost, SLA compliance, integration
+      readiness, and historical performance
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Compute deterministic carrier score and total landed transport cost impact
+      per lane
+  - step: >-
+      Apply deterministic selection rules and business policies to pick primary
+      and backup carriers; surface exceptions
+    stage: decide
+    component: Process Builder (Rules + IF + Branch)
+    purpose: >-
+      Automate selection logic, route exceptions to human review when thresholds
+      or policy conflicts occur
+  - step: >-
+      Execute onboarding and system integration tasks; write selected carrier,
+      contract and rate cards into SAP S/4HANA
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Perform ERP writebacks, trigger EDI/API provisioning, and create
+      onboarding tasks
+  - step: >-
+      Govern ongoing performance and escalate SLA breaches or contract
+      deviations to stakeholders
+    stage: review
+    component: CWB Lifecycle
+    purpose: >-
+      Manage exceptions, create action items, and track remediation until SLA
+      compliance is restored
+  - step: >-
+      Surface selection outcomes, onboarding status, and carrier KPIs to
+      procurement and operations dashboards
+    stage: surface
+    component: UI Screen / Dashboard
+    purpose: >-
+      Provide transparent decision audit trail and operational status for
+      stakeholders
+branches:
+  - condition: >-
+      Carrier fails integration readiness checks (no EDI/API, labeling or ASN
+      capability)
+    response: >-
+      Create onboarding action item and schedule integration project; fallback
+      to backup carrier if lane critical
+    outcome: >-
+      Onboarding queued with estimated lead time; critical shipments routed to
+      compliant carriers to avoid disruption
+  - condition: Bid price exceeds cost threshold or violates negotiated rate cards
+    response: >-
+      Auto-reject or flag for procurement negotiation via Action Item and
+      Notification; optionally re-run selection with alternative carriers
+    outcome: >-
+      Procurement engages carrier for re-bid or rejects; cost outliers prevented
+      from entering execution
+  - condition: >-
+      Carrier score indicates high SLA risk despite low cost (performance
+      degradation or high claims)
+    response: >-
+      Block auto-selection, route to CWB Lifecycle for review and require
+      remediation plan before onboarding
+    outcome: >-
+      Protects OTIF and reduces downstream disruption; high-risk carriers placed
+      on watchlist until improved

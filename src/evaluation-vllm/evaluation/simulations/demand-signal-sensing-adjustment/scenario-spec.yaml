@@ -1,0 +1,65 @@
+objective: >-
+  Unified DI solution for sensing real-time demand signals, adjusting forecasts,
+  and coordinating promotions, inventory, and order fulfillment across the
+  automotive supply network.
+trigger: Real-time sales order data from SAP S/4HANA.
+decision: >-
+  Acceptance/adjustment of sales orders against forecasted demand, triggering
+  replanning actions.
+expected_action: >-
+  Rapid adjustments to short-term demand forecasts, coordination of promotions,
+  inventory, and order fulfillment.
+expected_outcome: >-
+  Reduced stockouts, minimized excess, improved OTIF, and enhanced revenue
+  capture.
+rationale: >-
+  Automate demand signal sensing and adjustment to optimize inventory and order
+  fulfillment across the supply network.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Real-time Sales Orders
+    source: SAP S/4HANA
+    purpose: Monitor sales orders against forecasts
+    preferred_stream_type: real-time
+  - name: Dealer Inventory Levels
+    source: SAP S/4HANA
+    purpose: Track dealer inventory levels and days' supply
+    preferred_stream_type: periodic
+  - name: Promotional Campaign Data
+    source: SAP S/4HANA
+    purpose: Assess demand uplift due to promotions
+    preferred_stream_type: periodic
+happy_path:
+  - step: Ingest real-time sales order data from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Collect and prepare sales order data for analysis
+  - step: Analyze sales order data against existing forecasts
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Detect variances and potential demand shifts
+  - step: Adjust short-term demand forecasts based on real-time signals
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Implement rapid adjustments to forecasts
+  - step: Coordinate promotions, inventory, and order fulfillment
+    stage: act
+    component: Process Builder
+    purpose: Trigger necessary actions across the supply network
+  - step: Review and escalate significant demand deviations
+    stage: review
+    component: CWB Lifecycle
+    purpose: Identify and escalate significant demand deviations
+branches:
+  - condition: Significant demand deviation detected
+    response: Escalate to cross-functional teams with recommended actions
+    outcome: Cross-functional team reviews and resolves the issue
+  - condition: No significant demand deviation detected
+    response: Continue monitoring and analysis
+    outcome: Maintain current forecast and operations
+  - condition: Promotional campaign impact exceeds threshold
+    response: Adjust promotional plans and forecasts accordingly
+    outcome: Updated promotional plans and adjusted forecasts

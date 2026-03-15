@@ -1,0 +1,66 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: SAS
+    type: Analytics/Screening (existing screening or analytics)
+    status: identified
+  - name: External Restricted Party Screening Service / Government License Registry
+    status: tbd
+  - name: Supplier Portal / 3PL document repository
+    status: tbd
+aera_ingestion:
+  - stream_name: supplier-master-feed-contacts-country-of-origin-tax-id
+    stream_type: DDM/Crawlers
+    source: S4 (or Supplier Portal)
+  - stream_name: product-master-sku-descriptions-preliminary-hs-code-incoterm
+    stream_type: STREAMS
+    source: S4
+  - stream_name: shipment-order-event-shipment-date-route-ports-value
+    stream_type: STREAMS
+    source: Uber Freight TMS / Blue Yonder WMS / S4
+  - stream_name: restricted-party-screening-results
+    stream_type: Remote Functions
+    source: External Screening Service or SAS
+  - stream_name: license-documents-expiry-metadata
+    stream_type: DDM/Crawlers
+    source: Supplier Portal / 3PL repo / S4 attachments
+  - stream_name: regulatory-rule-set-tariff-tables
+    stream_type: Event Stream
+    source: External regulatory feeds / internal compliance rules
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: >-
+      Call external screening/license services and apply regulatory rule engine
+      to produce decision inputs
+  - component: Process Builder & CWB Lifecycle
+    type: process_builder
+    function: Apply deterministic thresholds to choose auto-action vs human review
+  - component: Remote Functions
+    type: process_builder
+    function: Persist authoritative data and enforce shipment action in ERP/TMS
+  - component: UI Screen & Notification
+    type: process_builder
+    function: >-
+      Enable human-in-the-loop decisions with context and close the loop with
+      alerts
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate and semi-autonomously execute global trade compliance
+      decisions (license validation/issuance, master data confirmation for hs
+      codes/incoterms/trade classifications, restricted party screening) to
+      reduce compliance risk, improve duty/tax accuracy (cogs), and accelerate
+      license-to-ship and supplier onboarding. and approve the recommended
+      action.

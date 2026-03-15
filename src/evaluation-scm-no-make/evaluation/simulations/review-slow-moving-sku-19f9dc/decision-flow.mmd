@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled portfolio review cadence (e.g., weekly/monthly) or threshold-based portfolio risk/turnover signal (forecast bias, excess days of supply, supplier term deviation).]
+  A --> N1[Stream: STREAMS / DDM/Crawlers - Ingest and validate demand, inventory, supplier, and SKU master data into the Data Foundation]
+  N1 --> N2[Cortex: Cortex Auto Forecast + Safety Stock Service - Compute demand signals, forecast variance, and multi-echelon inventory metrics; run safety stock and ROI simulations]
+  N2 --> N3{PB: Process Builder (Rules, IF, Data View) + CWB Lifecycle - Evaluate business rules and portfolio risk/return; generate ranked recommendations and classify into auto-executable vs. approval-required}
+  N3 -->|Primary| N4[PB: Remote Functions + Process Builder (Action Item) - Execute low-risk changes automatically and create CWB tasks for approvals on high-impact recommendations]
+  N4 --> N5[UI: UI Screens + Notification (CWB) - Surface results and audit trail to stakeholders and trigger notifications for approvals or negotiations]
+  N5 --> Z1[Outcome: Reduced slow-moving inventory, improved EBITDA/COGS alignment with demand signals, optimized multi-echelon safety stock, auditable decision trail for approvals/overrides, and measurable reduction in excess days-of-supply and procurement cost deltas.]
+  N3 -->|Portfolio score indicates high financ...| B1[Force human-in-the-loop: route to CWB Lifecycle with detailed ROI analysis and require multirole approvals before any writeback]
+  B1 --> O1[Outcome: Prevents autonomous execution of high-impact changes; ensures auditable cross-functional approval]
+  O1 --> End[End]
+  N3 -->|Supplier terms or lead time data indi...| B2[Create procurement negotiation Action Item and schedule Agent Team / procurement owner CWB; hold automated changes for affected SKUs]
+  B2 --> O2[Outcome: Negotiation path initiated; affected SKUs remain protected until resolution to avoid stockouts or cost spikes]
+  O2 --> End[End]
+  N3 -->|Forecast variance or recent demand si...| B3[Trigger demand review subprocess (Process Builder Wait + IF) and flag SKU for temporary hold on permanent reprioritization; optionally run accelerated forecast refresh via SAS]
+  B3 --> O3[Outcome: Reduces risk of acting on noisy signals; defers permanent portfolio changes until forecast clarity is restored]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect raw material receipt data.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Remote Functions
+    purpose: Apply acceptance criteria.
+    confidence: inferred
+    capability: Apply acceptance criteria.
+process_builder:
+  - name: Process Builder
+    purpose: Minimize waste and changeovers.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Efficient recycling and disposal.
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: Supplier remediation and containment.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce working capital tied to inbound and in-plant inventories
+      while improving cogs through optimized material flow and enhanced line
+      readiness. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

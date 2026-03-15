@@ -1,0 +1,20 @@
+flowchart TD
+  A[Trigger: New product introduction (NPI) initiation]
+  A --> N1[Stream: DDM/Crawlers - Initiate NPI process]
+  N1 --> N2[Cortex: Remote Functions - Set target costs]
+  N2 --> N3{PB: CWB Lifecycle - Collaborate on design-to-cost}
+  N3 -->|Primary| N4{PB: CWB Lifecycle - Conduct VA/VE workshops}
+  N4 --> N5[Cortex: AutoML - Implement should-cost modeling]
+  N5 --> N6[PB: Remote Functions - Generate and track cost-reduction ideas]
+  N6 --> N7{PB: CWB Lifecycle - Evaluate localization strategy}
+  N7 --> Z1[Outcome: Reduced COGS, improved cash flow, and measurable EBITDA and working capital improvements]
+  N3 -->|Cost-reduction initiative fails to me...| B1[Reject and request reevaluation]
+  B1 --> O1[Outcome: Return to VA/VE workshop for further analysis]
+  O1 --> End[End]
+  N3 -->|Supplier does not provide cost-reduct...| B2[Escalate to supplier management]
+  B2 --> O2[Outcome: Ensure supplier engagement and participation]
+  O2 --> End[End]
+  N3 -->|Localization strategy exceeds budget| B3[Adjust strategy or seek alternative options]
+  B3 --> O3[Outcome: Optimize localization plan within budget constraints]
+  O3 --> End[End]
+  Z1 --> End[End]

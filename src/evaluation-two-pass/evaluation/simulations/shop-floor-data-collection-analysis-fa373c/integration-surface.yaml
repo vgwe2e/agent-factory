@@ -1,0 +1,57 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    type: MES
+    status: tbd
+  - name: PLC/ICS (PLC, SCADA, Historian)
+    type: PLC/ICS
+    status: tbd
+  - name: PLM
+    type: PLM
+    status: tbd
+  - name: CMMS / Maintenance System
+    type: CMMS
+    status: tbd
+aera_ingestion:
+  - stream_name: shop-floor-telemetry-cycle-times-alarms-sensor-states
+    stream_type: DDM/Crawlers
+    source: PLC/ICS (Historian/SCADA)
+  - stream_name: mes-execution-status-work-order-progress-actuals-resource-occupancy
+    stream_type: STREAMS
+    source: MES
+  - stream_name: production-orders-master-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: engineering-change-change-orders
+    stream_type: DDM/Crawlers
+    source: PLM
+  - stream_name: maintenance-schedules-work-orders
+    stream_type: DDM/Crawlers
+    source: CMMS
+  - stream_name: historical-performance-oee-downtime-kpis
+    stream_type: STREAMS
+    source: Subject Areas (derived)
+processing:
+  - component: Process Builder - Rules
+    type: cortex
+    function: Classify event (minor/major/systemic) and determine decision path.
+  - component: Process Builder - Remote Functions
+    type: process_builder
+    function: >-
+      Apply capacity constraints, tooling/changeover logic, and maintenance
+      windows to produce actionable schedule changes and orders.
+  - component: >-
+      Process Builder - Transaction + Notification (Remote Functions for ERP/MES
+      API)
+    type: process_builder
+    function: >-
+      Update SAP S/4HANA and MES with revised schedules and create/assign
+      maintenance tasks; push alerts to operators/maintainers.
+ui_surface:
+  - component: UI Screen (dashboard)
+    screen: Primary
+    purpose: >-
+      Provide shift leads and engineers with visibility and audit trail of
+      autonomous actions, and allow override if required.

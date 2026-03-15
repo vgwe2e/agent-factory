@@ -1,0 +1,44 @@
+decision: >-
+  Determine quality checks, resource allocation, defect countermeasures, process
+  improvements, supplier part inspections, and regulatory compliance actions.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Start of production line cycle or receipt of new supplier parts.
+  parameters:
+    objective: >-
+      Reduce COGS and improve yield through cohesive quality management and
+      control.
+    key_inputs:
+      - In-Process Quality Data
+      - End-of-Line Audit Results
+      - Defect Data
+      - FTT Yield Metrics
+      - Supplier Part Quality Data
+      - Regulatory Compliance Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Trigger additional quality checks, allocate resources for audits, deploy
+    defect countermeasures, implement process improvements, schedule supplier
+    part inspections, verify regulatory compliance.
+  outcome: >-
+    Reduced rework and scrap, improved first-pass yields, lowered warranty
+    costs, enhanced OTIF performance.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Cortex Monitoring
+    - RCA Service
+    - Cortex Auto Forecast
+    - Remote Functions
+    - Action Item
+    - Dashboard
+rationale: >-
+  By integrating deterministic and agentic decisions across various quality
+  checkpoints, Ford can achieve significant cost savings and quality
+  improvements.

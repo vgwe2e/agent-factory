@@ -1,0 +1,74 @@
+objective: >-
+  Reduce working capital tied to inventory and cut COGS by managing sourcing
+  risks through proactive supplier risk assessment and dynamic mitigation
+  planning.
+trigger: Periodic supplier risk assessment and real-time alerts for supplier distress.
+decision: >-
+  Assess supplier base risk and determine mitigation actions; plan and implement
+  single-source risk reduction strategies; develop and execute contingency plans
+  for critical components; conduct supply chain security remediation; integrate
+  supplier DRP/BCP signals; implement early warning signals for supplier
+  distress.
+expected_action: >-
+  Execute mitigation actions, switch to alternative suppliers, establish
+  emergency response plans, improve supply chain security, integrate DRP/BCP
+  signals, and take preemptive actions based on early warning signals.
+expected_outcome: >-
+  Reduced working capital tied to inventory, minimized COGS from disruptions,
+  protected EBITDA, and enhanced supply chain resilience.
+rationale: >-
+  Proactive risk management and dynamic mitigation planning can significantly
+  reduce financial and operational risks associated with supplier dependencies,
+  ensuring business continuity and cost efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Supplier Financial Health Data
+    source: SAP S/4HANA
+    purpose: Assess financial risks of suppliers
+  - name: Operational Risk Data
+    source: SAP S/4HANA
+    purpose: Identify operational risks in the supply chain
+  - name: Geopolitical Risk Data
+    source: External APIs
+    purpose: Monitor geopolitical risks impacting suppliers
+  - name: Early Warning Signals
+    source: External APIs
+    purpose: Detect early signs of supplier distress
+happy_path:
+  - step: Collect and aggregate supplier risk data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Gather necessary data for risk assessment
+  - step: Analyze supplier risk using AI/ML models
+    stage: analyze
+    component: AutoML
+    purpose: Identify high-risk suppliers and potential issues
+  - step: Generate mitigation plans and contingency actions
+    stage: decide
+    component: Agentic AI
+    purpose: Develop actionable plans to mitigate risks
+  - step: Present mitigation plans for approval
+    stage: review
+    component: CWB Lifecycle
+    purpose: Ensure human oversight before executing plans
+  - step: Execute approved mitigation actions
+    stage: act
+    component: Remote Functions
+    purpose: Implement plans and update systems accordingly
+  - step: Monitor and report on risk mitigation effectiveness
+    stage: notify
+    component: UI Screens
+    purpose: Provide visibility into risk management outcomes
+branches:
+  - condition: High-risk supplier identified but no viable alternatives
+    response: Escalate to senior management for decision
+    outcome: Manual intervention to address critical supplier risk
+  - condition: Early warning signal detected but low confidence
+    response: Conduct further investigation and monitor closely
+    outcome: Delayed action until more data is available
+  - condition: Approved mitigation action fails due to unforeseen circumstances
+    response: Reassess and generate new mitigation plan
+    outcome: Adaptive response to changing conditions

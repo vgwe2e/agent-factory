@@ -1,0 +1,31 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: historical-order-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: carrier-costs
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: AutoML
+    type: cortex
+    function: Forecast capacity needs and optimize DC locations.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Allow human review and approval of recommendations.
+  - component: Remote Functions
+    type: process_builder
+    function: Update inventory and transportation plans in ERP.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize service parts distribution, transportation, and
+      fulfillment planning to reduce working capital, lower cogs, and improve
+      otif. and approve the recommended action.

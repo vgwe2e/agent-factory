@@ -1,0 +1,41 @@
+decision: >-
+  Determine optimal actions for material receiving, line-side replenishment,
+  internal parts kitting, inventory accuracy, empty container management, and
+  material shortage identification.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Material receipt notification from SAP S/4HANA.
+  parameters:
+    objective: >-
+      Automate material reception, line-side replenishment, in-plant kit
+      assembly, inventory accuracy, and shortage escalation to reduce COGS and
+      enhance OTIF and working capital efficiency.
+    key_inputs:
+      - Material Receipt Notification
+      - Line-Side Replenishment Requirements
+      - Component Inventory Levels
+      - Inventory Accuracy Targets
+      - Empty Container Status
+      - Material Shortages
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Accept and stage incoming materials, execute line-side replenishment, group
+    components into kits, adjust inventory accuracy targets, route empty
+    containers, identify and escalate material shortages.
+  outcome: >-
+    Reduced COGS, improved material flow, minimized stockouts, faster material
+    turnaround, enhanced OTIF, and better working capital efficiency.
+  affected_components:
+    - DDM/Crawler
+    - Process Builder
+    - Action Item
+    - Dashboard
+rationale: >-
+  Automating material flow and in-plant logistics processes will streamline
+  operations, reduce costs, and improve overall supply chain efficiency.

@@ -1,0 +1,70 @@
+objective: >-
+  Reduce COGS and improve OTIF through optimized order allocation and inventory
+  reservation.
+trigger: New customer or dealer order creation in SAP S/4HANA.
+decision: >-
+  Allocate orders to production slots, reserve and allocate parts inventory,
+  define and optimize allocation rules, and expedite urgent orders.
+expected_action: >-
+  Orders are allocated to optimal production slots, parts are reserved and
+  allocated efficiently, allocation rules are optimized, and urgent orders are
+  expedited.
+expected_outcome: >-
+  Reduced COGS, improved OTIF, optimized working capital, and enhanced order
+  capture.
+rationale: >-
+  By integrating decision intelligence across production slot allocation,
+  inventory reservation, and priority expediting, Ford can achieve significant
+  cost savings and operational efficiency improvements.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Customer/Dealer Orders
+    source: SAP S/4HANA
+    purpose: To identify new orders requiring allocation.
+  - name: Available Production Slots
+    source: SAP S/4HANA
+    purpose: To determine feasible slots for order allocation.
+  - name: Parts Inventory Levels
+    source: SAP S/4HANA
+    purpose: To ensure parts availability for order fulfillment.
+  - name: Allocation Rules
+    source: SAP S/4HANA
+    purpose: To guide the allocation process based on predefined criteria.
+happy_path:
+  - step: Retrieve new customer/dealer orders from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest new orders into the Aera platform.
+  - step: Analyze available production slots and parts inventory.
+    stage: analyze
+    component: STREAMS
+    purpose: Prepare data for allocation decisions.
+  - step: Allocate orders to production slots using defined rules.
+    stage: decide
+    component: Process Builder
+    purpose: Determine optimal production slots for orders.
+  - step: Reserve and allocate parts inventory for orders.
+    stage: act
+    component: Process Builder
+    purpose: Ensure parts are reserved and allocated efficiently.
+  - step: Optimize allocation rules based on current demand and capacity.
+    stage: decide
+    component: Process Builder
+    purpose: Improve allocation efficiency and fairness.
+  - step: Expedite and reallocate resources for urgent orders.
+    stage: act
+    component: Process Builder
+    purpose: Prioritize urgent orders to meet service level agreements.
+branches:
+  - condition: Insufficient parts inventory for an order.
+    response: Trigger reallocation of parts from other locations.
+    outcome: Parts are reallocated to fulfill the order.
+  - condition: No feasible production slots available for an order.
+    response: Schedule a new production slot or expedite existing slots.
+    outcome: Order is allocated to a new or expedited slot.
+  - condition: Urgent order requires immediate attention.
+    response: Expedite order allocation and resource reallocation.
+    outcome: Urgent order is prioritized and fulfilled promptly.

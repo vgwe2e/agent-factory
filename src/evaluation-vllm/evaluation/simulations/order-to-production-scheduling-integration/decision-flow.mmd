@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New confirmed vehicle order in SAP S/4HANA.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve confirmed vehicle orders from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Sequence orders for optimal line efficiency using Cortex Auto Forecast.]
+  N2 --> N3{PB: CWB Lifecycle - Release manufacturing orders and monitor progression.}
+  N3 -->|Primary| N4[PB: Remote Functions - Adjust build schedules based on constraints and priorities.]
+  N4 --> N5[PB: Remote Functions - Resolve material availability constraints.]
+  N5 --> Z1[Outcome: Optimized production throughput, reduced COGS, improved working capital, synchronized decisions across Order and Production domains.]
+  N3 -->|Material shortage detected| B1[Trigger alternative sourcing options.]
+  B1 --> O1[Outcome: Avoid production delays by resolving material constraints.]
+  O1 --> End[End]
+  N3 -->|Production delay identified| B2[Escalate to production team for immediate action.]
+  B2 --> O2[Outcome: Minimize impact on overall production schedule.]
+  O2 --> End[End]
+  N3 -->|Due date conflict| B3[Adjust order sequence and notify stakeholders.]
+  B3 --> O3[Outcome: Maintain optimal production flow while meeting customer deadlines.]
+  O3 --> End[End]
+  Z1 --> End[End]

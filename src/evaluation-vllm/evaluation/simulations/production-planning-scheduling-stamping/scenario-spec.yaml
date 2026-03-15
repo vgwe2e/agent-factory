@@ -1,0 +1,71 @@
+objective: >-
+  Optimize stamping demand forecasting, daily production sequencing, capacity
+  utilization, MRP for stamping, and expedited order management to reduce COGS,
+  improve on-time delivery, and decrease working capital.
+trigger: Daily start of production planning cycle.
+decision: >-
+  Integrate stamping build plan forecasts, generate daily production schedules,
+  allocate capacity, manage MRP, and handle expedited orders.
+expected_action: >-
+  Generate optimized production schedules, allocate capacity, manage MRP, and
+  handle expedited orders.
+expected_outcome: >-
+  Reduced COGS, improved on-time delivery, decreased working capital, and
+  optimized capacity utilization.
+rationale: >-
+  By integrating multiple L4 activities through a deterministic and agentic mix,
+  the solution aligns line sequencing, capacity, and expedited actions across
+  plants and suppliers with real-time write-backs to MES, ERP, and supplier
+  systems.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Vehicle Build Plan Forecasts
+    source: SAP S/4HANA
+    purpose: Determine stamping production requirements.
+  - name: Press Line Capacity Data
+    source: SAP S/4HANA
+    purpose: Allocate capacity across press lines.
+  - name: Raw Material Inventory Levels
+    source: SAP S/4HANA
+    purpose: Balance material availability against WIP and obsolescence risk.
+  - name: Urgent Stamping Orders
+    source: SAP S/4HANA
+    purpose: Manage expedited orders.
+happy_path:
+  - step: Fetch vehicle build plan forecasts from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect stamping demand data.
+  - step: Generate daily production schedules using Cortex Auto Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Optimize production sequencing and capacity allocation.
+  - step: Allocate capacity across press lines using Safety Stock Service.
+    stage: decide
+    component: Safety Stock Service
+    purpose: Maximize throughput and minimize idle capacity.
+  - step: Calculate raw material and blank requirements using STREAMS.
+    stage: analyze
+    component: STREAMS
+    purpose: Manage MRP for stamping.
+  - step: Handle expedited orders using Remote Functions.
+    stage: act
+    component: Remote Functions
+    purpose: Manage urgent stamping orders.
+  - step: Write back optimized schedules and MRP plans to SAP S/4HANA.
+    stage: notify
+    component: Remote Functions
+    purpose: Ensure real-time synchronization with ERP.
+branches:
+  - condition: Insufficient raw materials detected.
+    response: Trigger procurement request via Remote Functions.
+    outcome: Ensure material availability for production.
+  - condition: High number of urgent orders.
+    response: Prioritize urgent orders using CWB Lifecycle.
+    outcome: Optimize COGS impact while meeting critical build requirements.
+  - condition: Unexpected capacity constraints.
+    response: Adjust production schedules using Process Builder.
+    outcome: Maintain optimal production flow and minimize disruptions.

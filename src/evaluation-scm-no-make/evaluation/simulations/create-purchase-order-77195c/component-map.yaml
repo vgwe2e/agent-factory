@@ -1,0 +1,36 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Collect request and join material, supplier, contract and inventory data
+      for processing.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder
+    purpose: >-
+      Run deterministic rules (budget limits, contract compliance, lead-time
+      risk) and branch to auto-issue or CWB approval.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Write PO with legal/commercial terms into S4 and record financial
+      commitment.
+    confidence: inferred
+    node_type: act
+  - name: Notification
+    purpose: >-
+      Alert procurement, requester and supplier; update Subject Areas for
+      reporting.
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically create purchase orders in s4 for approved
+      material/service requests while balancing cost, lead-time risk, and
+      contract compliance. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

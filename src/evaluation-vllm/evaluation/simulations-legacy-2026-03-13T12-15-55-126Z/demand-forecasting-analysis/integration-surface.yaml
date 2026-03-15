@@ -1,0 +1,36 @@
+source_systems:
+  - name: SAP S/4HANA
+    status: identified
+aera_ingestion:
+  - stream_name: global_sales_forecast
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+  - stream_name: vehicle_configuration_mix
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+  - stream_name: forecast_accuracy
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+  - stream_name: new_model_launch_volume
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+processing:
+  - component: Demand Forecasting Engine
+    type: Forecasting
+    function: Aggregates global sales forecast and measures forecast accuracy
+  - component: Mix Planning Engine
+    type: Planning
+    function: Plans vehicle configuration mix based on market intelligence and forecast
+  - component: Launch Volume Engine
+    type: Planning
+    function: Aligns new model launch volumes with market intelligence and forecast
+ui_surface:
+  - component: Demand Forecasting Dashboard
+    screen: Demand Forecasting
+    purpose: View and adjust global sales forecasts and forecast accuracy metrics
+  - component: Mix Planning Dashboard
+    screen: Mix Planning
+    purpose: Plan and adjust vehicle configuration mix
+  - component: Launch Volume Dashboard
+    screen: New Model Launch
+    purpose: Plan and align new model launch volumes

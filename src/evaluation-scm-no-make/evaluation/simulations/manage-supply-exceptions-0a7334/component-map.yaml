@@ -1,0 +1,35 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate source-system records and transform into unified measures
+      (on-hand, forecast, PO status, ETA, allocation rules)
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+  - name: Subject Areas + Data Quality & Validation (STREAMS rules)
+    purpose: >-
+      Generate exception flags (stockout risk, overstock, delayed supply) and
+      rank by business impact
+    confidence: confirmed
+    type: Subject Areas + Data Quality & Validation (STREAMS rules)
+cortex: []
+process_builder:
+  - name: Process Builder (Rules + IF) + CWB Lifecycle
+    purpose: >-
+      Select touchless action when within guardrails or create CWB for human
+      approval when outside guardrails
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions + Process Builder (Action Item / Transaction)
+    purpose: >-
+      Writeback adjustments to S4/Kinaxis (reallocations, expedite POs,
+      reprioritize production) and push transport instructions to TMS/3PL
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screens (Control Tower dashboard) + Notification
+    purpose: >-
+      Provide planners and managers visibility, action history, and allow
+      overrides via CWB Lifecycle
+    confidence: confirmed
+    component_type: display

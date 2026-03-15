@@ -1,0 +1,48 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: in-process-quality-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: end-of-line-audit-results
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: defect-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: ftt-yield-metrics
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: supplier-part-quality-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: regulatory-compliance-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Monitoring
+    type: cortex
+    function: Resource allocation
+  - component: RCA Service
+    type: cortex
+    function: Countermeasure deployment
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Process improvement selection
+  - component: Remote Functions
+    type: cortex
+    function: Compliance verification
+  - component: Action Item
+    type: process_builder
+    function: >-
+      Trigger additional quality checks, allocate resources for audits, deploy
+      defect countermeasures, implement process improvements, schedule supplier
+      part inspections, verify regulatory compliance.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce cogs and improve yield through cohesive quality management
+      and control. and approve the recommended action.

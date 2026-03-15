@@ -1,0 +1,74 @@
+objective: >-
+  Unify multimodal transport design, carrier strategy, lane optimization, and
+  flow analysis to minimize COGS and improve OTIF across Ford's automotive parts
+  network.
+trigger: Periodic review of transportation strategy and mode optimization needs.
+decision: >-
+  Optimize transportation modes, lanes, and routes to minimize logistics costs
+  and stockouts while improving on-time delivery metrics.
+expected_action: >-
+  Automate end-to-end transportation decisions with cross-system orchestration,
+  focusing on continuous, near-real-time mode selection, lane balancing, and
+  capacity-aware routing.
+expected_outcome: >-
+  Reduced logistics costs, minimized stockouts, and improved on-time delivery
+  metrics.
+rationale: >-
+  The initiative aims to leverage AI and ML for deterministic decision-making to
+  enhance overall supply chain efficiency and cost-effectiveness.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Carrier Performance Data
+    source: SAP S/4HANA
+    purpose: Evaluate carrier performance for long-term strategy development.
+  - name: Freight Lane Data
+    source: SAP S/4HANA
+    purpose: Analyze and optimize shipping lanes and routes.
+  - name: SKU Location Data
+    source: SAP S/4HANA
+    purpose: Determine optimal flow of inbound/outbound logistics.
+  - name: Special Cargo Requirements
+    source: SAP S/4HANA
+    purpose: Plan and route special cargo to meet safety and regulatory constraints.
+happy_path:
+  - step: Retrieve carrier performance data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for carrier strategy evaluation.
+  - step: Analyze carrier performance using Cortex Auto Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict future performance and optimize total landed cost.
+  - step: >-
+      Design multimodal transport network leveraging rail, road, and ocean
+      configurations.
+    stage: decide
+    component: Process Builder
+    purpose: Determine optimal transport configuration for each lane.
+  - step: Optimize freight lanes and routes using STREAMS.
+    stage: decide
+    component: STREAMS
+    purpose: Balance cost, speed, and reliability for each SKU/location set.
+  - step: Analyze inbound/outbound logistics flow to identify bottlenecks.
+    stage: analyze
+    component: RCA Service
+    purpose: Maximize COGS savings while preserving service levels.
+  - step: Plan and route special cargo to minimize risk and total cost.
+    stage: decide
+    component: Process Builder
+    purpose: Ensure safety and regulatory compliance for sensitive components.
+branches:
+  - condition: Carrier performance data indicates significant underperformance.
+    response: Trigger CWB Lifecycle for carrier strategy adjustment.
+    outcome: Adjust long-term carrier strategy based on performance feedback.
+  - condition: Special cargo requirements exceed current capacity.
+    response: >-
+      Engage Remote Functions for custom API calls to external logistics
+      providers.
+    outcome: Secure additional capacity for special cargo shipments.
+  - condition: Freight lane optimization identifies high-risk lanes.
+    response: Use Remote Functions to reroute high-risk lanes to safer alternatives.
+    outcome: Minimize risk while maintaining cost and service level objectives.

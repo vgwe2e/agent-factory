@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: stamping-press-oee-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-kpi-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: quality-yield-and-scrap-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: energy-consumption-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: maintenance-and-quality-deviation-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: cost-of-quality-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast, RCA Service
+    type: cortex
+    function: Identify trends, anomalies, and optimization opportunities
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Present actionable insights for human review and approval
+  - component: Remote Functions
+    type: process_builder
+    function: Implement recommended actions and maintain data consistency
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize stamping operations by integrating oee tracking, kpi
+      monitoring, quality yield analysis, energy consumption tracking,
+      predictive maintenance, and cost of quality analysis into an autonomous
+      performance management loop. and approve the recommended action.

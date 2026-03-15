@@ -1,0 +1,40 @@
+decision: >-
+  Evaluate and select optimal S&OP plans based on financial impact, COGS,
+  revenue, gross margin, and working capital optimization.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Monthly S&OP planning cycle initiation.
+  parameters:
+    objective: >-
+      Link S&OP financial impact assessments, COGS optimization, revenue/gross
+      margin alignment, and working capital improvements into a coordinated,
+      semi-autonomous decision engine to achieve material EBITDA uplift and
+      improved cash conversion.
+    key_inputs:
+      - S&OP Plans
+      - COGS Data
+      - Revenue and Gross Margin Targets
+      - Working Capital Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate the assessment and alignment of S&OP plans with financial targets,
+    providing actionable insights and recommendations.
+  outcome: Improved EBITDA and cash conversion through optimized S&OP plans.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - AutoML
+    - Safety Stock Service
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  The integration of financial impact assessments, COGS optimization,
+  revenue/gross margin alignment, and working capital improvements will enable
+  more informed and data-driven decision-making, leading to significant
+  financial benefits.

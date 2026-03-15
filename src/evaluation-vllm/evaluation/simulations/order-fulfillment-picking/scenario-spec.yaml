@@ -1,0 +1,68 @@
+objective: >-
+  Autonomous management of order release, dynamic picking routes, kitting, and
+  urgent prioritization across plants and DCs to maximize OTIF and reduce COGS.
+trigger: New sales order creation in SAP S/4HANA.
+decision: >-
+  Release sales orders to warehouse, plan picking waves, optimize picking
+  routes, assemble kits/sub-assemblies, resolve picking errors, and prioritize
+  urgent/expedited orders.
+expected_action: >-
+  Optimize order release, generate picking routes, prepare kits, resolve picking
+  errors, and expedite urgent orders.
+expected_outcome: >-
+  Increased order capture, reduced labor/waste, improved working capital, and
+  enhanced OTIF.
+rationale: >-
+  Automate order fulfillment and picking processes to improve efficiency, reduce
+  costs, and enhance service levels.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Sales Orders
+    source: SAP S/4HANA
+    purpose: Identify new orders for release and fulfillment.
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Determine available stock for picking and kitting.
+  - name: Equipment Availability
+    source: SAP S/4HANA
+    purpose: Plan picking routes based on available equipment.
+happy_path:
+  - step: Retrieve new sales orders from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Ingest new sales orders for processing.
+  - step: Analyze sales orders and inventory levels to plan picking waves.
+    stage: analyze
+    component: Process Builder
+    purpose: Optimize order release and wave planning.
+  - step: >-
+      Generate optimized picking routes based on inventory and equipment
+      availability.
+    stage: decide
+    component: Process Builder
+    purpose: Minimize COGS while meeting service levels.
+  - step: Execute picking routes and prepare kits/sub-assemblies.
+    stage: act
+    component: Remote Functions
+    purpose: Assemble kits and prepare sub-assemblies efficiently.
+  - step: Resolve picking errors and trigger replenishment if needed.
+    stage: decide
+    component: Process Builder
+    purpose: Ensure stock levels are maintained.
+  - step: Prioritize and expedite urgent orders by adjusting picking and routing.
+    stage: act
+    component: Remote Functions
+    purpose: Meet critical timelines for urgent orders.
+branches:
+  - condition: Insufficient stock for an order.
+    response: Trigger replenishment request and reallocate stock if possible.
+    outcome: Maintain optimal stock levels and fulfill orders.
+  - condition: Picking error detected.
+    response: Resolve error and adjust picking routes if necessary.
+    outcome: Ensure accurate and efficient picking.
+  - condition: Urgent order requires expedited handling.
+    response: Adjust picking and staging to prioritize the urgent order.
+    outcome: Meet critical timelines for urgent orders.

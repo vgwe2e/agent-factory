@@ -1,0 +1,43 @@
+streams:
+  - name: STREAMS
+    purpose: Aggregate, cleanse and prepare time-series and event features for modeling
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Assess demand patterns, candidate algorithms, and produce baseline metrics
+      (MAPE, bias)
+    confidence: confirmed
+    capability: >-
+      Assess demand patterns, candidate algorithms, and produce baseline metrics
+      (MAPE, bias)
+process_builder:
+  - name: Process Builder (Process, Rules)
+    purpose: >-
+      Apply rules to balance fit vs complexity and adjust parameters to meet
+      EBITDA constraints
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Perform complex calculations, persist tuned parameters to Subject Areas,
+      write forecasts/params back to S4 and trigger Kinaxis
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle / UI Screens
+    purpose: >-
+      Present borderline cases for human override, capture decisions, and
+      finalize writeback
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end top-line demand forecasting with continuous
+      demand sensing, automated model selection and parameterization, and
+      ebitda-aligned tuning to reduce stockouts, waste, and promo volatility
+      while improving revenue and margin. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

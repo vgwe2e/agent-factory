@@ -1,0 +1,35 @@
+l3_name	l1_name	l2_name	composite	archetype	confidence	verdict	implementation_readiness_score	groundedness_score	integration_confidence_score	ambiguity_risk_score	reasons
+Demand Forecasting & Analysis	Plan	Production Planning & Scheduling	0.88	DETERMINISTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Material Requirements Planning (MRP) Integration	Plan	Production Planning & Scheduling	0.88	DETERMINISTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Cost & Value Optimization Initiatives	Procure Source & Buy	Commodity Management & Market Intelligence	0.82	DETERMINISTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Manufacturing Anomaly & Issue Resolution	Make	Powertrain Manufacturing (Engine & Transmission)	0.73	AGENTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Statistical Demand Modeling & Analytics	Plan	Demand Forecasting & Sensing	0.73	DETERMINISTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Demand Planning & Forecasting	Plan	Integrated Business Planning (IBP)	0.72	DETERMINISTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Capacity Scenario Modeling & Simulation	Plan	Capacity Planning & Constraint Management	0.70	DETERMINISTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Customer Experience & Technical Support for Connected Services	Service	Connected Vehicle Services & OTA Updates	0.67	AGENTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Sourcing Risk Management	Procure Source & Buy	Strategic Sourcing & Supplier Selection	0.67	AGENTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Service Parts Regulatory Compliance & Quality Assurance	Service	Service Parts Planning & Management	0.63	AGENTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Transportation Compliance & Risk Management	Move & Fulfill	Transportation Management & Carrier Operations	0.59	DETERMINISTIC	HIGH	REVIEW	74	43	100	29	Low groundedness (43) from confirmed vs inferred component references.
+Warehouse & Inventory Management	Move & Fulfill	Inbound Logistics & Material Flow	0.88	DETERMINISTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Service Parts Inventory Planning & Optimization	Service	Service Parts Planning & Management	0.77	DETERMINISTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Supplier Collaboration for Inventory Optimization	Plan	Inventory Planning & Optimization	0.73	AGENTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Inbound Logistics Network Design & Optimization	Move & Fulfill	Inbound Logistics & Material Flow	0.70	DETERMINISTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Service Parts Network Strategy & Optimization	Move & Fulfill	Service Parts Logistics & Distribution	0.70	DETERMINISTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Warehouse & Distribution Center Network Management	Move & Fulfill	Logistics Network Optimization	0.70	DETERMINISTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Drive Unit Final Assembly & Testing	Make	Electric Vehicle Battery & Drive Unit Production	0.67	DETERMINISTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Emergency & Critical Parts Fulfillment	Move & Fulfill	Service Parts Logistics & Distribution	0.66	AGENTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Integrated Financial & Operational Reconciliation	Plan	Integrated Business Planning (IBP)	0.63	DETERMINISTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Manufacturing Process Quality Audits	Make	Quality Control & In-Process Inspection	0.63	AGENTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Topcoat Application	Make	Paint Operations	0.63	DETERMINISTIC	HIGH	REVIEW	73	40	100	30	Low groundedness (40) from confirmed vs inferred component references.
+Launch Logistics & Distribution Planning	Plan	New Product Launch Planning	0.82	AGENTIC	HIGH	REVIEW	72	38	100	31	Low groundedness (38) from confirmed vs inferred component references.
+Multi-Echelon Inventory Optimization	Plan	Inventory Planning & Optimization	0.84	DETERMINISTIC	HIGH	REVIEW	70	33	100	33	Low groundedness (33) from confirmed vs inferred component references.
+Cost & Value Optimization (Sourcing Phase)	Procure Source & Buy	Strategic Sourcing & Supplier Selection	0.65	DETERMINISTIC	HIGH	REVIEW	70	33	100	33	Low groundedness (33) from confirmed vs inferred component references.
+Field Quality & Warranty Performance Management	Procure Source & Buy	Supplier Quality Management	0.61	AGENTIC	HIGH	REVIEW	70	33	100	33	Low groundedness (33) from confirmed vs inferred component references.
+Inventory & Material Flow Strategy	Plan	Sales & Operations Planning (S&OP)	0.71	DETERMINISTIC	HIGH	REVIEW	68	29	100	36	Low groundedness (29) from confirmed vs inferred component references.
+Finished Goods Handling & Dispatch	Make	Electric Vehicle Battery & Drive Unit Production	0.70	DETERMINISTIC	HIGH	REVIEW	66	25	100	38	Low groundedness (25) from confirmed vs inferred component references.
+Material Flow & Inventory Planning for Launch	Plan	New Product Launch Planning	0.74	DETERMINISTIC	HIGH	REVIEW	65	40	100	50	Low groundedness (40) from confirmed vs inferred component references. | Decision flow failed Mermaid validation.
+Body-In-White (BIW) Assembly Execution	Make	Body Shop & Welding	0.78	DETERMINISTIC	HIGH	HOLD	64	20	100	40	Low groundedness (20) from confirmed vs inferred component references.
+Commodity Strategy & Roadmap Development	Procure Source & Buy	Commodity Management & Market Intelligence	0.60	AGENTIC	HIGH	HOLD	64	20	100	40	Low groundedness (20) from confirmed vs inferred component references.
+New Product Introduction & Lifecycle Planning	Plan	Integrated Business Planning (IBP)	0.74	AGENTIC	HIGH	REVIEW	62	33	100	53	Low groundedness (33) from confirmed vs inferred component references. | Decision flow failed Mermaid validation.
+Operator & Automated Quality Inspections	Make	Quality Control & In-Process Inspection	0.67	AGENTIC	HIGH	REVIEW	58	25	100	57	Low groundedness (25) from confirmed vs inferred component references. | Decision flow failed Mermaid validation.
+Service Parts Network Design & Operations	Service	Service Parts Planning & Management	0.67	DETERMINISTIC	HIGH	REVIEW	58	25	100	57	Low groundedness (25) from confirmed vs inferred component references. | Decision flow failed Mermaid validation.

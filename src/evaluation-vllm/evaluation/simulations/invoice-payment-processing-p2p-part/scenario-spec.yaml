@@ -1,0 +1,65 @@
+objective: >-
+  Unify and automate core P2P decisions across invoice intake, 3-way match,
+  discrepancy handling, and payment term management to reduce COGS and working
+  capital while improving OTIF and supplier cash-flow terms.
+trigger: Receipt of an indirect supplier invoice.
+decision: >-
+  Validate and pay indirect invoices after matching, considering discrepancies
+  and validation rules.
+expected_action: >-
+  Automate invoice receipt, validation, 3-way match, discrepancy resolution, and
+  payment run authorization.
+expected_outcome: >-
+  Reduced COGS, improved working capital, enhanced OTIF, and optimized supplier
+  cash-flow terms.
+rationale: >-
+  By automating P2P processes, Ford can streamline operations, reduce errors,
+  and improve financial performance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Indirect Supplier Invoice
+    source: SAP S/4HANA
+    purpose: To initiate the P2P process.
+  - name: Purchase Order (PO) Details
+    source: SAP S/4HANA
+    purpose: To perform 3-way match.
+  - name: Goods Receipt (GR) Details
+    source: SAP S/4HANA
+    purpose: To perform 3-way match.
+  - name: Payment Terms
+    source: SAP S/4HANA
+    purpose: To manage and optimize payment terms.
+happy_path:
+  - step: Receive and validate indirect supplier invoice.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest invoice data into Aera.
+  - step: Perform 3-way match between invoice, PO, and GR details.
+    stage: analyze
+    component: STREAMS
+    purpose: Ensure accuracy and completeness of invoice data.
+  - step: Evaluate discrepancies and apply validation rules.
+    stage: decide
+    component: Remote Functions
+    purpose: Determine if invoice matches PO and GR details.
+  - step: Approve or escalate discrepancies.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Handle discrepancies through a structured workflow.
+  - step: Authorize and execute scheduled payment runs.
+    stage: act
+    component: Process Builder
+    purpose: Execute payment runs based on cash flow and supplier terms.
+branches:
+  - condition: Discrepancies detected during 3-way match.
+    response: Escalate to CWB Lifecycle for manual review.
+    outcome: Manual intervention to resolve discrepancies.
+  - condition: Early payment discount available.
+    response: Evaluate and authorize early payment.
+    outcome: Optimize cash flow by leveraging discounts.
+  - condition: Supplier payment terms need adjustment.
+    response: Engage with supplier for negotiation.
+    outcome: Balance cash flow improvement with supplier relationships.

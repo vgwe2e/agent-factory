@@ -1,0 +1,43 @@
+decision: >-
+  Plan and validate supplier quality audits, monitor CAPA closures, collaborate
+  on process capability improvements, conduct NPI quality gate reviews, select
+  and implement supplier training programs.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled audit cycle start, CAPA creation, process improvement request, NPI
+    phase transition, training program initiation.
+  parameters:
+    objective: >-
+      Autonomous management of supplier quality audits, CAPA cycles, process
+      capability improvements, NPI quality gating, and supplier training to
+      reduce COGS, accelerate time-to-market, and improve OTIF with suppliers.
+    key_inputs:
+      - Supplier Quality Audit Schedule
+      - CAPA Records
+      - Process Capability Metrics
+      - NPI Phase Status
+      - Supplier Training Needs
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate audit scheduling and validation, track CAPA closure progress,
+    prioritize process improvement initiatives, review NPI quality gates,
+    initiate training programs.
+  outcome: >-
+    Reduced COGS, accelerated time-to-market, improved OTIF, optimized supplier
+    training programs.
+  affected_components:
+    - DDM/Crawler
+    - Action Item
+    - Agentic AI
+    - Dashboard
+rationale: >-
+  The platform will coordinate end-to-end quality decisions across audits, CAPA
+  closure, process capability elevation, and NPI gate reviews, reducing COGS,
+  accelerating time-to-market, and improving OTIF with suppliers.

@@ -1,0 +1,68 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (Rebalancing / Order Expediting / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+aera_ingestion:
+  - stream_name: >-
+      innovation-initiative-dossier-requirements-proposed-skus-supplier-proposals
+    stream_type: api
+    source: Category team / Supplier uploads
+  - stream_name: demand-forecasts-and-uplift-scenarios
+    stream_type: scheduled_batch
+    source: SAS (Advanced Statistical Forecasting) and Cortex Auto Forecast
+  - stream_name: inventory-on-hand-and-replenishment-constraints
+    stream_type: scheduled_batch
+    source: S4 (inventory tables) and Kinaxis (constraints & supply plans)
+  - stream_name: supplier-capacity-lead-times-and-commercial-terms
+    stream_type: api
+    source: Supplier proposals / 3PL & TMS (Uber Freight)
+  - stream_name: financial-kpis-margin-cost-working-capital-impact
+    stream_type: scheduled_batch
+    source: S4 (finance)
+processing:
+  - component: Cortex Auto Forecast + RCA Service
+    type: cortex
+    function: >-
+      Produce quantified scenarios (revenue, margin, working capital, stock
+      risk) and surface root causes/risks
+  - component: Process Builder -> CWB Lifecycle (Rules + Notification)
+    type: process_builder
+    function: >-
+      Present approve/pilot/defer recommendation and capture decision or
+      override
+  - component: 'Process Builder: Action Item + Remote Functions (ERP/TMS/WMS writeback)'
+    type: process_builder
+    function: >-
+      Operationalize the approved initiative across S4, Kinaxis and
+      transport/WMS partners
+  - component: UI Screens (dashboard) + Subject Areas
+    type: process_builder
+    function: >-
+      Track revenue, EBITDA, working capital and supply performance; feed back
+      into future decision cycles
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end category innovation decisions to evaluate,
+      validate, and operationalize initiatives across demand, inventory and
+      procurement to drive revenue growth, ebitda uplift, and improved working
+      capital. and approve the recommended action.

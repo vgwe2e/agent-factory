@@ -1,0 +1,56 @@
+decision: >-
+  Release the final daily production schedule to operations (auto-release when
+  constraints satisfied; route exceptions for planner approval when violations
+  exist).
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Daily schedule horizon (nightly/early-morning) or an exception event from
+    execution (material short, machine downtime, large deviation).
+  parameters:
+    objective: >-
+      Deliver an adaptive, end-to-end deterministic production scheduling engine
+      that auto-synchronizes line sequencing, changeovers, and capacity across
+      multi-plant automotive platforms to reduce COGS, improve on-time delivery,
+      and lower working capital.
+    key_inputs:
+      - Master Production Schedule & Planned Orders
+      - Material Availability / Inventory & MRP Results
+      - Plant Capacity, Shift Patterns, Machine Calendars
+      - Work Order Status & Actuals (throughput, OEE)
+      - Changeover Matrix (sequence-dependent setup times)
+      - Historical run-rates and changeover distributions
+    source_systems:
+      - SAP S/4HANA
+      - MES
+      - PLM / Changeover DB
+      - Plant SCADA / OT
+      - Planner Spreadsheets (local)
+expected_output:
+  action: >-
+    Automatically generate and publish the plant-level production schedule into
+    SAP S/4HANA and downstream MES, including sequence, start/stop times,
+    changeover activities, and hold/rework tasks. Route exceptions into CWB for
+    planner review when required.
+  outcome: >-
+    Consistent, capacity‑aware daily schedules released on time; minimized
+    changeover time and sequence-driven efficiency; fewer manual adjustments on
+    the shop floor; improved on-time delivery and reduced inventory/working
+    capital.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS + Data Quality & Validation
+    - Process (Process Builder) + Remote Functions (optimizer)
+    - CWB Lifecycle + Process IF (Rules)
+    - Process Transaction node + Remote Functions
+    - UI Screens (dashboard) + Notification (Process Builder)
+rationale: >-
+  Deterministic optimization that unifies scheduling, changeover coordination,
+  and real‑time execution feedback closes the loop between planning and
+  operations. Orchestrating ingestion, optimization, rule-based gating
+  (auto-release vs. exceptions), and automated writeback drives faster, more
+  consistent schedule releases and reduces manual rework and COGS.

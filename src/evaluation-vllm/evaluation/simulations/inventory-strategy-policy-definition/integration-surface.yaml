@@ -1,0 +1,49 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: demand-variability
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: lead-times
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: service-targets
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: inventory-value
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: inventory-volatility
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: strategic-suppliers
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: consignment-items
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Safety Stock Service
+    type: cortex
+    function: Determine new safety stock levels.
+  - component: AutoML
+    type: cortex
+    function: Apply differentiated inventory policies.
+  - component: Process Builder
+    type: process_builder
+    function: Establish VMI policies.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure human-in-the-loop validation.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize inventory strategy and policy definition across the
+      automotive supply network to reduce working capital, lower cogs, and
+      improve otif. and approve the recommended action.

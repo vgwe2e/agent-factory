@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Gather necessary information for delivery scheduling.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict optimal carrier and delivery time slot.
+    confidence: confirmed
+    capability: Predict optimal carrier and delivery time slot.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Ensure optimal delivery schedule is selected.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Confirm delivery appointment and communicate with stakeholders.
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate final mile scheduling, direct-to-customer delivery
+      coordination, and order fulfillment orchestration to optimize delivery
+      times, reduce costs, and improve service levels. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,54 @@
+decision: >-
+  Select and onboard new carriers by evaluating bids, terms, and integration
+  readiness to minimize COGS while meeting service and SLA requirements.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New carrier bid submission, contract renewal event, or flagged lane
+    capacity/coverage gap.
+  parameters:
+    objective: >-
+      Automate deterministic carrier selection and onboarding to optimize total
+      transport cost, enforce SLA compliance, and continuously govern carrier
+      performance across the automotive supply network.
+    key_inputs:
+      - Carrier Bids (rates, transit times, capacity commitments)
+      - Contract Terms & Approved Rate Cards
+      - Historical Carrier Performance (OTIF, claims, dwell time)
+      - Integration Readiness (EDI/API capability, onboarding status)
+      - Lane Demand & Shipment Schedules
+      - SLA & Compliance Rules (safety, security, regional requirements)
+    source_systems:
+      - SAP S/4HANA
+      - Transportation Management System (TMS)
+      - Carrier Portal / Bidding Platform
+      - Freight Audit & Payment / Finance
+      - Carrier Performance DB / Claims System
+expected_output:
+  action: >-
+    Run rule-based scoring and policy checks to auto-select compliant carriers;
+    surface exceptions to reviewers via CWB lifecycle; execute onboarding steps
+    and writebacks to SAP S/4HANA; create notifications and action items for
+    procurement/onboarding teams.
+  outcome: >-
+    Reduced freight COGS, improved on-time delivery performance (OTIF), stronger
+    working capital via better transport efficiency, faster carrier onboarding,
+    and continuous performance governance.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Process Builder (Rules + IF + Branch)
+    - Remote Functions
+    - CWB Lifecycle
+    - UI Screen / Dashboard
+rationale: >-
+  Coordinating bid evaluation, contract compliance, integration readiness, and
+  live performance signals in a deterministic process reduces manual negotiation
+  delays and mismatch between contracted terms and operational execution.
+  Process Builder orchestrates deterministic rules, Remote Functions handle SAP
+  writebacks and integrations, and CWB lifecycle routes exceptions for human
+  review.

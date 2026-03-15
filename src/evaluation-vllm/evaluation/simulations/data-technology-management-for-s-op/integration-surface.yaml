@@ -1,0 +1,34 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: s-op-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: forecast-models
+    stream_type: Event Stream
+    source: Cortex Auto Forecast
+  - stream_name: integration-status
+    stream_type: Event Stream
+    source: STREAMS
+  - stream_name: technology-roadmap
+    stream_type: Event Stream
+    source: Process Builder
+  - stream_name: master-data-elements
+    stream_type: Event Stream
+    source: Dimensions
+processing:
+  - component: Data Quality & Validation
+    type: cortex
+    function: Ensure data completeness, accuracy, and timeliness
+  - component: Cortex Auto Forecast
+    type: process_builder
+    function: Improve S&OP forecasts
+  - component: Process Builder
+    type: process_builder
+    function: Balance short-term and long-term S&OP capabilities
+ui_surface:
+  - component: Dimensions
+    screen: Primary
+    purpose: Ensure consistency and accuracy across systems

@@ -1,0 +1,30 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Capture requisition details from SAP S/4HANA.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex: []
+process_builder:
+  - name: Action Item
+    purpose: >-
+      Automatically create and approve requisitions, issue POs, manage catalogs,
+      process goods receipts, and handle PO amendments/cancellations.
+    confidence: confirmed
+    node_type: transaction
+agent_teams:
+  - name: Agentic AI
+    purpose: >-
+      Analyze requisition details and automatically approve based on predefined
+      rules.
+    confidence: inferred
+    role: >-
+      Analyze requisition details and automatically approve based on predefined
+      rules.
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce cogs, accelerate po lifecycle, and improve working capital
+      through touchless, compliant, and optimized po creation, amendment, and
+      goods receipt workflows. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,164 @@
+objective: >-
+  Unify demand forecasting, autonomous data validation, feature enrichment (COGS
+  & lifecycle), and forecast-driven inventory & revenue optimization across
+  multi-SKU, multi-location CPG network to improve forecast accuracy, reduce
+  stockouts/waste, and protect revenue.
+trigger: >-
+  Scheduled model refresh or detection of new candidate feature via 'Determine
+  New Features and Update Process' (periodic cadence or feature discovery
+  event).
+decision: >-
+  Choose whether to add, keep, or remove a forecast feature (driver) by
+  balancing model performance uplift vs. data availability, operational cost,
+  and revenue/COGS impact.
+expected_action: >-
+  Process Builder orchestrates STREAMS and DDM/Crawlers to enrich Subject Areas,
+  run Data Quality & Validation, invoke Cortex Auto Forecast for retrain + SHAP
+  explainability, present recommendation via CWB Lifecycle UI Screen, and—if
+  approved—execute writeback/update via Remote Functions to S4/Kinaxis/Blue
+  Yonder and trigger Safety Stock Service recalculation.
+expected_outcome: >-
+  Selected feature set applied to production forecasts resulting in measurable
+  MAPE improvement, reduced stockouts and overstocks, optimized safety stock and
+  replenishment signals, and verified neutral-or-positive revenue impact;
+  automated rollback/hold if negative impact detected.
+rationale: >-
+  A single DI stack that couples automated data ingestion/validation, COGS-aware
+  feature engineering, explainable ML forecasting, and lifecycle-driven
+  approvals ensures repeatable, auditable feature updates that improve forecast
+  accuracy and align inventory and revenue objectives while minimizing manual
+  toil.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS/3PL
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting
+    type: Statistical Tool
+    status: identified
+  - name: Enterprise Data Lake
+    type: Data Lake
+    status: tbd
+  - name: Retail POS / External Demand Feeds
+    status: tbd
+key_inputs:
+  - name: Sales history (transactional)
+    source: S4 (ERP)
+    purpose: Train demand/time-series models and compute historical baselines
+    preferred_stream_type: batch
+  - name: On-hand inventory & WMS transactions
+    source: Blue Yonder WMS / S4
+    purpose: Compute safety stock, replenishment signals and availability features
+    preferred_stream_type: batch
+  - name: Promotions, pricing and markdowns
+    source: S4 / Promotional feeds
+    purpose: Feature drivers for uplift and price-elasticity modeling
+    preferred_stream_type: batch
+  - name: COGS and product master (lifecycle, category)
+    source: S4
+    purpose: Create COGS-aware revenue impact features and lifecycle flags
+    preferred_stream_type: batch
+  - name: Shipment / TMS events (lead times)
+    source: Uber Freight
+    purpose: Lead-time and transit variability features for replenishment
+    preferred_stream_type: API
+  - name: Shortage / constraint signals
+    source: Kinaxis RapidResponse
+    purpose: Propagate constraints, adjust demand sinks and rebalancing logic
+    preferred_stream_type: batch
+  - name: External demand signals (search, weather, events)
+    source: DDM/Crawlers
+    purpose: Enrich features for seasonality, events, and external drivers
+    preferred_stream_type: API
+  - name: Reference historical forecasts / SAS outputs
+    source: SAS / Advanced Statistical Forecasting
+    purpose: Benchmarking and ensemble blending with Cortex forecasts
+    preferred_stream_type: batch
+happy_path:
+  - step: >-
+      Ingest normalized transactional, WMS, TMS and external signal feeds into
+      Subject Areas via DDM/Crawlers and STREAMS
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: Unify and stage clean, joined data for modeling and downstream analysis
+  - step: >-
+      Run automated data quality and validation rules on ingested data and flag
+      exceptions
+    stage: analyze
+    component: Data Quality & Validation
+    purpose: >-
+      Detect gaps/outliers, enforce referential integrity and measure signal
+      availability
+  - step: >-
+      Enrich features (COGS, lifecycle, promotions, lead times) and
+      train/evaluate forecasts with Cortex Auto Forecast (explainability via
+      SHAP)
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Produce demand, revenue-impact and uncertainty forecasts and quantify
+      feature importance
+  - step: >-
+      Orchestrate decision flow in Process Builder to present add/retain/remove
+      feature recommendation via CWB Lifecycle UI Screen
+    stage: decide
+    component: Process Builder
+    purpose: >-
+      Enable human-in-the-loop review, approve/override or auto-approve based on
+      rules and metrics
+  - step: >-
+      If approved, execute Remote Functions to write feature/config updates and
+      forecast adjustments to S4/Kinaxis and trigger Safety Stock Service
+      recalculation
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Apply changes to planning systems and update replenishment/safety stock
+      targets
+  - step: >-
+      Surface updated forecasts, impact dashboards and audit trail via UI
+      Screens and Subject Areas for planner review
+    stage: review
+    component: UI Screens
+    purpose: >-
+      Provide transparency, KPI tracking (MAPE, stockouts, revenue delta) and
+      enable follow-up actions
+branches:
+  - condition: >-
+      Automated data quality checks fail or signal availability for candidate
+      feature below threshold
+    response: >-
+      Process Builder creates Action Item and Notification; CWB Lifecycle marks
+      feature decision as on-hold and routes to data ops for remediation
+    outcome: >-
+      Feature update deferred until data gaps resolved; prevents degraded model
+      deployment
+  - condition: >-
+      New feature yields statistically significant forecast accuracy uplift and
+      positive revenue/COGS impact in validation
+    response: >-
+      Process Builder triggers auto-approve rules and schedules production
+      retrain + writeback via Remote Functions
+    outcome: >-
+      Feature added to production forecasts with automated downstream updates
+      and monitoring
+  - condition: >-
+      Feature improves demand fit but simulation shows negative revenue/COGS
+      impact or increased waste
+    response: >-
+      CWB Lifecycle flags finance review; Process Builder requires manual
+      approval and runs additional constrained simulations via Remote Functions
+    outcome: >-
+      Decision requires stakeholder override; protects revenue and prevents
+      unintended inventory/waste consequences

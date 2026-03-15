@@ -1,0 +1,51 @@
+source_systems:
+  - name: SAP S/4HANA
+    status: identified
+  - name: MES / Plant Execution System
+    status: tbd
+  - name: Dealer Allocation System / CRM
+    status: tbd
+aera_ingestion:
+  - stream_name: dealer-allocations-demand-orders
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: long-range-capacity-plans-work-center-calendars
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: boms-routings-changeover-matrices
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: inventory-on-hand-inbound-receipts
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: cost-parameters-cogs-drivers-labor-rates-material-costs
+    stream_type: Event Stream
+    source: tbd
+  - stream_name: business-constraints-rules-service-levels-platform-prioritization
+    stream_type: Event Stream
+    source: tbd
+processing:
+  - component: Process (Process Builder) -> Remote Functions (optimization solver)
+    type: process_builder
+    function: >-
+      Run solver with multi-echelon constraints and cost objective to generate
+      optimized schedule and sequence.
+  - component: Remote Functions (SAP writeback)
+    type: process_builder
+    function: >-
+      Write MPS, production orders, and sequence assignments into SAP S/4HANA
+      and refresh internal views.
+  - component: CWB Lifecycle + UI Screens
+    type: process_builder
+    function: >-
+      Present schedules, exception list, and key metrics for human validation,
+      accept/reject or manual override.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously produce conflict-free, cost-optimized weekly and
+      long-range production master production schedules (mps) and build
+      sequences across vehicle platforms and components to reduce cogs, improve
+      line efficiency, and increase on-time delivery. and approve the
+      recommended action.

@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Periodic inventory check and demand forecast generation.]
+  A --> N1[Stream: DDM/Crawlers - Fetch historical sales data and current inventory levels]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Perform demand forecasting using historical sales data]
+  N2 --> N3{PB: CWB Lifecycle - Generate replenishment orders based on forecasted demand and current inventory}
+  N3 -->|Primary| N4[PB: UI Screens - Provide dealers with inventory optimization guidance]
+  N4 --> N5{PB: Remote Functions - Manage supercession and obsolescence of service parts}
+  N5 --> N6[PB: Safety Stock Service - Adjust safety stock levels for warranty and recall parts]
+  N6 --> Z1[Outcome: Reduced working capital, minimized stockouts, managed obsolescence risk, and maintained optimal inventory levels for recall and warranty parts.]
+  N3 -->|High inventory carrying costs detected| B1[Adjust replenishment quantities to reduce working capital]
+  B1 --> O1[Outcome: Lowered inventory carrying costs]
+  O1 --> End[End]
+  N3 -->|Obsolete parts identified| B2[Initiate supercession process and update inventory targets]
+  B2 --> O2[Outcome: Reduced obsolescence risk]
+  O2 --> End[End]
+  N3 -->|Recall campaign initiated| B3[Increase safety stock for critical parts]
+  B3 --> O3[Outcome: Ensured adequate stock for recall campaigns]
+  O3 --> End[End]
+  Z1 --> End[End]

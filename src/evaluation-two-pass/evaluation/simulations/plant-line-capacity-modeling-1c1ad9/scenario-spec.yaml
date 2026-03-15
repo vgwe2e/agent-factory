@@ -1,0 +1,156 @@
+objective: >-
+  Autonomously model plant and line capacity across a multi-site manufacturing
+  network and generate bottleneck-driven production allocations to minimize
+  COGS, increase line throughput, and align capacity with demand signals.
+trigger: >-
+  Daily scheduled planning run or demand signal change (forecast update or large
+  confirmed order) from SAP S/4HANA / Cortex Auto Forecast.
+decision: >-
+  Select capacity allocation and bottleneck-driven production plan across plants
+  and lines that meets demand while minimizing changeovers, resolving
+  bottlenecks, and balancing utilization and cost.
+expected_action: >-
+  Process Builder orchestrates data ingestion and demand forecasting, runs
+  capacity simulation via Remote Functions, applies rules to select allocations
+  and sequencing, writes optimized production schedules to SAP S/4HANA, and
+  issues action items/notifications for operations.
+expected_outcome: >-
+  Network-level production plan that reduces bottleneck impact, improves line
+  throughput, lowers unit COGS through optimized allocation and sequencing, and
+  better aligns capacity to demand with automated execution and clear operator
+  tasks.
+rationale: >-
+  Deterministic process combines robust data ingestion (STREAMS), demand signals
+  (Cortex Auto Forecast), constraint-aware simulation (Remote Functions), and
+  Process Builder orchestration to produce repeatable, auditable production
+  allocations. High integration complexity (SAP S/4HANA, MES, HR) is warranted
+  by expected operational and cost benefits from automated bottleneck resolution
+  and cross-site optimization.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant MES
+    type: MES
+    status: tbd
+  - name: HR / Workforce Management
+    type: HR
+    status: tbd
+key_inputs:
+  - name: Sales Orders & Confirmed Demand
+    source: SAP S/4HANA
+    purpose: >-
+      Ground truth demand and order priorities to satisfy with production
+      allocation.
+    preferred_stream_type: STREAMS
+  - name: Demand Forecast (time-series)
+    source: Cortex Auto Forecast
+    purpose: >-
+      Forward-looking demand signal used to size capacity needs and plan
+      allocations across horizon.
+  - name: Plant & Line Master Data (routing, capacities)
+    source: SAP S/4HANA
+    purpose: >-
+      Model of available lines, machine capabilities, standard rates, and
+      changeover characteristics.
+    preferred_stream_type: STREAMS
+  - name: Equipment capability, MTTR/MTBF, downtime logs
+    source: Plant MES
+    purpose: >-
+      Accurate capacity, reliability and bottleneck identification inputs for
+      simulation.
+    preferred_stream_type: DDM/Crawlers
+  - name: Changeover times and sequence-dependent setup costs
+    source: SAP S/4HANA / MES
+    purpose: >-
+      Used to minimize changeovers and compute effective usable capacity per
+      sequence.
+    preferred_stream_type: STREAMS
+  - name: Shift calendars, labor availability & skill mappings
+    source: HR / Workforce Management
+    purpose: >-
+      Manpower constraints and overtime options to inform feasible allocation
+      and temporary capacity expansions.
+  - name: Cost rates (variable machining, labor, OEE impact)
+    source: SAP S/4HANA
+    purpose: >-
+      Objective function inputs to trade off cost vs. throughput and select site
+      prioritization.
+    preferred_stream_type: STREAMS
+  - name: Business constraints & policies (service levels, site preferences)
+    source: Planner inputs (UI Screen) / Process Builder rules
+    purpose: >-
+      Encode business priorities used during constrained optimization and
+      tie-breakers.
+happy_path:
+  - step: >-
+      Ingest master data, orders, cost rates, and historical production/downtime
+      into subject areas
+    stage: ingest
+    component: STREAMS
+    purpose: Centralize ERP and MES inputs into Subject Areas for downstream modeling.
+  - step: Generate/upsert demand forecasts and scenario demand signals
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Provide time-series demand inputs and prediction uncertainty for capacity
+      sizing.
+  - step: Run network capacity simulation and bottleneck detection
+    stage: analyze
+    component: Process (Process Builder) + Remote Functions
+    purpose: >-
+      Simulate multiple allocation scenarios with sequence/changeover, labor,
+      and equipment constraints to identify bottlenecks and feasible plans.
+  - step: Apply business rules to select final allocation and sequencing
+    stage: decide
+    component: Process (Process Builder) - Rules / IF
+    purpose: >-
+      Choose optimal plan by balancing cost, utilization, service level, and
+      changeover minimization; flag exceptions.
+  - step: >-
+      Execute plan: write schedules to SAP and create operator action items and
+      dashboards
+    stage: act
+    component: Remote Functions + Process (Process Builder) - Action Item / Notification
+    purpose: >-
+      Write optimized production schedules back to SAP S/4HANA, notify
+      operations, and surface plan in UI screens for planners/operators.
+  - step: Surface plan, KPIs and bottleneck mitigation tasks for review
+    stage: surface
+    component: UI Screen / Subject Areas / Dashboard
+    purpose: >-
+      Provide transparency, MAPE/throughput KPIs, and explanation of bottleneck
+      decisions for planner validation and audit.
+branches:
+  - condition: >-
+      Network demand exceeds aggregate available capacity under current
+      constraints
+    response: >-
+      Invoke constrained optimization routine (Remote Functions) with
+      prioritized objectives (margin, customer SL) and produce prioritized
+      allocation + recommended trade-offs (overtime, subcontracting, order
+      reschedule).
+    outcome: >-
+      Feasible, prioritized production plan with clear service-level tradeoffs
+      and actionable recommendations for capacity augmentation or order
+      adjustments.
+  - condition: >-
+      Critical bottleneck detected with no feasible simulated mitigation within
+      policy limits
+    response: >-
+      Create Action Item and Notification to operations and planning team;
+      suggest temporary measures (overtime, line re-sequencing, part reroute)
+      and open CWB Lifecycle exception for manual approval.
+    outcome: >-
+      Human-in-the-loop intervention to resolve the bottleneck; plan paused or
+      adjusted pending remediation, preserving safety and policy compliance.
+  - condition: >-
+      Incomplete or low-quality data from SAP/MES (missing routings, downtime,
+      or shift data)
+    response: >-
+      Process Builder raises data-quality exception, routes to exception queue
+      (CWB Lifecycle) and halts finalization until required data is corrected or
+      a planner overrides with documented assumptions.
+    outcome: >-
+      Prevent incorrect allocations; ensure manual remediation or documented
+      override before schedule writeback.

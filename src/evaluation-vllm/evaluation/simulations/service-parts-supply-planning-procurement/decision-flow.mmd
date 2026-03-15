@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Periodic service parts demand forecast update or detected shortage.]
+  A --> N1[Stream: DDM/Crawlers - Fetch service parts demand forecast]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze supplier capacity and demand alignment]
+  N2 --> N3{PB: CWB Lifecycle - Place optimized production orders}
+  N3 -->|Primary| N4[PB: Remote Functions - Negotiate and manage long-term supply agreements]
+  N4 --> N5{PB: CWB Lifecycle - Source aftermarket suppliers}
+  N5 --> N6[PB: Exception Management - Escalate and resolve critical part shortages]
+  N6 --> Z1[Outcome: Reduced COGS, minimized stockouts, improved EBITDA, and accelerated issue resolution.]
+  N3 -->|Insufficient supplier capacity| B1[Trigger additional supplier sourcing]
+  B1 --> O1[Outcome: Ensure adequate capacity]
+  O1 --> End[End]
+  N3 -->|High cost of production orders| B2[Review and negotiate terms with suppliers]
+  B2 --> O2[Outcome: Minimize COGS]
+  O2 --> End[End]
+  N3 -->|Unresolved critical part shortage| B3[Escalate to senior management]
+  B3 --> O3[Outcome: Accelerate resolution]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,133 @@
+objective: >-
+  Automate end-to-end receiving and putaway orchestration with immediate
+  exception handling for non-conforming materials across yard, inbound
+  unloading, inspection, and segregation to reduce receiving COGS, improve OTIF,
+  and accelerate downstream throughput.
+trigger: >-
+  Inbound ASN arrival + yard arrival event (vehicle docks) detected or receiving
+  inspection failure recorded.
+decision: >-
+  Determine disposition for received items (accept to inventory,
+  quarantine/segregate for quality disposition, return to supplier) and allocate
+  dock, labor, and putaway path balancing quality risk, cost impact, and
+  downstream throughput.
+expected_action: >-
+  Agentic AI evaluates inspection, ASN, and yard/warehouse state then executes
+  automated actions (update SAP S/4HANA/WMS, reserve quarantine locations,
+  dispatch labor, adjust dock schedule) or opens a CWB for human review when
+  required.
+expected_outcome: >-
+  Faster, consistent segregation of non-conforming materials, fewer receiving
+  errors in inventory, reduced rework/returns costs, improved OTIF, and lower
+  working capital via optimal immediate inventory positioning.
+rationale: >-
+  Agentic AI coordinates multi-source real-time inputs and tradeoffs (quality
+  risk vs cost vs throughput) where adaptive reasoning and multi-step
+  orchestration outperform static rules. Process Builder provides deterministic
+  orchestration and Remote Functions handle ERP writebacks; CWB Lifecycle
+  captures human-in-the-loop exceptions. This hybrid ensures automated low-risk
+  actions and controlled escalation for ambiguous/high-risk cases.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Yard Management System
+    type: YMS
+    status: tbd
+  - name: Warehouse Management System
+    type: WMS
+    status: tbd
+  - name: Mobile Inspection / Scanner Devices
+    type: IoT
+    status: tbd
+key_inputs:
+  - name: Advance Shipping Notice (ASN) / EDI inbound
+    source: SAP S/4HANA / Carrier EDI
+    purpose: Expected goods, quantities, packaging info to pre-stage dock and putaway
+    preferred_stream_type: API
+  - name: Dock & Yard Arrival Events
+    source: Yard Management System / Gate sensors
+    purpose: Trigger receiving workflow and dock assignment
+    preferred_stream_type: API
+  - name: Receiving Inspection Results (QC scans, photos, operator notes)
+    source: Mobile Inspection / Scanner Devices
+    purpose: Detect non-conformance (quality/quantity) for disposition decision
+    preferred_stream_type: event
+  - name: WMS Inventory & Putaway Maps
+    source: Warehouse Management System
+    purpose: Available locations, putaway paths, and segregation zones
+    preferred_stream_type: API
+  - name: Labor Availability & Skills
+    source: Workforce Management / Scheduling
+    purpose: Allocate appropriate staff for unloading, inspection, and segregated moves
+  - name: Quality Rules & Cost Impact Policies
+    source: Quality Management / Business Rules
+    purpose: >-
+      Risk thresholds and cost tradeoff parameters for agentic disposition
+      decisions
+happy_path:
+  - step: Ingest inbound ASN, yard arrival, WMS and inspection feed into platform
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect ASN, gate events, WMS state, and inspection data for processing
+  - step: >-
+      Normalize and enrich inputs; compute current dock/labor capacity and
+      putaway options
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Build subject-area view of inbound load, available locations, and
+      constraints
+  - step: >-
+      Agentic AI evaluates inspection outcomes and tradeoffs to recommend
+      disposition and actions
+    stage: decide
+    component: Agent Team
+    purpose: >-
+      Classify items (accept/quarantine/return), score risk, and generate
+      actionable plan
+  - step: >-
+      Apply decision: auto-execute low-risk dispositions or open CWB for review;
+      orchestrate allocations and ERP/WMS writebacks
+    stage: act
+    component: Process Builder + Remote Functions
+    purpose: >-
+      Reserve quarantine slots, assign labor, schedule putaway, and update SAP
+      S/4HANA/WMS
+  - step: >-
+      Surface actions and exceptions to operators and stakeholders; dispatch
+      mobile tasks and notifications
+    stage: notify
+    component: UI Screen + Notification
+    purpose: >-
+      Provide operators with pick/put instructions, quarantine labels, and
+      exception CWB items
+branches:
+  - condition: >-
+      High-risk non-conformance (severity above threshold) or low agent
+      confidence
+    response: >-
+      Automatically quarantine goods, open CWB Lifecycle for QA disposition and
+      supplier claim initiation, and halt automated putaway
+    outcome: >-
+      Human quality engineer reviews, records disposition, and authorizes
+      return/rework; quarantined inventory prevented from being used downstream
+  - condition: >-
+      Low-risk discrepancy (minor packaging/quantity variance) and high agent
+      confidence
+    response: >-
+      Auto-accept with annotation to inventory, schedule fast putaway to optimal
+      active location, and notify receiving supervisor
+    outcome: >-
+      Minimal delay, corrected inventory position, improved throughput and lower
+      holding cost
+  - condition: >-
+      Ambiguous or conflicting inputs (ASN vs inspection mismatch) but
+      cost-to-delay tradeoff favors throughput
+    response: >-
+      Place temporary limited-availability hold allowing restricted use for
+      non-critical downstream processes and route CWB for follow-up
+      investigation
+    outcome: >-
+      Maintains throughput for low-risk downstream needs while ensuring
+      follow-up prevents quality/regulatory exposure

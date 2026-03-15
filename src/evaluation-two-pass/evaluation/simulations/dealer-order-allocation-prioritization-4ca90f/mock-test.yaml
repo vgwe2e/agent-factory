@@ -1,0 +1,58 @@
+decision: >-
+  Allocate available production slots to dealer and fleet orders under business
+  rules, balancing revenue capture, OTIF, and line efficiency; accept agentic
+  schedule recommendations or route prioritized exceptions for planner override.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Nightly/weekly batch or on-demand planning run initiated by Process Builder
+    when new dealer/fleet orders or updated capacity/components are ingested.
+  parameters:
+    objective: >-
+      Autonomously generate conflict-free, cost-optimized multi-scroll Master
+      Production Schedules (weekly + long-range) that allocate production slots
+      to dealer and fleet orders while respecting multi-echelon constraints to
+      reduce COGS, improve line efficiency, and increase OTIF across vehicle
+      platforms and components.
+    key_inputs:
+      - Dealer orders (firm & requested)
+      - Fleet orders and commitments
+      - Current MPS / master schedule
+      - Plant capacity by line/shift/skill
+      - Component availability / BOM lead times
+      - Cost drivers (labor rates, material costs, changeover penalties)
+      - Line efficiency & historical throughput
+      - Delivery windows / OTIF commitments
+    source_systems:
+      - SAP S/4HANA
+      - Dealer Order Feed
+      - Component Supplier Inventory
+      - Manufacturing Execution System (MES)
+expected_output:
+  action: >-
+    Agent Team (multi-agent pipeline) synthesizes orders, constraints, and cost
+    signals to propose an optimized multi-scroll MPS; Process Builder applies
+    business rules, routes exceptions to CWB Lifecycle if needed, and Remote
+    Functions write approved schedule back to SAP S/4HANA.
+  outcome: >-
+    Conflict-free production schedules committed to SAP S/4HANA that lower COGS
+    via optimized sequencing and component utilization, increase line
+    efficiency, and improve on-time delivery for dealer/fleet allocations with
+    minimal manual intervention.
+  affected_components:
+    - STREAMS
+    - Agent Team
+    - CWB Lifecycle
+    - Remote Functions
+    - Notification
+    - UI Screen
+    - Dashboard
+rationale: >-
+  Coordinating weekly planning, long-range capacity, dealer allocation,
+  sequencing, and master data via agentic multi-agent orchestration enables
+  global constraint negotiation and cost-aware tradeoffs that are not achievable
+  with isolated planning silos—driving measurable COGS and OTIF improvements.

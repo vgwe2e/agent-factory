@@ -1,0 +1,23 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest new orders into the Aera platform.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Prepare data for allocation decisions.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder
+    purpose: Determine optimal production slots for orders.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce cogs and improve otif through optimized order allocation and
+      inventory reservation. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

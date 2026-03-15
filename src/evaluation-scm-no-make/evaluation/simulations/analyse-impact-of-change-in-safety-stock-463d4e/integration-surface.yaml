@@ -1,0 +1,70 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Advanced Forecasting
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Advanced Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (shortage propagation / Maestro)
+    type: APS
+    status: identified
+  - name: Kinaxis (FG safety stock modeling)
+    type: APS
+    status: identified
+  - name: Kinaxis (rebalancing / order expediting)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS / 3PL
+    status: identified
+aera_ingestion:
+  - stream_name: touchless-demand-forecasts-and-demand-scenarios
+    stream_type: STREAMS
+    source: SAS (Advanced Statistical Forecasting)
+  - stream_name: current-inventory-on-hand-allocated-in-transit
+    stream_type: Subject Area
+    source: S4 (SAP) / Blue Yonder WMS
+  - stream_name: current-safety-stock-parameters-and-policies
+    stream_type: STREAMS
+    source: Kinaxis (FG safety stock modeling)
+  - stream_name: open-pos-supplier-lead-times-and-replenishment-constraints
+    stream_type: STREAMS
+    source: S4 (SAP) / Kinaxis
+  - stream_name: service-level-targets-and-working-capital-thresholds
+    stream_type: Event Stream
+    source: Finance (via S4) / Planning policy
+  - stream_name: sku-location-master-and-hierarchy
+    stream_type: Subject Area
+    source: S4 / Subject Areas
+processing:
+  - component: Process Builder (calls Safety Stock Service / Remote Functions)
+    type: cortex
+    function: Quantify service vs. working-capital trade-offs across SKUs and locations
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Surface recommendations with impact metrics for accept/reject/override
+  - component: Process Builder (Remote Functions)
+    type: process_builder
+    function: Apply low-risk changes automatically and initiate system-level actions
+  - component: Notification / Action Item (Process Builder)
+    type: process_builder
+    function: >-
+      Ensure visibility, required approvals, and traceability of decisions and
+      system writes
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review orchestrate integrated demand-supply scenario analyses to generate
+      risk-adjusted demand scenarios, run safety stock sensitivity across skus
+      and locations, and execute semi-autonomous actions to protect revenue
+      while optimizing working capital. and approve the recommended action.

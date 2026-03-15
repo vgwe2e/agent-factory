@@ -1,0 +1,38 @@
+decision: >-
+  Determine launch feasibility, required capacity ramp, tooling/fixture
+  allocation, volume ramp-up plan, pilot build scaling, and supplier capacity
+  readiness.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New product introduction (NPI) initiation.
+  parameters:
+    objective: >-
+      Assess and coordinate capacity across gates, tooling, ramp-up, pilot
+      builds, and supplier readiness for NPIs to ensure on-time launches with
+      minimized cost deviations.
+    key_inputs:
+      - NPI Program Details
+      - Tooling & Fixture Requirements
+      - Supplier Capacity Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Autonomous assessment and coordination of capacity across various stages of
+    NPI, including gate reviews, tooling validation, ramp-up planning, pilot
+    build impact assessment, and supplier readiness tracking.
+  outcome: >-
+    Preempt bottlenecks, align CAPEX/COGS impact, and ensure on-time launches
+    with minimized cost deviations.
+  affected_components:
+    - DDM/Crawler
+    - Remote Functions
+    - Process Builder
+    - UI Screens
+rationale: >-
+  Automate and optimize the capacity assessment process for NPIs to enhance
+  efficiency and reduce risks associated with launch delays and cost overruns.

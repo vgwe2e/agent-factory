@@ -1,0 +1,60 @@
+decision: >-
+  Dynamically reallocate purchasing volumes across suppliers and initiate
+  renegotiation workflows for supplier terms based on near-real-time demand
+  forecasts, should-cost analytics, supplier capacity, lead times, and margin
+  impact.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Significant demand forecast update or demand spike (e.g., forecast variance
+    > configurable threshold) from Advanced Statistical Forecasting in SAS or
+    Kinaxis RapidResponse demand signals.
+  parameters:
+    objective: >-
+      Automatically coordinate demand and sourcing to dynamically select
+      suppliers, adjust purchase volumes, and (where possible) renegotiate
+      supplier terms in near real-time to protect margins and maximize EBITDA
+      while maintaining contract coverage.
+    key_inputs:
+      - Demand forecast and variance signals
+      - Current POs, contracts, pricing and lead times
+      - Supplier capacity and service performance
+      - Should-cost and margin impact analytics
+      - Inventory and fulfillment status
+      - Logistics capacity / freight options
+    source_systems:
+      - SAP S/4HANA (S4)
+      - SAS (Advanced Statistical Forecasting)
+      - Kinaxis RapidResponse
+      - Blue Yonder WMS
+      - Uber Freight TMS
+expected_output:
+  action: >-
+    Orchestrate automated supplier ranking and volume reallocation calculations,
+    create/update change orders and POs in S4, initiate negotiation requests
+    (automated API or CWB Lifecycle for human-in-the-loop), and trigger
+    logistics updates (TMS/WMS) for expedited or rebalanced shipments.
+  outcome: >-
+    Optimized supplier mix and purchase volumes aligned to demand,
+    renegotiated/updated contract terms where feasible, updated POs in S4,
+    logistics replan triggered, sourcing team notified for exceptions —
+    resulting in preserved/improved margins and maintained contract coverage.
+  affected_components:
+    - STREAMS
+    - Remote Functions
+    - Process Builder (Rules) + CWB Lifecycle
+    - Process Builder (Transaction) + Remote Functions
+    - Subject Areas + UI Screen
+rationale: >-
+  Use Process Builder to orchestrate ETL, analytics, decision rules, and
+  downstream writebacks; STREAMS ingests and normalizes enterprise signals;
+  Remote Functions run should-cost, margin impact and negotiation simulations
+  and call external supplier APIs; CWB Lifecycle provides controlled
+  human-in-the-loop approvals and renegotiation tasks; Subject Areas/UI Screens
+  surface outcomes and KPIs. This hybrid deterministic process balances
+  automated reallocation with guardrails for contractual and service-level
+  constraints.

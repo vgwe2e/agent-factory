@@ -1,0 +1,57 @@
+decision: >-
+  For a given supplier-material pair, decide audit frequency, sampling plan, and
+  remediation triggers (e.g., supplier corrective actions, shipment holds,
+  escalation) to manage supplier quality risk.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled batch run (e.g., weekly) plus exception triggers when incoming
+    defect rate or quality notifications in SAP S/4HANA exceed defined
+    thresholds.
+  parameters:
+    objective: >-
+      Continuously monitor and audit quality performance of raw material and
+      blank/coil suppliers to determine audit frequency, sampling plans, and
+      remediation triggers that maintain incoming material quality.
+    key_inputs:
+      - Incoming inspection results (IQC) & quality notifications
+      - Supplier master & contract terms
+      - Historical defect rates & trend series
+      - Inspection lot metadata (batch, coil/blank IDs, material spec)
+      - Supplier-provided evidence (certs, photos, corrective action reports)
+    source_systems:
+      - SAP S/4HANA
+      - Quality Management System (QMS)
+      - Laboratory/Inspection System (LIMS)
+      - Supplier Portal / Documents
+expected_output:
+  action: >-
+    Agentic AI (Agent Team) synthesizes inspection, historical and contextual
+    signals, recommends audit cadence and sampling plan; Process Builder
+    orchestrates approval routing (CWB Lifecycle) and uses Remote Functions to
+    create quality notifications, blocks or audit events in SAP S/4HANA;
+    Notifications surface recommendations to supplier quality owners and
+    suppliers.
+  outcome: >-
+    High-risk suppliers receive prioritized audits and stronger
+    sampling/remediation rules; quality exceptions are triaged and written back
+    to SAP S/4HANA; improved defect capture, reduced escapes, and closed-loop
+    remediation tracked in enterprise systems.
+  affected_components:
+    - STREAMS
+    - RCA Service
+    - Remote Functions + CWB Lifecycle
+    - Notification
+    - Process Builder + Agent Team
+    - Dashboard
+rationale: >-
+  Agentic route (composite score 0.9532) is appropriate because supplier quality
+  monitoring requires adaptive reasoning across structured inspection data,
+  historical patterns, and unstructured context (audit notes). Medium
+  implementation complexity: requires SAP S/4HANA integration (identified), Root
+  Cause Analysis (RCA Service), Process Builder orchestration, Agent Team for
+  recommendations, and Remote Functions for ERP writeback and action automation.

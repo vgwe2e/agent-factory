@@ -1,0 +1,54 @@
+decision: >-
+  Choosing SKU segmentation rule adjustments (ABC/XYZ) to rebalance portfolio
+  mix and align service/cost targets.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled monthly review or ad-hoc when segment performance deviates beyond
+    threshold or planned demand changes are detected.
+  parameters:
+    objective: >-
+      Review and update SKU segmentation (ABC/XYZ) rules to optimize portfolio
+      mix against demand variability and service targets.
+    key_inputs:
+      - SKU master (product attributes, current ABC/XYZ tags)
+      - Historical sales / shipments
+      - Statistical forecast and forecast error (MAPE)
+      - On-hand inventory and replenishment lead time
+      - >-
+        Operational constraints and business policy thresholds (e.g., service
+        targets, ABC value cutoffs)
+      - Downstream impact indicators (APS alerts, shortage propagation)
+    source_systems:
+      - S4
+      - Advanced Statistical Forecasting in SAS
+      - Kinaxis RapidResponse
+      - Blue Yonder WMS
+      - Uber Freight TMS / 3PL
+expected_output:
+  action: >-
+    Automatically compute ABC/XYZ metrics, propose rule adjustments via Process
+    Builder, present recommendations in a CWB for approvers, and on approval
+    execute Remote Functions to persist new segment tags back to S4 (and
+    downstream systems).
+  outcome: >-
+    Updated SKU segmentation rules applied to master data, improved alignment of
+    stock/service levels with demand variability, audit trail of changes and
+    approvals, and downstream systems updated (S4, RapidResponse, WMS) within
+    the planning window.
+  affected_components:
+    - STREAMS
+    - Process Builder - Rules
+    - CWB Lifecycle
+    - Remote Functions
+    - Process Builder - Notification / UI Screen
+    - Dashboard
+rationale: >-
+  Deterministic rule adjustments based on established metrics (volume, value,
+  demand variability, forecast error) reduce manual effort, ensure consistent
+  classification, and enable downstream planning tools (APS, safety stock) to
+  act on current segments.

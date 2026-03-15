@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and prepare supply chain data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict potential disruptions using historical data.
+    confidence: confirmed
+    capability: Predict potential disruptions using historical data.
+  - name: AutoML
+    purpose: Generate and evaluate different scenarios for stress testing.
+    confidence: inferred
+    capability: Generate and evaluate different scenarios for stress testing.
+process_builder:
+  - name: Process Builder
+    purpose: Implement response protocols and mitigate risks.
+    confidence: confirmed
+    node_type: act
+agent_teams:
+  - name: Agentic AI
+    purpose: Create actionable contingency plans.
+    confidence: inferred
+    role: Create actionable contingency plans.
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce working capital volatility and protect revenue by
+      autonomously identifying supply chain vulnerabilities, simulating
+      demand-supply shocks, and generating pre-emptive contingency plans. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

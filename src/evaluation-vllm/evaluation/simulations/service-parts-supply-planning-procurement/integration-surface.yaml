@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: service-parts-demand-forecast
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: supplier-capacity-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: long-term-supply-agreements
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: aftermarket-supplier-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: critical-part-shortages
+    stream_type: STREAMS
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Forecast demand and assess capacity
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Human-in-the-loop decision for order placement
+  - component: Remote Functions
+    type: process_builder
+    function: Automate agreement management
+  - component: Exception Management
+    type: process_builder
+    function: Resolve shortages efficiently
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize service parts production ordering, supplier capacity
+      planning, aftermarket sourcing, and shortage escalation to reduce cogs,
+      prevent stockouts, and improve ebitda and working capital. and approve the
+      recommended action.

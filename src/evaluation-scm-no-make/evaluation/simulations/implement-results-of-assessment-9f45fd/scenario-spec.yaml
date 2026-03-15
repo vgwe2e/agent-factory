@@ -1,0 +1,158 @@
+objective: >-
+  Use deterministic demand segmentation to create SKU-Location demand blocs
+  (ABC/XYZ), then automatically allocate production and inventory/replenishment
+  at the segment level with touchless execution and rapid rollback.
+trigger: >-
+  Scheduled daily segmentation assessment (or on-demand run) after nightly data
+  refresh completes and promotion calendar updates are ingested.
+decision: >-
+  Accept or reject deterministic segmentation results and apply ABC/XYZ labels
+  per SKU-Location based on confidence thresholds and business rules; if
+  accepted, push labels and triggered allocations to planning and execution
+  systems.
+expected_action: >-
+  System applies ABC/XYZ labels to SKU-Location records, generates segment-level
+  demand blocs, executes allocation instructions (production push to S4/Kinaxis,
+  replenishment orders to S4, transfer/rebalance actions to Kinaxis/3PL/WMS) via
+  Remote Functions and Process Builder; enable automated rollback path if
+  downstream validation fails.
+expected_outcome: >-
+  Touchless, repeatable allocation flows that align inventory and production to
+  revenue-driven demand segments, improved forecast stability and service,
+  measurable reduction in stockouts/overstock at segment level, and ability to
+  revert recent allocations within a defined validation window.
+rationale: >-
+  Deterministic segmentation (ABC/XYZ) produces stable, explainable demand blocs
+  that simplify allocation logic. Orchestrating assessment, decision, and
+  execution with Process Builder + Remote Functions and system writebacks (S4,
+  Kinaxis, WMS, TMS) enables end-to-end automation with explicit checkpoints and
+  rollback—balancing speed with control for high-impact SKU-Location changes.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Advanced forecasting / promotions
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / supply planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS / 3PL
+    status: identified
+  - name: Aera STREAMS (Data Foundation)
+    type: ETL
+    status: tbd
+  - name: Cortex Auto Forecast / Monitoring
+    type: AI/ML & monitoring
+    status: tbd
+  - name: Process Builder
+    type: Orchestration
+    status: tbd
+key_inputs:
+  - name: SKU master (attributes, lifecycle, product family)
+    source: S4 (product master)
+    purpose: >-
+      Define universe for segmentation and attribute-based rules (e.g., product
+      family, lead times).
+    preferred_stream_type: Report Data
+  - name: Location master (site attributes, capacities)
+    source: S4 / Kinaxis
+    purpose: >-
+      Map SKU to locations and apply location-specific allocation rules and
+      capacity constraints.
+    preferred_stream_type: Report Data
+  - name: Sales history and demand signals (POS, shipments)
+    source: S4 / SAS
+    purpose: >-
+      Feed deterministic segmentation algorithms (volume, variability,
+      seasonality proxies).
+    preferred_stream_type: Stream
+  - name: Promotions calendar and planned events
+    source: SAS
+    purpose: >-
+      Flag promotional periods that affect segmentation labeling and override
+      rules.
+    preferred_stream_type: Report Data
+  - name: On-hand inventory and WMS locations
+    source: Blue Yonder WMS
+    purpose: >-
+      Inform allocation feasibility, transfer candidates, and rollback impact
+      analysis.
+    preferred_stream_type: Stream
+  - name: Supply constraints and production capacity
+    source: Kinaxis RapidResponse / S4
+    purpose: Constrain allocations and prioritize segment-level production orders.
+    preferred_stream_type: Report Data
+happy_path:
+  - step: >-
+      Ingest master and transactional data (SKU, location, sales history,
+      promotions, inventory, capacity).
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate and validate all source inputs into Subject Areas for
+      segmentation.
+  - step: >-
+      Run deterministic segmentation rules and transforms to assign ABC/XYZ
+      labels and confidence scores.
+    stage: analyze
+    component: STREAMS (Rules) + Data Science (deterministic rule set)
+    purpose: >-
+      Produce stable SKU-Location segments and per-record confidence for
+      decisioning.
+  - step: >-
+      Evaluate segmentation results against business thresholds and constraints;
+      surface recommendations.
+    stage: decide
+    component: Process Builder (IF/Rules) + CWB Lifecycle (recommendation view)
+    purpose: >-
+      Automatically accept high-confidence segments; route low-confidence
+      exceptions.
+  - step: >-
+      Execute allocations and writebacks: update S4 (master/ATP), push plans to
+      Kinaxis, create transfers/orders in WMS/TMS via Remote Functions.
+    stage: act
+    component: Process Builder (Transaction) + Remote Functions
+    purpose: >-
+      Apply segment-driven production/replenishment and inventory rebalancing
+      across systems.
+  - step: >-
+      Validate downstream acceptance and monitoring; enable rapid rollback if
+      validation fails within window.
+    stage: review
+    component: Cortex Monitoring + Process Builder (Rollback Transaction) + UI Screen
+    purpose: >-
+      Confirm allocations applied correctly and provide a rapid revert path if
+      anomalies detected.
+branches:
+  - condition: >-
+      Segmentation confidence below threshold OR conflicts with upcoming
+      promotions
+    response: >-
+      Route SKU-Location to CWB Lifecycle for manual review and override by
+      demand planner.
+    outcome: >-
+      Human-in-the-loop decision prevents inappropriate automatic reallocation;
+      retains audit trail.
+  - condition: >-
+      Downstream system (S4/Kinaxis/WMS) rejects writeback or reports
+      capacity/ATP conflicts
+    response: >-
+      Process Builder pauses execution, creates exception, and triggers
+      notification to planner + automatic rollback of partial changes.
+    outcome: >-
+      Partial changes are reverted; exception logged for corrective action and
+      re-run.
+  - condition: >-
+      High business impact detected (top revenue SKU or critical location) even
+      with high confidence
+    response: >-
+      Override automatic touchless execution: require approver via UI Screen
+      (CWB) before commit.
+    outcome: >-
+      Additional control for high-risk items while preserving automated flows
+      for the long tail.

@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and prepare supply chain risk data.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Identify potential geopolitical risks.
+    confidence: inferred
+    capability: Identify potential geopolitical risks.
+  - name: Cortex Auto Forecast
+    purpose: Evaluate network vulnerability under different scenarios.
+    confidence: confirmed
+    capability: Evaluate network vulnerability under different scenarios.
+process_builder:
+  - name: Process Builder
+    purpose: Create and maintain disaster recovery plans.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Develop strategies to mitigate single-source risks.
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: UI Screens
+    purpose: Present recommendations for resilient sourcing and capacity responses.
+    confidence: confirmed
+    component_type: display

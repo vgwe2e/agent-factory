@@ -1,0 +1,52 @@
+decision: >-
+  Determine optimal pickup quantities, timings, and routing for empty container
+  returns balancing turnaround time, plant capacity needs, transport capacity,
+  and working capital constraints.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled daily process run or threshold-trigger (container aging, low
+    availability, or forecasted shortfall) detected in inventory Subject Area.
+  parameters:
+    objective: >-
+      Orchestrate and optimize the return flow of empty returnable containers
+      from plants back to suppliers to minimize COGS and working capital while
+      ensuring container availability and supplier compliance.
+    key_inputs:
+      - Container inventory & movements (positions, ownership, location, age)
+      - Plant consumption / production schedules
+      - Supplier lead times & return window commitments
+      - Transport capacity and routing constraints
+      - Container turnover forecast
+    source_systems:
+      - SAP S/4HANA
+      - Supplier Portal / EDI
+      - 3PL / TMS
+expected_output:
+  action: >-
+    Automatically generate prioritized, consolidated return schedules and
+    execution instructions; write back return movement orders to SAP S/4HANA;
+    initiate transportation bookings or exception workflows when constraints
+    occur.
+  outcome: >-
+    Faster container turnover and higher utilization, reduced COGS from fewer
+    idle containers, improved OTIF for inbound containerized materials, and
+    reduced manual scheduling effort.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - STREAMS + Subject Areas (Data Quality & Validation)
+    - >-
+      Process Builder (Process) calling Cortex Auto Forecast + Remote Functions
+      (optimization engine)
+    - Process Builder (Transaction) + Remote Functions (ERP writeback)
+    - UI Screen + Process Builder Notification
+    - Dashboard
+rationale: >-
+  Deterministic, process-driven orchestration combining multi-echelon visibility
+  (inventory, movements, supplier capacity) with scheduled optimization and ERP
+  writebacks enables repeatable reductions in working capital and improved
+  service levels while keeping human intervention limited to exceptions.

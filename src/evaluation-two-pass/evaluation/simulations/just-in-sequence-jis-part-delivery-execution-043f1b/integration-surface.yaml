@@ -1,0 +1,55 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant MES (line buffers & sensors)
+    status: tbd
+  - name: Warehouse/WMS
+    status: tbd
+  - name: Supplier TMS / Supplier Portal
+    status: tbd
+aera_ingestion:
+  - stream_name: production-sequence-schedule
+    stream_type: STREAMS
+    source: SAP S/4HANA (or MES)
+  - stream_name: real-time-inventory-levels-multi-echelon
+    stream_type: STREAMS
+    source: SAP S/4HANA / WMS
+  - stream_name: supplier-lead-times-constraints-and-shipment-status
+    stream_type: Event Stream
+    source: SAP S/4HANA / Supplier Portal
+  - stream_name: line-side-buffer-capacities-handling-constraints
+    stream_type: Event Stream
+    source: MES / Plant systems
+  - stream_name: line-stop-downtime-indicators-and-quality-exceptions
+    stream_type: Event Stream
+    source: MES / Plant sensors
+processing:
+  - component: Cortex Auto Forecast + Data Science
+    type: cortex
+    function: >-
+      Estimate per-sequence material needs and identify multi-echelon allocation
+      plan
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Write orders to SAP S/4HANA, notify suppliers/warehouse, and dispatch
+      AGV/line conveyors
+  - component: Process Builder + Agent Team
+    type: agent_teams
+    function: >-
+      Resolve sequencing constraints, cost vs. OTIF tradeoffs, and finalize
+      execution plan
+  - component: CWB Lifecycle + UI Screen + Agent Team
+    type: agent_teams
+    function: >-
+      Human-in-the-loop review for exceptions and continuous monitoring of
+      OTIF/COGS impact
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review orchestrate just-in-sequence (jis) deliveries, pull-based
+      replenishment, and line-waste reduction across production lines by
+      dynamically allocating multi-echelon inventory and sequencing constraints
+      to minimize cogs and improve otif. and approve the recommended action.

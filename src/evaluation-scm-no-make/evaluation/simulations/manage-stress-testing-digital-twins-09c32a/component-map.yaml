@@ -1,0 +1,40 @@
+streams:
+  - name: STREAMS
+    purpose: Assemble canonical N‑Tier dataset and time series for simulation
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Agent Team
+    purpose: Create targeted simulation variants balancing coverage and run cost
+    confidence: confirmed
+    node_type: integration
+  - name: Data Science
+    purpose: Quantify exposures, bottlenecks and mitigation effectiveness
+    confidence: confirmed
+    node_type: integration
+  - name: CWB Lifecycle
+    purpose: >-
+      Enable human approval / override of agent recommendations with
+      traceability
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Apply changes in S4 / Kinaxis and trigger transport/3PL actions
+    confidence: inferred
+    node_type: act
+  - name: UI Screen
+    purpose: Provide transparency, audit trail and next‑run tuning inputs
+    confidence: confirmed
+    node_type: integration
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review provide an integrated resilience procurement control tower that
+      delivers n‑tier supplier visibility, runs digital‑twin stress tests, and
+      aligns continuity and sourcing decisions to protect margins and revenue
+      amid input cost volatility and promotional spend. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

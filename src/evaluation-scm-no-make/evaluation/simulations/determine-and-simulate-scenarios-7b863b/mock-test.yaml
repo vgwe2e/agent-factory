@@ -1,0 +1,58 @@
+decision: >-
+  Choose which supply scenarios to evaluate and which supply option(s) to
+  simulate, balancing projected REVENUE impact and risk exposure
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Determine And Simulate Scenarios (scheduled planning cycle or event-driven:
+    forecast deviation, inventory shortage, or executive directive)
+  parameters:
+    objective: >-
+      Orchestrate end-to-end supply scenario planning to protect revenue and
+      optimize cash flow by evaluating deterministic supply options, simulating
+      multi-scenario outcomes, and executing auditable supply plan writebacks
+      across SKUs and locations.
+    key_inputs:
+      - Baseline demand forecast
+      - On-hand inventory & location allocations
+      - Supply capacity, lead times, planned receipts
+      - SKU revenue / price & margin attributes
+      - Shortage propagation and downstream substitution rules
+      - Open orders, shipments, and expediting options
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS (Advanced Statistical Forecasting)
+      - >-
+        Kinaxis RapidResponse (APS / Shortage Propagation / Rebalancing / Order
+        Expediting / FG Safety Stock)
+      - Blue Yonder WMS
+      - Uber Freight (TMS / 3PL)
+expected_output:
+  action: >-
+    Automate ingestion of demand, inventory, capacity and revenue inputs;
+    generate candidate supply scenarios; run multi-scenario simulations
+    (Kinaxis/S4); select optimal scenario by revenue/cash trade-offs; write back
+    selected supply plan to S4/Kinaxis and notify stakeholders with an auditable
+    decision record.
+  outcome: >-
+    Reduced stockouts and lost revenue, improved working capital utilization,
+    faster decision cycle with auditable rationale for selected supply options,
+    and automated execution of supply plan changes.
+  affected_components:
+    - STREAMS
+    - Remote Functions
+    - Rules
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Use Process Builder as the orchestration backbone to coordinate ETL (STREAMS),
+  deterministic scenario scoring (Remote Functions), APS simulations (Kinaxis
+  RapidResponse), and auditable decision capture (CWB Lifecycle). This hybrid
+  flow leverages enterprise forecasting (SAS) and ERP truth (S4) for
+  deterministic scenario evaluation, supports medium implementation complexity,
+  and preserves auditability and human override where needed.

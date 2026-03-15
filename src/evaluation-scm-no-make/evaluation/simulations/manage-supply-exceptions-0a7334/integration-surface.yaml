@@ -1,0 +1,55 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (Order Expediting / Rebalancing / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting in SAS
+    type: Forecasting Engine
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight / 3PL (carrier events)
+    type: TMS / 3PL
+    status: identified
+  - name: Kinaxis Rapid Response for APS supply chain planning
+    type: APS
+    status: identified
+aera_ingestion:
+  - stream_name: demand-signals-statistical-forecasts-recent-orders
+    stream_type: delta_batch
+    source: SAS forecasts + S4 order history
+  - stream_name: inventory-position-and-location-level-availability
+    stream_type: delta_batch
+    source: S4 + Blue Yonder WMS
+  - stream_name: supply-status-and-constraints-pos-shipments-supplier-allocations
+    stream_type: delta_batch
+    source: Kinaxis RapidResponse + S4
+  - stream_name: shipment-transport-status-and-eta
+    stream_type: delta_batch
+    source: Uber Freight / TMS
+  - stream_name: safety-stock-allocation-policy-parameters
+    stream_type: Event Stream
+    source: Kinaxis FG Safety Stock models + Business policy tables
+processing:
+  - component: Process Builder (Rules + IF) + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Select touchless action when within guardrails or create CWB for human
+      approval when outside guardrails
+  - component: Remote Functions + Process Builder (Action Item / Transaction)
+    type: process_builder
+    function: >-
+      Writeback adjustments to S4/Kinaxis (reallocations, expedite POs,
+      reprioritize production) and push transport instructions to TMS/3PL
+ui_surface:
+  - component: UI Screens (Control Tower dashboard) + Notification
+    screen: Primary
+    purpose: >-
+      Provide planners and managers visibility, action history, and allow
+      overrides via CWB Lifecycle

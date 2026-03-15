@@ -1,0 +1,66 @@
+objective: >-
+  Integrate lean manufacturing principles and optimize process cycle times to
+  reduce COGS and improve OTIF across the automotive parts network.
+trigger: Monthly production cycle start.
+decision: >-
+  Integrate lean principles to identify and eliminate waste, plan and host
+  Kaizen events, drive initiatives to reduce cycle times, eliminate or
+  re-sequence value-stream activities, and re-engineer and modernize
+  manufacturing processes.
+expected_action: >-
+  Automate waste identification and process cycle time reduction initiatives,
+  schedule and allocate resources for Kaizen events, prioritize and sequence
+  process improvements, and restructure manufacturing processes to enhance
+  performance.
+expected_outcome: >-
+  Reduced COGS, improved OTIF, optimized working capital, and streamlined
+  manufacturing processes.
+rationale: >-
+  Leveraging Aera's deterministic optimization and semi-autonomous orchestration
+  capabilities will enable Ford to systematically integrate lean principles and
+  drive continuous process improvements across multiple sites and functions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Production Data
+    source: SAP S/4HANA
+    purpose: Monitor current production cycles and identify inefficiencies.
+  - name: Lean Metrics
+    source: SAP S/4HANA
+    purpose: Track waste and cycle times for targeted improvements.
+  - name: Resource Allocation
+    source: SAP S/4HANA
+    purpose: Allocate resources efficiently for Kaizen events and process improvements.
+happy_path:
+  - step: Ingest production and resource data from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+  - step: Analyze production data to identify waste and inefficiencies
+    stage: analyze
+    component: AutoML
+    purpose: Identify areas for improvement.
+  - step: Plan and schedule Kaizen events and process improvements
+    stage: decide
+    component: Process Builder
+    purpose: Coordinate and schedule improvements.
+  - step: Execute process cycle time reduction initiatives and resource allocation
+    stage: act
+    component: Remote Functions
+    purpose: Implement planned improvements.
+  - step: Review progress and results of implemented improvements
+    stage: review
+    component: UI Screens
+    purpose: Monitor and evaluate outcomes.
+branches:
+  - condition: Insufficient resources for Kaizen events
+    response: Adjust resource allocation
+    outcome: Ensure successful execution of Kaizen events.
+  - condition: Unexpected production delays
+    response: Reschedule process improvements
+    outcome: Maintain delivery targets.
+  - condition: Significant waste identified
+    response: Initiate additional lean initiatives
+    outcome: Further reduce COGS and improve efficiency.

@@ -1,0 +1,133 @@
+objective: >-
+  Autonomously identify multi-plant and supplier-driven bottlenecks, simulate
+  mitigation trade-offs, and execute coordinated procurement, production
+  scheduling, and logistics actions to reduce COGS and improve on-time delivery
+  (OTD) across automotive plants.
+trigger: >-
+  Periodic planning run or detection of critical component shortage (from SAP
+  S/4HANA) that threatens committed production schedules or OTD targets.
+decision: >-
+  Decide an optimal escalation & mitigation plan for critical component
+  shortages, selecting actions across procurement (expedite/alternate supplier),
+  production (reschedule/shift capacity), and logistics (priority
+  shipments/re-routing) balanced by cost and service-level impact.
+expected_action: >-
+  Agentic orchestration evaluates shortage scenarios, recommends and (where
+  authorized) executes coordinated writebacks to SAP S/4HANA (PO updates,
+  production schedule changes, shipment priorities) and opens CWB approvals for
+  exceptions requiring human sign-off.
+expected_outcome: >-
+  Reduced stockouts and line-stops, improved OTD for affected orders, measurable
+  P&L impact (lower emergency procurement premium vs. lost revenue), and an
+  auditable decision trail of simulated scenarios, selected mitigations, and
+  execution outcomes.
+rationale: >-
+  Agentic AI (multi-agent + Process Builder) lets the platform reason across
+  domains (procurement, production, logistics) and run multi-scenario
+  simulations to trade off service vs. cost. Cortex RCA identifies root drivers;
+  Process Builder and Remote Functions enable safe, auditable execution and ERP
+  writebacks. CWB Lifecycle handles human-in-the-loop approvals for high-risk
+  actions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Portal / EDI
+    status: tbd
+  - name: Transportation / 3PL System
+    status: tbd
+  - name: Ad-hoc uploads (spreadsheets, supplier notes)
+    status: tbd
+key_inputs:
+  - name: Planned production schedule (by plant & line)
+    source: SAP S/4HANA
+    purpose: Baseline supply plan to identify impacted orders and lines
+    preferred_stream_type: subject_area
+  - name: BOM & critical component requirements
+    source: SAP S/4HANA
+    purpose: Map shortages to affected SKUs and substitutes
+    preferred_stream_type: subject_area
+  - name: On-hand inventory and in-transit receipts
+    source: SAP S/4HANA
+    purpose: Determine available supply and timing to avoid line-stops
+    preferred_stream_type: subject_area
+  - name: Supplier capacity, lead times & delivery reliability
+    source: Supplier Portal / EDI
+    purpose: Assess supplier risk and expedite/alternate options
+  - name: Plant capacity profiles and constraints
+    source: SAP S/4HANA
+    purpose: Assess ability to shift volume across plants or add shifts
+    preferred_stream_type: subject_area
+  - name: Logistics transit times and slot availability
+    source: Transportation / 3PL System
+    purpose: Simulate prioritized shipments and re-routing feasibility
+  - name: Escalation & cost policies (business rules)
+    source: Config / Policy repository
+    purpose: Guide automated decision thresholds and approval limits
+happy_path:
+  - step: >-
+      Ingest and normalize transactional and master data from SAP S/4HANA and
+      supplier feeds into the DI subject area
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Create consolidated dataset (schedules, inventory, POs, capacities) for
+      analysis
+  - step: >-
+      Detect shortage and identify candidate bottlenecks + contributors using
+      pattern mining
+    stage: analyze
+    component: Cortex RCA Service
+    purpose: >-
+      Prioritize root causes (supplier risk, capacity limits, late receipts) and
+      quantify impact on schedules and OTD
+  - step: >-
+      Simulate mitigation scenarios (alternate suppliers, cross-plant shifts,
+      expedited logistics) and evaluate cost vs. service trade-offs
+    stage: analyze
+    component: Process Builder (Data Science / Remote Functions)
+    purpose: Generate ranked mitigation options with estimated COGS and OTD outcomes
+  - step: >-
+      Agentic decisioning composes prioritized action plan and triggers
+      approvals where needed
+    stage: decide
+    component: Agent Team
+    purpose: >-
+      Select executable plan respecting escalation policies and approval
+      thresholds
+  - step: >-
+      Execute coordinated actions (ERP writebacks, scheduling changes, PO
+      updates, logistics priorities) and create CWB items for exceptions
+    stage: act
+    component: Process Builder
+    purpose: >-
+      Apply accepted mitigations via Remote Functions to SAP S/4HANA and surface
+      exceptions via CWB Lifecycle
+  - step: >-
+      Surface outcomes and KPIs (COGS delta, OTD impact, execution audit) to
+      operations and finance
+    stage: surface
+    component: UI Screen
+    purpose: Enable review, monitoring, and P&L reconciliation
+branches:
+  - condition: Preferred supplier cannot expedite or rejects change order
+    response: >-
+      Agentic flow selects next-best supplier or triggers quality-weighted
+      supplier qualification and re-evaluates routing/production mitigations
+    outcome: >-
+      Mitigation executed with higher procurement cost and validated supplier;
+      production impact minimized but COGS increases
+  - condition: Cross-plant capacity insufficient to absorb shortage
+    response: >-
+      Escalate to C-level via CWB Lifecycle with proposed
+      overtime/subcontracting costs or customer re-phasing options
+    outcome: >-
+      Human-approved exception increases cost but restores throughput or
+      triggers controlled order delivery adjustments
+  - condition: Source data is incomplete or stale (quality/latency issues)
+    response: >-
+      Hold automated execution, flag data owners, and run conservative fallback
+      plan (use last-known safe buffers); notify stakeholders
+    outcome: >-
+      Reduced automation; conservative actions protect service but may increase
+      temporary inventory/cost

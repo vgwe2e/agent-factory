@@ -1,0 +1,64 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: Carrier/3PL
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis
+    type: APS
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+aera_ingestion:
+  - stream_name: purchase-order-po-header-lines
+    stream_type: Stream
+    source: S4 (ERP)
+  - stream_name: advanced-shipping-notice-asn-carrier-edi
+    stream_type: Stream
+    source: Supplier via TMS / EDI ingests
+  - stream_name: wms-receiving-events-scan-logs
+    stream_type: Stream
+    source: Blue Yonder WMS
+  - stream_name: qa-inspection-results
+    stream_type: Event Stream
+    source: WMS or QA system / manual entry
+  - stream_name: carrier-delivery-confirmation
+    stream_type: Report Data
+    source: Uber Freight TMS / 3PL
+  - stream_name: receipt-tolerance-supplier-auto-receipt-rules
+    stream_type: Data View
+    source: Master data / business rules in Data View
+processing:
+  - component: Data Quality & Validation
+    type: cortex
+    function: Detect quantity/UM mismatches, missing items, and QA triggers
+  - component: Process Builder (IF / Rules)
+    type: process_builder
+    function: Deterministic decision based on supplier policy, tolerance, and QA outcome
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Writeback receipt transaction to S4 and update Blue Yonder WMS
+      inventory/receiving records
+  - component: UI Screen / Notification
+    type: process_builder
+    function: Inform receiving team, supplier, and update dashboards with receipt status
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automatically create receipts of goods or services in sap s/4hana
+      when inbound shipments/asns and receiving events match purchase orders and
+      qa checks; route exceptions for manual acknowledgment. and approve the
+      recommended action.

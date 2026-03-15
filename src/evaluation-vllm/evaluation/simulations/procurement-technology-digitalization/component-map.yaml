@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ensure accurate and complete data for analysis
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Monitoring
+    purpose: Identify areas for improvement
+    confidence: confirmed
+    capability: Identify areas for improvement
+process_builder:
+  - name: Process Builder
+    purpose: Determine optimal procurement technology and automation strategies
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Automate requisition-to-pay processes and maintain e-procurement systems
+    confidence: inferred
+    node_type: act
+  - name: UI Screens
+    purpose: Track improvements in COGS, EBITDA, and cycle times
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize procurement processes through automation and data
+      integration to improve cogs, working capital, and ebitda. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

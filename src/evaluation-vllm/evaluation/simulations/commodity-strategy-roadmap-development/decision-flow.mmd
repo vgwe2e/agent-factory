@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Quarterly business review kickoff.]
+  A --> N1[Stream: DDM/Crawlers - Ingest commodity data from SAP S/4HANA.]
+  N1 --> N2[Cortex: AutoML - Analyze commodity trends and supplier performance using AutoML.]
+  N2 --> N3{Agent: Agentic AI - Generate long-term commodity strategy recommendations.}
+  N3 -->|Primary| N4{PB: Remote Functions - Evaluate make-vs-buy decisions using Remote Functions.}
+  N4 --> N5{Agent: Agentic AI - Design strategic sourcing models using Agentic AI.}
+  N5 --> N6{Agent: Agentic AI - Align commodity strategies with technology roadmaps using Agentic AI.}
+  N6 --> Z1[Outcome: Optimized COGS and EBITDA uplift through coordinated supplier commitments and platform investments.]
+  N3 -->|Supplier performance below threshold.| B1[Trigger supplier performance improvement plan.]
+  B1 --> O1[Outcome: Enhanced supplier performance and reduced risk.]
+  O1 --> End[End]
+  N3 -->|Insufficient internal production capa...| B2[Prioritize external sourcing options.]
+  B2 --> O2[Outcome: Optimized COGS through strategic sourcing.]
+  O2 --> End[End]
+  N3 -->|Significant market volatility detected.| B3[Adjust hedging and capacity commitment strategies.]
+  B3 --> O3[Outcome: Mitigated financial risk through dynamic strategy adjustments.]
+  O3 --> End[End]
+  Z1 --> End[End]

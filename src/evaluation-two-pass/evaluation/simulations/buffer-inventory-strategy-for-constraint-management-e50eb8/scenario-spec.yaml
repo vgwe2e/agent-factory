@@ -1,0 +1,130 @@
+objective: >-
+  Autonomously identify multi-plant and supplier-driven bottlenecks, simulate
+  constraint mitigation options, and execute coordinated procurement, production
+  scheduling, and logistics actions to minimize COGS while improving on-time
+  delivery and measurable P&L impact.
+trigger: >-
+  Daily scheduled snapshot or exception event (capacity breach, supplier delay,
+  demand spike) detected in SAP S/4HANA
+decision: >-
+  Where to place buffer stock and how to re-route procurement, production, and
+  logistics across constrained nodes so that capacity constraints are not
+  violated while minimizing COGS and meeting target on-time delivery (OTD)
+  service levels
+expected_action: >-
+  Automatically ingest cross-domain data, run deterministic constraint
+  simulations, select the cost/service-optimal mitigation plan, execute
+  adjustments via Remote Functions to SAP S/4HANA (POs, production orders,
+  schedule shifts), and surface results; escalate to CWB Lifecycle when manual
+  approval or trade-off negotiation is required.
+expected_outcome: >-
+  Coordinated reduction in constraint-driven stockouts and expedited actions,
+  measurable decrease in COGS from optimized buffer placement, improved OTD
+  percentages, and traceable P&L impact from executed actions and simulations.
+rationale: >-
+  Deterministic, rule-driven orchestration (Process route) is appropriate
+  because constraint logic and buffer-placement policies must be repeatable,
+  auditable, and tightly integrated with ERP writebacks. Process Builder
+  provides cross-component orchestration; STREAMS/DDM ensure data integrity;
+  Safety Stock Service and rule engines compute recommended buffers; Remote
+  Functions enable safe ERP writebacks. High implementation complexity is
+  justified by cross-domain P&L impact.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Cortex Auto Forecast
+    type: Aera Service
+    status: tbd
+  - name: Supplier Portal / EDI
+    status: tbd
+key_inputs:
+  - name: Plant capacity & work center calendars
+    source: SAP S/4HANA
+    purpose: >-
+      Determine available production capacity and identify bottleneck work
+      centers
+    preferred_stream_type: STREAMS
+  - name: Current inventory on-hand & in-transit
+    source: SAP S/4HANA
+    purpose: >-
+      Assess buffer levels and available supply across nodes for placement
+      decisions
+    preferred_stream_type: STREAMS
+  - name: Open purchase orders and supplier lead times
+    source: SAP S/4HANA / Supplier Portal
+    purpose: Model supplier constraints, shortages, and realistic replenishment timing
+    preferred_stream_type: Report Data
+  - name: Demand forecast
+    source: Cortex Auto Forecast
+    purpose: Drive forward-looking requirement calculations and scenario simulations
+  - name: Routing times, changeover and cycle times
+    source: SAP S/4HANA
+    purpose: Accurately simulate production throughput and capacity feasibility
+    preferred_stream_type: STREAMS
+  - name: Cost inputs (material cost, production cost, expedite cost)
+    source: SAP S/4HANA
+    purpose: Calculate COGS impact of buffer placement and mitigation actions
+happy_path:
+  - step: Ingest latest snapshots of capacity, inventory, POs, routings, and demand
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate and cleanse cross-system inputs into Subject Areas for
+      consistent analytics
+  - step: Compute forecasts, safety stock baselines, and identify constrained nodes
+    stage: analyze
+    component: Cortex Auto Forecast + Safety Stock Service + Subject Areas
+    purpose: >-
+      Generate demand outlooks, baseline buffers, and score constraint
+      criticality
+  - step: >-
+      Simulate mitigation options and rank plans by COGS impact and OTD
+      attainment
+    stage: decide
+    component: Process Builder (Process + Rules + Data View)
+    purpose: >-
+      Run deterministic scenario simulations (reallocation, expedite, buffer
+      placement) and select the optimal plan
+  - step: >-
+      Execute approved plan changes and ERP writebacks; create action items for
+      exceptions
+    stage: act
+    component: Remote Functions + Process Builder (Action Item)
+    purpose: >-
+      Create/modify POs, adjust production schedules in SAP S/4HANA and trigger
+      logistics updates; open CWB when manual intervention required
+  - step: Surface results and notify stakeholders with KPIs and audit trail
+    stage: surface
+    component: UI Screens + Notification
+    purpose: >-
+      Present executed plan, expected COGS/OTD impact, and allow overrides/audit
+      via CWB Lifecycle
+branches:
+  - condition: >-
+      Top-ranked mitigation plan requires supplier capacity beyond committed
+      lead times
+    response: >-
+      Process Builder flags plan; create CWB Lifecycle exception routed to
+      Procurement team with recommended expedite or alternate suppliers
+    outcome: >-
+      Procurement reviews and either approves alternate suppliers/expedites
+      (through Remote Functions writeback) or the plan defaults to next-best
+      scenario with longer lead times
+  - condition: >-
+      Calculated buffer cost uplift exceeds configured COGS threshold or ROI
+      constraint
+    response: >-
+      Rules node rejects high-cost buffers and triggers constrained optimization
+      mode prioritizing OTD or cost per business policy; notify finance for
+      policy override
+    outcome: >-
+      System applies a lower-cost mitigation plan and surfaces trade-off report;
+      finance can approve temporary policy relaxation via CWB Lifecycle
+  - condition: Forecast uncertainty / model confidence below threshold for key SKUs
+    response: >-
+      Pause autonomous writeback for affected SKUs and create review Action
+      Items assigned to planners (CWB Lifecycle) with scenario comparisons
+    outcome: >-
+      Human-in-the-loop review required; autonomous execution proceeds only for
+      high-confidence SKUs while others are handled manually

@@ -1,0 +1,27 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: load-details
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: carrier-information
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: real-time-conditions
+    stream_type: Event Stream
+    source: External APIs
+processing:
+  - component: Process Builder
+    type: process_builder
+    function: Determine optimal routes and carrier assignments
+  - component: Remote Functions
+    type: process_builder
+    function: Implement the optimized routes and monitor their execution
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous transportation planning & scheduling and approve the
+      recommended action.

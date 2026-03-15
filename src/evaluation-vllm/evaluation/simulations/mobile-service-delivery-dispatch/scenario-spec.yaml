@@ -1,0 +1,75 @@
+objective: >-
+  Automate mobile service appointment routing, technician dispatch, on-site
+  diagnostics, mobile inventory management, equipment maintenance, and outage
+  communications to reduce working capital, improve COGS, and enhance OTIF.
+trigger: >-
+  New mobile service request or equipment maintenance need detected in SAP
+  S/4HANA.
+decision: >-
+  Plan and route mobile service appointments, assign jobs to technicians, manage
+  on-site diagnostics and repairs, optimize mobile service vehicle inventory,
+  schedule equipment maintenance, and communicate outages/delays.
+expected_action: >-
+  Optimize dispatch decisions, inventory localization, and real-time
+  communications to reduce working capital, improve COGS, and enhance OTIF.
+expected_outcome: >-
+  Reduced working capital tied to service parts, improved COGS through efficient
+  field operations, and enhanced OTIF for mobile service.
+rationale: >-
+  Jointly optimizing dispatch decisions, inventory localization, and real-time
+  communications will streamline mobile service operations, leading to
+  significant cost savings and improved customer satisfaction.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Service Requests
+    source: SAP S/4HANA
+    purpose: To identify new mobile service requests.
+  - name: Technician Availability
+    source: SAP S/4HANA
+    purpose: To determine available technicians for job assignments.
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: To manage and optimize inventory on mobile service vehicles.
+  - name: Equipment Maintenance Needs
+    source: SAP S/4HANA
+    purpose: To schedule maintenance actions for mobile service equipment.
+happy_path:
+  - step: Capture new service requests and maintenance needs from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest new service requests and maintenance needs.
+  - step: >-
+      Analyze service requests and technician availability to plan optimal
+      routes.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Generate optimized routes for mobile service appointments.
+  - step: Assign mobile service jobs to technicians based on skills and capacity.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure optimal job assignments to technicians.
+  - step: Manage and optimize inventory on mobile service vehicles.
+    stage: decide
+    component: Safety Stock Service
+    purpose: Ensure parts availability while controlling vehicle stock levels.
+  - step: Schedule maintenance actions for mobile service equipment.
+    stage: decide
+    component: Remote Functions
+    purpose: Minimize COGS while maintaining fleet readiness.
+  - step: Notify fleet customers about outages/delays proactively.
+    stage: act
+    component: Notification
+    purpose: Minimize churn and revenue impact.
+branches:
+  - condition: Insufficient inventory on mobile service vehicle
+    response: Trigger replenishment order
+    outcome: Ensure parts availability for upcoming service appointments.
+  - condition: Technician unavailable due to unexpected delay
+    response: Reassign job to another technician
+    outcome: Maintain service commitment to customers.
+  - condition: Equipment maintenance cannot be completed within downtime window
+    response: Reschedule maintenance action
+    outcome: Ensure fleet readiness while minimizing disruption.

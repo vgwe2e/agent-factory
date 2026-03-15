@@ -1,0 +1,125 @@
+objective: >-
+  Improve material planning and reduce working capital by deploying autonomous
+  ML demand models and integrated forecast optimization across supplier-plant-DC
+  network.
+trigger: >-
+  Scheduled weekly forecast pipeline and exception-based triggers when forecast
+  error (MAPE) or service KPIs exceed thresholds.
+decision: >-
+  Deploy and maintain ML-based demand prediction models; decide when to retrain
+  or adjust features based on model performance, data quality, and business rule
+  thresholds.
+expected_action: >-
+  Orchestrate ingestion, generate forecasts and driver explanations, evaluate
+  model performance, automatically deploy models or schedule retraining, write
+  approved forecasts to SAP S/4HANA, and surface exceptions/recommendations to
+  planners for overrides.
+expected_outcome: >-
+  Tighter COGS and lower working capital via improved forecast accuracy, fewer
+  stockouts and excesses across multi-echelon network, measurable reduction in
+  inventory days and procurement variance, continuous model performance
+  measurement.
+rationale: >-
+  Use Aera Process Builder to orchestrate repeatable ETL, modeling, evaluation,
+  and writeback. Cortex Auto Forecast provides robust time-series forecasts with
+  explainability; RCA Service surfaces demand drivers for feature adjustments.
+  Remote Functions enable safe deployment and ERP writeback to SAP S/4HANA. CWB
+  Lifecycle + UI Screens provide human-in-the-loop approval for production
+  changes. Cortex Monitoring ensures ongoing measurement and retrain triggers.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Enterprise Data Lake / Subject Areas
+    type: Data Warehouse
+    status: tbd
+  - name: External Market Signals (3rd-party APIs)
+    status: tbd
+key_inputs:
+  - name: Historical sales & shipments (time-series)
+    source: SAP S/4HANA via STREAMS/DDM
+    purpose: Primary time-series data for demand modeling and forecast training
+    preferred_stream_type: STREAMS
+  - name: Product & location master data
+    source: SAP S/4HANA Subject Areas
+    purpose: Dimensions for hierarchical forecast aggregation and SKU-location mapping
+    preferred_stream_type: STREAMS
+  - name: Inventory levels & in-transit data
+    source: SAP S/4HANA
+    purpose: >-
+      Assess stock positions, safety stock calculation, and multi-echelon
+      balancing
+    preferred_stream_type: STREAMS
+  - name: Supplier lead times & capacity constraints
+    source: SAP S/4HANA / supplier feeds
+    purpose: Constraint inputs for procurement alignment and replenishment timing
+    preferred_stream_type: DDM/Crawlers
+  - name: Promotions & events calendar
+    source: Marketing / planning inputs
+    purpose: Model covariates for demand shifts and anomaly detection
+  - name: External demand signals (e.g., market index, seasonality indicators)
+    source: 3rd-party APIs
+    purpose: Enhance model features and detect external demand drivers
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: Ingest and normalize transactional and master data into Subject Areas
+    stage: ingest
+    component: STREAMS + DDM/Crawlers
+    purpose: >-
+      Centralize historical sales, inventory, master data, supplier feeds and
+      external signals for modeling
+  - step: Train and score time-series models and analyze demand drivers
+    stage: analyze
+    component: Cortex Auto Forecast + RCA Service
+    purpose: >-
+      Generate forecasts, compute error metrics (MAPE), and surface feature
+      impacts for model explainability
+  - step: Evaluate model performance and decide deploy vs. retrain
+    stage: decide
+    component: Process Builder (IF, Rules, Data Science)
+    purpose: >-
+      Apply business rules and performance thresholds to determine deployment or
+      retraining actions
+  - step: >-
+      Deploy model and write approved forecasts to ERP; trigger
+      procurement/replenishment actions
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Push forecasts to SAP S/4HANA and initiate downstream procurement or
+      production adjustments
+  - step: Surface recommendations and exceptions for planner approval
+    stage: surface
+    component: CWB Lifecycle + UI Screens
+    purpose: >-
+      Allow planners to review, accept/override forecast changes and record
+      rationale
+  - step: Monitor performance and notify teams; schedule retrains when required
+    stage: review
+    component: Cortex Monitoring + Process Builder Notification
+    purpose: >-
+      Track forecast accuracy, KPI improvement, and automate retrain cadence or
+      alerts
+branches:
+  - condition: Model performance within threshold (MAPE <= target)
+    response: >-
+      Auto-deploy model to production and write forecasts to SAP S/4HANA;
+      schedule next periodic retrain
+    outcome: >-
+      Continuous forecast updates applied to planning; expected reduction in
+      stock variance
+  - condition: Model performance degraded (MAPE > threshold) but data quality OK
+    response: >-
+      Trigger automated retrain pipeline via Process Builder and mark new model
+      candidate for validation; do not overwrite production forecasts until
+      validation passes
+    outcome: Model refresh attempts to restore accuracy while avoiding risky writebacks
+  - condition: >-
+      Data quality exceptions detected (missing/lagging feeds, inconsistent
+      master data)
+    response: >-
+      Pause model deploy, create Exception (CWB) routed to Data Engineering via
+      Notification and log required fixes; fallback to last-known-good forecast
+    outcome: >-
+      Prevents bad deployments; ensures rapid remediation and preserves planning
+      stability

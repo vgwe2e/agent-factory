@@ -1,0 +1,65 @@
+source_systems:
+  - name: SAP S/4HANA (S4)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Kinaxis (Rebalancing / FG Safety Stock Modeling)
+    type: Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS/Logistics
+    status: identified
+aera_ingestion:
+  - stream_name: historical-sales-shipments
+    stream_type: Subject Areas
+    source: SAP S/4HANA / Blue Yonder WMS
+  - stream_name: advanced-statistical-forecasts-demand-signals
+    stream_type: Subject Areas
+    source: SAS (Advanced Statistical Forecasting) and Cortex Auto Forecast outputs
+  - stream_name: current-inventory-on-hand-in-transit
+    stream_type: STREAMS
+    source: SAP S/4HANA and Blue Yonder WMS
+  - stream_name: network-constraints-capacity-lead-times-node-limits-shipment-capacity
+    stream_type: Subject Areas
+    source: Kinaxis RapidResponse / Uber Freight
+  - stream_name: existing-safety-stock-parameters-and-policy-thresholds
+    stream_type: Subject Areas
+    source: Subject Areas / S4 parameter extracts
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: >-
+      Produce updated demand forecast and flag statistically significant pattern
+      changes
+  - component: Safety Stock Service
+    type: process_builder
+    function: >-
+      Generate optimized safety stock levels and SKU sequencing/rebalancing
+      plans given forecast and network constraints
+  - component: Process Builder + Remote Functions
+    type: process_builder
+    function: >-
+      Apply business-rule filters, route high-impact changes to CWB if needed,
+      and write approved parameter updates to S4 and Kinaxis; push pick/sequence
+      priorities to WMS/TMS
+  - component: CWB Lifecycle + UI Screens (dashboard/notification)
+    type: process_builder
+    function: >-
+      Show changes, collect approvals for high-risk adjustments, and notify
+      planner/operations teams of applied updates
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automatically coordinate safety stock levels and sku sequencing
+      across plan and fulfill domains on a weekly cadence to align inventory
+      with shifting demand patterns and network constraints. and approve the
+      recommended action.

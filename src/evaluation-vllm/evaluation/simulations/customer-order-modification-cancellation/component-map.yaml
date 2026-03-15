@@ -1,0 +1,37 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Ingest request data
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Evaluate schedule impacts
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Remote Functions
+    purpose: Ensure request meets criteria
+    confidence: inferred
+    capability: Ensure request meets criteria
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Make informed decision
+    confidence: confirmed
+    node_type: decide
+  - name: Notification
+    purpose: Inform customer of outcome
+    confidence: confirmed
+    node_type: communication
+  - name: Remote Functions
+    purpose: Finalize order status and financial adjustments
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end customer order modification and cancellation
+      with validation, impact assessment, communication, and governance to
+      reduce cogs impact, preserve otif, and improve cash flow. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

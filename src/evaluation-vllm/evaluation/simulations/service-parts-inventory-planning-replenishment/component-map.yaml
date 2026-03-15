@@ -1,0 +1,25 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for demand forecasting.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Produce accurate demand forecasts.
+    confidence: confirmed
+    capability: Produce accurate demand forecasts.
+process_builder:
+  - name: Remote Functions
+    purpose: Determine optimal inventory levels.
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomous optimization of service part stock levels, replenishment
+      orders, obsolescence handling, and critical part stocking strategies
+      across a multi-echelon service parts network. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

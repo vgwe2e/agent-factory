@@ -1,0 +1,35 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      To gather necessary information about the batch for the topcoat
+      application process.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: >-
+      To select the best application plans based on historical data and current
+      requirements.
+    confidence: inferred
+    capability: >-
+      To select the best application plans based on historical data and current
+      requirements.
+process_builder:
+  - name: Remote Functions
+    purpose: To ensure optimal conditions for paint application.
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: To ensure correct color and minimize rework.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review increase revenue by improving paint yield and finish quality,
+      reduce cogs through optimized energy and material usage, and improve otif
+      by ensuring correct sequences and precise environmental control. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

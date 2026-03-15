@@ -1,0 +1,40 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: biw-defect-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: rework-station-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: mrb-disposition-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: rework-loop-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Predict optimal rework prioritization.
+  - component: RCA Service
+    type: cortex
+    function: Identify recurring issues and corrective actions.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Make informed MRB decisions.
+  - component: Notification
+    type: process_builder
+    function: Ensure swift resolution of critical issues.
+  - component: Agentic AI
+    type: agent_teams
+    function: Optimize rework station operations.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce cogs linked to rework, scrap, and delays while improving
+      otif and line efficiency through coherent orchestration of non-conformance
+      handling. and approve the recommended action.

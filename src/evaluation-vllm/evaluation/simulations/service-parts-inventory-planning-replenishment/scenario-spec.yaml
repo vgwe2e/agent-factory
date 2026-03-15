@@ -1,0 +1,81 @@
+objective: >-
+  Autonomous optimization of service part stock levels, replenishment orders,
+  obsolescence handling, and critical part stocking strategies across a
+  multi-echelon service parts network.
+trigger: Periodic inventory review and demand signal update.
+decision: >-
+  Generate and adjust service part demand forecasts, set inventory stocking
+  levels, generate replenishment orders, manage obsolescence, and develop
+  critical part stocking strategies.
+expected_action: >-
+  Accurate demand forecasts, optimized inventory levels, timely replenishment
+  orders, effective obsolescence management, and robust critical part stocking
+  strategies.
+expected_outcome: >-
+  Reduced working capital and COGS, improved availability and OTIF for Ford’s
+  service parts ecosystem.
+rationale: >-
+  Automating the service parts inventory planning and replenishment process will
+  enhance efficiency, reduce costs, and ensure optimal service levels.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Historical Service Part Sales Data
+    source: SAP S/4HANA
+    purpose: Input for demand forecasting models.
+  - name: Current Inventory Levels
+    source: SAP S/4HANA
+    purpose: Basis for inventory optimization and replenishment decisions.
+  - name: Lead Times and Supplier Information
+    source: SAP S/4HANA
+    purpose: Required for generating replenishment orders.
+  - name: Obsolescence and Excess Inventory Data
+    source: SAP S/4HANA
+    purpose: To identify and manage obsolete and excess inventory.
+happy_path:
+  - step: Retrieve historical service part sales data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for demand forecasting.
+  - step: >-
+      Generate and adjust service part demand forecasts using statistical
+      models.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Produce accurate demand forecasts.
+  - step: >-
+      Optimize inventory stocking levels based on demand forecasts and
+      multi-echelon constraints.
+    stage: decide
+    component: Remote Functions
+    purpose: Determine optimal inventory levels.
+  - step: Generate and release replenishment orders to suppliers or plants.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure timely replenishment of service parts.
+  - step: >-
+      Manage obsolescence and excess inventory by reallocating, delaying, or
+      liquidating.
+    stage: decide
+    component: Remote Functions
+    purpose: Minimize carrying costs and stockout risks.
+  - step: Adjust service parts inventory for seasonal campaigns.
+    stage: decide
+    component: Remote Functions
+    purpose: Balance service levels and working capital.
+  - step: Develop and implement critical part stocking strategies.
+    stage: decide
+    component: Remote Functions
+    purpose: Prevent stockouts while minimizing COGS.
+branches:
+  - condition: Insufficient historical data available for demand forecasting.
+    response: Use default parameters or collaborate with domain experts.
+    outcome: Default demand forecasts generated.
+  - condition: High variability in lead times or supplier information.
+    response: Adjust replenishment order generation to account for variability.
+    outcome: More flexible replenishment orders generated.
+  - condition: Significant obsolescence detected.
+    response: Prioritize reallocation or liquidation actions.
+    outcome: Reduced carrying costs and minimized stockout risks.

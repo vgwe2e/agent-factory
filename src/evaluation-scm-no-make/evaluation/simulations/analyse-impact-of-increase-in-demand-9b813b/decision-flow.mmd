@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Detected demand uplift or forecast deviation beyond configured threshold (sales orders / forecast delta) during daily planning cadence.]
+  A --> N1[Stream: DDM/Crawlers + STREAMS - Ingest sales, forecast, inventory, capacity and logistics data into the Data Foundation]
+  N1 --> N2[Cortex: Cortex Auto Forecast + Safety Stock Service - Generate touchless forecasts and detect uplift; run safety-stock sensitivity across SKUs/locations]
+  N2 --> N3{PB: Process Builder + CWB Lifecycle - Orchestrate scenario ranking and semi-autonomous decision logic, present recommendations}
+  N3 -->|Primary| N4[PB: Remote Functions - S4 / Kinaxis RapidResponse - Execute accepted changes: write safety-stock updates, create procurement/production/expedite actions]
+  N4 --> N5[PB: UI Screen (CWB) + Notification - Surface decisions, exceptions, and KPI impact to planners for review; notify stakeholders]
+  N5 --> Z1[Outcome: Reduced stockouts (improved revenue protection), lower excess inventory (reduced working capital), prioritized mitigation actions executed across procurement/production/fulfillment with audit trail and optional human overrides.]
+  N3 -->|Demand uplift high but capacity const...| B1[Process Builder triggers capacity option analysis and presents choices: add shifts, outsource, or prioritize SKUs; CWB shows recommended action and impact]
+  B1 --> O1[Outcome: If accepted, Remote Functions create production shift change requests or expedite orders; if rejected, scenario escalates to planning team for manual resolution]
+  O1 --> End[End]
+  N3 -->|Risk-adjusted scenarios indicate sign...| B2[Recommend reducing safety stock targets and deferring new orders; generate rebalancing actions in Kinaxis and push hold requests to procurement]
+  B2 --> O2[Outcome: Working capital reduced via fewer incoming POs and targeted rebalancing; monitoring rule tracks for rebound in demand]
+  O2 --> End[End]
+  N3 -->|Planner rejects automated recommendat...| B3[Process Builder triggers Rollback Transaction or creates exception task and routes to Agent Team for collaborative resolution]
+  B3 --> O3[Outcome: No writeback occurs; exception tracked with alternate plan and owner assigned for manual execution]
+  O3 --> End[End]
+  Z1 --> End[End]

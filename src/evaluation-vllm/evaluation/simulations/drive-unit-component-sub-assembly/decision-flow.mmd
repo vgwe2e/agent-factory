@@ -1,0 +1,17 @@
+flowchart TD
+  A[Trigger: Daily production planning cycle start]
+  A --> N1[Stream: DDM/Crawlers - Retrieve production orders and inventory levels from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze production orders and inventory levels to determine optimal sequencing and resource allocation.]
+  N2 --> N3{PB: CWB Lifecycle - Decide on production sequencing and resource allocation based on analysis.}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute approved production plans and update SAP S/4HANA with new inventory positions and production statuses.]
+  N4 --> Z1[Outcome: Reduced COGS, minimized working capital tied to component stock, improved on-time delivery.]
+  N3 -->|Inventory levels below threshold| B1[Trigger replenishment order]
+  B1 --> O1[Outcome: Maintain optimal inventory levels to avoid production delays.]
+  O1 --> End[End]
+  N3 -->|Machine capacity exceeds demand| B2[Adjust production sequencing to balance load]
+  B2 --> O2[Outcome: Optimize machine utilization and reduce idle time.]
+  O2 --> End[End]
+  N3 -->|Quality gate fails| B3[Initiate rework process]
+  B3 --> O3[Outcome: Ensure quality standards are met and defects are contained.]
+  O3 --> End[End]
+  Z1 --> End[End]

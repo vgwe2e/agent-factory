@@ -1,0 +1,36 @@
+decision: Identify and execute cost-saving opportunities from indirect spend data.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic data refresh from SAP S/4HANA.
+  parameters:
+    objective: >-
+      Implement an indirect spend analytics and optimization initiative to
+      autonomously identify and realize indirect spend opportunities across the
+      enterprise.
+    key_inputs:
+      - Indirect Spend Data
+      - Consumption Patterns
+      - Savings Tracking Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate the identification and execution of indirect spend optimizations,
+    including supplier consolidation and maverick spend controls.
+  outcome: >-
+    Realized savings and improved EBITDA through optimized indirect spend
+    management.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - AutoML
+    - Process Builder
+    - UI Screens
+    - Dashboard
+rationale: >-
+  Leverage AI/ML and autonomous workflows to continuously improve indirect spend
+  management, reducing COGS and enhancing working capital.

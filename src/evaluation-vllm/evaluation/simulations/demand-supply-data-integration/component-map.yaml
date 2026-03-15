@@ -1,0 +1,27 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: To collect and harmonize multi-division sales forecasts.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: To ensure data consistency and accuracy.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Action Item
+    purpose: >-
+      Autonomous validation and alignment of inputs, triggering end-to-end
+      decisions.
+    confidence: confirmed
+    node_type: transaction
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unify and autonomously coordinate four l4 processes into a
+      cross-functional data-driven decision layer to reduce working capital,
+      lower cogs, and improve on-time delivery and order fulfillment. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,64 @@
+decision: >-
+  Agentic decision to either (A) autonomously reallocate inventory and adjust
+  allocations/production plans within guardrails, (B) initiate expedited
+  sourcing or order rebalancing, or (C) escalate to human review when guardrails
+  or confidence levels are breached.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    New or updated demand/supply deviation detected (unexpected demand surge,
+    supplier constraint, or shortage propagation) exceeding configured exception
+    thresholds.
+  parameters:
+    objective: >-
+      Continuously monitor demand and supply performance, autonomously detect
+      unfulfilled demand and supply exceptions, and execute prescriptive,
+      guardrailed actions to minimize stockouts, reduce waste, and protect
+      margin.
+    key_inputs:
+      - Touchless demand signals (sales, promotions, POS surge)
+      - Time-series demand forecasts and confidence intervals
+      - Inventory on-hand, reserved, and available-to-promise (ATP)
+      - Open orders, inbound receipts, and supplier lead-times
+      - Shortage propagation & constraint alerts
+      - Safety stock targets and FG safety stock model outputs
+      - Business priority rules and margin protection policies
+      - >-
+        Operational constraints (production capacity, routing, transportation
+        lead times)
+    source_systems:
+      - SAP S/4HANA (S4)
+      - SAS / Advanced Statistical Forecasting
+      - Kinaxis RapidResponse
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL (Uber Freight / carrier systems)
+expected_output:
+  action: >-
+    Agent Team (agentic AI) reasons over forecasts, inventory, and constraints,
+    generates a ranked set of prescriptive actions (reallocations, production
+    reprioritization, expediting), executes allowed actions via Remote Functions
+    to Kinaxis/S4, and opens CWB Lifecycle cases for exceptions requiring human
+    approval.
+  outcome: >-
+    Reduced stockouts and expedited shipments, improved service levels with
+    fewer manual interventions, lower waste from smarter reallocation, and
+    measurable protection of margin via constraint-aware decisions and audit
+    trail of automated actions.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex Auto Forecast + RCA Service
+    - Remote Functions -> Kinaxis RapidResponse / SAP S/4HANA
+    - Agent Team + Process Builder (IF + Rules) + CWB Lifecycle
+    - UI Screens (report/dashboard) + Notification
+rationale: >-
+  Agentic AI (Agent Team + Cortex services) enables adaptive, conversation-like
+  reasoning over heterogeneous signals; Process Builder orchestrates decision
+  flow and guardrails; Cortex Auto Forecast / RCA Service surface root causes
+  and confidence; Remote Functions enable safe, auditable writes to Kinaxis/S4;
+  CWB Lifecycle provides human-in-the-loop where guardrails or low confidence
+  require approval.

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Inbound ASN arrival + yard arrival event (vehicle docks) detected or receiving inspection failure recorded.]
+  A --> N1[Stream: DDM/Crawlers - Ingest inbound ASN, yard arrival, WMS and inspection feed into platform]
+  N1 --> N2[Stream: STREAMS - Normalize and enrich inputs; compute current dock/labor capacity and putaway options]
+  N2 --> N3{PB: Agent Team - Agentic AI evaluates inspection outcomes and tradeoffs to recommend disposition and actions}
+  N3 -->|Primary| N4[PB: Process Builder + Remote Functions - Apply decision: auto-execute low-risk dispositions or open CWB for review; orchestrate allocations and ERP/WMS writebacks]
+  N4 --> N5[PB: UI Screen + Notification - Surface actions and exceptions to operators and stakeholders; dispatch mobile tasks and notifications]
+  N5 --> Z1[Outcome: Faster, consistent segregation of non-conforming materials, fewer receiving errors in inventory, reduced rework/returns costs, improved OTIF, and lower working capital via optimal immediate inventory positioning.]
+  N3 -->|High-risk non-conformance (severity a...| B1[Automatically quarantine goods, open CWB Lifecycle for QA disposition and supplier claim initiation, and halt automated putaway]
+  B1 --> O1[Outcome: Human quality engineer reviews, records disposition, and authorizes return/rework; quarantined inventory prevented from being used downstream]
+  O1 --> End[End]
+  N3 -->|Low-risk discrepancy (minor packaging...| B2[Auto-accept with annotation to inventory, schedule fast putaway to optimal active location, and notify receiving supervisor]
+  B2 --> O2[Outcome: Minimal delay, corrected inventory position, improved throughput and lower holding cost]
+  O2 --> End[End]
+  N3 -->|Ambiguous or conflicting inputs (ASN ...| B3[Place temporary limited-availability hold allowing restricted use for non-critical downstream processes and route CWB for follow-up investigation]
+  B3 --> O3[Outcome: Maintains throughput for low-risk downstream needs while ensuring follow-up prevents quality/regulatory exposure]
+  O3 --> End[End]
+  Z1 --> End[End]

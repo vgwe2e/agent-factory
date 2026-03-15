@@ -1,0 +1,70 @@
+objective: >-
+  Unify L4 logistics processes into a single decision-driven orchestration layer
+  to optimize transportation, carrier management, logistics analytics, and fleet
+  telematics.
+trigger: Daily batch job to initiate logistics optimization process.
+decision: >-
+  Optimize transportation configuration, carrier management, logistics
+  analytics, and fleet telematics.
+expected_action: >-
+  Automatically configure TMS settings, manage EDI connections, generate
+  logistics reports, and integrate telematics data.
+expected_outcome: >-
+  Reduced COGS, prevented stockouts, improved OTIF through real-time,
+  cross-system decisions.
+rationale: >-
+  Unifying logistics processes under a single orchestration layer enables
+  real-time optimization and decision-making across suppliers, plants, and
+  distribution centers.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Carrier Data
+    source: SAP S/4HANA
+    purpose: To determine optimal carrier connections and configurations.
+  - name: Shipment Plans
+    source: SAP S/4HANA
+    purpose: To plan and execute efficient transportation routes.
+  - name: Telematics Data
+    source: IoT Devices
+    purpose: To track and optimize fleet operations.
+  - name: Contract Terms
+    source: SAP S/4HANA
+    purpose: To ensure compliance with carrier agreements.
+happy_path:
+  - step: Extract carrier data and shipment plans from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for logistics optimization.
+  - step: Analyze carrier data and shipment plans to optimize TMS settings.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict optimal TMS configurations.
+  - step: Generate logistics performance reports and dashboards.
+    stage: analyze
+    component: UI Screens
+    purpose: Provide actionable insights into logistics performance.
+  - step: Integrate telematics data for real-time fleet tracking and optimization.
+    stage: analyze
+    component: STREAMS
+    purpose: Fuse telematics data with logistics operations.
+  - step: Update TMS settings and EDI connections based on analysis.
+    stage: act
+    component: Remote Functions
+    purpose: Implement optimized configurations.
+  - step: Review and monitor the effectiveness of the new configurations.
+    stage: review
+    component: Cortex Monitoring
+    purpose: Ensure continuous improvement and accuracy.
+branches:
+  - condition: Carrier data is incomplete or outdated.
+    response: Trigger manual review and update process.
+    outcome: Manual intervention to correct data issues.
+  - condition: Telematics data integration fails.
+    response: Notify operations team to investigate and resolve.
+    outcome: Resolved data integration issues and resumed optimization.
+  - condition: Generated reports do not meet actionability criteria.
+    response: Adjust report definitions and regenerate.
+    outcome: Improved report actionability and utility.

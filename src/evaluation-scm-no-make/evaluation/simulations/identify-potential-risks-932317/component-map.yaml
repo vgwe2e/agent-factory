@@ -1,0 +1,47 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Unify risk definitions, clean and prepare SKU/location facts and
+      dimensions for analysis
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: Cortex RCA Service + Data Science
+    purpose: >-
+      Classify risks (write-off, supplier, promotion) and surface feature impact
+      for each SKU/location
+    confidence: confirmed
+    capability: >-
+      Classify risks (write-off, supplier, promotion) and surface feature impact
+      for each SKU/location
+process_builder:
+  - name: Remote Functions + Process Builder Action Item
+    purpose: >-
+      Implement recommended changes (cancel/expedite/reprice/reallocate) and
+      record audit trail
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle + UI Screen + Notification
+    purpose: >-
+      Enable human-in-the-loop approvals for high-impact or low-confidence cases
+      and capture decisions for learning
+    confidence: confirmed
+    node_type: review
+agent_teams:
+  - name: Process Builder (IF + Rules) + Agent Team
+    purpose: >-
+      Select mitigation path balancing detection sensitivity vs. workload and
+      WCM/EBITDA impact
+    confidence: confirmed
+    role: >-
+      Select mitigation path balancing detection sensitivity vs. workload and
+      WCM/EBITDA impact
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate unified risk segmentation, assessment, and proactive
+      mitigation across inventory, supplier, and promotion risks to protect
+      working capital and ebitda across sku/location matrices. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

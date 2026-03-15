@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: RFx readiness signal, demand/shortage alert from Kinaxis or promotional planning window, or market volatility threshold from external market data]
+  A --> N1[Stream: STREAMS - Ingest masters, POs, forecasts, inventory and market signals into the data foundation]
+  N1 --> N2[PB: Agent Team - Autonomous supplier discovery and capability scoring using multi-agent analysis]
+  N2 --> N3{PB: Process (Process Builder) - IF - Determine event type and participant list via rules + Agentic recommendation}
+  N3 -->|Primary| N4[Agent: Process (Action Item) + Agent Team - Execute sourcing event and run autonomous negotiation agents with staged approval points]
+  N4 --> N5[UI: CWB Lifecycle + Remote Functions - Surface recommended award, route for CWB approval, and writeback finalized contract terms to ERP]
+  N5 --> Z1[Outcome: Competitive agreements executed faster with lower landed costs, protected margins under input volatility, institutionalized supplier terms in ERP, and measurable reduction in promotional procurement lead time]
+  N3 -->|Fewer than three qualified suppliers ...| B1[Agent Team expands search (broaden geographies/criteria) and/or relax constraints; if still 3, route to single-source approval with risk mitigation via CWB Lifecycle]
+  B1 --> O1[Outcome: Either additional qualified suppliers are added to the event or single-source award is approved with documented risk controls]
+  O1 --> End[End]
+  N3 -->|Initial bids exceed target cost reduc...| B2[Trigger negotiation agent for iterative price/term bargaining; if negotiation fails to meet thresholds, escalate to procurement manager via Process Builder for manual strategy change]
+  B2 --> O2[Outcome: Achieve improved pricing through negotiation or escalate for manual intervention to preserve service/cost objectives]
+  O2 --> End[End]
+  N3 -->|Proposed contract terms violate compl...| B3[Block ERP writeback, notify Legal and Procurement via Process Builder Notification and attach exception CWB for review]
+  B3 --> O3[Outcome: Contract is held until compliance/legal clearance; prevents non-compliant terms from being institutionalized]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: pfmea-outcomes
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: control-plan-parameters
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: msa-results
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: quality-gate-status
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: deviation-reports
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Predict quality risks and their impacts.
+  - component: Data Quality & Validation
+    type: cortex
+    function: Ensure measurement reliability and trigger corrective actions.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Implement quality gate checkpoints and enforce them.
+  - component: Notification
+    type: process_builder
+    function: Communicate findings and actions to stakeholders.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce scrap, rework, and warranty costs while improving first-pass
+      yields and on-time delivery by automating quality-related cogs driver
+      detection, prediction, and remediation. and approve the recommended
+      action.

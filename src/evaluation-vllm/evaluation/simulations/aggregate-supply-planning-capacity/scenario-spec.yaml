@@ -1,0 +1,71 @@
+objective: Aggregate Supply Planning & Capacity
+trigger: Monthly demand forecast update
+decision: >-
+  Optimize production capacity, material availability, build planning, supplier
+  capacity, and logistics capacity to minimize COGS and improve EBITDA.
+expected_action: >-
+  Jointly optimize multi-echelon inventory, capacity alignment, and end-to-end
+  fulfillment decisions.
+expected_outcome: >-
+  Reduced stockouts, overages, and expedited costs; improved on-time delivery
+  across plants, suppliers, and DCs.
+rationale: >-
+  By leveraging advanced analytics and decision intelligence, Ford can achieve
+  better alignment between supply and demand, leading to cost savings and
+  improved profitability.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Monthly Demand Forecast
+    source: SAP S/4HANA
+    purpose: To inform the aggregate build plan and capacity assessment.
+  - name: Supplier Capacity Data
+    source: SAP S/4HANA
+    purpose: To identify critical bottlenecks and prioritize supplier capacity.
+  - name: Material Availability Data
+    source: SAP S/4HANA
+    purpose: To assess long-term material and component availability.
+  - name: Logistics Network Data
+    source: SAP S/4HANA
+    purpose: To evaluate capacity constraints in the logistics network.
+happy_path:
+  - step: Ingest monthly demand forecast data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: To prepare data for analysis.
+  - step: Analyze global production capacity levels using Cortex Auto Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: To determine optimal capacity utilization.
+  - step: Evaluate long-term material and component availability using AutoML.
+    stage: analyze
+    component: AutoML
+    purpose: To ensure sufficient inventory for future production.
+  - step: >-
+      Align S&OP plans with long-term manufacturing network strategy using
+      Process Builder.
+    stage: decide
+    component: Process Builder
+    purpose: To balance capital expenditure, capacity, and cost-to-serve.
+  - step: Develop monthly aggregate build plan using Remote Functions.
+    stage: decide
+    component: Remote Functions
+    purpose: To match demand with available supply and resources.
+  - step: Surface optimized build plan and capacity recommendations on UI Screens.
+    stage: surface
+    component: UI Screens
+    purpose: To enable human-in-the-loop review and approval.
+branches:
+  - condition: Critical supplier capacity bottleneck identified
+    response: Escalate to CWB Lifecycle for review and approval.
+    outcome: >-
+      Prioritize supplier capacity adjustments to maintain production
+      continuity.
+  - condition: Significant logistics network constraint detected
+    response: Trigger Process Builder to reroute shipments and adjust capacity.
+    outcome: Maintain flow and cost efficiency in the logistics network.
+  - condition: Material availability shortfall exceeds threshold
+    response: Initiate emergency procurement through Remote Functions.
+    outcome: Ensure sufficient materials for production to avoid stockouts.

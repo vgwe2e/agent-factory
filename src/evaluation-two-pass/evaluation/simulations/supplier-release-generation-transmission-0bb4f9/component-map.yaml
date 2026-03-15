@@ -1,0 +1,52 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: >-
+      Collect authoritative ERP and partner data for a consistent planning
+      dataset.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast / Safety Stock Service
+    purpose: Generate demand projections and target buffers to inform net requirements.
+    confidence: confirmed
+    capability: Generate demand projections and target buffers to inform net requirements.
+process_builder:
+  - name: Remote Functions + Process Builder (Transaction)
+    purpose: >-
+      Persist release orders in ERP and send supplier-facing releases via
+      EDI/API or portal.
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle / UI Screen
+    purpose: >-
+      Allow planners to approve, modify, or escalate constrained releases before
+      finalization.
+    confidence: confirmed
+    node_type: review
+agent_teams:
+  - name: Agentic AI (Process Builder orchestrating Agent Team + RCA Service)
+    purpose: >-
+      Weigh cost, capacity, lead time, and risk to produce prioritized supplier
+      release schedules.
+    confidence: confirmed
+    role: >-
+      Weigh cost, capacity, lead time, and risk to produce prioritized supplier
+      release schedules.
+  - name: Process Builder Notification / Agent Team
+    purpose: >-
+      Ensure suppliers and internal stakeholders receive timely release and
+      exception information.
+    confidence: confirmed
+    role: >-
+      Ensure suppliers and internal stakeholders receive timely release and
+      exception information.
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end mrp decisions to generate and transmit supplier
+      material release schedules that balance cost, supplier capacity, and
+      production needs across a multi-echelon automotive network to reduce cogs,
+      improve otif, and optimize working capital. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

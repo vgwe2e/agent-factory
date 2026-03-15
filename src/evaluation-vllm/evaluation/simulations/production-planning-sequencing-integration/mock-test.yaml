@@ -1,0 +1,39 @@
+decision: >-
+  Choose optimal daily build sequence, adjust production schedule, manage model
+  mix, and assess capacity needs.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Daily production start or significant upstream/downstream changes detected.
+  parameters:
+    objective: >-
+      Integrate production planning and sequencing across daily build, schedule
+      adjustments, and line balancing to reduce COGS, improve OTIF, and
+      strengthen multi-plant alignment.
+    key_inputs:
+      - Daily Build Sequence
+      - Production Schedule Changes
+      - Model Mix Data
+      - Capacity Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate end-to-end sequencing decisions, apply capacity-aware scheduling,
+    and balance line utilization with product mix constraints.
+  outcome: >-
+    Reduced COGS, improved OTIF, and enhanced multi-plant alignment through
+    optimized production planning and sequencing.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - AutoML
+    - Remote Functions
+    - Cortex Monitoring
+    - Dashboard
+rationale: >-
+  Automating production planning and sequencing decisions will streamline
+  operations, reduce costs, and improve on-time delivery performance.

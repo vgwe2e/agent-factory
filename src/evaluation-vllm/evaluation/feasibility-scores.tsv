@@ -1,0 +1,337 @@
+l3_name	opportunity_name	l1_name	l2_name	archetype	data_readiness	platform_fit	archetype_conf	tech_total	decision_density	financial_gravity	impact_proximity	confidence_signal	adoption_total	value_density	simulation_viability	value_total	composite	confidence	promotes_to_sim
+Warehouse & Inventory Management	Autonomous Multi-Echelon Inventory & Slotting Optimization	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	3	3	3	9	3	3	3	3	12	1	2	3	0.88	HIGH	Y
+Demand Forecasting & Analysis	Autonomous Demand-Driven Volume & Mix Orchestration Engine	Plan	Production Planning & Scheduling	DETERMINISTIC	3	3	3	9	3	3	3	2	11	2	2	4	0.88	HIGH	Y
+Material Requirements Planning (MRP) Integration	Autonomous MRP-Driven Production & Supply Alignment Engine	Plan	Production Planning & Scheduling	DETERMINISTIC	3	3	3	9	3	3	3	3	12	0	3	3	0.88	HIGH	Y
+Inbound Receiving & Putaway	Autonomous Inbound Receiving & Putaway Optimizer	Move & Fulfill	Warehouse & Distribution Center Operations	DETERMINISTIC	3	3	3	9	3	3	3	2	11	1	2	3	0.84	HIGH	Y
+Multi-Echelon Inventory Optimization	Autonomous Multi-Echelon Inventory Optimization Engine	Plan	Inventory Planning & Optimization	DETERMINISTIC	3	3	3	9	3	2	3	2	10	2	2	4	0.84	HIGH	Y
+Production Planning & Control	Autonomous Production Planning & Replenishment Engine	Make	Powertrain Manufacturing (Engine & Transmission)	DETERMINISTIC	3	2	3	8	3	3	3	3	12	1	2	3	0.84	HIGH	Y
+Inventory Positioning & Optimization	Autonomous Multi-Echelon Inventory Positioning Engine for Automotive	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	3	3	3	9	3	3	2	2	10	2	2	4	0.84	HIGH	Y
+Cost & Value Optimization Initiatives	Integrated COGS Optimization Engine for Automotive Value/COST Reduction	Procure Source & Buy	Commodity Management & Market Intelligence	DETERMINISTIC	2	2	2	6	3	3	3	2	11	3	2	5	0.82	HIGH	Y
+Production Schedule Execution & Monitoring	Adaptive, End-to-End Production Scheduling Engine for Automotive Platforms	Plan	Production Planning & Scheduling	DETERMINISTIC	2	2	2	6	3	3	3	3	12	2	2	4	0.82	HIGH	Y
+Quality Control & Performance Testing	Autonomous Quality Control Orchestration for COGS & Working Capital	Make	Powertrain Manufacturing (Engine & Transmission)	DETERMINISTIC	2	2	2	6	3	3	3	3	12	2	2	4	0.82	HIGH	Y
+Launch Logistics & Distribution Planning	Autonomous Launch Logistics Orchestration for Multi-Echelon Distribution	Plan	New Product Launch Planning	AGENTIC	2	2	2	6	3	3	3	3	12	2	2	4	0.82	HIGH	Y
+Line-side Material Delivery	Autonomous Line-Side Material Delivery Engine	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	2	2	3	7	3	3	3	3	12	1	2	3	0.81	HIGH	Y
+Constraint Identification & Resolution	Autonomous Constraint Orchestration Engine (ACOE) for Automotive Supply Chain	Plan	Sales & Operations Planning (S&OP)	AGENTIC	3	2	3	8	2	3	3	2	10	2	2	4	0.81	HIGH	Y
+Production Planning & Sequencing Integration	Autonomous Production Planning & Sequencing Engine for Vehicle Platforms	Make	Body Shop & Welding	DETERMINISTIC	3	3	3	9	3	3	3	2	11	0	2	2	0.80	HIGH	Y
+Tactical Capacity Planning	Autonomous Tactical Capacity Orchestrator for Automotive Build Plans	Plan	Capacity Planning & Constraint Management	DETERMINISTIC	3	3	3	9	3	3	3	2	11	0	2	2	0.80	HIGH	Y
+Strategic Network Design & Optimization	Autonomous Strategic Network Optimization Engine for Global Footprint and M&A Alignment	Plan	Supply Network Design & Planning	DETERMINISTIC	2	1	2	5	3	3	3	2	11	3	2	5	0.79	HIGH	Y
+Body-In-White (BIW) Assembly Execution	Autonomous BIW Synchronous Scheduling & Replenishment Engine	Make	Body Shop & Welding	DETERMINISTIC	2	1	2	5	3	3	3	3	12	2	2	4	0.78	HIGH	Y
+Data & Technology Management for S&OP	Autonomous S&OP Digital Backbone for Ford	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	2	2	2	6	3	3	3	2	11	2	2	4	0.78	HIGH	Y
+Capacity Planning & Optimization	Autonomous Capacity Planning & Bottleneck-Driven Production Engine	Plan	Production Planning & Scheduling	AGENTIC	2	2	2	6	3	3	3	3	12	1	2	3	0.78	HIGH	Y
+Warranty Performance Monitoring & Analytics	Autonomous Warranty Cost Optimization & Early Warning Engine	Service	Warranty Administration & Claims Management	DETERMINISTIC	3	2	3	8	2	3	2	2	9	2	2	4	0.77	HIGH	Y
+Material Handling & Preparation	End-to-End Material Handling Optimization for Automotive Platform Turbine	Make	Stamping Operations	DETERMINISTIC	3	2	3	8	2	3	2	2	9	2	2	4	0.77	HIGH	Y
+Production Planning & Scheduling (Stamping)	Autonomous Stamping Production & Capacity Synchronization Engine	Make	Stamping Operations	AGENTIC	3	2	3	8	2	3	3	2	10	1	2	3	0.77	HIGH	Y
+Service Parts Inventory Planning & Optimization	Autonomous Service Parts Inventory Orchestrator (ASPIO)	Service	Service Parts Planning & Management	DETERMINISTIC	3	3	3	9	2	2	2	2	8	2	2	4	0.77	HIGH	Y
+Master Production Scheduling (MPS)	Autonomous Multi-Scroll MPS Engine for COGS Optimization	Plan	Production Planning & Scheduling	DETERMINISTIC	3	2	3	8	3	3	3	3	12	0	1	1	0.76	HIGH	Y
+Service Parts Logistics Operations	Autonomous Service Parts Logistics Orchestration (ASPO) Engine	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	3	3	3	9	2	3	3	2	10	0	2	2	0.76	HIGH	Y
+Inventory Strategy & Policy Definition	Autonomous Multi-Echelon Inventory Strategy Engine	Plan	Inventory Planning & Optimization	DETERMINISTIC	3	3	3	9	2	3	3	2	10	0	2	2	0.76	HIGH	Y
+Service Parts Inventory Planning & Replenishment	Autonomous Service Parts Inventory Replenishment Engine	Move & Fulfill	Service Parts Logistics & Distribution	DETERMINISTIC	3	3	3	9	3	3	3	2	11	0	1	1	0.75	HIGH	Y
+Finished Powertrain Logistics & Outbound Preparation	Autonomous Finished Powertrain Logistics Optimizer	Make	Powertrain Manufacturing (Engine & Transmission)	DETERMINISTIC	2	2	2	6	2	3	3	2	10	2	2	4	0.74	HIGH	Y
+Strategic Demand Planning & Scenario Modeling	Autonomous Strategic Demand & Scenario Engine for Automotive Portfolio	Plan	Demand Forecasting & Sensing	DETERMINISTIC	2	2	2	6	3	3	3	2	11	1	2	3	0.74	HIGH	Y
+Stamping Supplier & Outsource Management	Autonomous Stamping Supply & Production Orchestration for Tier-1 Outsourced Stamping	Make	Stamping Operations	AGENTIC	2	2	2	6	2	3	3	2	10	2	2	4	0.74	HIGH	Y
+New Product Introduction & Lifecycle Planning	Autonomous NPI Lifecycle Orchestration & Obsolescence-Aware IBP	Plan	Integrated Business Planning (IBP)	AGENTIC	2	2	2	6	2	3	3	2	10	2	2	4	0.74	HIGH	Y
+Material Flow & Inventory Planning for Launch	Autonomous Launch Material Flow & Shortage Recovery Engine	Plan	New Product Launch Planning	DETERMINISTIC	2	2	2	6	2	3	3	2	10	2	2	4	0.74	HIGH	Y
+Paint Shop Maintenance & Reliability	Autonomous Paint Shop Maintenance & Spare Parts Optimization Platform	Make	Paint Operations	AGENTIC	2	2	2	6	3	3	2	3	11	1	2	3	0.74	HIGH	Y
+Pricing Management	Autonomous Pricing Management Engine for COGS-Driven Pricing	Procure Source & Buy	Contract & Commercial Management	DETERMINISTIC	2	2	2	6	3	3	3	2	11	1	2	3	0.74	HIGH	Y
+Logistics Capital Planning & Investment	Autonomous Logistics Capital Optimization Engine	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	2	2	2	6	3	3	2	2	10	2	2	4	0.74	HIGH	Y
+Drive Unit Component & Sub-Assembly	Autonomous Drive Unit Component & Sub-Assembly DI Engine	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	2	2	2	6	3	3	3	2	11	1	2	3	0.74	HIGH	Y
+New Product Introduction (NPI) Production Planning	Autonomous NPI Production Planning Engine for Ford	Plan	Production Planning & Scheduling	DETERMINISTIC	2	2	2	6	3	3	3	2	11	1	2	3	0.74	HIGH	Y
+Transportation Planning & Scheduling	Autonomous End-to-End Transportation Orchestration & Inventory-Delivery Synchronization	Move & Fulfill	Outbound Vehicle Logistics & Distribution	DETERMINISTIC	2	2	2	6	3	3	3	2	11	1	2	3	0.74	HIGH	Y
+Manufacturing Anomaly & Issue Resolution	End-to-End Anomaly Resolution Engine for Manufacturing	Make	Powertrain Manufacturing (Engine & Transmission)	AGENTIC	2	2	3	7	3	3	2	3	11	1	1	2	0.73	HIGH	Y
+Supply Base Risk & Resilience Management	Autonomous Supply Base Risk & Resilience Engine (ASBRE) across multi-echelon network	Procure Source & Buy	Commodity Management & Market Intelligence	AGENTIC	2	2	3	7	2	3	3	2	10	1	2	3	0.73	HIGH	Y
+Constraint & Exception Management	Autonomous Constraint-Driven Production Orchestration & Exception Handling	Plan	Production Planning & Scheduling	AGENTIC	2	2	3	7	3	3	2	3	11	1	1	2	0.73	HIGH	Y
+Statistical Demand Modeling & Analytics	Autonomous Demand Modeling & Integrated Forecast Optimization for Automotive Supply Network	Plan	Demand Forecasting & Sensing	DETERMINISTIC	3	2	2	7	3	3	2	2	10	1	2	3	0.73	HIGH	Y
+Supplier Collaboration for Inventory Optimization	Autonomous Collaborative Inventory Optimization Engine (ACIOE)	Plan	Inventory Planning & Optimization	AGENTIC	2	2	3	7	2	3	3	2	10	1	2	3	0.73	HIGH	Y
+Demand & Supply Data Integration	Autonomous Demand-Supply Data Integration & Orchestration Engine	Plan	Inventory Planning & Optimization	DETERMINISTIC	3	3	3	9	2	2	2	2	8	1	2	3	0.72	HIGH	Y
+Service Parts Inventory & Distribution	Autonomous Service Parts Inventory & Fulfillment Orchestrator	Service	Ford Pro Fleet Service & Upfit Operations	AGENTIC	3	3	3	9	2	2	2	2	8	1	2	3	0.72	HIGH	Y
+Financial Integration & Profitability Analysis	Integrated Profitability Optimization Engine for Automotive Value Chain	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	3	2	3	8	3	3	3	3	12	0	0	0	0.72	HIGH	Y
+Demand Planning & Forecasting	Autonomous Demand Planning Engine for Automotive Platform Lifecycles	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	3	3	3	9	2	2	3	1	8	1	2	3	0.72	HIGH	Y
+Vehicle & Part Order Allocation	Autonomous Vehicle & Part Allocation Engine (AVPAE)	Move & Fulfill	Order Management & Fulfillment	DETERMINISTIC	3	3	3	9	2	2	2	2	8	1	2	3	0.72	HIGH	Y
+Goods Receipt, Invoice Verification & Resolution	Autonomous AP Matching & Discrepancy Resolution Engine	Procure Source & Buy	Purchase Order Management & Execution	DETERMINISTIC	3	3	3	9	2	2	2	2	8	1	2	3	0.72	HIGH	Y
+Inventory & Material Flow Strategy	Autonomous Multi-Echelon Inventory & Build Strategy Engine	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	3	3	3	9	3	3	3	2	11	0	0	0	0.71	HIGH	Y
+Inventory & Working Capital Optimization	Autonomous Multi-Echelon Inventory & Working Capital Optimizer for Ford	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	3	3	3	9	3	3	3	2	11	0	0	0	0.71	HIGH	Y
+Service Parts Network Strategy & Optimization	Autonomous Service Parts Network & Transportation Optimization Engine	Move & Fulfill	Service Parts Logistics & Distribution	DETERMINISTIC	2	2	2	6	2	3	2	2	9	2	2	4	0.70	HIGH	Y
+Supplier Acknowledgment & Communication	Autonomous Supplier Acknowledgment & PO Sync Orchestration	Procure Source & Buy	Purchase Order Management & Execution	DETERMINISTIC	2	2	2	6	3	3	2	2	10	1	2	3	0.70	HIGH	Y
+Finished Goods Handling & Dispatch	Autonomous Finished Goods Handling & Dispatch Engine	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	2	2	2	6	3	2	3	2	10	1	2	3	0.70	HIGH	Y
+Production Quality Control & Assurance	Autonomous Production Quality & Throughput Engine	Make	Production Support Services	DETERMINISTIC	2	2	2	6	2	3	3	2	10	1	2	3	0.70	HIGH	Y
+Battery Pack Assembly	Autonomous Battery Pack Assembly Orchestration Engine	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	2	1	2	5	3	3	3	2	11	1	2	3	0.70	HIGH	Y
+Capacity Scenario Modeling & Simulation	Integrated Capacity Scenario Engine for Automotive Capacity Levers	Plan	Capacity Planning & Constraint Management	DETERMINISTIC	2	2	2	6	3	3	2	2	10	1	2	3	0.70	HIGH	Y
+Inbound Logistics Network Design & Optimization	Autonomous Inbound Logistics Optimization Engine	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	2	2	2	6	3	3	3	2	11	0	2	2	0.70	HIGH	Y
+Manufacturing Engineering & Process Optimization	Autonomous Line Sequencing & Multi-Echelon Inventory Optimization for Ford's Vehicle Platforms	Make	Powertrain Manufacturing (Engine & Transmission)	DETERMINISTIC	2	2	2	6	2	3	2	2	9	2	2	4	0.70	HIGH	Y
+Supplier Quality & Development	Autonomous Supplier Quality & Development Orchestrator	Procure Source & Buy	Supplier Relationship Management	AGENTIC	2	2	2	6	2	3	3	3	11	1	1	2	0.70	HIGH	Y
+Returnable Packaging Management	Autonomous Returnable Packaging Optimization Engine	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	2	2	2	6	3	3	2	2	10	1	2	3	0.70	HIGH	Y
+In-Process Component & Assembly Verification	Autonomous In-Process Quality Verification & Assembly Validation Engine	Make	Quality Control & In-Process Inspection	DETERMINISTIC	2	1	2	5	3	3	3	2	11	1	2	3	0.70	HIGH	Y
+Commercial Change Management	Autonomous Commercial Change Engine for Automotive Platform Optimization	Procure Source & Buy	Contract & Commercial Management	DETERMINISTIC	2	2	2	6	3	3	2	2	10	1	2	3	0.70	HIGH	Y
+Request for Quote (RFQ) & Bid Management	Autonomous RFQ & Bid Optimization Engine	Procure Source & Buy	Strategic Sourcing & Supplier Selection	DETERMINISTIC	2	2	2	6	2	3	2	2	9	2	2	4	0.70	HIGH	Y
+Exception & Non-Conformance Management	Autonomous Exception & Non-Conformance Orchestrator (AENO) for Automotive Manufacturing	Make	Trim Chassis & Final Assembly	DETERMINISTIC	2	2	2	6	3	3	3	2	11	1	1	2	0.70	HIGH	Y
+Battery Module Assembly	Autonomous Battery Module Assembly Orchestration & Scheduling Engine	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	2	1	2	5	3	3	3	2	11	1	2	3	0.70	HIGH	Y
+Warehouse & Distribution Center Network Management	Autonomous DC Network Optimization & Service Parts Fulfillment Engine	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	2	2	2	6	2	3	3	2	10	1	2	3	0.70	HIGH	Y
+New Product Introduction (NPI) Demand Forecasting	Autonomous NPI Demand Orchestration for New Vehicle Programs	Plan	Demand Forecasting & Sensing	DETERMINISTIC	3	3	3	9	2	2	2	1	7	1	2	3	0.69	HIGH	Y
+Order Fulfillment & Picking	Autonomous End-to-End Order Fulfillment & Dynamic Picking Engine	Move & Fulfill	Warehouse & Distribution Center Operations	DETERMINISTIC	3	2	3	8	2	3	2	2	9	1	1	2	0.69	HIGH	Y
+Inbound Logistics Exception Management	Autonomous Inbound Logistics Exception Management Engine	Move & Fulfill	Inbound Logistics & Material Flow	AGENTIC	2	2	3	7	2	3	3	2	10	1	1	2	0.69	HIGH	Y
+Parts Supply Chain & Logistics Coordination	Autonomous Parts Supply Chain Orchestrator for Automotive MRO and Production	Service	Recall & Field Service Action Management	DETERMINISTIC	3	3	3	9	2	2	2	2	8	1	1	2	0.68	HIGH	Y
+Service Parts Network Design & Operations	Autonomous Service Parts Network Optimization & End-to-End Fulfillment Engine	Service	Service Parts Planning & Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+OTA Software Deployment & Management	Autonomous OTA Deployment Orchestration for Vehicle Platform Stability	Service	Connected Vehicle Services & OTA Updates	AGENTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+Sourcing Risk Management	Autonomous Sourcing Risk Management Engine for Automotive Supply	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+Internal Production Logistics & Material Handling	Autonomous Production Logistics Orchestration for Multi-Echelon COGS Reduction	Make	Production Support Services	DETERMINISTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+Press Operations & Production Execution	Autonomous Press-to-Post-Stamping Production Orchestrator	Make	Stamping Operations	AGENTIC	2	1	2	5	2	3	2	2	9	2	2	4	0.67	HIGH	Y
+Dealer & Customer Delivery Operations	Autonomous End-to-End Dealer & Customer Delivery Orchestration	Move & Fulfill	Outbound Vehicle Logistics & Distribution	DETERMINISTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+Customer Experience & Technical Support for Connected Services	Autonomous Connected Services Experience Orchestrator	Service	Connected Vehicle Services & OTA Updates	AGENTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+Drive Unit Final Assembly & Testing	Integrated Final-Drive Assembly & Test Orchestration Engine	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	2	1	2	5	2	3	3	2	10	1	2	3	0.67	HIGH	Y
+Contract Management & Lifecycle	Autonomous Contract Lifecycle Optimization & Supplier Risk-Adjusted P&L	Procure Source & Buy	Strategic Sourcing & Supplier Selection	DETERMINISTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+Launch Program Strategy & Governance	Autonomous Launch Program Playbook & Governance Engine	Plan	New Product Launch Planning	DETERMINISTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+Continuous Improvement & Data Analytics	Integrated Continuous Improvement Decision Engine for COGS Reduction and OTIF Enhancement	Move & Fulfill	Outbound Vehicle Logistics & Distribution	DETERMINISTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+Die Engineering & Management	Autonomous Die Engineering Lifecycle Optimization	Make	Stamping Operations	AGENTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+Indirect Sourcing Strategy & Planning	Autonomous Indirect Sourcing Decision Engine for COGS and Working Capital	Procure Source & Buy	Indirect Procurement	DETERMINISTIC	2	2	2	6	2	2	2	2	8	2	2	4	0.67	HIGH	Y
+Transportation Strategy & Mode Optimization	Autonomous Multimodal Transportation & Carrier Optimization Engine	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	2	1	2	5	2	3	3	2	10	1	2	3	0.67	HIGH	Y
+Operator & Automated Quality Inspections	Autonomous End-to-End Quality Inspection & Certification Engine	Make	Quality Control & In-Process Inspection	AGENTIC	2	1	2	5	2	3	3	2	10	1	2	3	0.67	HIGH	Y
+Outbound Shipping & Loading	Autonomous Outbound Shipping Orchestrator for Vehicle Platforms	Move & Fulfill	Warehouse & Distribution Center Operations	DETERMINISTIC	2	2	2	6	3	2	2	2	9	1	2	3	0.66	HIGH	N
+PO Performance Analysis & Continuous Improvement	Autonomous PO Performance Optimization Engine	Procure Source & Buy	Purchase Order Management & Execution	DETERMINISTIC	2	2	2	6	2	3	2	2	9	1	2	3	0.66	HIGH	Y
+Regulatory & Trade Policy Compliance	Autonomous Regulatory & Trade Compliance Orchestrator	Procure Source & Buy	Commodity Management & Market Intelligence	DETERMINISTIC	2	2	2	6	2	3	3	2	10	1	1	2	0.66	HIGH	Y
+Data Analytics & Performance Management	Autonomous Performance & Quality Optimization Engine for Automotive Stamping & Production	Make	Stamping Operations	AGENTIC	3	2	2	7	2	2	2	2	8	1	2	3	0.66	HIGH	Y
+Non-Conformance & Rework Management	Autonomous Non-Conformance Orchestration & Rework Optimizer	Make	Body Shop & Welding	AGENTIC	2	2	2	6	2	3	2	2	9	1	2	3	0.66	HIGH	Y
+Indirect Spend Analytics & Optimization	Autonomous Indirect Spend Optimization & Savings Realization	Procure Source & Buy	Indirect Procurement	AGENTIC	2	2	2	6	2	2	3	2	9	1	2	3	0.66	HIGH	Y
+Emergency & Critical Parts Fulfillment	Autonomous Critical Parts Fulfillment Engine (AC-PFE)	Move & Fulfill	Service Parts Logistics & Distribution	AGENTIC	2	2	3	7	2	2	2	2	8	1	2	3	0.66	HIGH	Y
+Aggregate Supply Planning & Capacity	End-to-End Aggregate Supply Planning & Capacity Engine	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	2	2	2	6	3	3	3	2	11	0	1	1	0.65	HIGH	Y
+New Product Introduction (NPI) Capacity Assessment	Autonomous NPI Capacity Assurance Engine	Plan	Capacity Planning & Constraint Management	DETERMINISTIC	2	2	2	6	3	3	3	2	11	0	1	1	0.65	HIGH	Y
+Material Flow & In-Plant Logistics	Autonomous In-Plant Material Flow & Replenishment Engine	Make	Trim Chassis & Final Assembly	DETERMINISTIC	3	2	3	8	3	2	2	2	9	0	1	1	0.65	HIGH	Y
+Cost & Value Optimization (Sourcing Phase)	End-to-End Sourcing Value Optimization Engine	Procure Source & Buy	Strategic Sourcing & Supplier Selection	DETERMINISTIC	2	2	2	6	3	3	3	2	11	0	1	1	0.65	HIGH	Y
+Supplier Launch Readiness & Support	Autonomous Supplier Launch Readiness Engine	Procure Source & Buy	Supplier Quality Management	DETERMINISTIC	2	2	2	6	3	3	3	3	12	0	0	0	0.65	HIGH	Y
+Service Parts Inventory Management	Autonomous Service Parts Inventory Orchestrator	Plan	Inventory Planning & Optimization	DETERMINISTIC	3	3	3	9	2	2	2	2	8	0	1	1	0.64	HIGH	Y
+Production Planning & Material Flow Management	Autonomous End-to-End Production & Material Flow Optimizer	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	3	3	3	9	2	3	2	2	9	0	0	0	0.64	HIGH	Y
+Demand Sensing & Forecasting	Autonomous Demand Sensing & Forecasting Engine for Automotive Platform Mix	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	3	3	3	9	2	2	2	2	8	0	1	1	0.64	HIGH	Y
+Service Parts Demand Forecasting	Autonomous Service Parts Demand Orchestrator for Ford	Service	Service Parts Planning & Management	DETERMINISTIC	3	3	3	9	2	2	2	2	8	0	1	1	0.64	HIGH	Y
+Executive S&OP / IBP Review & Decision Making	Autonomous S&OP Orchestrator for Ford IBP Playbook	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	2	2	2	6	2	2	2	1	7	2	2	4	0.63	HIGH	Y
+Asset Lifecycle Management & Tracking	Autonomous Asset Lifecycle Optimizer for Automotive Asset Utilization	Make	Plant Maintenance & Reliability	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+New Product Introduction (NPI) Network Readiness	Autonomous NPI Network Readiness Engine	Plan	Supply Network Design & Planning	DETERMINISTIC	2	2	2	6	2	2	3	1	8	1	2	3	0.63	HIGH	Y
+Inbound Logistics & Material Handling	Autonomous Inbound Logistics Optimization for Ford: End-to-End Material Receiving, Storage, and Kitting	Make	Powertrain Manufacturing (Engine & Transmission)	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+New Model Launch Quality Readiness	Autonomous New Model Launch Quality Readiness Engine	Make	Quality Control & In-Process Inspection	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Paint Material Management	Autonomous Paint Material Management & Demand-Driven Mixing Optimization	Make	Paint Operations	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Compliance & Risk Management	Autonomous Compliance & Risk Orchestration Engine	Move & Fulfill	Outbound Vehicle Logistics & Distribution	AGENTIC	2	1	2	5	2	2	2	2	8	2	2	4	0.63	HIGH	Y
+Carrier Performance & Relationship Management	Autonomous Carrier Selection & Performance Optimization Engine	Move & Fulfill	Outbound Vehicle Logistics & Distribution	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Supplier Identification & Pre-Qualification	Autonomous Supplier Qualification & Onboarding Engine	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+New Supplier Quality Assessment & Selection	Autonomous Supplier Quality Assessment & Selection Engine	Procure Source & Buy	Supplier Quality Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Indirect Supplier Qualification & Selection	Autonomous Indirect Supplier Qualification & Selection Engine	Procure Source & Buy	Indirect Procurement	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Returnable Container Fleet Management	Autonomous Returnable Container Fleet Optimization Engine	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	2	2	2	6	2	2	3	1	8	1	2	3	0.63	HIGH	N
+Production Planning & Execution Control	End-to-End Production Planning & Dynamic Execution Optimization	Make	Trim Chassis & Final Assembly	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Connected Services & Aftermarket Order Integration	Autonomous Aftermarket Order Orchestration & Spare Parts Replenishment Engine	Move & Fulfill	Order Management & Fulfillment	AGENTIC	2	2	2	6	2	2	3	1	8	1	2	3	0.63	HIGH	N
+Service Parts Regulatory Compliance & Quality Assurance	Autonomous Quality & Compliance Assurance Engine for Service Parts	Service	Service Parts Planning & Management	AGENTIC	2	2	2	6	2	2	2	1	7	2	2	4	0.63	HIGH	Y
+Supplier Defect Management & Recovery	Autonomous Supplier Defect Recovery & Cost Recovery Engine	Service	Recall & Field Service Action Management	AGENTIC	2	2	2	6	2	2	2	1	7	2	2	4	0.63	HIGH	N
+Integrated Financial & Operational Reconciliation	End-to-End Financial-Operational Reconciliation Engine	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	2	1	2	5	2	3	2	1	8	2	2	4	0.63	HIGH	Y
+Warranty Policy & Program Development	Autonomous Warranty Policy & Program Optimization Engine	Service	Warranty Administration & Claims Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Topcoat Application	Autonomous Topcoat Application & Verification Optimization Engine	Make	Paint Operations	DETERMINISTIC	2	1	2	5	2	2	2	2	8	2	2	4	0.63	HIGH	Y
+Technical Service Information Management	Autonomous Service Information Lifecycle Optimization Engine	Service	Dealer Technical Support & Service Engineering	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Sales Channel & Marketing Management	Autonomous Direct-to-Channel Revenue Acceleration Engine	Service	Extended Service Plans & Maintenance Programs	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Manufacturing Process Quality Audits	Autonomous Quality Audit Orchestrator for Tier-1 Automotive Manufacturing	Make	Quality Control & In-Process Inspection	AGENTIC	2	2	2	6	2	2	2	1	7	2	2	4	0.63	HIGH	Y
+Inbound Freight Operations (Parts & Components)	Autonomous Inbound Freight Orchestration for Multi-Echelon Supplier Network	Move & Fulfill	Transportation Management & Carrier Operations	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Logistics Performance Management & Analytics	Autonomous Logistics Performance Engine for COGS Optimization and OTIF	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	2	2	2	6	2	2	2	1	7	2	2	4	0.63	HIGH	Y
+Invoice & Payment Processing (P2P part)	Autonomous P2P Invoice Validation, 3-Way Match & Payment Optimization Engine	Procure Source & Buy	Indirect Procurement	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Mobile Service Delivery & Dispatch	Autonomous Mobile Service Orchestration for End-to-End Dispatch	Service	Ford Pro Fleet Service & Upfit Operations	DETERMINISTIC	2	1	2	5	2	2	2	2	8	2	2	4	0.63	HIGH	Y
+Manufacturing Quality Process Engineering	Autonomous Quality Process Engineering Engine for COGS Reduction	Make	Manufacturing Engineering & Process Design	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Inventory Performance Monitoring & Analytics	Autonomous Inventory Performance Optimization across multi-echelon network	Plan	Inventory Planning & Optimization	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Quality Management & Control	End-to-End Quality Management & Defect Reduction Engine across Vehicle Platforms	Make	Trim Chassis & Final Assembly	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Requisition-to-Order Processing	Autonomous Requisition-to-Order Orchestration for Automotive Supply Chain	Procure Source & Buy	Indirect Procurement	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Carrier Relationship Management & Sourcing	Autonomous Carrier Optimization & Strategic Sourcing Engine	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Upfit Solution Design & Integration	Autonomous Upfit Orchestration & Quality-Driven Supplier Alignment	Service	Ford Pro Fleet Service & Upfit Operations	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Labor & Skills Capacity Planning	Autonomous Labor Capacity & Contingent Workforce Orchestrator	Plan	Capacity Planning & Constraint Management	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Battery Cell Production	Autonomous Battery Cell Production Optimization Engine	Make	Electric Vehicle Battery & Drive Unit Production	AGENTIC	2	1	2	5	2	3	2	2	9	1	2	3	0.63	HIGH	N
+Predictive Maintenance (PdM) & Condition Monitoring	Autonomous PdM & Condition Monitoring for Multi-Echelon Automotive Ops	Make	Plant Maintenance & Reliability	DETERMINISTIC	2	1	2	5	2	3	2	2	9	1	2	3	0.63	MEDIUM	Y
+Supplier Contract & Relationship Governance	Autonomous Supplier Contract & Relationship Governance Engine	Procure Source & Buy	Supplier Relationship Management	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Preventive Maintenance (PM) Program Execution	Autonomous PM Orchestration for PM Scheduling, Execution, and Backlog Optimization	Make	Plant Maintenance & Reliability	DETERMINISTIC	2	1	2	5	3	2	2	2	9	1	2	3	0.63	HIGH	N
+Production Line Maintenance & Uptime Management	Unified Autonomous Maintenance Optimization Engine (UAME) for Ford	Make	Electric Vehicle Battery & Drive Unit Production	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Paint Quality & Rework Management	Autonomous Paint Quality & Rework Optimization Engine	Make	Paint Operations	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Service Tool & Equipment Development	 Autonomous Tooling Development & Orchestration for Service Tools & Equipment	Service	Dealer Technical Support & Service Engineering	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Raw Material & Component Receipt & Kitting	Autonomous Material Receipt & Kitting Orchestrator for Battery Production	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Supplier Communication & Collaboration	Autonomous Supplier Collaboration & Development Engine	Procure Source & Buy	Supplier Relationship Management	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Dealer Claims Submission & Front-End Validation	Autonomous Dealer Claims Intake & Validation Engine	Service	Warranty Administration & Claims Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Procurement Technology & Digitalization	Autonomous, Integrated Procurement Digitalization Engine	Procure Source & Buy	Indirect Procurement	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Continuous Improvement & Digital Transformation	End-to-End Planning Modernization & AI-Driven Scheduling Engine	Plan	Production Planning & Scheduling	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Service Parts Master Data & Bill of Material (BOM) Management	Autonomous BOM & Master Data Orchestration for Service Parts	Service	Service Parts Planning & Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Packaging Inventory Management	Autonomous Packaging Inventory Optimization Engine	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Commodity Data Analytics & Reporting	Autonomous Commodity Data Intelligence and Risk-Adjusted Spend Control	Procure Source & Buy	Commodity Management & Market Intelligence	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Service Parts Warehouse & Distribution Center Operations	Autonomous Service Parts Warehouse Optimization Engine	Move & Fulfill	Service Parts Logistics & Distribution	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Service Parts Order Management	Autonomous Service Parts Order Management Engine	Move & Fulfill	Service Parts Logistics & Distribution	AGENTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	N
+Customer Order Modification & Cancellation	 Autonomous Order Modification & Cancellation Engine	Move & Fulfill	Order Management & Fulfillment	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	2	3	0.63	HIGH	Y
+Supplier Launch Readiness Management	Autonomous Supplier Launch Readiness Engine for Automotive Launch Programs	Plan	New Product Launch Planning	DETERMINISTIC	2	2	2	6	2	3	2	2	9	1	1	2	0.62	HIGH	N
+Supply Planning & Production Scheduling	Autonomous Global Supply & Production Orchestration for Automotive Platform Value	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	2	2	2	6	3	3	2	2	10	0	1	1	0.62	HIGH	Y
+New Model Launch & Production Readiness	Autonomous New Model Launch Orchestration Engine	Make	Trim Chassis & Final Assembly	DETERMINISTIC	2	2	2	6	3	3	2	2	10	0	1	1	0.62	HIGH	N
+Powertrain Assembly & Sub-Assembly	Autonomous Powertrain Production Orchestration Engine	Make	Powertrain Manufacturing (Engine & Transmission)	AGENTIC	2	1	2	5	3	3	3	3	12	0	0	0	0.62	HIGH	N
+Purchase Order Creation & Issuance	Autonomous PO Creation & Issuance Engine for Automotive MRO and Capital Equipment	Procure Source & Buy	Purchase Order Management & Execution	AGENTIC	2	2	2	6	2	3	3	2	10	0	1	1	0.62	HIGH	Y
+Service Parts Supply Planning & Procurement	Autonomous Service Parts Supply & Procurement Orchestrator	Service	Service Parts Planning & Management	DETERMINISTIC	2	2	2	6	3	3	2	2	10	0	1	1	0.62	HIGH	Y
+Unscheduled Repair & Recall Execution	Autonomous Unscheduled Repair & Recall Orchestration Engine	Service	Ford Pro Fleet Service & Upfit Operations	AGENTIC	2	2	2	6	2	3	3	2	10	0	1	1	0.62	HIGH	N
+Emergency & Escalation Management	Autonomous Emergency Orchestration Engine for Automotive Crises	Service	Recall & Field Service Action Management	AGENTIC	2	2	3	7	2	2	2	1	7	2	1	3	0.62	LOW	N
+Supplier Capability Development	Autonomous Supplier Capability Acceleration Engine	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	2	2	3	7	2	2	2	2	8	1	1	2	0.62	HIGH	N
+Receiving & Putaway Operations	Autonomous Receiving & Putaway Orchestrator for Automotive Logistics	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	2	2	3	7	2	2	2	1	7	1	2	3	0.62	HIGH	N
+Paint Production Planning & Control	Autonomous Paint Production Orchestration for COGS Reduction and OTIF Improvement	Make	Paint Operations	DETERMINISTIC	2	2	2	6	3	2	2	2	9	0	2	2	0.62	HIGH	N
+Vehicle Distribution Center (VDC) Operations	Autonomous VDC Operations Orchestrator	Move & Fulfill	Outbound Vehicle Logistics & Distribution	DETERMINISTIC	2	2	2	6	2	3	3	2	10	0	1	1	0.62	HIGH	N
+Launch Risk & Issue Management	Autonomous Launch Risk & Issue Orchestration Engine	Plan	New Product Launch Planning	AGENTIC	2	2	3	7	2	2	2	2	8	1	1	2	0.62	HIGH	Y
+Risk Management & Scenario Planning	Autonomous Risk & Scenario Optimization Engine for Automotive Supply Chain	Plan	Integrated Business Planning (IBP)	AGENTIC	2	2	3	7	2	2	2	1	7	1	2	3	0.62	HIGH	Y
+Customer Request & Incident Management	Autonomous Incident Triage & Resolution Engine	Service	Roadside Assistance & Emergency Services	AGENTIC	2	2	3	7	2	2	2	1	7	1	2	3	0.62	HIGH	N
+Industrial Engineering & Efficiency	Autonomous Industrial Engineering Engine for COGS, Throughput, and Through-Life Efficiency	Make	Production Support Services	DETERMINISTIC	2	2	2	6	3	3	3	2	11	0	0	0	0.61	HIGH	N
+Field Quality & Warranty Performance Management	Autonomous Field Quality & Warranty Optimization Engine	Procure Source & Buy	Supplier Quality Management	AGENTIC	2	2	3	7	2	3	3	2	10	0	0	0	0.61	HIGH	Y
+Product Quality & Reliability Feedback Loop	Autonomous Quality Feedback & Change Lifecycle Engine	Service	Dealer Technical Support & Service Engineering	AGENTIC	2	2	3	7	2	3	2	2	9	0	1	1	0.61	HIGH	N
+Supplier Capacity Management	Autonomous Supplier Capacity Management Engine for Automotive Network	Plan	Capacity Planning & Constraint Management	DETERMINISTIC	2	2	2	6	3	3	3	2	11	0	0	0	0.61	HIGH	Y
+Supply Chain Risk Management & Resilience	Autonomous Multi-Echelon Risk Resilience Engine	Plan	Supply Network Design & Planning	AGENTIC	2	2	3	7	2	3	3	2	10	0	0	0	0.61	HIGH	Y
+Continuous Process Improvement & Optimization	Autonomous Lean Transformation Engine for Automotive PLANT-DC Network	Make	Manufacturing Engineering & Process Design	DETERMINISTIC	2	2	2	6	3	3	3	2	11	0	0	0	0.61	HIGH	Y
+Supplier Problem Resolution & Corrective Actions	Autonomous Supplier Quality & Corrective Action Orchestrator	Procure Source & Buy	Supplier Quality Management	AGENTIC	2	2	3	7	2	3	2	2	9	0	1	1	0.61	HIGH	N
+Commodity Strategy & Roadmap Development	Autonomous Commodity Strategy Orchestrator for End-to-End EBITDA Optimization	Procure Source & Buy	Commodity Management & Market Intelligence	AGENTIC	1	1	2	4	2	2	2	2	8	2	2	4	0.60	HIGH	Y
+Logistics Technology & Digitalization Strategy	Autonomous Logistics Orchestration & Multi-Echelon Inventory Nervous System	Move & Fulfill	Logistics Network Optimization	AGENTIC	1	1	2	4	2	2	2	2	8	2	2	4	0.60	HIGH	Y
+Demand Signal Sensing & Adjustment	Autonomous Demand Signal Sensing & Adjustment Engine	Plan	Demand Forecasting & Sensing	DETERMINISTIC	3	2	3	8	3	2	2	2	9	0	0	0	0.60	HIGH	Y
+Service Network Performance & Quality Management	Autonomous Service Network Performance Optimization & Dealer Enablement	Service	Customer Experience & Service Quality	DETERMINISTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Supplier Quality Strategy & Governance	Autonomous Supplier Quality Governance & Compliance Engine	Procure Source & Buy	Supplier Quality Management	DETERMINISTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Order to Production Scheduling Integration	Autonomous Order-to-Production Orchestration Engine	Move & Fulfill	Order Management & Fulfillment	DETERMINISTIC	2	1	2	5	2	3	2	2	9	1	1	2	0.59	HIGH	Y
+Packaging Compliance & Sustainability	Autonomous Packaging Compliance & Sustainability Optimizer	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Process Validation & Simulation	Autonomous Process Validation & Simulation Engine	Make	Manufacturing Engineering & Process Design	DETERMINISTIC	2	1	2	5	2	2	2	2	8	1	2	3	0.59	HIGH	Y
+Global Market & Economic Intelligence	Autonomous Global Market Intelligence Engine for COGS & Availability Continual Alignment	Procure Source & Buy	Commodity Management & Market Intelligence	DETERMINISTIC	2	1	2	5	2	3	2	2	9	1	1	2	0.59	HIGH	N
+Logistics Technology & Data Management	Autonomous Multi-Echelon Logistics Orchestration Engine	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	2	1	2	5	2	2	2	2	8	1	2	3	0.59	HIGH	Y
+Quality Control & Metrology	Autonomous Quality Control Orchestration & Rapid RCA Engine	Make	Body Shop & Welding	AGENTIC	2	2	2	6	1	2	2	1	6	2	2	4	0.59	MEDIUM	N
+Transportation Compliance & Risk Management	Autonomous Transportation Compliance & Risk Engine	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	2	1	2	5	2	2	2	2	8	1	2	3	0.59	HIGH	Y
+Warranty Cost Recovery & Supplier Management	Autonomous Warranty Recovery & Supplier Alignment Engine	Service	Warranty Administration & Claims Management	AGENTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Advanced Product Quality Planning (APQP) & PPAP Management	Autonomous APQP/PPAP Orchestration for Ford Quality Gateframes	Procure Source & Buy	Supplier Quality Management	AGENTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Digital Manufacturing & Automation Process Design	Autonomous Multi-Echelon Manufacturing Orchestration for Ford	Make	Manufacturing Engineering & Process Design	DETERMINISTIC	2	1	2	5	2	2	2	2	8	1	2	3	0.59	MEDIUM	Y
+Facilities & Equipment Maintenance	End-to-End Maintenance Optimization & Spare Parts Inventory Sync	Make	Production Support Services	DETERMINISTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	LOW	N
+Preventive Maintenance & Predictive Diagnostics	Autonomous PM & Diagnostics Orchestrator for Automotive TPM	Service	Ford Pro Fleet Service & Upfit Operations	AGENTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Data & Analytics for Production Performance	Autonomous Production Performance Optimization Engine	Make	Trim Chassis & Final Assembly	DETERMINISTIC	2	1	2	5	2	2	2	2	8	1	2	3	0.59	HIGH	Y
+Contract Negotiation & Execution	Autonomous Commercial Contract Optimization & Execution Engine	Procure Source & Buy	Contract & Commercial Management	AGENTIC	2	1	2	5	2	2	2	2	8	1	2	3	0.59	HIGH	N
+Logistics Sustainability & Green Initiatives	Autonomous Sustainable Logistics Optimization Engine	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Maintenance Workforce Management & Development	Autonomous Maintenance Workforce Orchestration	Make	Plant Maintenance & Reliability	DETERMINISTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Supplier Relationship & Innovation Management	Autonomous Strategic Supplier Partnership Engine with Innovation Funding	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Dealer Operations & Service Readiness	Autonomous Dealer Readiness & Recall Orchestration Engine	Service	Recall & Field Service Action Management	DETERMINISTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Returns & Reverse Logistics Management	Autonomous Reverse Logistics Orchestration for Ford	Move & Fulfill	Warehouse & Distribution Center Operations	AGENTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Contract & Agreement Management (Post-Award)	Autonomous Contract Lifecycle & Commitment Optimizer	Procure Source & Buy	Procurement Operations & Compliance	AGENTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Service Parts Returns & Reverse Logistics	Autonomous Service Parts Returns & Reverse Logistics Engine	Move & Fulfill	Service Parts Logistics & Distribution	DETERMINISTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Global Trade & Export Order Compliance	Autonomous Global Trade Compliance & Optimization Engine	Move & Fulfill	Order Management & Fulfillment	AGENTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Supplier Interface & Performance Management	 Autonomous Supplier Performance & VMI Orchestrator	Make	Trim Chassis & Final Assembly	AGENTIC	2	2	2	6	2	2	2	1	7	1	2	3	0.59	HIGH	N
+Supplier Financial Viability Assessment	Autonomous Supplier Financial Risk & Terms Optimization Engine	Procure Source & Buy	Contract & Commercial Management	AGENTIC	2	2	2	6	2	3	2	2	9	0	1	1	0.58	HIGH	N
+Quality Control & Assurance	Autonomous Quality Assurance Optimization Suite	Make	Electric Vehicle Battery & Drive Unit Production	AGENTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Market & Economic Intelligence Gathering	Autonomous Market Intelligence Orchestration for Auto Market Volatility	Plan	Demand Forecasting & Sensing	AGENTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Non-Conformance Management & Containment	Autonomous Non-Conformance Lifecycle Orchestrator	Make	Quality Control & In-Process Inspection	AGENTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Production Planning Governance & Strategy	Integrated S&OP-Driven Production & Inventory Orchestrator	Plan	Production Planning & Scheduling	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Supplier Risk Management	Autonomous Supplier Risk Management & Resilience Engine	Procure Source & Buy	Supplier Relationship Management	AGENTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Third-Party & Supplier Management	Autonomous Third-Party Governance & Contract Optimization Engine	Service	Extended Service Plans & Maintenance Programs	AGENTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Customer Issue Resolution & Escalation	Autonomous Customer Issue Resolution & Escalation Engine	Service	Customer Experience & Service Quality	AGENTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Current Production Supplier Quality Monitoring	Autonomous Supplier Quality Orchestration for JIT Automotive Production	Procure Source & Buy	Supplier Quality Management	AGENTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Manufacturing Systems & IT Support	Autonomous Shop Floor Optimization & Integrated Production Scheduling Engine	Make	Production Support Services	DETERMINISTIC	2	1	2	5	2	3	3	2	10	0	1	1	0.58	HIGH	N
+Data & Technology Enablement for IBP	 autonomous IBP Data & Interoperability Engine for Ford IBP	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	Y
+Indirect Category Management & Stakeholder Engagement	Autonomous Indirect Spend Governance & Stakeholder Alignment Engine	Procure Source & Buy	Indirect Procurement	DETERMINISTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Supplier Quality Assurance & Improvement	Autonomous Supplier Quality Excellence Engine	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Supplier Relationship Management (Operational & Strategic)	Autonomous Supplier Relationship Orchestration Engine	Procure Source & Buy	Procurement Operations & Compliance	AGENTIC	2	2	2	6	2	2	2	2	8	1	1	2	0.58	HIGH	N
+Supplier Capacity & Business Continuity Planning	Autonomous Supplier Capacity & Continuity Optimizer	Procure Source & Buy	Supplier Relationship Management	AGENTIC	2	2	2	6	2	3	3	2	10	0	0	0	0.57	HIGH	N
+Supply Base Strategy & Optimization	Autonomous Global Supply Base Optimization Engine	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	2	2	2	6	2	3	3	2	10	0	0	0	0.57	HIGH	N
+New Program & Lifecycle S&OP Integration	Integrated Lifecycle S&OP Accelerator for New Programs and Transitions	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	2	2	2	6	3	3	2	2	10	0	0	0	0.57	HIGH	Y
+Freight Planning & Network Optimization	Autonomous Freight Planning & Network Optimization Engine	Move & Fulfill	Transportation Management & Carrier Operations	AGENTIC	2	2	2	6	2	3	3	2	10	0	0	0	0.57	HIGH	N
+Customs	Autonomous Customs Compliance and Trade Optimization	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	1	1	1	3	2	3	3	2	10	1	1	2	0.56	HIGH	N
+Compliance	Autonomous Ethics & Compliance Automation for Automotive Compliance	Procure Source & Buy	Procurement Operations & Compliance	DETERMINISTIC	2	2	2	6	2	2	2	1	7	1	1	2	0.55	HIGH	N
+Inbound Transportation Execution & Monitoring	Autonomous Inbound Transportation Orchestrator for CPG-Grade Auto Supply Network	Move & Fulfill	Inbound Logistics & Material Flow	AGENTIC	2	1	2	5	2	2	2	1	7	1	2	3	0.55	HIGH	N
+Manufacturing System Integration & Layout Design	Autonomous Manufacturing System Integration & Layout Optimization	Make	Manufacturing Engineering & Process Design	DETERMINISTIC	2	1	2	5	2	2	2	2	8	0	2	2	0.55	HIGH	N
+Global Trade & Customs Compliance (Service Parts)	Autonomous Global Trade & Customs Excellence Engine for Service Parts	Move & Fulfill	Service Parts Logistics & Distribution	AGENTIC	2	2	2	6	2	2	2	1	7	1	1	2	0.55	HIGH	N
+Packaging Design & Specification	Autonomous Packaging Design & Specification Orchestration	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	2	2	2	6	2	1	2	1	6	1	2	3	0.55	LOW	N
+Commercial Dispute Resolution	Autonomous Commercial Dispute Resolution Engine	Procure Source & Buy	Contract & Commercial Management	DETERMINISTIC	2	2	2	6	2	2	2	1	7	1	1	2	0.55	LOW	N
+Connected Vehicle Data Governance & Analytics	Autonomous Vehicle Data Governance & Monetization Engine	Service	Connected Vehicle Services & OTA Updates	AGENTIC	2	2	2	6	1	2	2	2	7	1	1	2	0.55	MEDIUM	N
+Regulatory & Compliance Inventory Review	Autonomous Compliance Inventory Orchestrator Across Multi-Echelon Network	Plan	Inventory Planning & Optimization	AGENTIC	2	2	2	6	1	2	1	2	6	1	2	3	0.55	HIGH	N
+Compliance & Trade Regulations Planning	Autonomous Compliance & Trade Optimization Engine	Plan	Supply Network Design & Planning	AGENTIC	2	2	2	6	2	2	2	1	7	1	1	2	0.55	HIGH	N
+Supplier Development & Capacity Management	Autonomous Supplier Readiness & Capacity Orchestration	Procure Source & Buy	Procurement Operations & Compliance	AGENTIC	2	2	2	6	2	2	2	1	7	1	1	2	0.55	HIGH	N
+Supplier Risk & Resilience Management	Autonomous Supplier Risk & Resilience Orchestrator	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	2	2	2	6	2	2	2	1	7	1	1	2	0.55	HIGH	N
+Cross-Functional Demand Collaboration	Autonomous Consensus Demand Orchestration Across Cross-Functional Stakeholders	Plan	Demand Forecasting & Sensing	AGENTIC	2	2	2	6	1	2	2	1	6	1	2	3	0.55	HIGH	N
+Maintenance Performance Monitoring & Continuous Improvement	Autonomous TPM Optimization & OEE-Driven Maintenance Engine	Make	Plant Maintenance & Reliability	AGENTIC	2	2	2	6	1	2	2	1	6	1	2	3	0.55	LOW	N
+Vehicle Assembly Operations	Autonomous Vehicle Assembly Orchestration for COGS Reduction and On-Time Delivery	Make	Trim Chassis & Final Assembly	DETERMINISTIC	1	1	1	3	3	3	2	3	11	0	1	1	0.55	HIGH	N
+Logistics Network Design & Modeling	End-to-End Logistics Network Optimization Engine	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	2	2	2	6	2	2	2	1	7	0	2	2	0.55	HIGH	N
+Technical Service Support & Diagnostic Tooling	Autonomous Technical Service & Diagnostic Orchestrator	Service	Customer Experience & Service Quality	AGENTIC	2	2	2	6	1	2	2	1	6	1	2	3	0.55	LOW	N
+Inventory Risk & Obsolescence Management	Autonomous Inventory Risk & Obsolescence Optimization for Automotive Supply Network	Plan	Inventory Planning & Optimization	DETERMINISTIC	2	2	2	6	2	3	2	2	9	0	0	0	0.54	HIGH	N
+Internal Manufacturing Launch Readiness	Autonomous Launch Readiness Orchestration Engine	Plan	New Product Launch Planning	AGENTIC	2	2	2	6	2	2	3	2	9	0	0	0	0.54	HIGH	N
+Exception & Dispute Management	Autonomous Exception & Dispute Orchestrator for Automotive Supply Chain	Procure Source & Buy	Purchase Order Management & Execution	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Strategic Sourcing Incident Management	Autonomous Strategic Sourcing Incident Engine for Automotive Supply Disruptions	Procure Source & Buy	Commodity Management & Market Intelligence	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Supplier Qualification & Onboarding	Autonomous Supplier Qualification & Onboarding Orchestrator for Automotive Supply Chain	Procure Source & Buy	Supplier Development & Capability Building	DETERMINISTIC	2	2	2	6	2	3	2	2	9	0	0	0	0.54	HIGH	N
+Outbound Logistics Network Strategy & Optimization	Autonomous Outbound Logistics Network Optimization & Disruption-Resilient Routing	Move & Fulfill	Outbound Vehicle Logistics & Distribution	DETERMINISTIC	2	1	2	5	2	3	3	2	10	0	0	0	0.54	HIGH	N
+Service Parts Inbound Logistics	Autonomous Inbound Parts Orchestration for Service Parts	Move & Fulfill	Service Parts Logistics & Distribution	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Packaging Supplier & 3PL Management	Autonomous Packaging & 3PL Sourcing & Compliance Engine	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Returnable Container Logistics & Tracking	Autonomous Returnable Container Orchestration Engine	Move & Fulfill	Packaging & Returnable Container Management	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Service Parts Lifecycle Management (NPI to Obsolescence)	Autonomous Service Parts Lifecycle Optimizer (ASPOL)	Service	Service Parts Planning & Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Service Parts Supplier Relationship Management	Autonomous Service Parts Supplier Relationship Orchestrator	Service	Service Parts Planning & Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Supplier Performance Management	Autonomous Supplier Performance Optimization Engine	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+S&OP Cycle Management & Governance	Autonomous S&OP Orchestration & Governance Engine	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+S&OP Performance Monitoring & Improvement	Autonomous S&OP Performance Optimization Engine	Plan	Sales & Operations Planning (S&OP)	AGENTIC	2	2	2	6	2	3	2	2	9	0	0	0	0.54	HIGH	N
+New Product Introduction (NPI) Inventory Planning	Autonomous NPI Inventory Orchestration for Fast Cycle New Vehicle Programs	Plan	Inventory Planning & Optimization	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Inventory Exception Management & Resolution	Autonomous Inventory Exception Management & Resolution Engine	Plan	Inventory Planning & Optimization	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Digital Transformation & Analytics Strategy	End-to-End DI Strategy for Revenue, COGS, and Working Capital Optimization in Automotive Network	Plan	Supply Network Design & Planning	DETERMINISTIC	2	2	2	6	2	3	2	2	9	0	0	0	0.54	HIGH	N
+Performance Measurement & Continuous Improvement	Autonomous Performance Measurement & Improvement Engine (APMIE)	Plan	Supply Network Design & Planning	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Equipment Maintenance & Reliability	Autonomous Maintenance Orchestration & Spare Parts Optimization for High-Throughput Automotive Ops	Make	Stamping Operations	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Pre-treatment & E-Coat Operations	Autonomous Pre-treatment & E-Coat Digital Twin with Semi-Autonomous Scheduling	Make	Paint Operations	DETERMINISTIC	2	2	2	6	2	2	3	2	9	0	0	0	0.54	HIGH	N
+Plant Maintenance & Asset Management	Autonomous TPM-Driven Maintenance Orchestrator	Make	Powertrain Manufacturing (Engine & Transmission)	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Quality Standards & Compliance Adherence	Autonomous Quality Compliance Orchestrator for Automotive Quality Lifecycle	Make	Quality Control & In-Process Inspection	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	MEDIUM	N
+Maintenance Strategy & Planning	Autonomous Maintenance Optimization Engine for Automotive Manufacturing	Make	Plant Maintenance & Reliability	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Maintenance Parts & Spares Inventory Management	Autonomous MRO Inventory & Supplier Lifecycle Optimizer	Make	Plant Maintenance & Reliability	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Manufacturing Engineering & Process Development	End-to-End Manufacturing Process Optimization Engine for COGS Reduction and On-Time Delivery	Make	Production Support Services	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Strategic Supplier Relationship Management (SRM)	Autonomous SRM Orchestrator for COGS-Driven Supplier Optimization	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+New Product Introduction (NPI) Sourcing	Autonomous NPI Sourcing & Readiness Orchestrator	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Supplier Financial Health Monitoring	Autonomous Supplier Financial Risk & Recovery Engine	Procure Source & Buy	Supplier Relationship Management	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Risk Management in Contracts	Autonomous Contract Risk & Compliance Engine	Procure Source & Buy	Contract & Commercial Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Inventory Management & Accuracy	Autonomous Multi-Echelon Inventory Optimization & Cycle-Count Automation	Move & Fulfill	Warehouse & Distribution Center Operations	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Service Parts Logistics Performance & Quality Management	Autonomous Service Parts Logistics Orchestration & Quality Improvement Engine	Move & Fulfill	Service Parts Logistics & Distribution	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Strategic Warehouse Network Planning	Autonomous Strategic Warehouse Network Optimization	Move & Fulfill	Warehouse & Distribution Center Operations	DETERMINISTIC	2	2	2	6	2	3	3	1	9	0	0	0	0.54	HIGH	N
+Packaging Cost Management & Optimization	Autonomous Packaging Cost Optimization Engine	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Service Parts Performance Management & Continuous Improvement	Autonomous Service Parts Performance Engine	Service	Service Parts Planning & Management	DETERMINISTIC	2	2	2	6	2	3	2	2	9	0	0	0	0.54	HIGH	N
+Claim Adjudication & Processing	Autonomous Claims Adjudication & Processing Engine	Service	Warranty Administration & Claims Management	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Financial Management & Cost Recovery	Autonomous Financial Recovery & Reimbursement Orchestrator	Service	Recall & Field Service Action Management	AGENTIC	2	2	2	6	2	3	2	2	9	0	0	0	0.54	HIGH	N
+Service & Upfit Quality Assurance	Autonomous Service Quality Assurance & Corrective Action Orchestration	Service	Ford Pro Fleet Service & Upfit Operations	AGENTIC	2	2	3	7	2	2	2	1	7	0	1	1	0.54	HIGH	N
+Claims Adjudication & Payment Processing	Autonomous Claims Adjudication & Payment Orchestration	Service	Extended Service Plans & Maintenance Programs	AGENTIC	2	2	2	6	2	2	2	2	8	0	1	1	0.54	HIGH	N
+Transportation Performance & Continuous Improvement	Autonomous Transportation Performance Engine for Multi-Echelon Logistics	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	1	1	1	3	2	2	2	2	8	1	2	3	0.52	HIGH	N
+Sustainability & Circularity Planning	Autonomous Sustainability & Circularity Optimizer for Automotive Supply Chain	Plan	Supply Network Design & Planning	DETERMINISTIC	1	1	1	3	2	2	2	2	8	1	2	3	0.52	HIGH	N
+Supplier Innovation Management	Autonomous Supplier Innovation & IP Valuation Engine	Procure Source & Buy	Supplier Relationship Management	AGENTIC	2	2	2	6	1	2	2	1	6	1	1	2	0.51	HIGH	N
+Customer Order Receipt & Validation	Autonomous Order Intake & Validation Orchestrator	Move & Fulfill	Order Management & Fulfillment	AGENTIC	2	2	2	6	1	2	2	0	5	1	2	3	0.51	LOW	N
+Supplier Sustainability & Compliance	Autonomous Supplier Sustainability & Compliance Engine	Procure Source & Buy	Supplier Development & Capability Building	AGENTIC	2	2	2	6	1	2	2	1	6	1	1	2	0.51	LOW	N
+Indirect Supplier Performance & Relationship Management	Autonomous Indirect Supplier Performance Optimization Engine	Procure Source & Buy	Indirect Procurement	AGENTIC	2	2	2	6	1	1	2	2	6	1	1	2	0.51	MEDIUM	N
+Risk & Scenario Planning for S&OP	Autonomous S&OP Risk & Scenario Engine with Multi-Echelon Mitigation	Plan	Sales & Operations Planning (S&OP)	DETERMINISTIC	2	1	2	5	2	2	2	2	8	0	1	1	0.51	HIGH	N
+Packaging Exception & Issue Management	Autonomous Packaging Exception & Recovery Engine	Move & Fulfill	Packaging & Returnable Container Management	AGENTIC	2	2	2	6	1	2	2	1	6	1	1	2	0.51	LOW	N
+Order Fulfillment Exception & Escalation Management	Autonomous Fulfillment Exception Orchestrator (AFEO)	Move & Fulfill	Order Management & Fulfillment	AGENTIC	2	2	2	6	1	2	2	1	6	1	1	2	0.51	HIGH	N
+Supplier In-Plant Quality & Performance Management	Autonomous Supplier In-Plant Quality & Performance Engine	Make	Powertrain Manufacturing (Engine & Transmission)	AGENTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	HIGH	N
+Sourcing Strategy & Category Management	Autonomous Sourcing Strategy Orchestrator	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+PO Lifecycle Tracking & Monitoring	Autonomous PO Lifecycle Orchestration for Working Capital & COGS Optimization	Procure Source & Buy	Purchase Order Management & Execution	AGENTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	HIGH	N
+Supplier Performance & Relationship Management (Strategic)	Autonomous Strategic Supplier Performance & Continuity Engine	Procure Source & Buy	Commodity Management & Market Intelligence	AGENTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Purchase Order (PO) Management	Autonomous PO Lifecycle Orchestrator for Automotive PO Management	Procure Source & Buy	Procurement Operations & Compliance	AGENTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Dealer Order Management & Support	Autonomous Dealer Order Optimization & Fulfillment Engine	Move & Fulfill	Order Management & Fulfillment	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Field Service Engineering Support	Autonomous Field Service Excellence Engine	Service	Dealer Technical Support & Service Engineering	DETERMINISTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	HIGH	N
+Strategic Capacity Planning	Autonomous Multi-Echelon Capacity Optimization & Allocation engine	Plan	Capacity Planning & Constraint Management	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Capacity & Resource Planning	Autonomous Capacity & Resource Orchestrator for Global Automotive Platform Production	Plan	Integrated Business Planning (IBP)	DETERMINISTIC	2	2	2	6	2	3	2	1	8	0	0	0	0.50	HIGH	N
+Material Flow & Inventory Management (Internal)	Autonomous Material Flow Orchestrator for Automotive Volume Lean Inventory	Make	Body Shop & Welding	DETERMINISTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	HIGH	N
+Workforce Management & Development	Autonomous Workforce Optimization Engine for Automotive Production	Make	Trim Chassis & Final Assembly	AGENTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	HIGH	N
+Process Engineering & Continuous Improvement	End-to-End Process Optimization Engine for Production and Fulfillment	Make	Electric Vehicle Battery & Drive Unit Production	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Corrective Maintenance & Breakdown Management	Autonomous Corrective Maintenance Orchestrator for Automotive Lines	Make	Plant Maintenance & Reliability	AGENTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	HIGH	N
+Logistics Performance & Supplier Collaboration	Autonomous Logistics Optimization & Supplier Collaboration Engine	Move & Fulfill	Inbound Logistics & Material Flow	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Service Parts Outbound Logistics & Transportation	Autonomous Service Parts Outbound Logistics Optimization Engine	Move & Fulfill	Service Parts Logistics & Distribution	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Expendable Packaging Management	Autonomous Expendable-to-Returnable Packaging Optimization & End-to-End Packaging Lifecycle	Move & Fulfill	Packaging & Returnable Container Management	DETERMINISTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	HIGH	N
+Warranty Parts Management	Autonomous Warranty Parts Reconciliation & Return Orchestration	Service	Warranty Administration & Claims Management	AGENTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	HIGH	N
+Service Parts Business Continuity & Risk Management	Autonomous Service Parts Continuity Engine	Service	Service Parts Planning & Management	AGENTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	LOW	N
+Performance Analysis & Process Improvement	Autonomous Performance Optimization & Recall Resilience Engine	Service	Recall & Field Service Action Management	DETERMINISTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	LOW	N
+Software & Feature Supply Chain Integration	End-to-End Software Supply Chain Orchestration for Automotive Platform Solutions	Service	Connected Vehicle Services & OTA Updates	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Extended Service Product Development & Lifecycle Management	Autonomous Lifecycle Alignment Engine for Ford Extended Service Products	Service	Extended Service Plans & Maintenance Programs	AGENTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Fleet Service Network & Capacity Management	Autonomous Fleet Service Network Orchestration & Capacity Optimization	Service	Ford Pro Fleet Service & Upfit Operations	DETERMINISTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	HIGH	N
+Performance Analytics & Program Optimization	 Autonomous Performance Optimization Engine for Automotive Supply-Chain & Production	Service	Extended Service Plans & Maintenance Programs	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Capacity Performance Monitoring & Reporting	Autonomous Capacity Orchestration Suite for Automotive Value Chain	Plan	Capacity Planning & Constraint Management	AGENTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Outbound Vehicle Logistics Operations	Autonomous Outbound Vehicle Logistics Orchestrator	Move & Fulfill	Transportation Management & Carrier Operations	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Trade Compliance & International Logistics	Autonomous Trade Compliance & International Logistics Orchestrator	Move & Fulfill	Customs	AGENTIC	2	2	2	6	2	2	2	1	7	0	1	1	0.50	HIGH	N
+Service Part Quality & Availability Management	Autonomous Service Part Quality & Availability Engine	Service	Customer Experience & Service Quality	DETERMINISTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Service Process Continuous Improvement	Autonomous Service Process Reengineering Engine for Automotive Service Web	Service	Customer Experience & Service Quality	AGENTIC	2	2	2	6	2	2	2	2	8	0	0	0	0.50	HIGH	N
+Environmental Health & Safety (EHS) & Compliance	Autonomous EHS Compliance Orchestration & Incident Management	Make	Paint Operations	AGENTIC	1	1	1	3	2	2	2	2	8	1	1	2	0.48	HIGH	N
+Diagnostic Software & Firmware Management	Autonomous Diagnostic Software Lifecycle Optimization	Service	Dealer Technical Support & Service Engineering	AGENTIC	2	2	2	6	1	1	1	1	4	1	2	3	0.47	MEDIUM	N
+Primer & Sealer Application	Autonomous Primer/Sealer Application Orchestration for OEM Paint/Coat Conformance	Make	Paint Operations	AGENTIC	2	2	2	6	1	1	1	1	4	1	2	3	0.47	MEDIUM	N
+Paint Process Engineering & Optimization	Autonomous Paint Process Optimization Engine (APPOE)	Make	Paint Operations	DETERMINISTIC	2	1	2	5	2	2	2	2	8	0	0	0	0.47	HIGH	N
+Supplier Evaluation	Autonomous Supplier Evaluation & Award Engine	Procure Source & Buy	Strategic Sourcing & Supplier Selection	AGENTIC	1	1	1	3	2	3	3	2	10	0	0	0	0.47	HIGH	N
+In-Transit Visibility & Exception Management	Autonomous In-Transit Visibility & Exception Orchestration Engine	Move & Fulfill	Outbound Vehicle Logistics & Distribution	AGENTIC	2	1	2	5	2	2	2	1	7	0	1	1	0.47	HIGH	N
+Warehouse Performance & Continuous Improvement	Autonomous Warehouse Performance Orchestrator for COGS and Working Capital	Move & Fulfill	Warehouse & Distribution Center Operations	AGENTIC	2	2	2	6	1	2	2	1	6	0	1	1	0.47	HIGH	N
+Performance Monitoring & Continuous Improvement	Autonomous Continuous Improvement Engine for Packaging and Plant Performance	Move & Fulfill	Packaging & Returnable Container Management	AGENTIC	2	2	2	6	1	2	2	1	6	0	1	1	0.47	LOW	N
+Fraud Prevention & Audit	Autonomous Fraud Detection & Audit Lifecycle Orchestration	Service	Extended Service Plans & Maintenance Programs	AGENTIC	2	1	2	5	2	2	2	2	8	0	0	0	0.47	HIGH	N
+Warranty & Goodwill Policy Management	Autonomous Warranty Risk & Goodwill Optimization Engine	Service	Customer Experience & Service Quality	AGENTIC	2	2	2	6	1	2	2	1	6	0	1	1	0.47	HIGH	N
+Maintenance & Asset Management	Autonomous Maintenance & Spare Parts Optimization Engine	Make	Trim Chassis & Final Assembly	AGENTIC	2	2	2	6	2	2	2	1	7	0	0	0	0.46	HIGH	N
+Supplier Network Strategy & Development	Autonomous Supplier Network Optimization Engine	Plan	Supply Network Design & Planning	DETERMINISTIC	2	2	2	6	2	2	2	1	7	0	0	0	0.46	HIGH	N
+Continuous Improvement & Process Optimization	Autonomous Continuous Improvement Engine for Automotive MIM: Integrated Stamping, Cycle Time, and New Tech Pilots	Make	Stamping Operations	DETERMINISTIC	2	2	2	6	2	2	2	1	7	0	0	0	0.46	HIGH	N
+Supplier Diversity & Sustainability	Autonomous Supplier Diversity & Sustainability Optimization	Procure Source & Buy	Supplier Relationship Management	DETERMINISTIC	2	2	2	6	2	2	2	1	7	0	0	0	0.46	HIGH	N
+Recall & FSA Determination & Strategy	Autonomous Recall & FSA Strategy Engine	Service	Recall & Field Service Action Management	AGENTIC	2	2	3	7	1	2	2	0	5	0	1	1	0.46	LOW	N
+Regulatory & Environmental Compliance Planning	Autonomous Regulatory & Compliance Orchestrator for Automotive Launches	Plan	New Product Launch Planning	AGENTIC	1	1	1	3	1	2	2	1	6	1	1	2	0.41	MEDIUM	N
+Supplier Compliance & Ethics	Autonomous Supplier Compliance & Ethics Orchestrator	Procure Source & Buy	Supplier Relationship Management	AGENTIC	2	2	2	6	2	1	1	1	5	0	0	0	0.39	HIGH	N
+Logistics Risk Management & Resilience Planning	Autonomous Logistics Resilience Engine for Automotive Supply Network	Move & Fulfill	Logistics Network Optimization	DETERMINISTIC	1	1	1	3	2	2	2	1	7	0	0	0	0.36	LOW	N
+Digital & Connected Service Experience	Autonomous Connected Service Orchestration Engine	Service	Customer Experience & Service Quality	AGENTIC	1	1	1	3	1	1	1	1	4	1	1	2	0.33	MEDIUM	N
+Sustainability & Ethical Sourcing Governance	Autonomous Sustainability Governance Engine for End-to-End Sourcing Transparency	Procure Source & Buy	Commodity Management & Market Intelligence	AGENTIC	1	1	1	3	1	2	2	1	6	0	0	0	0.33	MEDIUM	N
+Environmental	Autonomous Environmental Health & Safety Compliance Engine for Automotive VIN/Component Lifecycle	Make	Production Support Services	DETERMINISTIC	1	1	1	3	1	1	1	1	4	1	1	2	0.33	HIGH	N
+Emergency Services Integration	Autonomous Emergency Response Orchestrator for Automotive Safety Incidents	Service	Roadside Assistance & Emergency Services	DETERMINISTIC	1	1	1	3	1	1	1	1	4	0	0	0	0.25	MEDIUM	N
+Technology & Innovation Scouting	Autonomous Tech Scouting & Partnerships Orchestrator	Procure Source & Buy	Commodity Management & Market Intelligence	DETERMINISTIC	1	0	1	2	1	1	1	1	4	0	0	0	0.22	HIGH	N

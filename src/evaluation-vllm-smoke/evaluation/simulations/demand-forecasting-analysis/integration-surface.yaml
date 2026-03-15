@@ -1,0 +1,62 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Global Sales Forecast System
+    status: tbd
+  - name: Vehicle Configuration System
+    status: tbd
+  - name: Market Intelligence Platform
+    status: tbd
+  - name: Forecast Accuracy Reporting Tool
+    status: tbd
+  - name: New Model Launch Planning System
+    status: tbd
+aera_ingestion:
+  - stream_name: global_sales_forecast_stream
+    stream_type: Event Stream
+    source: Global Sales Forecast System
+  - stream_name: vehicle_config_mix_stream
+    stream_type: Event Stream
+    source: Vehicle Configuration System
+  - stream_name: market_intelligence_stream
+    stream_type: Reference Stream
+    source: Market Intelligence Platform
+  - stream_name: forecast_accuracy_report_stream
+    stream_type: Event Stream
+    source: Forecast Accuracy Reporting Tool
+  - stream_name: new_model_launch_volume_stream
+    stream_type: Event Stream
+    source: New Model Launch Planning System
+  - stream_name: sap_s4hana_stream
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: demand_forecasting_engine
+    type: Analytics Component
+    function: Aggregate and analyze global sales forecasts
+  - component: mix_planning_engine
+    type: Analytics Component
+    function: Plan vehicle configuration mix based on market intelligence
+  - component: accuracy_measurement_engine
+    type: Analytics Component
+    function: Measure and report forecast accuracy
+  - component: launch_volume_planning_engine
+    type: Analytics Component
+    function: Align new model launch volumes with production capacity
+ui_surface:
+  - component: global_sales_forecast_dashboard
+    screen: Forecast Dashboard
+    purpose: Display aggregated global sales forecasts
+  - component: vehicle_config_mix_dashboard
+    screen: Mix Planning Dashboard
+    purpose: Visualize vehicle configuration mix plans
+  - component: market_intelligence_dashboard
+    screen: Market Intelligence Dashboard
+    purpose: Present market intelligence data
+  - component: forecast_accuracy_dashboard
+    screen: Accuracy Dashboard
+    purpose: Show forecast accuracy metrics
+  - component: new_model_launch_dashboard
+    screen: Launch Planning Dashboard
+    purpose: Monitor new model launch volume planning

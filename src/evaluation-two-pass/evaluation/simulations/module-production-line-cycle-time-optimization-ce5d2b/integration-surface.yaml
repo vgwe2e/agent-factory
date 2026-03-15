@@ -1,0 +1,59 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant Floor Telemetry / MES
+    type: MES
+    status: tbd
+  - name: Quality Lab System (electrical test results)
+    type: Quality
+    status: tbd
+  - name: Supplier Portal / APS
+    type: Supply Chain
+    status: tbd
+aera_ingestion:
+  - stream_name: production-orders-routing-work-centers-operation-sequence
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: bom-and-resource-master-stations-capacities-tooling
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: station-level-cycle-times-throughput-per-operation-telemetry
+    stream_type: delta_batch
+    source: Plant Floor Telemetry / MES
+  - stream_name: changeover-matrix-setup-times-by-family-line-tooling
+    stream_type: Event Stream
+    source: Manufacturing Engineering (or MES)
+  - stream_name: quality-test-results-gate-pass-fail-rates
+    stream_type: DDM/Crawlers
+    source: Quality Lab System (electrical test results)
+  - stream_name: supplier-lead-times-and-delivery-reliability
+    stream_type: Event Stream
+    source: Supplier Portal / APS
+  - stream_name: shift-schedules-and-labor-availability
+    stream_type: DDM/Crawlers
+    source: HR / Timekeeping
+processing:
+  - component: Process Builder + Remote Functions
+    type: process_builder
+    function: >-
+      Run solver with constraints (quality gates, changeovers, capacity,
+      supplier windows) and select feasible, cost-minimizing schedule.
+  - component: Process Builder (Transaction) + Remote Functions
+    type: process_builder
+    function: >-
+      Implement schedule changes in ERP, update shop-floor instructions, and
+      persist audit trail for approvals.
+  - component: CWB Lifecycle + UI Screen
+    type: process_builder
+    function: >-
+      Human-in-the-loop approval for risky or infeasible changes and capture
+      overrides for governance and learning.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously optimize battery module assembly line cycle times and
+      scheduling across plants, balancing takt reduction, quality gates,
+      changeover constraints, and supplier variability to reduce cogs and
+      improve on-time delivery. and approve the recommended action.

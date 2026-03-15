@@ -1,0 +1,50 @@
+skill_id	skill_name	l4_name	l3_name	l2_name	l1_name	archetype	platform_fit	tech_total	decision_density	financial_gravity	impact_proximity	confidence_signal	adoption_total	value_density	simulation_viability	value_total	composite	confidence	promotes_to_sim	is_cross_functional
+b60144-9520da	Autonomous Goods Receiving Orchestrator	Physically Receive And Inspect Goods Or Services	Receive Goods & Services	Order to "Ok To Pay"	Source & Procure	AGENTIC	3	3	3	3	3	3	12	3	3	6	0.97	HIGH	Y	N
+d8faf5-6edff6	Autonomous Revenue-Protection Optimization	Review Unfulfilled Demand	Monitor Performance and Handle Exceptions	Sales & Operations Execution	Plan	AGENTIC	3	3	3	3	3	3	12	3	3	6	0.97	HIGH	Y	N
+18d2bf-8b7b29	Automated Supply Scenario Optimization	Determine And Simulate Scenarios	Conduct Supply Scenario Planning	Tactical Supply Planning	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.97	HIGH	Y	N
+78a1fd-82a38d	DRP Adjustment Orchestration	Drp Adjustment And Str Release	Conduct Distribution Requirements Planning	Tactical Supply Planning	Plan	AGENTIC	3	3	2	3	3	3	11	3	3	6	0.96	HIGH	Y	N
+f22996-27b49f	Automated Tactical Sourcing Allocation	Conduct Tactical Sourcing Event	Execute Tactical Sourcing	Sourcing	Source & Procure	AGENTIC	3	3	2	3	3	3	11	3	3	6	0.96	HIGH	Y	N
+3c579c-f28159	Agile Strategic Sourcing Orchestrator	Conduct Rfx, Rfp Or Auction	Execute Sourcing	Sourcing	Source & Procure	AGENTIC	3	3	2	3	3	3	11	3	3	6	0.96	HIGH	Y	N
+59d45a-d610a1	Automated Stress Testing & Resilience Optimization	Manage Stress Testing & Digital Twins	Manage Resilience Procurement	Risk & Resiliency	Source & Procure	AGENTIC	3	3	2	3	3	3	11	3	3	6	0.96	HIGH	Y	N
+7484ce-4ab000	Product Classification Optimization	Classify Products	Manage Import / Export	Global Trade Management	Fulfill	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.95	HIGH	Y	N
+2a146e-f4db13	Deterministic Supplier Selection for Spot Buy	Select Supplier	Execute Spot Buy	Order to "Ok To Pay"	Source & Procure	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.95	HIGH	Y	N
+75eea5-f8ee76	Drp Results Optimization	Create Drp Planned Volumes	Conduct Distribution Requirements Planning	Tactical Supply Planning	Plan	AGENTIC	3	3	2	3	3	3	11	3	3	6	0.95	HIGH	Y	N
+821c78-85e467	Multi-Tier Supplier Mapping Orchestrator	Manage N-Tier Supplier Mapping & Visibility	Manage Resilience Procurement	Risk & Resiliency	Source & Procure	AGENTIC	3	3	2	3	3	3	11	3	3	6	0.95	HIGH	Y	N
+8e0064-8c4807	Safety Stock Sensitivity Optimizer	Analyse Impact of Change In Safety Stock	Manage Integrated Scenarios	Sales & Operations Planning	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.95	HIGH	Y	N
+a2ea0f-d24887	Risk-Based Inventory Coverage	Identify Potential Risks	Manage Risk Segmentation & Assessment	Risk & Resiliency	Source & Procure	AGENTIC	3	3	2	3	3	3	11	3	3	6	0.95	HIGH	Y	N
+d98747-dba8a9	Optimize Category Innovation Profit	Analyse & Validate Innovation Initiatives	Manage Category Innovation	Category Management	Source & Procure	DETERMINISTIC	3	3	3	3	3	3	12	3	3	6	0.93	HIGH	Y	N
+c1e538-b63a85	Autonomous DRP Capacity Optimization	Perform Feasibility Check	Review Supply Capability	Tactical Supply Planning	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.93	HIGH	Y	N
+5f0a16-5f2dd9	Automated Spot Buy Negotiation Routing	Manage Negotiations	Execute Spot Buy	Order to "Ok To Pay"	Source & Procure	AGENTIC	3	3	2	3	3	3	11	3	3	6	0.91	HIGH	Y	N
+3b24cf-a2ea34	Demand-Driven Capacity Expansion	Analyse Impact of Increase In Demand	Manage Integrated Scenarios	Sales & Operations Planning	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.91	HIGH	Y	N
+8c7c47-62a922	Collaborative Supplier Agreement orchestrator	form Collaboration Agreement With Suppliers	Manage Category Innovation	Category Management	Source & Procure	AGENTIC	3	3	2	3	3	3	11	3	3	6	0.91	HIGH	Y	N
+7ebb9b-62c651	Ml Forecast Model – Market Inputs	Gather Market Inputs	Define Ml Forecast Model	Forecast Analytics	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.91	HIGH	Y	N
+a12e86-5d38d8	Autonomous Demand-Plan Review	Review of Production Capacity	Review Supply Capability	Tactical Supply Planning	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.91	HIGH	Y	N
+0f137d-f150b0	Feature Engineering & Process Tuning	Determine New Features and Update Process	Define Ml Forecast Model	Forecast Analytics	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.91	HIGH	Y	N
+f3e078-248660	Evaluate Data Significance for SD Drivers	Assess Data	Define Ml Forecast Model	Forecast Analytics	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.91	HIGH	Y	N
+cf-8723a10a	Integrated Demand-Driven Sourcing	Integrated Demand-Driven Sourcing	Cross-Functional: Plan + Source	Cross Functional	Cross-Functional	DETERMINISTIC	3	3	2	3	3	3	11	3	2	5	0.91	HIGH	Y	Y
+cf-24ef36c5	Automated Demand-Constrained Production Scheduling	Automated Demand-Constrained Production Scheduling	Cross-Functional: Plan + Make + Source	Cross Functional	Cross-Functional	DETERMINISTIC	3	3	2	3	3	3	11	3	2	5	0.91	HIGH	Y	Y
+vf-5100d701	Automated Channel Margin Coordination	Automated Channel Margin Coordination	Cross-Functional: Finance + Sell + Customer	Value Flow	Cross-Functional	DETERMINISTIC	3	3	2	3	3	3	11	3	2	5	0.90	HIGH	Y	Y
+vf-0ba5d586	Automated Cross-Functional OTIF-Driven Fulfillment Tradeoff	Automated Cross-Functional OTIF-Driven Fulfillment Tradeoff	Cross-Functional: Fulfill + Sell + Finance	Value Flow	Cross-Functional	DETERMINISTIC	3	3	2	3	3	3	11	3	2	5	0.90	HIGH	Y	Y
+vf-3654664e	Automated Safety Stock Coordination Across Planning and Fulfillment	Automated Safety Stock Coordination Across Planning and Fulfillment	Cross-Functional: Fulfill + Plan + Finance	Value Flow	Cross-Functional	DETERMINISTIC	3	3	2	3	3	3	11	3	2	5	0.90	HIGH	Y	Y
+cf-999807ae	Synchronized ATP/CTP with Supplier Readiness	Synchronized ATP/CTP with Supplier Readiness	Cross-Functional: Fulfill + Source & Procure	Cross Functional	Cross-Functional	DETERMINISTIC	3	3	2	3	3	3	11	3	2	5	0.90	HIGH	Y	Y
+d3da30-07c468	Dynamic Purchase Order Change Orchestration	Manage Purchase Order Changes & Approvals	Conduct Transactional Procurement	Order to "Ok To Pay"	Source & Procure	AGENTIC	3	3	3	3	3	3	12	3	3	6	0.90	MEDIUM	Y	N
+cf-820d2938	Cross-Domain Demand-Driven Sequencing	Cross-Domain Demand-Driven Sequencing	Cross-Functional: Plan + Fulfill	Cross Functional	Cross-Functional	DETERMINISTIC	3	3	2	3	3	3	11	3	2	5	0.89	HIGH	Y	Y
+753011-a1a0d9	Portfolio Slow-Moving SKU Reinvestment	Review Slow Moving SKU	Prepare and Conduct Portfolio Review	Sales & Operations Planning	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.89	HIGH	Y	N
+285e9d-818c28	Supplier Conflict-Resolution Optimizer	Manage Supply Exceptions	Monitor Performance and Handle Exceptions	Sales & Operations Execution	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.88	HIGH	Y	N
+37a91e-b7c2da	Automated Receipt-Validation for Payables	Create Receipt of Goods Or Services	Receive Goods & Services	Order to "Ok To Pay"	Source & Procure	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.88	HIGH	Y	N
+08680c-47bda5	Global Trade Master Data Automation	Set Up & Manage Global Trade Master Data	Manage Trade Compliance	Global Trade Management	Fulfill	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.88	HIGH	Y	N
+a34ce3-b47247	Automated Critical Material Data Balancing	Maintain Critical Material Data	Manage Supply Planning Data	Supply Strategy & Analytics	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.88	HIGH	Y	N
+a2e25c-cfa20e	Supplier Call-Off Consolidation	Adjust Purchase Orders	Execute Material Call off	Operational Supply Planning	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.88	HIGH	Y	N
+a0259e-162636	Purchase Order Automation Orchestration	Create Purchase Order	Conduct Transactional Procurement	Order to "Ok To Pay"	Source & Procure	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.88	HIGH	Y	N
+6f7498-9c5839	SKU Segmentation-Driven Cost Optimization	Review SKU Segmentation Rules	Conduct Volume to Value Planning	Sales & Operations Planning	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.87	HIGH	Y	N
+0199b6-ee3e3d	Best Model & Algorithm Selection	Determine Best Model & Algorithm	Define Statistical Forecast Model	Forecast Analytics	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.87	HIGH	Y	N
+vf-d711e034	Automated Demand-Promising Coordination	Automated Demand-Promising Coordination	Cross-Functional: Fulfill + Sell + Deliver + Customer	Value Flow	Cross-Functional	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.84	HIGH	Y	Y
+bf56cc-add07a	Autonomous Planning Data Review	Suggest And Monitor Changes	Manage Supply Planning Data	Supply Strategy & Analytics	Plan	AGENTIC	3	3	2	3	3	3	11	3	3	6	0.84	MEDIUM	Y	N
+a98d7b-9986f7	Implement Segmentation Results	Implement Results of Assessment	Define Demand Segmentation	Forecast Analytics	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.84	MEDIUM	Y	N
+cf-e6d602b4	Automated Demand-Supply Scenario Coordination	Automated Demand-Supply Scenario Coordination	Cross-Functional: Plan + Source	Cross Functional	Cross-Functional	DETERMINISTIC	3	3	2	3	3	3	11	3	2	5	0.83	HIGH	Y	Y
+vf-072c847e	Automated Regional Demand Rebalancing	Automated Regional Demand Rebalancing	Cross-Functional: Plan + Fulfill + Sell + Deliver	Value Flow	Cross-Functional	DETERMINISTIC	3	3	2	3	3	3	11	3	2	5	0.83	HIGH	Y	Y
+597355-2738c6	Understand Demand & Spend Initiatives	Understand Business Goals & Current Plans	Identify and Implement Demand Initiatives	Demand Planning for Source & Procure	Source & Procure	DETERMINISTIC	2	2	2	3	3	3	11	3	3	6	0.79	HIGH	Y	N
+872000-2fc5ce	Automated LSP Performance Optimization	Monitor & Report Supplier Performance	Monitor LSP Spend & Contract Compliance	Logistics Service Provider (LSP) Selection and Management	Fulfill	AGENTIC	2	2	2	3	3	3	11	3	3	6	0.79	HIGH	Y	N
+7b3540-fec1ff	Optimize Demand Segmentation	Assess Data for Segmentation	Define Demand Segmentation	Forecast Analytics	Plan	DETERMINISTIC	3	3	2	3	3	3	11	3	3	6	0.76	HIGH	Y	N
+f0d9d8-868ab6	Total Cost Breakdown for Sourcing	Assess Sourcing Opportunity	Develop Sourcing Profile & Strategy	Sourcing	Source & Procure	DETERMINISTIC	2	2	2	3	3	3	11	3	3	6	0.75	HIGH	Y	N
+89ff8b-735609	Import/Export Valuation Automation	Manage Product Import/Export Valuation	Manage Import / Export	Global Trade Management	Fulfill	DETERMINISTIC	2	2	2	3	3	3	11	3	3	6	0.71	MEDIUM	Y	N

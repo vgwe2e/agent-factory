@@ -1,0 +1,140 @@
+objective: >-
+  Automatically coordinate demand and sourcing to dynamically select suppliers,
+  adjust purchase volumes, and (where possible) renegotiate supplier terms in
+  near real-time to protect margins and maximize EBITDA while maintaining
+  contract coverage.
+trigger: >-
+  Significant demand forecast update or demand spike (e.g., forecast variance >
+  configurable threshold) from Advanced Statistical Forecasting in SAS or
+  Kinaxis RapidResponse demand signals.
+decision: >-
+  Dynamically reallocate purchasing volumes across suppliers and initiate
+  renegotiation workflows for supplier terms based on near-real-time demand
+  forecasts, should-cost analytics, supplier capacity, lead times, and margin
+  impact.
+expected_action: >-
+  Orchestrate automated supplier ranking and volume reallocation calculations,
+  create/update change orders and POs in S4, initiate negotiation requests
+  (automated API or CWB Lifecycle for human-in-the-loop), and trigger logistics
+  updates (TMS/WMS) for expedited or rebalanced shipments.
+expected_outcome: >-
+  Optimized supplier mix and purchase volumes aligned to demand,
+  renegotiated/updated contract terms where feasible, updated POs in S4,
+  logistics replan triggered, sourcing team notified for exceptions — resulting
+  in preserved/improved margins and maintained contract coverage.
+rationale: >-
+  Use Process Builder to orchestrate ETL, analytics, decision rules, and
+  downstream writebacks; STREAMS ingests and normalizes enterprise signals;
+  Remote Functions run should-cost, margin impact and negotiation simulations
+  and call external supplier APIs; CWB Lifecycle provides controlled
+  human-in-the-loop approvals and renegotiation tasks; Subject Areas/UI Screens
+  surface outcomes and KPIs. This hybrid deterministic process balances
+  automated reallocation with guardrails for contractual and service-level
+  constraints.
+source_systems:
+  - name: SAP S/4HANA (S4)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+key_inputs:
+  - name: Demand forecast and variance signals
+    source: SAS (Advanced Statistical Forecasting) / Kinaxis RapidResponse
+    purpose: >-
+      Identify changes in demand that drive reallocation of supplier volumes and
+      negotiation needs
+    preferred_stream_type: STREAMS
+  - name: Current POs, contracts, pricing and lead times
+    source: SAP S/4HANA (S4)
+    purpose: >-
+      Determine contractual constraints, baseline volumes, and write-back
+      targets for PO updates
+    preferred_stream_type: STREAMS
+  - name: Supplier capacity and service performance
+    source: Kinaxis RapidResponse
+    purpose: >-
+      Assess ability of suppliers to absorb reallocated volume and meet lead
+      times
+    preferred_stream_type: Data View
+  - name: Should-cost and margin impact analytics
+    source: Remote Functions / Cortex (optional)
+    purpose: >-
+      Quantify EBITDA impact of supplier/rate changes and support supplier
+      ranking
+  - name: Inventory and fulfillment status
+    source: Blue Yonder WMS / Kinaxis
+    purpose: Ensure reallocation decisions maintain service levels and avoid stockouts
+    preferred_stream_type: STREAMS
+  - name: Logistics capacity / freight options
+    source: Uber Freight TMS
+    purpose: >-
+      Evaluate expedited or rebalanced shipment feasibility and cost when
+      reallocation causes routing changes
+happy_path:
+  - step: Ingest demand forecast update and supply master data
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Pull forecast deltas from SAS and demand signals + supplier/capacity data
+      from Kinaxis and inventory from WMS
+  - step: Compute supplier ranking and should-cost/margin impact
+    stage: analyze
+    component: Remote Functions
+    purpose: >-
+      Run deterministic cost simulations and rank suppliers by margin impact,
+      capacity and lead time
+  - step: Apply business rules and generate sourcing recommendations
+    stage: decide
+    component: Process Builder (Rules) + CWB Lifecycle
+    purpose: >-
+      Enforce contract constraints, select supplier mix, produce recommended PO
+      changes and negotiation tasks with optional human approval
+  - step: Execute approved PO updates and logistics actions
+    stage: act
+    component: Process Builder (Transaction) + Remote Functions
+    purpose: >-
+      Write updated POs/change orders to S4 and call TMS to replan or expedite
+      shipments as needed
+  - step: Surface decisions and notify stakeholders
+    stage: surface
+    component: Subject Areas + UI Screen
+    purpose: >-
+      Display updated supplier allocations, margin impact, and exceptions;
+      notify sourcing and planning teams via Process Builder notifications
+branches:
+  - condition: Top-ranked supplier lacks capacity to accept reallocated volume
+    response: >-
+      Automatically select next-ranked supplier(s) and re-run negotiation
+      simulation; if none available, create CWB Lifecycle exception and flag for
+      expedited logistics/alternate sourcing
+    outcome: >-
+      Volume reallocated to feasible suppliers or exception routed to sourcing
+      team with mitigation plan (expedite or backorder)
+  - condition: >-
+      Negotiation simulation indicates unacceptable margin deterioration or
+      fails automated threshold
+    response: >-
+      Do not auto-bind contract change; create CWB Lifecycle negotiation task
+      for sourcing manager with precomputed fallback options and recommended
+      counteroffers
+    outcome: >-
+      Human-in-the-loop approval/renegotiation preserves margin targets or
+      maintains existing supplier assignments
+  - condition: Forecast uncertainty above configurable threshold (low confidence)
+    response: >-
+      Increase buffer by applying safety stock adjustments via Kinaxis
+      rebalancing and hold major PO changes until confidence improves; notify
+      demand planning
+    outcome: >-
+      Protect service levels while avoiding premature supplier term changes;
+      change actions are deferred pending more stable signal

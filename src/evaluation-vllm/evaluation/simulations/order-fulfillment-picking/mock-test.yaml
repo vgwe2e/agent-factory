@@ -1,0 +1,38 @@
+decision: >-
+  Release sales orders to warehouse, plan picking waves, optimize picking
+  routes, assemble kits/sub-assemblies, resolve picking errors, and prioritize
+  urgent/expedited orders.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: New sales order creation in SAP S/4HANA.
+  parameters:
+    objective: >-
+      Autonomous management of order release, dynamic picking routes, kitting,
+      and urgent prioritization across plants and DCs to maximize OTIF and
+      reduce COGS.
+    key_inputs:
+      - Sales Orders
+      - Inventory Levels
+      - Equipment Availability
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Optimize order release, generate picking routes, prepare kits, resolve
+    picking errors, and expedite urgent orders.
+  outcome: >-
+    Increased order capture, reduced labor/waste, improved working capital, and
+    enhanced OTIF.
+  affected_components:
+    - DDM/Crawler
+    - Process Builder
+    - Process Builder
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Automate order fulfillment and picking processes to improve efficiency, reduce
+  costs, and enhance service levels.

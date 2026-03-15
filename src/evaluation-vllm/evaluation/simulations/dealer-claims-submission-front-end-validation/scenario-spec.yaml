@@ -1,0 +1,63 @@
+objective: >-
+  Automate and coordinate end-to-end dealer claim data entry, validation, and
+  pre-authorization processing to reduce manual handling, accelerate claim
+  cash-flows, and improve OTIF metrics.
+trigger: Dealer submits a warranty claim.
+decision: >-
+  Determine the completeness of the claim, enforce documentation requirements,
+  and process pre-authorization requests.
+expected_action: >-
+  Automate claim validation, enforce documentation requirements, and approve or
+  escalate pre-authorization requests.
+expected_outcome: >-
+  Reduced manual handling, accelerated claim processing, improved OTIF metrics,
+  and standardized front-end compliance.
+rationale: >-
+  Unify L4 processes into a decision-centric workflow to lower working capital
+  tied to claims, reduce error-driven rework, and standardize front-end
+  compliance across dealer networks and service channels.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Warranty Claim Data
+    source: SAP S/4HANA
+    purpose: Validate completeness and accuracy of the claim.
+  - name: Repair Order Documentation
+    source: SAP S/4HANA
+    purpose: Ensure all necessary documentation is included.
+  - name: Pre-Authorization Requests
+    source: SAP S/4HANA
+    purpose: Decide on approval or escalation for high-cost repairs.
+happy_path:
+  - step: Retrieve dealer-submitted warranty claim data.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Ingest claim data from SAP S/4HANA.
+  - step: Perform initial automated system checks for completeness.
+    stage: analyze
+    component: STREAMS
+    purpose: Validate the completeness of the claim data.
+  - step: Enforce documentation requirements.
+    stage: decide
+    component: Process Builder
+    purpose: Ensure all necessary documentation is included.
+  - step: Process pre-authorization requests.
+    stage: decide
+    component: Process Builder
+    purpose: Approve or escalate high-cost repairs.
+  - step: Notify dealer of claim status.
+    stage: notify
+    component: Notification
+    purpose: Inform the dealer about the claim's status.
+branches:
+  - condition: Incomplete documentation detected.
+    response: Reject claim and request additional documentation.
+    outcome: Claim is returned to dealer for additional information.
+  - condition: High-cost repair requires pre-authorization.
+    response: Escalate claim for further review.
+    outcome: Claim is escalated for detailed review and potential approval.
+  - condition: Claim meets all criteria.
+    response: Approve claim and proceed with processing.
+    outcome: Claim is approved and processed for payment.

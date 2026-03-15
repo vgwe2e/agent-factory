@@ -1,0 +1,29 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: purchase-order-details
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: goods-receipt-records
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: invoices
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Process Builder
+    type: process_builder
+    function: Determine hold or payment actions
+  - component: Remote Functions
+    type: process_builder
+    function: Ensure accurate goods receipt records
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review execute three-way match, detect invoice discrepancies, streamline
+      goods receipt corrections, and authorize supplier payments to reduce
+      working capital blocks and lower cogs leakage. and approve the recommended
+      action.

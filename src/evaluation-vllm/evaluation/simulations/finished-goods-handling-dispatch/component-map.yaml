@@ -1,0 +1,24 @@
+streams:
+  - name: DDM/Crawler
+    purpose: Fetch inspection data for decision-making.
+    confidence: inferred
+    type: DDM/Crawler
+cortex:
+  - name: Remote Functions
+    purpose: Apply pass/fail criteria and control write-offs.
+    confidence: inferred
+    capability: Apply pass/fail criteria and control write-offs.
+process_builder:
+  - name: Remote Functions
+    purpose: Ensure compliance and optimize documentation flow.
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize finished goods handling and dispatch to reduce cogs,
+      improve on-time delivery, and accelerate order fulfillment. and approve
+      the recommended action.
+    confidence: confirmed
+    component_type: display

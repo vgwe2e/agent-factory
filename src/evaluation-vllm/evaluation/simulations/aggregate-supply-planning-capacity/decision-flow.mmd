@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Monthly demand forecast update]
+  A --> N1[Stream: DDM/Crawlers - Ingest monthly demand forecast data from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze global production capacity levels using Cortex Auto Forecast.]
+  N2 --> N3[Cortex: AutoML - Evaluate long-term material and component availability using AutoML.]
+  N3 --> N4{PB: Process Builder - Align S&OP plans with long-term manufacturing network strategy using Process Builder.}
+  N4 -->|Primary| N5{PB: Remote Functions - Develop monthly aggregate build plan using Remote Functions.}
+  N5 --> N6[UI: UI Screens - Surface optimized build plan and capacity recommendations on UI Screens.]
+  N6 --> Z1[Outcome: Reduced stockouts, overages, and expedited costs; improved on-time delivery across plants, suppliers, and DCs.]
+  N4 -->|Critical supplier capacity bottleneck...| B1[Escalate to CWB Lifecycle for review and approval.]
+  B1 --> O1[Outcome: Prioritize supplier capacity adjustments to maintain production continuity.]
+  O1 --> End[End]
+  N4 -->|Significant logistics network constra...| B2[Trigger Process Builder to reroute shipments and adjust capacity.]
+  B2 --> O2[Outcome: Maintain flow and cost efficiency in the logistics network.]
+  O2 --> End[End]
+  N4 -->|Material availability shortfall excee...| B3[Initiate emergency procurement through Remote Functions.]
+  B3 --> O3[Outcome: Ensure sufficient materials for production to avoid stockouts.]
+  O3 --> End[End]
+  Z1 --> End[End]

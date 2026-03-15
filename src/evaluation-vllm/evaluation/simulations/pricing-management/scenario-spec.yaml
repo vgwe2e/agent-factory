@@ -1,0 +1,71 @@
+objective: >-
+  Automate price setting, negotiation, and cost validation across various
+  pricing scenarios to optimize COGS and sustain margin integrity.
+trigger: >-
+  New production component introduction, annual review cycle, raw material index
+  update, should-cost model update, tooling/capital equipment purchase request.
+decision: >-
+  Determine initial piece prices, annual price review and renegotiation, raw
+  material indexing and adjustment processing, should cost modeling and
+  validation, tooling and capital equipment payment management.
+expected_action: >-
+  Set initial piece prices, renegotiate annual prices, adjust prices based on
+  raw material indices, validate supplier pricing against should-cost models,
+  approve and manage tooling and capital equipment payments.
+expected_outcome: >-
+  Reduced COGS, improved EBITDA, and sustained margin integrity across platforms
+  and regions.
+rationale: >-
+  Automating pricing decisions ensures alignment with multi-echelon cost
+  structures and supplier terms, leading to optimized financial outcomes.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: New Production Component Data
+    source: SAP S/4HANA
+    purpose: Initial piece price determination
+  - name: Annual Review Data
+    source: SAP S/4HANA
+    purpose: Annual price review and renegotiation
+  - name: Raw Material Indices
+    source: External Data Feed
+    purpose: Raw material indexing and adjustment processing
+  - name: Should-Cost Models
+    source: SAP S/4HANA
+    purpose: Should cost modeling and validation
+  - name: Tooling and Capital Equipment Requests
+    source: SAP S/4HANA
+    purpose: Payment management
+happy_path:
+  - step: Retrieve new production component data
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Gather initial piece price information
+  - step: Analyze cost structure and market conditions
+    stage: analyze
+    component: AutoML
+    purpose: Determine optimal initial piece price
+  - step: Present initial piece price recommendation
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Human-in-the-loop approval
+  - step: Update SAP S/4HANA with approved price
+    stage: act
+    component: Remote Functions
+    purpose: Writeback to ERP
+  - step: Monitor and report on price changes
+    stage: review
+    component: UI Screens
+    purpose: Provide visibility into pricing decisions
+branches:
+  - condition: Market conditions deteriorate
+    response: Trigger renegotiation workflow
+    outcome: Adjust pricing terms
+  - condition: Supplier does not meet should-cost benchmarks
+    response: Initiate cost reduction actions
+    outcome: Reduce supplier costs
+  - condition: Tooling payment exceeds budget
+    response: Prioritize and delay payments
+    outcome: Manage cash flow effectively

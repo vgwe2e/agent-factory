@@ -1,0 +1,57 @@
+source_systems:
+  - name: SAP S/4HANA (S4)
+    type: ERP
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS/Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+aera_ingestion:
+  - stream_name: demand-forecast-and-variance-signals
+    stream_type: STREAMS
+    source: SAS (Advanced Statistical Forecasting) / Kinaxis RapidResponse
+  - stream_name: current-pos-contracts-pricing-and-lead-times
+    stream_type: STREAMS
+    source: SAP S/4HANA (S4)
+  - stream_name: supplier-capacity-and-service-performance
+    stream_type: Data View
+    source: Kinaxis RapidResponse
+  - stream_name: should-cost-and-margin-impact-analytics
+    stream_type: Event Stream
+    source: Remote Functions / Cortex (optional)
+  - stream_name: inventory-and-fulfillment-status
+    stream_type: STREAMS
+    source: Blue Yonder WMS / Kinaxis
+  - stream_name: logistics-capacity-freight-options
+    stream_type: Event Stream
+    source: Uber Freight TMS
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: >-
+      Run deterministic cost simulations and rank suppliers by margin impact,
+      capacity and lead time
+  - component: Process Builder (Rules) + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Enforce contract constraints, select supplier mix, produce recommended PO
+      changes and negotiation tasks with optional human approval
+  - component: Process Builder (Transaction) + Remote Functions
+    type: process_builder
+    function: >-
+      Write updated POs/change orders to S4 and call TMS to replan or expedite
+      shipments as needed
+ui_surface:
+  - component: Subject Areas + UI Screen
+    screen: Primary
+    purpose: >-
+      Display updated supplier allocations, margin impact, and exceptions;
+      notify sourcing and planning teams via Process Builder notifications

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Changes in import/export regulations, local content requirements, tariffs, and environmental regulations.]
+  A --> N1[Stream: DDM/Crawlers - Ingest regulatory changes and updates.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze the impact of regulatory changes on sourcing costs and strategies.]
+  N2 --> N3[Cortex: AutoML - Evaluate potential adjustments to sourcing and supplier strategies.]
+  N3 --> N4{PB: CWB Lifecycle - Present recommendations for sourcing and supplier adjustments.}
+  N4 -->|Primary| N5[PB: Remote Functions - Execute approved adjustments to sourcing and supplier strategies.]
+  N5 --> Z1[Outcome: Minimized COGS impact, protected OTIF, and ensured compliance with all relevant regulations.]
+  N4 -->|Regulatory changes do not significant...| B1[No action required.]
+  B1 --> O1[Outcome: Maintain current sourcing and supplier strategies.]
+  O1 --> End[End]
+  N4 -->|Regulatory changes require immediate ...| B2[Trigger emergency workflow for rapid assessment and adjustment.]
+  B2 --> O2[Outcome: Quickly adapt sourcing and supplier strategies to minimize financial impact.]
+  O2 --> End[End]
+  N4 -->|Approved adjustments cannot be implem...| B3[Notify stakeholders and escalate for manual intervention.]
+  B3 --> O3[Outcome: Manual review and resolution of implementation issues.]
+  O3 --> End[End]
+  Z1 --> End[End]

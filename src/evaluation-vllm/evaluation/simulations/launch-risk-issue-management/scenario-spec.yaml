@@ -1,0 +1,58 @@
+objective: Launch Risk & Issue Management
+trigger: New product launch initiation
+decision: Which risk mitigation actions to deploy for a new product launch
+expected_action: >-
+  Deploy diversified supplier strategy, adjust schedules, and buffer safety
+  stock based on risk assessment
+expected_outcome: Reduced COGS impact from launch delays and improved on-time delivery
+rationale: >-
+  Automate risk detection, triage, and resolution to enhance launch performance
+  and material cost efficiency
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Risk Assessment Data
+    source: SAP S/4HANA
+    purpose: Identify potential risks and issues for new product launches
+    preferred_stream_type: ETL
+  - name: Launch Performance Metrics
+    source: SAP S/4HANA
+    purpose: Track and report KPIs for launch success
+    preferred_stream_type: ETL
+happy_path:
+  - step: Ingest risk assessment data from SAP S/4HANA
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and prepare raw data for analysis
+  - step: Analyze risk factors using AutoML
+    stage: analyze
+    component: AutoML
+    purpose: Identify high-risk areas and potential issues
+  - step: Generate risk mitigation plans
+    stage: decide
+    component: Process Builder
+    purpose: Develop actionable mitigation strategies
+  - step: Present mitigation plans for review
+    stage: review
+    component: CWB Lifecycle
+    purpose: Ensure human-in-the-loop validation and approval
+  - step: Execute approved mitigation actions
+    stage: act
+    component: Remote Functions
+    purpose: Implement risk mitigation strategies in SAP S/4HANA
+  - step: Monitor and report launch performance
+    stage: notify
+    component: UI Screens
+    purpose: Provide real-time visibility into launch progress and KPIs
+branches:
+  - condition: High risk detected but no clear mitigation plan
+    response: Escalate to war room for manual intervention
+    outcome: Manual review and decision by war room team
+  - condition: Low risk detected
+    response: Automatically approve mitigation plan
+    outcome: Immediate execution of mitigation actions without human review
+  - condition: Mitigation plan rejected by CWB Lifecycle
+    response: Re-analyze risk factors and generate new mitigation plans
+    outcome: Iterative refinement of mitigation strategies until approval

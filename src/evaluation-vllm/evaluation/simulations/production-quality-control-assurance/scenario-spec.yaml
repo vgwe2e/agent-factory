@@ -1,0 +1,79 @@
+objective: >-
+  Reduce waste, prevent rework delays, and improve first-pass yields through
+  coordinated automated inspection decisions, defect-root-cause actions, and
+  adaptive rework/no-rework routing.
+trigger: >-
+  Production start and completion events, incoming material receipt
+  notifications.
+decision: >-
+  Coordinate automated inspection decisions, defect-root-cause actions, and
+  adaptive rework/no-rework routing.
+expected_action: >-
+  Perform quality checks at defined stages, manage end-of-line audits and
+  rework, identify and address root causes of non-conformances, enforce Quality
+  Control Plans, conduct incoming material inspections, and implement production
+  improvements to increase FTT yield.
+expected_outcome: >-
+  Reduced waste, minimized rework delays, improved first-pass yields, and
+  enhanced overall production quality.
+rationale: >-
+  Coordinating automated inspection decisions and adaptive rework routing will
+  optimize production quality, reduce costs, and improve on-time throughput.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Production Stage Data
+    source: SAP S/4HANA
+    purpose: Monitor production stages for quality checks
+  - name: End-of-Line Audit Results
+    source: SAP S/4HANA
+    purpose: Manage rework based on audit findings
+  - name: Non-Conformance Reports
+    source: SAP S/4HANA
+    purpose: Identify root causes and corrective actions
+  - name: Quality Control Plans
+    source: SAP S/4HANA
+    purpose: Ensure adherence to quality standards
+  - name: Incoming Material Data
+    source: SAP S/4HANA
+    purpose: Perform incoming quality inspections
+  - name: Production Data
+    source: SAP S/4HANA
+    purpose: Analyze for FTT yield improvements
+happy_path:
+  - step: Collect production stage data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect production stage data
+  - step: Analyze production data for quality issues
+    stage: analyze
+    component: Cortex Monitoring
+    purpose: Analyze production data for quality issues
+  - step: Decide on quality gate inspections and rework management
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Decide on quality gate inspections and rework management
+  - step: Execute quality checks and rework actions
+    stage: act
+    component: Remote Functions
+    purpose: Execute quality checks and rework actions
+  - step: Review quality control plans and adherence
+    stage: review
+    component: UI Screens
+    purpose: Review quality control plans and adherence
+  - step: Notify stakeholders of quality issues and actions
+    stage: notify
+    component: Notification
+    purpose: Notify stakeholders of quality issues and actions
+branches:
+  - condition: High defect rate detected
+    response: Increase inspection frequency
+    outcome: Improved defect detection
+  - condition: Low defect rate detected
+    response: Decrease inspection frequency
+    outcome: Optimized inspection costs
+  - condition: Critical non-conformance identified
+    response: Initiate root cause analysis
+    outcome: Corrective actions implemented

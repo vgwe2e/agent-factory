@@ -1,0 +1,46 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Pull inventory positions, movement transactions, POs/GRs and production
+      schedules into the data foundation
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+  - name: STREAMS + Subject Areas (Data Quality & Validation)
+    purpose: >-
+      Produce clean, multi-echelon container position, aging, utilization and
+      plant demand metrics
+    confidence: confirmed
+    type: STREAMS + Subject Areas (Data Quality & Validation)
+cortex: []
+process_builder:
+  - name: >-
+      Process Builder (Process) calling Cortex Auto Forecast + Remote Functions
+      (optimization engine)
+    purpose: >-
+      Combine forecasts with constraints (supplier lead times, transport
+      capacity, service SLAs) to compute pickup quantities/times and
+      consolidation plans
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder (Transaction) + Remote Functions (ERP writeback)
+    purpose: >-
+      Write return orders into SAP S/4HANA and trigger transport bookings or
+      carrier APIs for pickups
+    confidence: confirmed
+    node_type: act
+  - name: UI Screen + Process Builder Notification
+    purpose: >-
+      Provide visibility of schedules via planner UI, send supplier
+      notifications, and open Action Items for exceptions
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review orchestrate and optimize the return flow of empty returnable
+      containers from plants back to suppliers to minimize cogs and working
+      capital while ensuring container availability and supplier compliance. and
+      approve the recommended action.
+    confidence: confirmed
+    component_type: display

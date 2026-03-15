@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled pre-season planning run (monthly/quarterly) or automated detection of sustained demand increase above threshold.]
+  A --> N1[Stream: STREAMS (ETL) - Consolidate inputs]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Derive seasonal demand signal]
+  N2 --> N3{PB: Process (Process Builder) - Rules + Remote Functions - Calculate capacity allocations}
+  N3 -->|Primary| N4[PB: Remote Functions - Write approved capacity plans to ERP]
+  N4 --> N5[UI: UI Screens (dashboard, report, action item) - Surface plan and exceptions to planners]
+  N5 --> Z1[Outcome: Updated logistics capacity plans in SAP S/4HANA aligned to seasonal demand, maintained service levels with minimized transportation cost impact, and a prioritized exception list for manual review.]
+  N3 -->|Forecast uncertainty or confidence be...| B1[Create Action Item for planner review via UI Screens; hold writeback pending manual approval; attach forecast explanation from Cortex.]
+  B1 --> O1[Outcome: Plan changes are reviewed and approved manually to avoid over/under-allocation during uncertain forecasts.]
+  O1 --> End[End]
+  N3 -->|Hard capacity constraints prevent mee...| B2[Run alternative cost-prioritized allocation rules (deprioritize low-margin SKUs, optimize cross-node reallocation) and notify stakeholders of service impacts.]
+  B2 --> O2[Outcome: A feasible, cost-aware plan is produced with explicit service level trade-offs and stakeholder notifications for escalation.]
+  O2 --> End[End]
+  N3 -->|ERP writeback to SAP S/4HANA fails or...| B3[Trigger rollback transaction, log failure in Process Builder, create IT action item and retry policy via Remote Functions.]
+  B3 --> O3[Outcome: Failed writebacks are captured for remediation and system state remains consistent until retry/resolution.]
+  O3 --> End[End]
+  Z1 --> End[End]

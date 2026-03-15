@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Receipt of an indirect supplier invoice.]
+  A --> N1[Stream: DDM/Crawlers - Receive and validate indirect supplier invoice.]
+  N1 --> N2[Stream: STREAMS - Perform 3-way match between invoice, PO, and GR details.]
+  N2 --> N3{PB: Remote Functions - Evaluate discrepancies and apply validation rules.}
+  N3 -->|Primary| N4{PB: CWB Lifecycle - Approve or escalate discrepancies.}
+  N4 --> N5[PB: Process Builder - Authorize and execute scheduled payment runs.]
+  N5 --> Z1[Outcome: Reduced COGS, improved working capital, enhanced OTIF, and optimized supplier cash-flow terms.]
+  N3 -->|Discrepancies detected during 3-way m...| B1[Escalate to CWB Lifecycle for manual review.]
+  B1 --> O1[Outcome: Manual intervention to resolve discrepancies.]
+  O1 --> End[End]
+  N3 -->|Early payment discount available.| B2[Evaluate and authorize early payment.]
+  B2 --> O2[Outcome: Optimize cash flow by leveraging discounts.]
+  O2 --> End[End]
+  N3 -->|Supplier payment terms need adjustment.| B3[Engage with supplier for negotiation.]
+  B3 --> O3[Outcome: Balance cash flow improvement with supplier relationships.]
+  O3 --> End[End]
+  Z1 --> End[End]

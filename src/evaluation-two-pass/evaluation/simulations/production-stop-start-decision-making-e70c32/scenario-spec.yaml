@@ -1,0 +1,157 @@
+objective: >-
+  Autonomously detect, simulate, and resolve production constraints and
+  exceptions to optimize stop/start decisions, reduce downtime and waste, and
+  preserve OTIF and availability.
+trigger: >-
+  New or updated production/telemetry/quality data indicating a potential
+  constraint, disruption, or quality hold (e.g., unexpected equipment
+  degradation, supply shortfall, or QC failure) ingested into the platform.
+decision: >-
+  Should the production line start or stop based on current constraints,
+  downtime risks, and demand signals, balancing cost of idling against missed
+  throughput?
+expected_action: >-
+  Automatically evaluate constraint scenarios, simulate recovery & sequencing
+  alternatives, execute stop/start or sequencing adjustments via ERP writeback,
+  and create CWB exceptions for human review when confidence is low or
+  safety/quality rules require manual approval.
+expected_outcome: >-
+  Reduced COGS through improved line sequencing and reduced downtime, minimized
+  waste from targeted holds, and maintained OTIF and availability via faster,
+  coordinated recovery actions.
+rationale: >-
+  Use deterministic Process Builder orchestration to coordinate data ingestion,
+  constraint analysis (Cortex RCA Service) and simulation (Remote Functions),
+  automated ERP writebacks to SAP S/4HANA for executed start/stop or reschedule,
+  and CWB Lifecycle for exception handling and human-in-the-loop approvals. This
+  hybrid deterministic route enables safe automation for high-impact operational
+  decisions while preserving oversight for safety or quality-critical
+  conditions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: OT/SCADA (equipment telemetry)
+    type: OT
+    status: tbd
+  - name: Quality Management System / LIMS
+    type: Quality System
+    status: tbd
+  - name: Advanced Planning System / Demand Signal
+    type: APS / Demand
+    status: tbd
+key_inputs:
+  - name: Work Orders & Production Schedule
+    source: SAP S/4HANA
+    purpose: >-
+      Current/future planned throughput, line assignments, routings and
+      scheduled start/finish times used to evaluate impact of any stop/start.
+    preferred_stream_type: STREAMS
+  - name: Inventory On-Hand & Supply Commitments
+    source: SAP S/4HANA
+    purpose: >-
+      Material availability and inbound supply timing to assess if shortages
+      necessitate line stoppage or reschedule.
+    preferred_stream_type: STREAMS
+  - name: Equipment Telemetry & Status
+    source: OT/SCADA (or historian)
+    purpose: >-
+      Real-time and recent-state signals (MTBF, vibration, temperature, error
+      codes) to detect imminent failures and quantify downtime risk.
+  - name: Quality Holds and Inspection Results
+    source: Quality Management System / LIMS
+    purpose: >-
+      Identify batch/SKU holds or failing QC trends that require pausing
+      affected runs or containment actions.
+    preferred_stream_type: STREAMS
+  - name: Demand Signal & Priority (OTIF targets)
+    source: Advanced Planning System / Sales Demand
+    purpose: >-
+      Demand urgency and customer priority used to weigh cost of idling vs.
+      missed throughput in decisions.
+    preferred_stream_type: STREAMS
+  - name: Downstream Impact & Recovery Windows
+    source: Calculated by STREAMS / Process Builder (derived)
+    purpose: >-
+      Projected backlog, changeover costs, and recovery sequencing options for
+      simulation.
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: >-
+      Ingest new telemetry, schedule, inventory and quality feeds from SAP, OT
+      and Quality systems.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Collect latest work orders, inventory, equipment signals and QC results
+      for evaluation.
+  - step: >-
+      Normalize, validate and enrich raw feeds into subject area tables and
+      compute derived downtime risk and impact metrics.
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Produce cleaned facts/dimensions and compute baseline risk & impact
+      features for decisioning.
+  - step: >-
+      Perform constraint detection and root-cause scoring; generate candidate
+      recovery and sequencing scenarios with estimated costs and OTIF impact.
+    stage: analyze
+    component: Cortex RCA Service
+    purpose: >-
+      Identify primary constraint drivers and rank scenario alternatives by
+      expected outcomes.
+  - step: >-
+      Orchestrate rule-based evaluation and scenario simulation, selecting
+      recommended action (stop, continue with adjust, partial hold) and whether
+      to auto-execute or require CWB approval.
+    stage: decide
+    component: Process Builder
+    purpose: >-
+      Apply deterministic business rules, run Remote Function simulations, and
+      choose action path with confidence thresholds.
+  - step: >-
+      Execute approved action: writeback start/stop or reschedule to SAP S/4HANA
+      and trigger operator instructions; isolate affected lots for QC if needed.
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Perform ERP/API writebacks and orchestration commands to effect physical
+      changes and update systems of record.
+  - step: >-
+      Surface recommendations, exceptions and actions to operations for review;
+      route unresolved or safety/quality-critical items via CWB for human
+      approval.
+    stage: review
+    component: CWB Lifecycle
+    purpose: >-
+      Provide human-in-the-loop oversight, manual overrides, and audit trail for
+      exception handling.
+branches:
+  - condition: >-
+      Detected condition violates safety or regulatory rules (safety-critical
+      alarm or major QC failure).
+    response: >-
+      Immediately stop affected line(s), escalate to operator/engineering,
+      create high-priority CWB and block auto-execution.
+    outcome: >-
+      Line stopped to preserve safety/quality; manual investigate-and-release
+      workflow initiated; no automatic writeback until clearance.
+  - condition: >-
+      Minor equipment anomaly with low downtime risk and high backlog/demand
+      priority.
+    response: >-
+      Continue production with adjusted sequencing and increased monitoring;
+      schedule maintenance during next planned downtime.
+    outcome: >-
+      Throughput preserved, minimal disruption, and maintenance deferred to
+      lower-cost window.
+  - condition: >-
+      Supply disruption affecting specific SKUs but alternative production
+      sequencing can maintain OTIF.
+    response: >-
+      Auto-reschedule remaining orders, sequence unaffected SKUs first, and
+      trigger expedited procurement for missing components.
+    outcome: >-
+      Minimized line idle time, reduced waste, and preserved customer
+      commitments via alternate sequencing.

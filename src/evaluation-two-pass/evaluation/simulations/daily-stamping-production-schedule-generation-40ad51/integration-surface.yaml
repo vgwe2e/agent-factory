@@ -1,0 +1,58 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant MES
+    type: MES
+    status: tbd
+  - name: Supplier Portal / APIs
+    type: Supplier System
+    status: tbd
+  - name: Plant Control / SCADA
+    type: OT
+    status: tbd
+aera_ingestion:
+  - stream_name: demand-plan-confirmed-orders
+    stream_type: batch (daily)
+    source: SAP S/4HANA
+  - stream_name: on-hand-inventory-mrp-recommendations
+    stream_type: batch (daily)
+    source: SAP S/4HANA
+  - stream_name: line-capacity-status-downtime
+    stream_type: near-real-time
+    source: Plant MES
+  - stream_name: changeover-times-tooling-constraints
+    stream_type: Event Stream
+    source: Subject Areas / Master Data
+  - stream_name: supplier-lead-time-expedited-capacity
+    stream_type: near-real-time
+    source: Supplier Portal / APIs
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: >-
+      Run deterministic scheduling solver (sequence optimization, minimize
+      changeovers, respect constraints) and produce candidate schedule
+  - component: Process Builder (Process + Rules)
+    type: process_builder
+    function: >-
+      Enforce release rules, prioritize customer commitments, detect exceptions
+      and determine automated vs. human approval paths (generate CWB if needed)
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Write final schedule to MES, update SAP S/4HANA MRP/schedule confirms, and
+      send expedited POs/ASN requests to suppliers
+  - component: UI Screen
+    type: process_builder
+    function: >-
+      Provide dashboard of schedule, KPIs, and CWB list for review or manual
+      override
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously generate and synchronize daily stamping production
+      schedules across plants and suppliers to minimize changeovers and idle
+      time, maximize capacity utilization, and trigger expedited actions to meet
+      delivery commitments. and approve the recommended action.

@@ -1,0 +1,28 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Identify trends and areas for improvement.
+    confidence: confirmed
+    capability: Identify trends and areas for improvement.
+process_builder:
+  - name: AutoML
+    purpose: Optimize logistics cost and service coverage.
+    confidence: inferred
+    node_type: decide
+  - name: Remote Functions
+    purpose: Maximize storage efficiency and throughput.
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize dc/cross-dock location strategy, warehouse automation,
+      parts storage, and service parts distribution network to reduce cogs,
+      improve otif, and boost order capture. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

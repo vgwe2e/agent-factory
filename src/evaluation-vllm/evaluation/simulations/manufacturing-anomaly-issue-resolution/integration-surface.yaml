@@ -1,0 +1,43 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: production-line-status
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: defective-part-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: issue-escalation-criteria
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: corrective-action-plans
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: aftermarket-service-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: RCA Service
+    type: cortex
+    function: Determine cause of stoppage
+  - component: Remote Functions
+    type: process_builder
+    function: Execute remediation plan
+  - component: Process Builder
+    type: process_builder
+    function: Route to appropriate departments
+  - component: Subject Areas
+    type: process_builder
+    function: Monitor KPIs for recurrence
+  - component: Agentic AI
+    type: agent_teams
+    function: Choose optimal actions
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomous detection, triage, escalation, and resolution of
+      manufacturing anomalies in real time to reduce cogs, prevent waste, and
+      improve otif. and approve the recommended action.

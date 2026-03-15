@@ -1,0 +1,45 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Consolidate and validate regional forecasts, inventory, allocations and
+      transport data into Subject Areas/Data Views
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Process Builder (Rules + Data View)
+    purpose: >-
+      Apply deterministic rules to detect regional imbalance and generate
+      prioritized SKU/DC transfer candidates
+    confidence: confirmed
+    capability: >-
+      Apply deterministic rules to detect regional imbalance and generate
+      prioritized SKU/DC transfer candidates
+process_builder:
+  - name: Process Builder (Remote Functions)
+    purpose: >-
+      Calculate transfer quantity considering safety stock, lead times,
+      transport cost and DC capacity; decide auto-execute vs escalate
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Create transfer orders in S4, update Blue Yonder WMS and book carrier
+      capacity via Uber Freight APIs
+    confidence: inferred
+    node_type: act
+  - name: Process Builder (Notification) + UI Screen / Dashboard
+    purpose: >-
+      Notify planners and operations of executed transfers and surface a summary
+      in planner dashboard and Subject Areas
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically detect regional demand mismatches and orchestrate
+      cross-region inventory repositioning to align supply with regional demand
+      signals, reducing emergency transfers and regional cogs while improving
+      service levels. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

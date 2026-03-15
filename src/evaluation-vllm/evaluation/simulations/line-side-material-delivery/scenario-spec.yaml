@@ -1,0 +1,67 @@
+objective: >-
+  Optimize line-side material delivery to minimize COGS and improve OTIF by
+  orchestrating Just-in-Sequence (JIS) deliveries, pull-based replenishment, and
+  waste-reducing line practices.
+trigger: Replenishment pull signal from production line.
+decision: >-
+  Sequence production line kit building and execute JIS deliveries to minimize
+  line stoppages and optimize sequence accuracy.
+expected_action: >-
+  Efficiently manage material flow, reduce handling costs, and ensure timely
+  delivery of materials to the production line.
+expected_outcome: >-
+  Reduced line stoppages, optimized sequence accuracy, and minimized material
+  handling costs.
+rationale: >-
+  By tightly coordinating JIS deliveries, pull-based replenishment, and
+  waste-reducing line practices, the solution will enhance overall production
+  efficiency and reduce costs.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Replenishment Signal
+    source: Production Line
+    purpose: Trigger replenishment actions.
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Determine available inventory for replenishment.
+  - name: Material Requirements
+    source: Production Line
+    purpose: Define material needs for kit building and sequencing.
+happy_path:
+  - step: Receive replenishment pull signal from production line.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Capture replenishment request.
+  - step: Retrieve current inventory levels and material requirements.
+    stage: analyze
+    component: STREAMS
+    purpose: Validate inventory sufficiency and material needs.
+  - step: Sequence production line kits based on material requirements.
+    stage: decide
+    component: Process Builder
+    purpose: Optimize kit building and sequencing.
+  - step: Execute Just-in-Sequence deliveries to the assembly line.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure timely and accurate material delivery.
+  - step: Monitor and adjust internal material movements and tugger operations.
+    stage: review
+    component: CWB Lifecycle
+    purpose: Optimize material flow and reduce handling costs.
+  - step: Remove empty containers from the production line.
+    stage: notify
+    component: Notification
+    purpose: Ensure line-side cleanliness and resource availability.
+branches:
+  - condition: Insufficient inventory levels detected.
+    response: Trigger emergency replenishment from suppliers.
+    outcome: Maintain production continuity.
+  - condition: Unexpected line stoppage occurs.
+    response: Adjust JIS delivery schedule and notify relevant teams.
+    outcome: Minimize downtime and realign material flow.
+  - condition: High waste generation from empty containers.
+    response: Implement recycling or disposal strategies.
+    outcome: Reduce waste and associated costs.

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New product introduction (NPI) announcement.]
+  A --> N1[Stream: Process Builder - Initiate NPI Supply Chain Impact Assessment]
+  N1 --> N2[Cortex: Process Builder - Coordinate Pilot Builds]
+  N2 --> N3{PB: CWB Lifecycle - Validate Production and Logistics Capacities}
+  N3 -->|Primary| N4[PB: Process Builder - Monitor Supply Network During Ramp-Up]
+  N4 --> N5[PB: Process Builder - Plan Continuous Optimization Post-Launch]
+  N5 --> Z1[Outcome: Minimized COGS during launch, protected working capital, and ensured on-time delivery across suppliers, plants, and distributors.]
+  N3 -->|Insufficient production capacity dete...| B1[Allocate additional buffers and resources]
+  B1 --> O1[Outcome: Ensure on-time delivery and minimized COGS]
+  O1 --> End[End]
+  N3 -->|Ramp-up issues identified| B2[Trigger corrective actions across suppliers and plants]
+  B2 --> O2[Outcome: Resolve issues and maintain ramp-up schedule]
+  O2 --> End[End]
+  N3 -->|Post-launch optimization opportunitie...| B3[Implement selected initiatives for continuous improvement]
+  B3 --> O3[Outcome: Enhance cost, service, and working capital performance]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,59 @@
+decision: >-
+  Determine whether to (a) apply an autonomous schedule adjustment and
+  maintenance action, (b) escalate to human review, or (c) defer due to data
+  quality — then orchestrate writebacks to MES and SAP S/4HANA and notify
+  stakeholders.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Continuous ingestion of PLC/ICS telemetry, MES execution status, and SAP/PLM
+    change events indicating a deviation in throughput, quality, or equipment
+    state.
+  parameters:
+    objective: >-
+      Autonomously detect shop-floor performance deviations, coordinate
+      maintenance and engineering changes, and adjust production schedules
+      across MES/PLM/SAP to minimize downtime and reduce COGS.
+    key_inputs:
+      - Shop-floor telemetry (cycle times, alarms, sensor states)
+      - MES execution status (work order progress, actuals, resource occupancy)
+      - Production orders & master data
+      - Engineering change / change orders
+      - Maintenance schedules & work orders
+      - Historical performance / OEE & downtime KPIs
+    source_systems:
+      - SAP S/4HANA
+      - MES
+      - PLC/ICS (PLC, SCADA, Historian)
+      - PLM
+      - CMMS / Maintenance System
+expected_output:
+  action: >-
+    Automatically detect deviations, compute optimal reschedule and maintenance
+    coordination using deterministic rules + remote functions, execute
+    transactional writebacks to MES and SAP S/4HANA, and notify
+    operations/engineering; escalate to CWB lifecycle when required.
+  outcome: >-
+    Faster resolution of downtime events, lower changeover and idle costs,
+    improved on-time delivery and utilization, measurable reduction in COGS and
+    improved EBITDA via fewer prolonged stoppages and optimized capacity
+    alignment.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - STREAMS (Subject Areas)
+    - Process Builder - Rules
+    - Process Builder - Remote Functions
+    - >-
+      Process Builder - Transaction + Notification (Remote Functions for ERP/MES
+      API)
+    - UI Screen (dashboard)
+rationale: >-
+  Deterministic orchestration across MES, PLC/ICS, PLM and ERP enables
+  repeatable, auditable decisions that minimize manual lag. Process Builder
+  coordinates data flows, rules, and remote functions to compute and execute
+  safe schedule changes and maintenance actions while preserving
+  human-in-the-loop for high-risk scenarios.

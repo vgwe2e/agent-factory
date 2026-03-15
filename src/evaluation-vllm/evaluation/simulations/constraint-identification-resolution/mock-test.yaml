@@ -1,0 +1,34 @@
+decision: Autonomous identification of bottlenecks and simulation of mitigation options.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Detection of supply-demand imbalance or critical component shortage.
+  parameters:
+    objective: >-
+      Identify and resolve supply chain bottlenecks to minimize COGS and improve
+      on-time delivery.
+    key_inputs:
+      - Supply-Demand Data
+      - Component Shortages
+      - Production Schedule
+      - Real-Time Production Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Coordinated actions across procurement, production scheduling, and
+    logistics.
+  outcome: Reduced COGS and improved on-time delivery.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - AutoML
+    - Process Builder
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  Fusing multiple L4 processes into a single decision architecture for
+  end-to-end orchestration and measurable P&L impact.

@@ -1,0 +1,147 @@
+objective: >-
+  Autonomously detect shop-floor performance deviations, coordinate maintenance
+  and engineering changes, and adjust production schedules across MES/PLM/SAP to
+  minimize downtime and reduce COGS.
+trigger: >-
+  Continuous ingestion of PLC/ICS telemetry, MES execution status, and SAP/PLM
+  change events indicating a deviation in throughput, quality, or equipment
+  state.
+decision: >-
+  Determine whether to (a) apply an autonomous schedule adjustment and
+  maintenance action, (b) escalate to human review, or (c) defer due to data
+  quality — then orchestrate writebacks to MES and SAP S/4HANA and notify
+  stakeholders.
+expected_action: >-
+  Automatically detect deviations, compute optimal reschedule and maintenance
+  coordination using deterministic rules + remote functions, execute
+  transactional writebacks to MES and SAP S/4HANA, and notify
+  operations/engineering; escalate to CWB lifecycle when required.
+expected_outcome: >-
+  Faster resolution of downtime events, lower changeover and idle costs,
+  improved on-time delivery and utilization, measurable reduction in COGS and
+  improved EBITDA via fewer prolonged stoppages and optimized capacity
+  alignment.
+rationale: >-
+  Deterministic orchestration across MES, PLC/ICS, PLM and ERP enables
+  repeatable, auditable decisions that minimize manual lag. Process Builder
+  coordinates data flows, rules, and remote functions to compute and execute
+  safe schedule changes and maintenance actions while preserving
+  human-in-the-loop for high-risk scenarios.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    type: MES
+    status: tbd
+  - name: PLC/ICS (PLC, SCADA, Historian)
+    type: PLC/ICS
+    status: tbd
+  - name: PLM
+    type: PLM
+    status: tbd
+  - name: CMMS / Maintenance System
+    type: CMMS
+    status: tbd
+key_inputs:
+  - name: Shop-floor telemetry (cycle times, alarms, sensor states)
+    source: PLC/ICS (Historian/SCADA)
+    purpose: >-
+      Detect equipment states, downtime start/stop, and real-time performance
+      deviations.
+    preferred_stream_type: DDM/Crawlers
+  - name: MES execution status (work order progress, actuals, resource occupancy)
+    source: MES
+    purpose: Validate production order execution and constrain rescheduling decisions.
+    preferred_stream_type: STREAMS
+  - name: Production orders & master data
+    source: SAP S/4HANA
+    purpose: >-
+      Supply planned production, BOMs, routings and capacity constraints for
+      rescheduling and cost impact.
+    preferred_stream_type: STREAMS
+  - name: Engineering change / change orders
+    source: PLM
+    purpose: >-
+      Identify changeover requirements, tooling updates, and coordinate
+      PLM-driven actions with schedule changes.
+    preferred_stream_type: DDM/Crawlers
+  - name: Maintenance schedules & work orders
+    source: CMMS
+    purpose: >-
+      Plan and coordinate maintenance windows and link corrective actions to
+      maintenance execution.
+    preferred_stream_type: DDM/Crawlers
+  - name: Historical performance / OEE & downtime KPIs
+    source: Subject Areas (derived)
+    purpose: >-
+      Baseline performance, support rules for deviation thresholds and cost
+      impact estimation.
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: >-
+      Ingest shop-floor telemetry, MES status, SAP orders and PLM events into
+      foundation
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate raw signals and transactional data into Subject Areas for
+      analysis.
+  - step: Normalize and compute KPIs (OEE, throughput, downtime, changeover cost)
+    stage: analyze
+    component: STREAMS (Subject Areas)
+    purpose: >-
+      Produce consistent metrics and flags for deviation detection and impact
+      calculation.
+  - step: Evaluate deviation rules and severity using deterministic rules
+    stage: analyze
+    component: Process Builder - Rules
+    purpose: Classify event (minor/major/systemic) and determine decision path.
+  - step: Compute optimized reschedule and maintenance coordination
+    stage: decide
+    component: Process Builder - Remote Functions
+    purpose: >-
+      Apply capacity constraints, tooling/changeover logic, and maintenance
+      windows to produce actionable schedule changes and orders.
+  - step: >-
+      Execute transactional writebacks and trigger maintenance/work orders; send
+      operational alerts
+    stage: act
+    component: >-
+      Process Builder - Transaction + Notification (Remote Functions for ERP/MES
+      API)
+    purpose: >-
+      Update SAP S/4HANA and MES with revised schedules and create/assign
+      maintenance tasks; push alerts to operators/maintainers.
+  - step: >-
+      Surface updated schedule, root-cause summary and KPI impact to operations
+      and engineering
+    stage: surface
+    component: UI Screen (dashboard)
+    purpose: >-
+      Provide shift leads and engineers with visibility and audit trail of
+      autonomous actions, and allow override if required.
+branches:
+  - condition: Deviation classified as low-severity and within pre-defined tolerance
+    response: >-
+      Auto-apply schedule tweak and maintenance suggestion; record action and
+      notify stakeholders.
+    outcome: >-
+      Immediate mitigation with no human intervention; reduced downtime and
+      minimal disruption.
+  - condition: Deviation high-severity or impacts multi-line capacity / critical product
+    response: >-
+      Create CWB Lifecycle work item and route to operations/engineering for
+      approval; hold automatic writebacks until approval.
+    outcome: >-
+      Human-in-the-loop review prevents risky autonomous changes; preserves
+      safety and quality while ensuring governance.
+  - condition: >-
+      Telemetry or data inputs fail quality checks (missing timestamps,
+      conflicting sources)
+    response: >-
+      Trigger Process Builder Wait + Notification to Data Ops and pause
+      automated actions; fallback to conservative scheduling rules.
+    outcome: >-
+      Prevents erroneous schedule changes due to bad data; ensures corrective
+      data remediation before automation resumes.

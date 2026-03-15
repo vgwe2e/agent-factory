@@ -1,0 +1,37 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: logistics-kpi-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: cost-to-serve-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: sla-compliance-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: bottleneck-identification-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Generate insights into logistics network performance.
+  - component: AutoML
+    type: cortex
+    function: Identify cost optimization opportunities.
+  - component: RCA Service
+    type: cortex
+    function: Pinpoint and prioritize network constraints.
+  - component: Process Builder
+    type: process_builder
+    function: Implement decisions to reduce COGS and improve OTIF.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review improve logistics performance by defining and tracking kpis,
+      optimizing cost-to-serve, ensuring sla adherence, and identifying
+      bottlenecks. and approve the recommended action.

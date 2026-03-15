@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled daily orchestration or real-time event: new promotion/price change, rebate update, or inventory threshold breach detected for channel-relevant SKUs.]
+  A --> N1[Stream: STREAMS - Ingest channel pricing, sales, rebate, inventory, and promotions data from SAP S/4HANA and Promotions system into the platform]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Generate demand and promo-impact signals for affected SKUs and channels]
+  N2 --> N3{PB: Process Builder - Rules - Apply deterministic business rules to compute unified channel price, rebate accrual adjustments, and channel allocation priorities}
+  N3 -->|Primary| N4[PB: Remote Functions + Process Builder Transaction - Execute approved updates and create transactional writebacks for pricing, rebate accruals, and allocations to SAP S/4HANA]
+  N4 --> N5[PB: CWB Lifecycle - Surface exceptions and recommended overrides for commercial or finance owners where rules flag risk or low-confidence forecasts]
+  N5 --> Z1[Outcome: Coordinated channel pricing and rebate accruals, reduced margin erosion from channel conflicts, prioritized inventory allocation aligned to EBITDA impact, auditable writebacks to SAP S/4HANA, and a manageable exceptions queue for finance and commercial owners.]
+  N3 -->|Severe inventory constraint that prev...| B1[Re-prioritize allocation using EBITDA impact rules, reduce promotional depth where necessary, and create a CWB exception for stakeholder approval if revenue risk exceeds threshold]
+  B1 --> O1[Outcome: Inventory allocated to maximize EBITDA; critical exceptions routed for rapid manual resolution]
+  O1 --> End[End]
+  N3 -->|Forecast confidence below threshold o...| B2[Pause automated price/rebate enforcement for affected SKUs, generate alternative scenarios in Cortex, and open CWB Lifecycle review for commercial/finance sign-off]
+  B2 --> O2[Outcome: Prevents erroneous automated changes; ensures human validation under high-uncertainty conditions]
+  O2 --> End[End]
+  N3 -->|Rebate agreement conflict or vendor d...| B3[Hold accrual writeback, create Finance notification and a Process Builder Subprocess to route dispute resolution tasks to finance and channel managers]
+  B3 --> O3[Outcome: Avoids incorrect financial postings and starts a traceable dispute resolution workflow]
+  O3 --> End[End]
+  Z1 --> End[End]

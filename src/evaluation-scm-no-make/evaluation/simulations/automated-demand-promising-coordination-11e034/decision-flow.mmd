@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Event: new or high-priority customer order created OR Scheduled: frequent near-term promise recalculation (e.g., hourly/4-hour batch) to align promises with updated inventory, forecasts, and shipment ETAs.]
+  A --> N1[Stream: STREAMS - Consolidate inputs (orders, ATP, forecasts, supply ETAs, WMS) into the decision data layer]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Generate reconciled near-term demand signal and detect variances vs. published forecasts]
+  N2 --> N3{PB: Process Builder (Rules + Remote Functions) - Evaluate ATP, allocation rules, safety stock, and expedite options to produce a recommended promise and allocation plan}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute allocations and write promise/fulfillment instructions to execution systems; trigger carrier options if expedite selected]
+  N4 --> N5[UI: CWB Lifecycle / UI Screen - Surface recommendations and exceptions to planners/sales for review and notify stakeholders of confirmed promise changes]
+  N5 --> Z1[Outcome: Reduced ATP over-promising, improved on-time fulfillment, fewer late shipments, protected revenue, and reduced COGS variability through synchronized near-term planning across Planning, Fulfillment, and Delivery.]
+  N3 -->|ATP sufficient at requested promise date| B1[Automatically confirm full order promise, allocate inventory, writeback to S4 and notify downstream systems/stakeholders]
+  B1 --> O1[Outcome: Order confirmed; expected on-time fulfillment; no manual intervention required]
+  O1 --> End[End]
+  N3 -->|ATP short but expedite/transport opti...| B2[Recommend expedite (expedite cost vs. revenue tradeoff) and create expedite request via Remote Function to TMS/3PL; surface to CWB for approval if cost threshold exceeded]
+  B2 --> O2[Outcome: Order promised with expedited delivery; higher fulfillment confidence; additional logistics cost recorded]
+  O2 --> End[End]
+  N3 -->|ATP short and no expedite feasible or...| B3[Recommend allocation alternatives (partial ship, downgrade date, or reallocation from less-critical orders) and surface trade-offs in CWB for planner/sales decision]
+  B3 --> O3[Outcome: Partial or rescheduled promise issued, affected orders flagged for follow-up, revenue/profit impact minimized and communicated]
+  O3 --> End[End]
+  Z1 --> End[End]

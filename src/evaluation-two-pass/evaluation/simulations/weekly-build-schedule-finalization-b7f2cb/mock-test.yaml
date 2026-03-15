@@ -1,0 +1,59 @@
+decision: >-
+  Finalize weekly build schedule by plant and shift by evaluating production
+  constraints, supplier readiness, capacity, inventory, sequencing rules, and
+  cost trade-offs to produce a conflict-free schedule that optimizes COGS while
+  meeting OTIF service targets.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Weekly planning cadence start (scheduled job) or updated demand / supplier
+    readiness feed for the upcoming weekly horizon.
+  parameters:
+    objective: >-
+      Autonomously generate conflict-free, cost-optimized weekly production
+      schedules (by plant & shift) that coordinate multi-echelon constraints to
+      minimize COGS while preserving OTIF targets across vehicle platforms and
+      components.
+    key_inputs:
+      - Master Demand / Build Orders
+      - Plant Capacity & Shift Templates
+      - BOM & Routing (Parts to Vehicle Mapping)
+      - Supplier Readiness & Lead-times
+      - On-hand & In-transit Inventory
+      - 'Cost Rates (COGS drivers: material, changeover, expedite, penalty)'
+      - Sequencing Rules & Constraints (quality, tooling, regulatory)
+    source_systems:
+      - SAP S/4HANA
+      - Supplier Readiness Portal / EDI
+      - Factory Execution / Capacity Planner
+      - Warehouse / Inventory System
+expected_output:
+  action: >-
+    Run deterministic scheduling process that (1) ingests ERP and supplier
+    readiness data, (2) evaluates multi-echelon constraints and cost
+    implications, (3) generates one or more conflict-free, cost-ranked weekly
+    schedules, (4) auto-commits the approved schedule to SAP S/4HANA for
+    supplier release and work orders, and (5) route flagged exceptions to CWB
+    for human review and resolution.
+  outcome: >-
+    Lowered COGS through optimized sequencing and allocation, improved line
+    efficiency (reduced changeover / downtime), higher on-time delivery rates,
+    fewer supplier release errors, and reduced manual schedule rework.
+  affected_components:
+    - STREAMS / Subject Areas
+    - Process Builder -> Rules + Data View
+    - Process Builder -> Remote Functions -> Transaction
+    - Remote Functions (ERP writeback)
+    - Subject Areas -> Dashboard (UI Screens)
+    - UI Screens + CWB Lifecycle (Notification)
+rationale: >-
+  Coordinating weekly build schedules end-to-end across plants, suppliers,
+  inventory and capacity reduces cascading conflicts and enables cost-aware
+  trade-offs. A deterministic, process-driven engine using Aera Process Builder,
+  STREAMS for data integration, and Remote Functions for ERP writeback enforces
+  rules and ensures repeatable, auditable schedule finalization while routing
+  exceptions for human-in-the-loop resolution.

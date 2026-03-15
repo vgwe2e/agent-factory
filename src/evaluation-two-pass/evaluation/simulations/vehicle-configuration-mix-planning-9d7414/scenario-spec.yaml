@@ -1,0 +1,139 @@
+objective: >-
+  Automate end-to-end demand forecasting, market-intelligent mix planning, and
+  model-launch volume alignment to optimize revenue capture, working capital,
+  and COGS for vehicle configuration portfolios.
+trigger: >-
+  Scheduled global planning cadence (weekly/monthly) or major event (new model
+  launch, market shock) that requires SKU/configuration-level forecast refresh
+  and production alignment.
+decision: >-
+  Approve or adjust SKU-level vehicle configuration demand and production mix
+  recommendations for the upcoming planning horizon (including launch ramps and
+  constrained capacity allocations).
+expected_action: >-
+  Automatically generate configuration-level forecasts and constrained mix
+  recommendations; surface recommendations in a CWB for planner review/override;
+  route exceptions for human decisioning; write approved production/mix plans
+  back to SAP S/4HANA.
+expected_outcome: >-
+  Higher forecast accuracy and mix alignment at launch, reduced inventory tied
+  to forecast error, improved production efficiency and COGS through optimized
+  configuration mix and capacity-aware allocations.
+rationale: >-
+  Use STREAMS/DDM to consolidate master transactional and market feeds into
+  Subject Areas, Cortex Auto Forecast for robust time-series forecasting at
+  SKU/configuration level, and Process Builder to orchestrate analysis,
+  exception routing and writebacks. Remote Functions handle constraint-aware mix
+  optimization and ERP integrations. CWB Lifecycle provides human-in-the-loop
+  governance for exceptions and launch approvals. This hybrid
+  deterministic/process route balances automation with necessary planner
+  oversight for high-impact launch and mix decisions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer Point-of-Sale / Retail Sales DB
+    type: Database
+    status: tbd
+  - name: Market Intelligence Provider (syndicated/third-party)
+    type: API
+    status: tbd
+  - name: Capacity & Production Planning System
+    status: tbd
+key_inputs:
+  - name: Global sales & shipment records (configuration-level)
+    source: SAP S/4HANA
+    purpose: >-
+      Historical demand for configuration-level forecasting and baseline
+      shipments
+    preferred_stream_type: batch
+  - name: Vehicle configuration sales history & hierarchy
+    source: Subject Areas (ingested via STREAMS/DDM)
+    purpose: SKU/dimension master and historical mix patterns for forecast modeling
+    preferred_stream_type: batch
+  - name: >-
+      Market intelligence signals (pricing, incentives, macro, competitor
+      activity)
+    source: Market Intelligence Provider
+    purpose: >-
+      Adjust forecasts for market shocks, promotional impacts, and competitor
+      shifts
+    preferred_stream_type: API
+  - name: Production capacity & constraint profiles (plant/line/variant)
+    source: Capacity & Production Planning System
+    purpose: Constrain and optimize recommended production mix and allocation
+  - name: Forecast accuracy & bias metrics (MAPE, bias by SKU/region)
+    source: Subject Areas / Cortex Monitoring
+    purpose: Drive model selection, weighting, and exception thresholds
+    preferred_stream_type: batch
+  - name: New model launch targets and ramp plans
+    source: Product Launch / Planning inputs (manual or PLM)
+    purpose: Initialize forecasts and align production launch volumes
+happy_path:
+  - step: Ingest transactional, master and market data into the analytics foundation
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Consolidate SAP S/4HANA, dealer sales, market feeds and launch inputs into
+      Subject Areas
+  - step: Produce SKU/configuration-level forecasts and diagnostic signals
+    stage: analyze
+    component: Cortex Auto Forecast + RCA Service
+    purpose: >-
+      Generate time-series forecasts, uncertainty bands, and root-cause drivers
+      for forecast error
+  - step: Orchestrate constrained mix optimization and generate CWB recommendations
+    stage: decide
+    component: Process Builder + Remote Functions + CWB Lifecycle
+    purpose: >-
+      Apply capacity, profitability and supply constraints to produce
+      recommended production/mix plans and route exceptions to planners
+  - step: Planner review and approval with override capability
+    stage: review
+    component: UI Screens (CWB) + CWB Lifecycle
+    purpose: >-
+      Surface recommendations, allow overrides, capture rationale and approvals
+      for auditability
+  - step: >-
+      Write approved production and allocation plans back to ERP and notify
+      stakeholders
+    stage: act
+    component: Remote Functions + Process Builder + Notification
+    purpose: >-
+      Execute writebacks to SAP S/4HANA and broadcast plan changes to supply
+      chain and commercial teams
+  - step: Surface KPIs and monitor model performance
+    stage: surface
+    component: Subject Areas + UI Screens (dashboard)
+    purpose: >-
+      Track forecast accuracy, inventory impact, launch adherence and COGS
+      benefits for continuous improvement
+branches:
+  - condition: >-
+      Forecast uncertainty or model confidence below threshold for a
+      configuration (e.g., new launch or volatile market)
+    response: >-
+      Process Builder triggers scenario analysis and conservative ramp
+      proposals; create CWB exception for cross-functional launch review
+    outcome: >-
+      Stakeholders select phased ramp or conservative allocation; system records
+      approved ramp and updates plans
+  - condition: >-
+      Optimization yields infeasible allocations against hard capacity
+      constraints
+    response: >-
+      Remote Functions mark infeasible allocations and Process Builder invokes
+      prioritized reallocation rules (profitability-first) and routes to
+      planners via CWB
+    outcome: >-
+      Mix is rebalanced toward feasible, higher-margin configurations;
+      production plan updated and notified
+  - condition: >-
+      Large divergence between recommended plan and ERP historical commitments
+      (contractual or legal constraints)
+    response: >-
+      Raise an exception that requires manual override and legal/contract review
+      before writeback
+    outcome: >-
+      Writeback is blocked until exception is resolved; audit trail captured and
+      stakeholders notified

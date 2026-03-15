@@ -1,0 +1,121 @@
+objective: >-
+  Automatically assign the appropriate customs (HS) classification to imported
+  and exported products using deterministic rules, minimize manual review and
+  audit risk, and write validated classifications back to the product master.
+trigger: >-
+  New product introduction or update to product attributes (packaging,
+  composition, country of origin) or scheduled reclassification run.
+decision: >-
+  Select the single best-fit HS code for a product based on deterministic
+  mapping rules, product attributes, historical mappings and authoritative
+  tariff references; escalate when mapping is ambiguous or audit risk is
+  elevated.
+expected_action: >-
+  Run rule-based classification pipeline: enrich product attributes, apply
+  deterministic classification rules and tariff lookups, write HS code and audit
+  metadata back to S4; create CWB exceptions for ambiguous/high-risk items and
+  notify customs/compliance team.
+expected_outcome: >-
+  Products in the product master have authoritative HS codes with an auditable
+  decision trail; majority of SKUs classified automatically; ambiguous or
+  high-risk cases routed to customs for human review; S4 updated with accepted
+  classifications.
+rationale: >-
+  Customs classification is deterministic and rules-driven: product attributes +
+  tariff tables map to HS codes. Use Process Builder for orchestration, STREAMS
+  for ETL/enrichment, Remote Functions for authoritative tariff API and S4
+  writeback, and CWB Lifecycle for exception handling to preserve auditability
+  and human-in-the-loop control.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+  - name: Tariff Reference (external API / government tariff database)
+    type: API
+    status: tbd
+  - name: Customs/Compliance Team (CWB)
+    type: People/Process
+    status: tbd
+key_inputs:
+  - name: Product master (SKU, descriptions, dimensions)
+    source: S4 (SAP S/4HANA)
+    purpose: Primary product attributes used for classification and writeback
+    preferred_stream_type: batch
+  - name: Packaging and composition details (materials, weights)
+    source: S4 / Blue Yonder WMS
+    purpose: Attribute inputs that influence tariff heading and subheading selection
+    preferred_stream_type: batch
+  - name: Country of origin / trade lane
+    source: S4
+    purpose: Determines applicable tariff rules and possible exceptions
+    preferred_stream_type: batch
+  - name: Authoritative tariff lookup table / API
+    source: Tariff Reference (external API / government)
+    purpose: Validate rule results and fetch official HS code metadata
+  - name: Classification ruleset and mapping table
+    source: Aera STREAMS / Subject Area (managed rules)
+    purpose: Deterministic mapping rules used to derive HS codes from attributes
+    preferred_stream_type: batch
+  - name: Historical classification mappings and audit log
+    source: Subject Area / S4 history
+    purpose: Fallback and precedence logic; support auditability and risk scoring
+    preferred_stream_type: batch
+happy_path:
+  - step: Inbound product update detected (new SKU or attribute change)
+    stage: ingest
+    component: STREAMS (ETL)
+    purpose: Ingest and normalize product attributes from S4 / WMS into Subject Area
+  - step: Enrich attributes and apply deterministic mapping rules
+    stage: analyze
+    component: Process Builder - Rules node
+    purpose: Run rule-based classification logic and calculate confidence/risk score
+  - step: Validate candidate HS code against authoritative tariff reference
+    stage: decide
+    component: Remote Functions (tariff API lookup)
+    purpose: Confirm official HS metadata and detect conflicts or disallowed mappings
+  - step: Writeback or escalate
+    stage: act
+    component: Remote Functions (S4 writeback) + Process Builder Transaction
+    purpose: >-
+      Persist HS code and audit metadata to S4 or create an exception when
+      escalation needed
+  - step: Human review for exceptions
+    stage: review
+    component: CWB Lifecycle (Action Item) + UI Screen
+    purpose: >-
+      Customs team reviews ambiguous/high-risk cases, accepts/overrides
+      classification
+  - step: Notify stakeholders and surface results
+    stage: notify
+    component: Process Builder - Notification / UI Screen (report)
+    purpose: Alert customs/compliance, update dashboards and finalize audit trail
+branches:
+  - condition: Multiple HS codes match with similar confidence (ambiguous mapping)
+    response: >-
+      Create a CWB exception, include candidate codes, supporting attributes and
+      historical mappings; route to customs/compliance team for adjudication.
+    outcome: >-
+      Classification remains pending until human reviewer selects HS code;
+      decision recorded and written back to S4 after approval.
+  - condition: Authoritative tariff API unavailable or returns inconsistent data
+    response: >-
+      Fallback to local mapping table (ruleset) and mark classification as
+      'validated locally' with elevated audit risk; schedule retry and flag for
+      post-check.
+    outcome: >-
+      HS code written to S4 with audit note and follow-up task for
+      reconciliation once API is available.
+  - condition: Insufficient product attribute data for deterministic classification
+    response: >-
+      Block automatic writeback, generate information request Action Item to
+      product owner (via CWB/UI Screen), and hold SKU in 'classification
+      pending' status.
+    outcome: >-
+      No HS code assigned until required attributes are supplied; process tracks
+      time-to-resolution and escalates if SLA missed.

@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Weekly global forecast aggregation cycle or an event trigger (new-model launch milestone or significant market intelligence signal)]
+  A --> N1[Stream: Process Builder - Stream - Ingest regional forecasts, historical sales, mix rules, launch plans, and market feeds into the DI platform]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Run consolidation and forecasting to produce unified global demand and mix forecasts with confidence scores]
+  N2 --> N3{PB: CWB Lifecycle - Apply business rules and exception detection; surface recommended approved volumes and flagged anomalies}
+  N3 -->|Primary| N4[PB: Remote Functions - Write approved volumes and allocation instructions to SAP S/4HANA and trigger downstream planning processes]
+  N4 --> N5[PB: Cortex Monitoring - Monitor forecast accuracy, launch execution KPIs and notify stakeholders of adjustments or issues]
+  N5 --> Z1[Outcome: Aligned global production volumes and mix per model/market, improved revenue capture from better demand alignment, reduced working capital tied to forecast error, and optimized COGS and launch execution through earlier, coordinated decisions.]
+  N3 -->|High confidence consensus across regi...| B1[Auto-approve recommended global volumes and perform automated writeback to SAP S/4HANA]
+  B1 --> O1[Outcome: Immediate allocation and production planning updates; reduced manual review latency]
+  O1 --> End[End]
+  N3 -->|Low confidence or large inter-regiona...| B2[Open CWB Lifecycle exception routed to regional planners and product launch owners for reconciliation]
+  B2 --> O2[Outcome: Human-in-the-loop adjustment of forecasts/mix and deferred writeback until consensus is reached]
+  O2 --> End[End]
+  N3 -->|New-model launch impacts cross-functi...| B3[Trigger Process Builder Dynamic Subprocess to coordinate manufacturing, finance and product teams before approval]
+  B3 --> O3[Outcome: Aligned launch volumes with capacity and cost constraints; formalized cross-functional sign-off]
+  O3 --> End[End]
+  Z1 --> End[End]

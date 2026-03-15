@@ -1,0 +1,143 @@
+objective: >-
+  Autonomously plan and coordinate pilot builds and related NPI production
+  activities (pre-production, ramp-up, supplier readiness, pilot builds,
+  end-of-life) to minimize time-to-market and COGS while improving OTIF and
+  working capital during NPI cycles.
+trigger: >-
+  New NPI program enters pilot phase or a status update (supplier readiness,
+  design freeze, or pilot request) is recorded in SAP S/4HANA.
+decision: >-
+  Manage pilot builds by scheduling and executing pilot runs: determine timing,
+  sequencing, resource allocation, and contingencies to validate manufacturing
+  processes.
+expected_action: >-
+  Automatically generate an optimized pilot build schedule, validate against
+  capacity and supplier readiness rules, write approved schedules back to SAP
+  S/4HANA, and create exceptions with CWB items for any constraint violations
+  requiring human review.
+expected_outcome: >-
+  Faster validated pilot execution with optimized sequencing and resource
+  utilization, improved OTIF for NPI launches, lower pilot-related COGS and
+  inventory holding, and timely escalation of unresolved constraints to
+  stakeholders.
+rationale: >-
+  Deterministic optimization plus process orchestration enables repeatable,
+  auditable scheduling decisions across multi-echelon supply and plant
+  resources. Integrating authoritative ERP data with automated rules and remote
+  optimization reduces manual coordination, shortens lead times, and enforces
+  readiness gates while surfacing exceptions for targeted human intervention.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Readiness Portal
+    type: portal
+    status: tbd
+  - name: Plant Capacity / MES (integration point)
+    status: tbd
+key_inputs:
+  - name: Bill of Materials (NPI BOM)
+    source: SAP S/4HANA
+    purpose: >-
+      Define components, assemblies, and build structure required for pilot
+      builds.
+    preferred_stream_type: DDM/Crawlers
+  - name: Master Data (Part, Routing, Resource)
+    source: SAP S/4HANA
+    purpose: >-
+      Provide part attributes, routings, and resource definitions for scheduling
+      and capacity checks.
+    preferred_stream_type: DDM/Crawlers
+  - name: Inventory & On-hand Levels
+    source: SAP S/4HANA
+    purpose: >-
+      Assess material availability and identify procurement or substitution
+      needs for pilot runs.
+    preferred_stream_type: DDM/Crawlers
+  - name: Resource Capacity Calendars (lines, tools, labor shifts)
+    source: Plant Capacity / MES (integration point)
+    purpose: Validate feasible sequencing and allocate resources for pilot production.
+  - name: Supplier Readiness Status (qualification, lead times)
+    source: Supplier Readiness Portal
+    purpose: >-
+      Determine supplier constraints and readiness gates impacting pilot
+      scheduling.
+  - name: Pilot Build Specifications & Test Plans
+    source: SAP S/4HANA
+    purpose: >-
+      Define required test steps, acceptance criteria, and build variants to be
+      scheduled.
+    preferred_stream_type: DDM/Crawlers
+  - name: Launch / Demand Milestones
+    source: Program Plan (SAP or PLM)
+    purpose: >-
+      Prioritize pilot timing relative to launch milestones and downstream ramp
+      requirements.
+happy_path:
+  - step: >-
+      Ingest authoritative ERP and supplier data for the NPI program (BOMs,
+      master data, inventory, pilot specs, supplier readiness).
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Collect latest NPI dataset from SAP S/4HANA and external readiness
+      sources.
+  - step: >-
+      Transform, validate and consolidate inputs into subject-area tables; run
+      data quality checks (part mappings, routing completeness, lead time
+      consistency).
+    stage: analyze
+    component: STREAMS
+    purpose: Produce cleansed, analytics-ready dataset for scheduling and optimization.
+  - step: >-
+      Execute deterministic production optimizer to generate pilot build
+      schedule and sequencing with resource allocations and alternative
+      scenarios.
+    stage: analyze
+    component: Remote Functions
+    purpose: >-
+      Compute optimal pilot run timing and resource assignments respecting
+      constraints and cost tradeoffs.
+  - step: >-
+      Evaluate optimized schedule against business rules; auto-approve if within
+      thresholds or create CWB exceptions for human review.
+    stage: decide
+    component: Process Builder (IF / Rules) + CWB Lifecycle
+    purpose: Apply guardrails and route exceptions for decisioning or override.
+  - step: >-
+      Write approved schedule into SAP S/4HANA, notify suppliers and plant
+      stakeholders, and surface schedule in UI for execution/tracking.
+    stage: act
+    component: Remote Functions + Notification + UI Screen
+    purpose: >-
+      Execute plan via ERP writeback and inform execution teams; provide
+      visibility for pilot execution.
+branches:
+  - condition: >-
+      Optimizer produces schedule that violates hard resource or safety
+      constraints (infeasible).
+    response: >-
+      Create high-priority CWB with exception details and recommended mitigation
+      scenarios; assign to NPI Program Manager or Agent Team for manual
+      resolution.
+    outcome: >-
+      Human-in-the-loop reviews constraints, approves revised plan or authorizes
+      resource changes; prevents unsafe or infeasible pilot execution.
+  - condition: Critical supplier readiness flagged as not ready within required window.
+    response: >-
+      Process Builder triggers alternative plan generation (defer, reschedule,
+      source substitution) and notifies procurement + supplier owners via CWB
+      and Notification.
+    outcome: >-
+      Either supplier remediation is scheduled or pilot is rescheduled with
+      minimized downstream impact; visibility on working capital and lead-time
+      changes.
+  - condition: >-
+      Minor deviation within configurable thresholds (e.g., small capacity
+      overrun, slight date shift).
+    response: >-
+      Auto-adjust schedule within thresholds and surface change log in UI; send
+      informational notifications to stakeholders.
+    outcome: >-
+      Maintains momentum for pilot builds while ensuring auditable adjustments
+      and stakeholder awareness.

@@ -1,0 +1,36 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: production-volume-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: material-requirements-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supplier-capacity-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supply-constraints-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: build-plan-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: CWB Lifecycle
+    type: process_builder
+    function: To address any supply constraints that may affect production.
+  - component: Notification
+    type: process_builder
+    function: To communicate the optimized production plan to all involved parties.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review to optimize supply planning and production scheduling by allocating
+      production volumes across globally dispersed plants, translating build
+      plans into long-term material requirements, assessing supplier capacity,
+      resolving supply constraints, and validating build plan feasibility across
+      divisions. and approve the recommended action.

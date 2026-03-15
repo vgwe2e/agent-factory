@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Daily scheduled ingest or detection of LSP performance deviation (KPIs breach vs. contract SLAs) via STREAMS/monitoring job.]
+  A --> N1[Stream: STREAMS / DDM/Crawlers - Ingest consolidated contractual, shipment, KPI and forecast datasets]
+  N1 --> N2[Cortex: Cortex Auto Forecast + RCA Service - Analyze demand alignment and detect supplier performance deviations]
+  N2 --> N3{Agent: Process Builder (Rules / IF) + Agent Team - Generate ranked corrective actions and contract compliance checks}
+  N3 -->|Primary| N4[PB: Remote Functions + CWB Lifecycle - Execute actions: auto-commit allowable changes or create CWB for exceptions]
+  N4 --> N5[PB: Notification + UI Screen (dashboard/report) - Notify stakeholders and surface dashboards/recommendations]
+  N5 --> Z1[Outcome: Tighter cost control and higher contract utilization leading to lower freight COGS, fewer service exceptions, improved working capital through timely dispute/claim handling, and measurable EBITDA uplift from optimized LSP mix and penalty recovery.]
+  N3 -->|Performance deviation within auto-act...| B1[Automated routing change and carrier ramp executed via Remote Functions; update spend and KPIs in Subject Areas]
+  B1 --> O1[Outcome: Fast correction with no manual intervention; reduced service impact and minimal cost delta]
+  O1 --> End[End]
+  N3 -->|Deviation exceeds tolerance or contra...| B2[Create CWB Lifecycle case with Agent Team summary, attach RCA and financial impact; route to Procurement + Legal for approval]
+  B2 --> O2[Outcome: Human-in-the-loop review, potential penalty recovery or negotiated remediation; audit trail preserved]
+  O2 --> End[End]
+  N3 -->|Key input data quality or missing con...| B3[Process Builder triggers Data Quality & Validation rules in STREAMS, pauses decision, notifies data stewards and queues Agent Team to extract/interpret missing clauses]
+  B3 --> O3[Outcome: Decision delayed until data remediated; prevents incorrect automated actions and ensures compliance]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,61 @@
+decision: >-
+  Choose whether to accept inbound goods, partially accept/quarantine, or
+  reject/return based on inspection results balancing supplier performance,
+  quality risk, and cost impact
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Advance Shipping Notice (ASN) arrival or dock scan indicating physical
+    receipt at receiving dock
+  parameters:
+    objective: >-
+      Coordinate inbound deliveries, perform inspection against quality
+      criteria, and decide accept/reject (or partial) with automated ERP/WMS
+      updates and supplier/3PL notifications.
+    key_inputs:
+      - Advance Shipping Notice (ASN)
+      - Purchase Order (PO) / PO Line
+      - Carrier Manifest / Bill of Lading
+      - Inspection Criteria / Quality Specifications
+      - WMS Receiving Scan / Dock Scan
+      - Supplier Performance & Historical Quality
+      - Physical Inspection Results (measurements, photos, notes)
+      - Cost Impact / Expedite Estimate
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - Blue Yonder WMS
+      - Kinaxis RapidResponse
+      - SAS (Advanced Statistical Forecasting)
+      - Uber Freight (TMS / 3PL)
+      - Supplier Portal / External Documents
+expected_output:
+  action: >-
+    Automatically gather ASN/PO/manifest, present an agent-guided inspection
+    checklist to the inspector, compute recommendation
+    (accept/partial/quarantine/reject) with supplier-risk and cost context,
+    capture human approval/override via CWB, and execute ERP/WMS writebacks and
+    notifications via Remote Functions.
+  outcome: >-
+    Accepted receipts posted to S4 and routed for putaway in Blue Yonder WMS;
+    rejects/quarantines create hold locations and return workflows; partial
+    receipts post partial quantities and trigger replenishment/expedite in
+    Kinaxis; exceptions and supplier notifications recorded in CWB and audit
+    trail.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Agent Team
+    - CWB Lifecycle
+    - Remote Functions
+    - UI Screen
+    - Dashboard
+rationale: >-
+  Agentic route combines Process Builder orchestration, AI-guided inspection
+  assistance (Agent Team) and human-in-the-loop approval (CWB Lifecycle) to
+  handle unstructured inspection judgment while ensuring deterministic ERP/WMS
+  updates via Remote Functions. This balances efficiency, traceability, and
+  supplier-risk-aware decisioning.

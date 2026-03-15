@@ -1,0 +1,28 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Gather audit data
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: Identify process capability gaps
+    confidence: inferred
+    capability: Identify process capability gaps
+  - name: Remote Functions
+    purpose: Check operator adherence
+    confidence: inferred
+    capability: Check operator adherence
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Escalate findings
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unify and automate end-to-end manufacturing quality audits to
+      reduce scrap and rework, accelerate issue resolution, and sustain
+      regulatory and process standards. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

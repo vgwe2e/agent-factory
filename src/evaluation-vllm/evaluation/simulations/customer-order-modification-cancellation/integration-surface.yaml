@@ -1,0 +1,38 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: order-change-request
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: order-cancellation-request
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: production-schedule
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: delivery-schedule
+    stream_type: STREAMS
+    source: SAP S/4HANA
+processing:
+  - component: Remote Functions
+    type: cortex
+    function: Ensure request meets criteria
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Make informed decision
+  - component: Notification
+    type: process_builder
+    function: Inform customer of outcome
+  - component: Remote Functions
+    type: process_builder
+    function: Finalize order status and financial adjustments
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end customer order modification and cancellation
+      with validation, impact assessment, communication, and governance to
+      reduce cogs impact, preserve otif, and improve cash flow. and approve the
+      recommended action.

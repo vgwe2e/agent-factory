@@ -1,0 +1,68 @@
+objective: >-
+  Reduce COGS and improve line efficiency in BIW assembly by optimizing
+  sub-assembly scheduling, welding line sequencing, and quality-release
+  decisions.
+trigger: Start of BIW assembly process for a new production batch.
+decision: >-
+  Optimize BIW assembly/welding sequence, parameters, and quality-release
+  criteria to minimize COGS while meeting build specifications and quality
+  targets.
+expected_action: >-
+  Autonomous adjustment of assembly sequences, welding parameters, and quality
+  gate inspections to optimize efficiency and reduce costs.
+expected_outcome: >-
+  Reduced COGS, minimized changeovers, fewer scrapped/reworked BIW panels, and
+  on-time delivery of BIW assemblies.
+rationale: >-
+  By leveraging Aera's deterministic decision-making capabilities, the BIW
+  assembly process can be optimized to reduce costs and improve efficiency,
+  leading to better on-time delivery and overall quality.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Build Specifications
+    source: SAP S/4HANA
+    purpose: Define the required BIW assembly configurations and quality standards.
+  - name: Current Inventory Levels
+    source: SAP S/4HANA
+    purpose: Determine available materials and components for assembly.
+  - name: Historical Assembly Data
+    source: SAP S/4HANA
+    purpose: Provide historical performance data for optimization.
+happy_path:
+  - step: Retrieve build specifications and inventory levels from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for assembly optimization.
+  - step: >-
+      Analyze historical assembly data to identify optimal sequences and
+      parameters.
+    stage: analyze
+    component: AutoML
+    purpose: Generate optimized assembly sequences and parameters.
+  - step: >-
+      Validate optimized sequences against current inventory and build
+      specifications.
+    stage: analyze
+    component: Data Quality & Validation
+    purpose: Ensure feasibility and adherence to build specifications.
+  - step: Adjust assembly sequences and parameters in SAP S/4HANA.
+    stage: act
+    component: Remote Functions
+    purpose: Implement optimized assembly plan.
+  - step: Schedule quality gate inspections based on optimized sequences.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure timely quality checks and releases.
+branches:
+  - condition: Insufficient inventory for optimal sequence
+    response: Adjust sequence to available inventory and notify stakeholders.
+    outcome: Suboptimal but feasible assembly plan.
+  - condition: Quality gate inspection fails
+    response: Initiate rework process and update assembly schedule.
+    outcome: Corrective actions taken to meet quality standards.
+  - condition: Unexpected equipment downtime
+    response: Re-optimize assembly sequences to account for downtime.
+    outcome: Adjusted assembly plan to maintain on-time delivery.

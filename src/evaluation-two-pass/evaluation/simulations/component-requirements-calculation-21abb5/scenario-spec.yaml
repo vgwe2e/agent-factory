@@ -1,0 +1,130 @@
+objective: >-
+  Automate end-to-end MRP decisions across BOM release, component requirements
+  calculation, supplier release, and dynamic safety stock to reduce COGS,
+  improve OTIF, and optimize working capital in a multi-echelon automotive
+  network.
+trigger: >-
+  Scheduled MPS update or BOM release event in SAP S/4HANA (daily or on-demand),
+  or detection of inventory shortfall exceeding threshold.
+decision: >-
+  Compute net component requirements from MPS and determine material release
+  quantities and timing (including safety stock adjustments and supplier release
+  recommendations) to minimize material cost and avoid shortages.
+expected_action: >-
+  Orchestrate deterministic MRP calculations, route recommended component
+  release quantities to planners for CWB approval, and write approved
+  releases/back-to-back POs to SAP S/4HANA while notifying suppliers and
+  updating inventory reservations.
+expected_outcome: >-
+  Timely, cost-efficient material releases with reduced stockouts and excess
+  inventory, improved OTIF and working capital, and automated feedback to
+  inventory policies and supplier lead-time settings.
+rationale: >-
+  Combining deterministic MRP calculations with automated orchestration, ERP
+  writeback, and human-in-the-loop approvals lets the organization enforce BOM
+  integrity, proactively plan materials, and coordinate supplier releases while
+  maintaining governance and minimizing manual intervention.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Master Production Schedule (MPS)
+    source: SAP S/4HANA
+    purpose: Primary demand signal driving component requirements calculation
+    preferred_stream_type: STREAM
+  - name: Bill of Materials (BOM) / BOM Release
+    source: SAP S/4HANA
+    purpose: >-
+      Component structure and routing for exploding requirements and validating
+      BOM integrity
+    preferred_stream_type: STREAM
+  - name: On-hand Inventory & Reservations
+    source: SAP S/4HANA
+    purpose: Determine available supply and net requirements
+    preferred_stream_type: STREAM
+  - name: Open Purchase Orders / Supplier Commitments
+    source: SAP S/4HANA
+    purpose: Planned incoming supply and lead-time-aware requirements planning
+    preferred_stream_type: STREAM
+  - name: Supplier Lead Times & Constraints
+    source: SAP S/4HANA or supplier portal (tbd)
+    purpose: Lead-time-driven scheduling and expedited release assessment
+  - name: Inventory Policy & Safety Stock Targets
+    source: Configured policy tables / Safety Stock Service (optional)
+    purpose: Balance service level targets vs. working capital in net requirements
+  - name: Lot-sizing & Procurement Rules (min/max, EOQ, multiples)
+    source: SAP S/4HANA
+    purpose: Enforce commercial and manufacturing constraints on release quantities
+    preferred_stream_type: STREAM
+  - name: Demand Forecast (if used to supplement MPS)
+    source: Cortex Auto Forecast (optional)
+    purpose: >-
+      Inform MPS adjustments and multi-period planning where MPS is coarse or
+      missing
+happy_path:
+  - step: >-
+      Ingest master data and transactional supply/demand (BOM, MPS, inventory,
+      open POs, supplier LTs) from SAP S/4HANA into the Data Foundation
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Consolidate and validate inputs into subject areas for deterministic MRP
+      calculation
+  - step: >-
+      Orchestrate deterministic MRP calculation to explode BOMs, apply on-hand
+      and PO supply, enforce lot-sizing, and compute net component requirements
+      and shortage risk
+    stage: analyze
+    component: Process (Process Builder) -> Remote Functions
+    purpose: >-
+      Compute recommended release quantities and timing minimizing cost/shortage
+      risk while respecting constraints
+  - step: >-
+      Present recommended component releases and exception flags to planners for
+      review with explainability (cost impact, shortage drivers, lead-time
+      risks)
+    stage: decide
+    component: CWB Lifecycle + UI Screen
+    purpose: Enable accept/override/adjust decisions with human governance
+  - step: >-
+      Execute approved releases and write back production reservations or
+      purchase orders to SAP S/4HANA; create supplier release notifications
+    stage: act
+    component: Remote Functions (ERP Writeback)
+    purpose: >-
+      Ensure SAP reflects executed MRP decisions and suppliers receive confirmed
+      release information
+  - step: >-
+      Monitor outcomes, notify stakeholders of exceptions, and feed results to
+      inventory policy service for dynamic safety stock tuning
+    stage: review
+    component: Process (Notification) -> Safety Stock Service (or Data View)
+    purpose: >-
+      Close the loop: surface performance, trigger follow-ups, and update
+      policies based on execution variance
+branches:
+  - condition: Planner approves recommended releases as-is in CWB
+    response: >-
+      System proceeds to writeback approved releases to SAP S/4HANA and notify
+      suppliers
+    outcome: >-
+      Automated execution with minimal manual intervention; inventory
+      reservations and POs updated
+  - condition: >-
+      Planner modifies quantities or timing (override) due to local knowledge or
+      constraint
+    response: >-
+      Capture override reason in CWB, invoke Remote Functions to revalidate
+      downstream impacts, and present updated release plan for final
+      confirmation
+    outcome: >-
+      Modified release executed after revalidation; override metadata logged for
+      governance and model feedback
+  - condition: Detected shortage or supplier constraint prevents timely fulfillment
+    response: >-
+      Route as exception: create expedited PO proposal, alert procurement and
+      supplier teams via notifications, and surface alternative sourcing options
+    outcome: >-
+      Expedited actions initiated to mitigate stockout risk; additional
+      cost/lead-time impact recorded for working capital analysis

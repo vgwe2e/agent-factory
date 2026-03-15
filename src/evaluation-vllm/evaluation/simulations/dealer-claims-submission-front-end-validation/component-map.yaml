@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawler
+    purpose: Ingest claim data from SAP S/4HANA.
+    confidence: inferred
+    type: DDM/Crawler
+  - name: STREAMS
+    purpose: Validate the completeness of the claim data.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder
+    purpose: Ensure all necessary documentation is included.
+    confidence: confirmed
+    node_type: decide
+  - name: Notification
+    purpose: Inform the dealer about the claim's status.
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate and coordinate end-to-end dealer claim data entry,
+      validation, and pre-authorization processing to reduce manual handling,
+      accelerate claim cash-flows, and improve otif metrics. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

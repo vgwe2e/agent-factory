@@ -1,0 +1,65 @@
+decision: >-
+  Whether to adjust safety stock levels (increase, decrease, or re-allocate
+  across echelons) and which semi-autonomous supply actions (expedite,
+  rebalance, PO change, transfer) to execute to balance service level targets
+  against working capital constraints.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    New or updated demand scenario (from SAS forecasting) or threshold breach in
+    service-risk or working-capital exposure detected during nightly scenario
+    run.
+  parameters:
+    objective: >-
+      Orchestrate integrated demand-supply scenario analyses to generate
+      risk-adjusted demand scenarios, run safety stock sensitivity across SKUs
+      and locations, and execute semi-autonomous actions to protect revenue
+      while optimizing working capital.
+    key_inputs:
+      - Touchless demand forecasts and demand scenarios
+      - Current inventory (on-hand, allocated, in-transit)
+      - Current safety stock parameters and policies
+      - Open POs,Supplier lead times, and replenishment constraints
+      - Service level targets and working capital thresholds
+      - SKU/location master and hierarchy
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Advanced Statistical Forecasting in SAS
+      - Kinaxis RapidResponse
+      - Kinaxis (shortage propagation / Maestro)
+      - Kinaxis (FG safety stock modeling)
+      - Kinaxis (rebalancing / order expediting)
+      - Blue Yonder WMS
+      - Uber Freight (TMS / 3PL)
+expected_output:
+  action: >-
+    Process Builder runs an integrated scenario pipeline: ingest forecasts and
+    inventory data, run safety-stock sensitivity and risk-adjusted scenario
+    generation (Safety Stock Service / Remote Functions), surface ranked
+    recommendations via CWB Lifecycle for required approvals, then execute
+    accepted actions through Remote Functions to S4 and Kinaxis (or create
+    action items for manual follow-up).
+  outcome: >-
+    Reduced stockouts (improved revenue protection) and lower tied-up inventory
+    (working capital reduction) at target service levels; automated execution
+    for low-risk changes, human review for high-impact actions; audit trail of
+    decisions and ERP/APS writebacks.
+  affected_components:
+    - STREAMS
+    - Process Builder (calls Safety Stock Service / Remote Functions)
+    - CWB Lifecycle
+    - Process Builder (Remote Functions)
+    - Notification / Action Item (Process Builder)
+    - Dashboard
+rationale: >-
+  Combines deterministic, repeatable scenario orchestration with targeted
+  ML-backed safety stock sensitivity to enable fast, defensible trade-offs
+  between service level and capital. Process Builder provides reliable
+  orchestration across ETL (STREAMS), analytics (Safety Stock Service / Remote
+  Functions), approvals (CWB Lifecycle), and system writebacks (Remote Functions
+  to S4/Kinaxis).

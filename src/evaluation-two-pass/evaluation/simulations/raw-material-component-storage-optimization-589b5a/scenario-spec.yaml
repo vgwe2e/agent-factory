@@ -1,0 +1,138 @@
+objective: >-
+  Autonomously rebalance multi-echelon inventory and optimize warehouse slotting
+  for raw materials/components to minimize handling cost and cycle time while
+  respecting material handling capacity and service targets.
+trigger: >-
+  Scheduled nightly batch plus delta inventory/transaction updates from SAP
+  S/4HANA and cycle count completion events.
+decision: >-
+  Select and approve an optimized set of inventory moves, slotting
+  reassignments, and replenishment adjustments across plants and distribution
+  centers (auto-apply when within guardrails; route to CWB when
+  exceptions/overrides required).
+expected_action: >-
+  Process Builder orchestrates data ingest (STREAMS) → Cortex forecasts + Remote
+  Functions optimization → generate CWB recommendations for human review when
+  needed → write approved slotting/move/replenishment changes back to SAP
+  S/4HANA via Remote Functions; create tasks for physical moves and cycle
+  counts.
+expected_outcome: >-
+  Reduced handling cost and cycle time, lower COGS and working capital through
+  balanced multi-echelon inventory, fewer obsolete items, improved cycle count
+  accuracy, and sustained material handling capacity without operational
+  disruption.
+rationale: >-
+  Deterministic, process-driven opportunity suited to Process Builder
+  orchestration with Cortex forecasting and Remote Functions optimization.
+  Medium implementation complexity because SAP S/4HANA integration and
+  constrained optimization are required; benefits are cross-echelon and
+  operational (COGS, WC, SG&A). Semi-autonomous approach uses CWB Lifecycle for
+  human-in-the-loop exceptions to limit risk.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: WMS / Warehouse Layout DB
+    type: WMS
+    status: tbd
+  - name: Labor & Equipment Capacity System
+    type: Workforce/Capacity
+    status: tbd
+key_inputs:
+  - name: Inventory on-hand by location/lot
+    source: SAP S/4HANA
+    purpose: Current stock positions to calculate rebalancing and slotting moves
+    preferred_stream_type: delta
+  - name: Product master (dimensions, weight, storage requirements)
+    source: SAP S/4HANA / Subject Areas
+    purpose: Slotting feasibility, handling cost, and location constraints
+    preferred_stream_type: batch
+  - name: Historical demand & forecast
+    source: Subject Areas / Cortex Auto Forecast
+    purpose: Drive multi-echelon replenishment and slotting prioritization
+    preferred_stream_type: batch
+  - name: Lead times and supplier constraints
+    source: SAP S/4HANA
+    purpose: Multi-echelon replenishment planning and safety stock constraints
+    preferred_stream_type: batch
+  - name: Cycle count records & accuracy metrics
+    source: SAP S/4HANA / WMS
+    purpose: Detectize obsolete/aging inventory and validate location accuracy
+    preferred_stream_type: delta
+  - name: Warehouse layout, slot capacities, travel distances
+    source: WMS / Warehouse Layout DB
+    purpose: Compute slotting assignments and handling time/cost
+    preferred_stream_type: batch
+  - name: Material handling capacity (equipment & labor schedules)
+    source: Labor & Equipment Capacity System
+    purpose: Ensure operational feasibility of proposed moves and avoid overload
+    preferred_stream_type: batch
+  - name: Obsolescence & age metrics (days since receipt, slow-moving flags)
+    source: SAP S/4HANA / Subject Areas
+    purpose: Identify candidates for disposal, quarantine, or promotion
+    preferred_stream_type: delta
+happy_path:
+  - step: >-
+      Consolidate inventory, master data, cycle counts, layout and capacity data
+      into Subject Areas
+    stage: ingest
+    component: STREAMS
+    purpose: Create a unified, validated data foundation for analysis
+  - step: >-
+      Produce demand forecasts and short-term demand signal for SKUs across
+      echelons
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Provide demand input to replenishment and slotting optimization
+  - step: >-
+      Run constrained multi-echelon inventory rebalancing and slotting
+      optimization
+    stage: analyze
+    component: Remote Functions (optimization routine) called from Process Builder
+    purpose: >-
+      Generate move plans, slot assignments, and replenishment targets that
+      respect handling capacity and service levels
+  - step: >-
+      Evaluate recommendations against guardrails and surface them in CWB for
+      required approvals
+    stage: decide
+    component: CWB Lifecycle (via Process Builder Action Item)
+    purpose: Auto-apply safe recommendations; route exceptions to planners for override
+  - step: >-
+      Apply approved changes and schedule physical moves and cycle counts;
+      writebacks to ERP
+    stage: act
+    component: Remote Functions (ERP writeback) + Process Builder Transaction
+    purpose: >-
+      Persist slotting and replenishment changes to SAP S/4HANA and trigger
+      execution tasks
+  - step: >-
+      Surface results, KPIs, and exception list to planners and notify
+      stakeholders
+    stage: surface
+    component: UI Screens + Notification node
+    purpose: Provide visibility, audit trail, and next-step assignments
+branches:
+  - condition: >-
+      Recommendation falls within predefined guardrails (cost/service
+      thresholds)
+    response: System auto-applies changes and schedules moves without human approval
+    outcome: >-
+      Faster cycle time and continuous autonomous optimization; writebacks
+      executed to SAP S/4HANA
+  - condition: Planner rejects recommendation or submits override
+    response: >-
+      Record override in CWB, cancel writeback for affected SKUs, create manual
+      re-evaluation task
+    outcome: >-
+      No system changes for overridden SKUs; audit trail retained and follow-up
+      assigned
+  - condition: >-
+      Constraint violation detected (insufficient handling capacity or safety
+      stock breach)
+    response: >-
+      Generate constrained plan prioritizing critical SKUs, notify
+      operations/planning, and open escalation subprocess
+    outcome: >-
+      Partial rebalancing with prioritized moves; escalation ensures capacity
+      and supplier actions to resolve bottleneck

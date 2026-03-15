@@ -1,0 +1,65 @@
+objective: >-
+  Autonomous drafting, validation, and issuance of various types of purchase
+  orders with end-to-end governance.
+trigger: Demand signals, project timelines, and critical material needs.
+decision: >-
+  Supplier selection, order quantities, and PO terms for different types of
+  purchase orders.
+expected_action: >-
+  Automatically generate, validate, and issue purchase orders for production
+  parts, service parts, capital equipment, and blanket POs.
+expected_outcome: >-
+  Reduced COGS, improved working capital, accelerated time-to-value for critical
+  materials.
+rationale: >-
+  Automate PO lifecycle to balance demand signals, supplier capacity, and cost,
+  improving efficiency and reducing manual intervention.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Demand Signals
+    source: SAP S/4HANA
+    purpose: To determine required quantities and timing for PO generation.
+  - name: Supplier Capacity
+    source: SAP S/4HANA
+    purpose: To ensure selected suppliers can meet order demands.
+  - name: Contract Terms
+    source: SAP S/4HANA
+    purpose: To validate PO terms against existing contracts.
+happy_path:
+  - step: Collect demand signals and supplier data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Gather necessary data for PO generation.
+  - step: Analyze demand and supplier capacity
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict optimal supplier and quantity for POs.
+  - step: Draft purchase orders
+    stage: decide
+    component: Agentic AI
+    purpose: Create PO drafts based on analysis.
+  - step: Validate PO terms and conditions
+    stage: decide
+    component: Remote Functions
+    purpose: Ensure POs comply with contract terms.
+  - step: Issue purchase orders
+    stage: act
+    component: Process Builder
+    purpose: Automate PO issuance process.
+  - step: Notify stakeholders
+    stage: notify
+    component: Notification
+    purpose: Inform relevant parties about issued POs.
+branches:
+  - condition: Insufficient supplier capacity
+    response: Trigger CWB Lifecycle for manual override
+    outcome: Manual review and adjustment of POs.
+  - condition: Contract terms violation
+    response: Send to Remote Functions for compliance check
+    outcome: Adjust PO terms to meet contract requirements.
+  - condition: Urgent PO request
+    response: Expedite PO issuance through Agentic AI
+    outcome: Immediate PO issuance for critical materials.

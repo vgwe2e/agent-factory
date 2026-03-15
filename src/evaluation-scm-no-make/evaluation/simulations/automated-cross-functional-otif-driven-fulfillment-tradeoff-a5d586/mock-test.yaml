@@ -1,0 +1,61 @@
+decision: >-
+  Select replenishment targets, network configuration changes, and forecast
+  consensus actions that optimize customer-level OTIF subject to cost-to-serve
+  and capacity constraints; present exceptions for human approval when
+  thresholds or overrides occur.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Daily scheduled run (overnight) plus event-driven triggers from Kinaxis
+    RapidResponse for shortage or capacity breach events.
+  parameters:
+    objective: >-
+      Automatically coordinate demand planning, network optimization,
+      replenishment targets, and consensus forecasting to balance OTIF targets
+      with cost-to-serve across customers and locations.
+    key_inputs:
+      - Sales orders & on-hand inventory
+      - Advanced statistical forecasts
+      - Shortage signals & rebalancing options
+      - Customer-level SLA / OTIF targets
+      - Cost-to-serve & transportation cost matrix
+      - Fulfillment capacity & WMS constraints
+      - Network topology & lead times
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS (Advanced Statistical Forecasting)
+      - >-
+        Kinaxis RapidResponse (APS / shortage propagation / rebalancing / order
+        expediting)
+      - Blue Yonder WMS
+      - Uber Freight TMS / 3PL (transportation & 3PL execution)
+expected_output:
+  action: >-
+    Process Builder orchestrates ingestion and analysis (STREAMS + Cortex Auto
+    Forecast + Remote Functions), applies business rules to produce recommended
+    replenishment and network changes, routes exceptions to CWB Lifecycle for
+    review/override, and uses Remote Functions to write approved changes back to
+    S4/Kinaxis/TMS/WMS.
+  outcome: >-
+    Improved OTIF consistent with customer SLAs while keeping cost-to-serve
+    within configured thresholds; automated, auditable decisions and writebacks
+    reduce manual cycle time and provide traceability for finance and
+    operations.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast + Remote Functions
+    - Process Builder (Rules + IF) + CWB Lifecycle
+    - Remote Functions
+    - Process Builder (Notification) + Subject Areas (dashboard)
+    - Dashboard
+rationale: >-
+  Aligning planning decisions to actual fulfillment capabilities and true
+  cost-to-serve enables targeted tradeoffs (service vs. margin) across Plan,
+  Fulfill, and Finance. Automation reduces latency between detection
+  (shortage/capacity) and remediation (replenishment, rebalancing, forecast
+  consensus), while human-in-the-loop handling of high-impact exceptions
+  preserves control.

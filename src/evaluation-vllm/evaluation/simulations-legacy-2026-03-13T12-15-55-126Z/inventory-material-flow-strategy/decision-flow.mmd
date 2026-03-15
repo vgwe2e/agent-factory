@@ -1,0 +1,13 @@
+flowchart TD
+    A[Trigger: Daily Inventory Data Refresh] --> B[Data View: Inventory Data]
+    B --> C[Process: Global Inventory Target Setting & Policy Definition]
+    C --> D{IF: Safety Stock Optimization Required?}
+    D -->|Yes| E[Cortex: Safety Stock & Buffer Strategy Optimization]
+    D -->|No| F[Process: Obsolete & Excess Inventory Reduction Planning]
+    E --> G{IF: Build-to-Order vs Build-to-Stock Adjustment Needed?}
+    F --> G
+    G -->|Yes| H[Process: Build-to-Order vs Build-to-Stock Strategy Review]
+    G -->|No| I[Process: Service Parts Inventory Integration]
+    H --> I
+    I --> J[UI: Generate Optimized Inventory Plan]
+    J --> K[End]

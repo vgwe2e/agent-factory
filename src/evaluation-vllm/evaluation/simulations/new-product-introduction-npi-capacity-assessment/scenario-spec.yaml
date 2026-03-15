@@ -1,0 +1,68 @@
+objective: >-
+  Assess and coordinate capacity across gates, tooling, ramp-up, pilot builds,
+  and supplier readiness for NPIs to ensure on-time launches with minimized cost
+  deviations.
+trigger: New product introduction (NPI) initiation.
+decision: >-
+  Determine launch feasibility, required capacity ramp, tooling/fixture
+  allocation, volume ramp-up plan, pilot build scaling, and supplier capacity
+  readiness.
+expected_action: >-
+  Autonomous assessment and coordination of capacity across various stages of
+  NPI, including gate reviews, tooling validation, ramp-up planning, pilot build
+  impact assessment, and supplier readiness tracking.
+expected_outcome: >-
+  Preempt bottlenecks, align CAPEX/COGS impact, and ensure on-time launches with
+  minimized cost deviations.
+rationale: >-
+  Automate and optimize the capacity assessment process for NPIs to enhance
+  efficiency and reduce risks associated with launch delays and cost overruns.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: NPI Program Details
+    source: SAP S/4HANA
+    purpose: Provide details about the new product introduction program.
+  - name: Tooling & Fixture Requirements
+    source: SAP S/4HANA
+    purpose: Identify the tooling and fixture requirements for the NPI.
+  - name: Supplier Capacity Data
+    source: SAP S/4HANA
+    purpose: Track supplier capacity readiness for new product introductions.
+happy_path:
+  - step: Retrieve NPI program details from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Gather necessary information about the NPI program.
+  - step: Validate tooling and fixture capacity requirements.
+    stage: analyze
+    component: Remote Functions
+    purpose: Ensure that the required tooling and fixtures are available.
+  - step: Plan phased capacity ramp-up for new vehicle launches.
+    stage: decide
+    component: Process Builder
+    purpose: Develop a phased capacity ramp-up plan to meet demand.
+  - step: Assess capacity impact of pilot builds.
+    stage: analyze
+    component: Remote Functions
+    purpose: Evaluate the capacity impact of pilot builds and pre-production runs.
+  - step: Track supplier capacity readiness.
+    stage: analyze
+    component: Remote Functions
+    purpose: Monitor supplier capacity readiness for new product introductions.
+  - step: Present final capacity assessment and recommendations.
+    stage: surface
+    component: UI Screens
+    purpose: Display the results and recommendations for review and action.
+branches:
+  - condition: Insufficient tooling and fixture capacity detected.
+    response: Trigger additional procurement and allocation processes.
+    outcome: Ensure sufficient tooling and fixture capacity for NPI.
+  - condition: Supplier readiness below threshold.
+    response: Initiate supplier readiness improvement actions.
+    outcome: Improve supplier readiness to meet NPI requirements.
+  - condition: Pilot build capacity impact exceeds thresholds.
+    response: Adjust pilot build schedules and resource allocations.
+    outcome: Optimize pilot build schedules to minimize capacity impact.

@@ -1,0 +1,25 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: Consolidate enterprise signals into Subject Areas for analysis
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: Cortex Auto Forecast + RCA Service
+    purpose: Identify unfulfilled demand, root causes, and confidence of signal
+    confidence: confirmed
+    capability: Identify unfulfilled demand, root causes, and confidence of signal
+process_builder:
+  - name: Remote Functions -> Kinaxis RapidResponse / SAP S/4HANA
+    purpose: Reallocate inventory, reprioritize production, or create expedite orders
+    confidence: inferred
+    node_type: act
+agent_teams:
+  - name: Agent Team + Process Builder (IF + Rules) + CWB Lifecycle
+    purpose: Select autonomous actions within policy constraints or flag for approval
+    confidence: confirmed
+    role: Select autonomous actions within policy constraints or flag for approval
+ui:
+  - name: UI Screens (report/dashboard) + Notification
+    purpose: Provide visibility, allow manual override, and capture decision history
+    confidence: confirmed
+    component_type: display

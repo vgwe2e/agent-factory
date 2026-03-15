@@ -1,0 +1,45 @@
+decision: >-
+  Plan and route mobile service appointments, assign jobs to technicians, manage
+  on-site diagnostics and repairs, optimize mobile service vehicle inventory,
+  schedule equipment maintenance, and communicate outages/delays.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New mobile service request or equipment maintenance need detected in SAP
+    S/4HANA.
+  parameters:
+    objective: >-
+      Automate mobile service appointment routing, technician dispatch, on-site
+      diagnostics, mobile inventory management, equipment maintenance, and
+      outage communications to reduce working capital, improve COGS, and enhance
+      OTIF.
+    key_inputs:
+      - Service Requests
+      - Technician Availability
+      - Inventory Levels
+      - Equipment Maintenance Needs
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Optimize dispatch decisions, inventory localization, and real-time
+    communications to reduce working capital, improve COGS, and enhance OTIF.
+  outcome: >-
+    Reduced working capital tied to service parts, improved COGS through
+    efficient field operations, and enhanced OTIF for mobile service.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Safety Stock Service
+    - Remote Functions
+    - Notification
+    - Dashboard
+rationale: >-
+  Jointly optimizing dispatch decisions, inventory localization, and real-time
+  communications will streamline mobile service operations, leading to
+  significant cost savings and improved customer satisfaction.

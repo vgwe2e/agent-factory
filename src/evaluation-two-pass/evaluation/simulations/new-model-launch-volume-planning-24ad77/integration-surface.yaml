@@ -1,0 +1,56 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer Orders & Pipeline (CRM/Dealer)
+    type: CRM/Dealer
+    status: tbd
+  - name: Market Intelligence Feed
+    type: external_api
+    status: tbd
+  - name: Aera Cortex / Monitoring
+    type: intelligence
+    status: tbd
+aera_ingestion:
+  - stream_name: historical-sales-shipments-variant-level
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: vehicle-configurations-bom-variant-attributes
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: market-intelligence-macroeconomic-competitor-incentives
+    stream_type: Event Stream
+    source: Market Intelligence Feed
+  - stream_name: dealer-orders-pipeline
+    stream_type: Event Stream
+    source: Dealer Orders (CRM/Dealer)
+  - stream_name: plant-capacity-constraint-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: forecast-accuracy-backtest-metrics
+    stream_type: Event Stream
+    source: Aera Cortex / Monitoring
+processing:
+  - component: Remote Functions (scenario simulation) + Process Builder (Data Science)
+    type: cortex
+    function: Quantify tradeoffs across candidate ramp profiles for decisioning
+  - component: Process Builder (IF) + CWB Lifecycle
+    type: process_builder
+    function: Present ranked options with explainability and trigger approval workflow
+  - component: Remote Functions (ERP writeback) + Notification
+    type: process_builder
+    function: Commit the selected ramp to SAP S/4HANA and inform downstream teams
+  - component: Cortex Monitoring + Process Builder (Wait/Asynchronous)
+    type: process_builder
+    function: Close the loop on post-launch adjustments and continuous improvement
+  - component: Cortex Auto Forecast + Agent Team
+    type: agent_teams
+    function: Produce demand scenarios and forecast uncertainty for the new model
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review orchestrate autonomous, demand-driven initial production volume and
+      ramp profiles for new vehicle models by unifying sales forecasts, variant
+      mix, market intelligence, and capacity constraints to optimize cogs,
+      revenue capture, and working capital. and approve the recommended action.

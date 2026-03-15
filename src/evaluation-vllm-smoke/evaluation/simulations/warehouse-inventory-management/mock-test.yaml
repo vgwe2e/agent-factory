@@ -1,0 +1,24 @@
+decision: >-
+  Decide optimal storage locations and methods for all raw materials/components
+  to minimize handling cost and cycle time while meeting service requirements
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: quarterly_review
+  parameters:
+    current_storage_method: random_storage
+    proposed_storage_method: class_based_storage
+expected_output:
+  action: adopt_class_based_storage
+  outcome: reduced_handling_cost_and_cycle_time
+  affected_components:
+    - raw_material_storage
+    - component_storage
+rationale: >-
+  Class-based storage optimizes the use of space and reduces the time required
+  for handling and retrieving items, leading to lower handling costs and shorter
+  cycle times. This aligns with the objective of minimizing handling costs and
+  cycle times while meeting service requirements.

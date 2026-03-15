@@ -1,0 +1,144 @@
+objective: >-
+  Autonomously optimize multi-echelon DRP decisions (DRP adjustments vs. STR
+  releases) end-to-end to minimize COGS, improve working capital, and protect
+  EBITDA while maintaining service levels and rapid execution with exception
+  handling.
+trigger: >-
+  Scheduled DRP planning run or new DRP/STR signal from Kinaxis/S4 indicating
+  allocation changes, inventory imbalances, or demand/constraint shifts.
+decision: >-
+  Select and execute DRP Adjustment or STR Release (or combination) per
+  SKU-location to balance COGS, service level, and working capital impact.
+expected_action: >-
+  Agentic AI orchestrated by Process Builder analyzes inputs (forecasts,
+  inventory, constraints), recommends per-SKU per-location DRP adjustments or
+  STR releases, invokes Remote Functions to write approved changes to Kinaxis
+  and S4, and opens CWB Lifecycle items for exceptions requiring human review.
+expected_outcome: >-
+  Closed-loop DRP cycle with automated execution of optimal distribution
+  decisions, measurable reductions in COGS and holding costs, improved working
+  capital, maintained or improved service levels, faster plan execution, and
+  tracked exceptions with auditable approval/override history.
+rationale: >-
+  Combining Agentic AI (for adaptive reasoning and trade-off negotiation),
+  Cortex forecasting/safety-stock services (for accurate demand and inventory
+  signals), Process Builder orchestration, Remote Functions (for reliable
+  ERP/APS writebacks), and CWB Lifecycle (for human-in-the-loop exceptions)
+  creates an autonomous, auditable DRP loop that balances cost and service while
+  preserving enterprise system integrity. Composite score: 0.9625;
+  Implementation complexity: HIGH.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting (SAS)
+    type: Advanced Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: >-
+      Kinaxis (Rebalancing / Shortage / Order Expediting / FG Safety Stock
+      modules)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: TMS/3PL
+    status: identified
+key_inputs:
+  - name: DRP candidate allocations / suggested replenishment volumes
+    source: Kinaxis RapidResponse / Kinaxis Rebalancing
+    purpose: Primary recommendations to evaluate for adjustment or release
+    preferred_stream_type: STREAMS
+  - name: Short-Term Release (STR) signals and timing constraints
+    source: Kinaxis / S4
+    purpose: Indicate immediate release windows, constraints, and supplier lead-times
+    preferred_stream_type: STREAMS
+  - name: Demand forecast and forecast deltas
+    source: SAS Advanced Statistical Forecasting
+    purpose: Update demand expectation and drive allocation sensitivity
+    preferred_stream_type: Subject Areas
+  - name: On-hand inventory and committed orders
+    source: S4 (SAP) and Blue Yonder WMS
+    purpose: Accurate inventory positions for multi-echelon decisions
+    preferred_stream_type: STREAMS
+  - name: Safety stock targets and FG model outputs
+    source: Kinaxis FG Safety Stock Modeling / Safety Stock Service
+    purpose: Guide buffer sizing and acceptable risk thresholds
+    preferred_stream_type: Subject Areas
+  - name: Transportation capacity, lead-times and cost
+    source: Uber Freight / TMS
+    purpose: Cost-service trade-offs for STR vs. rebalancing decisions
+  - name: COGS / unit cost and margin parameters
+    source: S4 (SAP)
+    purpose: Economic impact calculation for decision optimization
+    preferred_stream_type: Subject Areas
+  - name: Open exceptions and business rules
+    source: Process Builder ruleset / CWB Lifecycle
+    purpose: Routing and override criteria for human-in-the-loop decisions
+happy_path:
+  - step: >-
+      Ingest master and transactional inputs (forecasts, inventory, allocations,
+      transport/costs)
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: Collect and normalize source data from S4, SAS, Kinaxis, WMS, and TMS
+  - step: Compute updated demand, safety stock and allocation impact
+    stage: analyze
+    component: Cortex Auto Forecast + Safety Stock Service
+    purpose: Generate updated demand signals and buffer requirements for DRP evaluation
+  - step: >-
+      Agentic AI evaluates trade-offs and proposes per-SKU/location DRP
+      Adjustment vs STR Release
+    stage: decide
+    component: Agentic AI (orchestrated via Process Builder / Agent Team)
+    purpose: Adaptive reasoning to balance COGS, service level, and working capital
+  - step: >-
+      Execute approved changes: write DRP adjustments to Kinaxis and STR
+      releases to S4; record plan impacts
+    stage: act
+    component: Process Builder -> Remote Functions
+    purpose: Safe, auditable writebacks to APS/ERP and plan distribution
+  - step: >-
+      Open CWB Lifecycle items for exceptions and surface execution results to
+      planners
+    stage: review
+    component: CWB Lifecycle + UI Screen
+    purpose: Human-in-the-loop review of exceptions and final sign-off where required
+  - step: >-
+      Notify stakeholders and persist outcomes to Subject Areas for downstream
+      reporting
+    stage: notify
+    component: Process Builder Notification + Subject Areas
+    purpose: Communicate decisions and update analytics/scorecards for KPI tracking
+branches:
+  - condition: >-
+      Agentic AI recommends STR Release for a high-priority SKU but
+      transportation costs/lead-time exceed threshold
+    response: >-
+      Agentic AI falls back to DRP Adjustment with rebalancing and flags a CWB
+      for expedited approval if business requires
+    outcome: >-
+      Avoids excessive transport cost while surfacing exception for potential
+      executive override
+  - condition: >-
+      Multiple conflicting recommendations across echelons (downstream stockouts
+      vs upstream capacity constraints)
+    response: >-
+      Create a multi-party Agent Team subprocess to run scenario negotiation,
+      present top N tradeoff options, and open CWB Lifecycle for selected
+      scenario
+    outcome: >-
+      Transparent, negotiated resolution that balances multi-echelon constraints
+      with auditable rationale
+  - condition: Human reviewer rejects agent recommendation in CWB (override)
+    response: >-
+      Process Builder records the override, triggers Remote Function to revert
+      scheduled writebacks if already executed, and logs rationale for model
+      retraining
+    outcome: >-
+      Safe rollback, audit trail for continuous learning, and retraining signal
+      for Agentic AI/Cortex

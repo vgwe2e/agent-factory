@@ -1,0 +1,61 @@
+decision: >-
+  Accept or reject deterministic segmentation results and apply ABC/XYZ labels
+  per SKU-Location based on confidence thresholds and business rules; if
+  accepted, push labels and triggered allocations to planning and execution
+  systems.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled daily segmentation assessment (or on-demand run) after nightly
+    data refresh completes and promotion calendar updates are ingested.
+  parameters:
+    objective: >-
+      Use deterministic demand segmentation to create SKU-Location demand blocs
+      (ABC/XYZ), then automatically allocate production and
+      inventory/replenishment at the segment level with touchless execution and
+      rapid rollback.
+    key_inputs:
+      - SKU master (attributes, lifecycle, product family)
+      - Location master (site attributes, capacities)
+      - Sales history and demand signals (POS, shipments)
+      - Promotions calendar and planned events
+      - On-hand inventory and WMS locations
+      - Supply constraints and production capacity
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Kinaxis RapidResponse
+      - Blue Yonder WMS
+      - Uber Freight (TMS / 3PL)
+      - Aera STREAMS (Data Foundation)
+      - Cortex Auto Forecast / Monitoring
+      - Process Builder
+expected_output:
+  action: >-
+    System applies ABC/XYZ labels to SKU-Location records, generates
+    segment-level demand blocs, executes allocation instructions (production
+    push to S4/Kinaxis, replenishment orders to S4, transfer/rebalance actions
+    to Kinaxis/3PL/WMS) via Remote Functions and Process Builder; enable
+    automated rollback path if downstream validation fails.
+  outcome: >-
+    Touchless, repeatable allocation flows that align inventory and production
+    to revenue-driven demand segments, improved forecast stability and service,
+    measurable reduction in stockouts/overstock at segment level, and ability to
+    revert recent allocations within a defined validation window.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - STREAMS (Rules) + Data Science (deterministic rule set)
+    - Process Builder (IF/Rules) + CWB Lifecycle (recommendation view)
+    - Process Builder (Transaction) + Remote Functions
+    - Cortex Monitoring + Process Builder (Rollback Transaction) + UI Screen
+    - Dashboard
+rationale: >-
+  Deterministic segmentation (ABC/XYZ) produces stable, explainable demand blocs
+  that simplify allocation logic. Orchestrating assessment, decision, and
+  execution with Process Builder + Remote Functions and system writebacks (S4,
+  Kinaxis, WMS, TMS) enables end-to-end automation with explicit checkpoints and
+  rollback—balancing speed with control for high-impact SKU-Location changes.

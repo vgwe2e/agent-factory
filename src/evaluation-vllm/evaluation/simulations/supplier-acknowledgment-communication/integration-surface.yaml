@@ -1,0 +1,26 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: supplier-acknowledgment
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: po-terms
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supplier-reliability-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Remote Functions
+    type: process_builder
+    function: Apply rules to correct or escalate discrepancies
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review end-to-end automated handling of supplier po acknowledgments,
+      discrepancy resolutions, po system integration, and escalation for
+      unacknowledged pos across a multi-echelon automotive supply network. and
+      approve the recommended action.

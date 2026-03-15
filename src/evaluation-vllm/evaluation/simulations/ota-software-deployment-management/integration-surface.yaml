@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: release-schedule
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: test-fleet-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: deployment-status
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: server-utilization-metrics
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Optimize deployment timing and sequencing.
+  - component: Remote Functions
+    type: cortex
+    function: Ensure package readiness.
+  - component: Process Builder
+    type: process_builder
+    function: Maximize deployment success probability.
+  - component: UI Screens
+    type: process_builder
+    function: Track deployment status.
+  - component: Remote Functions
+    type: process_builder
+    function: Ensure fleet security posture.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review to autonomously plan, validate, execute, monitor, and remediate ota
+      software deployment cycles to optimize risk, downtime, and capacity,
+      reducing working capital tied to failed deployments and minimizing cogs.
+      and approve the recommended action.

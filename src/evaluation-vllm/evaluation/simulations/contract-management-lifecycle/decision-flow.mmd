@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New contract negotiation or amendment request.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve supplier data and contract terms.]
+  N1 --> N2[Cortex: AutoML - Analyze supplier performance and contract terms.]
+  N2 --> N3{PB: Process Builder - Draft and negotiate contract terms.}
+  N3 -->|Primary| N4[PB: CWB Lifecycle - Execute and monitor contract terms.]
+  N4 --> N5[PB: Notification - Generate reports and notifications.]
+  N5 --> Z1[Outcome: Reduced COGS, improved working capital, and enhanced contract compliance and risk management.]
+  N3 -->|Supplier performance below threshold.| B1[Trigger renegotiation or escalation.]
+  B1 --> O1[Outcome: Adjust contract terms to improve performance.]
+  O1 --> End[End]
+  N3 -->|Contract nearing expiration.| B2[Initiate renewal or re-sourcing process.]
+  B2 --> O2[Outcome: Proactively manage contract expiration and renewal.]
+  O2 --> End[End]
+  N3 -->|IP protection risk identified.| B3[Add or modify IP protection clauses.]
+  B3 --> O3[Outcome: Enhance IP protection based on risk assessment.]
+  O3 --> End[End]
+  Z1 --> End[End]

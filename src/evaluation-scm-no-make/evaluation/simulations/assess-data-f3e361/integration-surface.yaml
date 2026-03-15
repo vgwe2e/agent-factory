@@ -1,0 +1,65 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Advanced Forecasting Platform
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / S&OP
+    status: identified
+  - name: Kinaxis
+    type: Supply Chain Planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Frieght
+    status: identified
+aera_ingestion:
+  - stream_name: historical-sales-shipments
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA) + Blue Yonder WMS
+  - stream_name: advanced-statistical-forecasts
+    stream_type: Event Stream
+    source: SAS
+  - stream_name: promotion-pricing-calendar
+    stream_type: Report Data
+    source: S4 (SAP S/4HANA)
+  - stream_name: cogs-and-gross-margin-by-sku
+    stream_type: Event Stream
+    source: S4 (SAP S/4HANA)
+  - stream_name: inventory-on-hand-and-locations
+    stream_type: Subject Area
+    source: Blue Yonder WMS
+  - stream_name: lead-times-and-supply-constraints
+    stream_type: Event Stream
+    source: Kinaxis RapidResponse
+  - stream_name: 3rd-party-shipments-carrier-events
+    stream_type: Event Stream
+    source: Uber Freight TMS / 3PL Uber Frieght
+  - stream_name: external-drivers-weather-holidays-macro
+    stream_type: DDM/Crawlers
+    source: DDM/Crawlers
+  - stream_name: feature-candidate-dataset-new-driver-data
+    stream_type: STREAMS
+    source: DDM/Crawlers / STREAMS
+processing:
+  - component: Cortex Auto Forecast + RCA Service (feature importance)
+    type: cortex
+    function: Compare baseline vs. enriched forecasts and score driver importance/impact
+  - component: Process Builder (IF, Rules) + CWB Lifecycle
+    type: process_builder
+    function: Auto-accept significant drivers or create CWB for human review/override
+  - component: Cortex Auto Forecast + Safety Stock Service + Remote Functions
+    type: process_builder
+    function: >-
+      Produce updated forecasts, recalc safety stock, and writebacks to
+      S4/Kinaxis for replenishment
+ui_surface:
+  - component: UI Screens (CWB) + Process Builder Notification
+    screen: Primary
+    purpose: Present changes, revenue impact, and exception items for review and audit

@@ -1,0 +1,63 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Manufacturing Execution System (MES)
+    type: MES
+    status: tbd
+  - name: Warehouse Management System (WMS)
+    type: WMS
+    status: tbd
+  - name: Supplier EDI / External Lead-time Feeds
+    status: tbd
+aera_ingestion:
+  - stream_name: demand-forecast
+    stream_type: Event Stream
+    source: >-
+      Cortex Auto Forecast (derived from Subject Areas + SAP S/4HANA historical
+      sales/orders)
+  - stream_name: inventory-on-hand-in-transit
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: plant-supplier-capacity-profiles
+    stream_type: STREAMS
+    source: SAP S/4HANA (master data) + MES (detailed rates)
+  - stream_name: production-routing-changeover-sequencing-constraints
+    stream_type: Event Stream
+    source: MES / SAP S/4HANA
+  - stream_name: financial-targets-cost-parameters
+    stream_type: STREAMS
+    source: SAP S/4HANA (finance)
+  - stream_name: s-op-policy-definitions-and-contingency-rules
+    stream_type: Event Stream
+    source: User input via UI Screen / Process Builder configuration
+  - stream_name: risk-signals-supplier-health-lead-time-volatility
+    stream_type: DDM/Crawlers
+    source: Supplier EDI / External feeds
+processing:
+  - component: Cortex Auto Forecast + Safety Stock Service + Remote Functions
+    type: cortex
+    function: >-
+      Produce baseline forecasts, safety stock recommendations and feasibility
+      checks for scenarios
+  - component: UI Screen / CWB Lifecycle
+    type: process_builder
+    function: >-
+      Surface recommendations for selection/override; record decision and
+      trigger Process Builder Action Items to write approved plan to SAP S/4HANA
+  - component: Process Builder (Agent Team + Remote Functions)
+    type: agent_teams
+    function: >-
+      Agentic AI creates multiple demand-supply plan options (production
+      sequences, inventory positions, contingencies) with KPI impact and
+      recommended executive actions
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review orchestrate the monthly s&op cycle to produce integrated
+      demand-supply plans that align production sequencing, multi-echelon
+      inventory policies, and contingency-aware capacity decisions across
+      plants, suppliers, and distribution to reduce cogs, improve
+      on-time-in-full (otif), and increase order capture. and approve the
+      recommended action.

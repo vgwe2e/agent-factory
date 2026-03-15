@@ -1,0 +1,77 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Statistical tooling
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting Engine
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (General)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: Logistics/TMS
+    status: identified
+aera_ingestion:
+  - stream_name: sku-master-bom
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA)
+  - stream_name: location-network-master
+    stream_type: STREAMS
+    source: S4 (SAP S/4HANA)
+  - stream_name: baseline-promotional-forecasts
+    stream_type: Event Stream
+    source: Advanced Statistical Forecasting in SAS
+  - stream_name: inventory-on-hand-commitments
+    stream_type: STREAMS
+    source: Blue Yonder WMS / S4
+  - stream_name: shortage-constraint-alerts
+    stream_type: Event Stream
+    source: Kinaxis RapidResponse
+  - stream_name: promotions-marketing-change-events
+    stream_type: DDM/Crawlers
+    source: SAS / Marketing feeds
+  - stream_name: supplier-lead-time-capacity
+    stream_type: Event Stream
+    source: S4 / Kinaxis
+  - stream_name: transportation-etas-and-cost-signals
+    stream_type: Event Stream
+    source: Uber Freight (TMS)
+processing:
+  - component: Cortex Auto Forecast + RCA Service
+    type: cortex
+    function: >-
+      Produce recommended requirement, safety stock, and rebalancing actions
+      with confidence and impact estimates
+  - component: Remote Functions + Process Builder (Action Item)
+    type: process_builder
+    function: >-
+      Write adjustments to S4/Kinaxis and signal 3PL/TMS for transport or
+      fulfillment changes
+  - component: CWB Lifecycle + Notification + UI Screen
+    type: process_builder
+    function: >-
+      Ensure audit trail, stakeholder visibility, and measure change impact
+      (waste, COGS, service levels)
+  - component: Process Builder (IF, Rules) + Agent Team
+    type: agent_teams
+    function: >-
+      Apply governance: auto-execute high-confidence, create CWB for approvals
+      for others
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end data orchestration for sku x location across
+      hershey to harmonize forecasts, inventory, and supplier requirements so
+      autonomous recommendations and actions reduce waste, improve cogs, and
+      protect revenue during promotional and demand variability. and approve the
+      recommended action.

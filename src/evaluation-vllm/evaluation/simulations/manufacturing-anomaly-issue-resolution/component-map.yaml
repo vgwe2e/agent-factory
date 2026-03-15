@@ -1,0 +1,36 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Identify anomalies
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: RCA Service
+    purpose: Determine cause of stoppage
+    confidence: inferred
+    capability: Determine cause of stoppage
+process_builder:
+  - name: Remote Functions
+    purpose: Execute remediation plan
+    confidence: inferred
+    node_type: act
+  - name: Process Builder
+    purpose: Route to appropriate departments
+    confidence: confirmed
+    node_type: act
+  - name: Subject Areas
+    purpose: Monitor KPIs for recurrence
+    confidence: confirmed
+    node_type: review
+agent_teams:
+  - name: Agentic AI
+    purpose: Choose optimal actions
+    confidence: inferred
+    role: Choose optimal actions
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomous detection, triage, escalation, and resolution of
+      manufacturing anomalies in real time to reduce cogs, prevent waste, and
+      improve otif. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

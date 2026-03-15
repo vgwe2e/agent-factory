@@ -1,0 +1,40 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: demand-forecast
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: inventory-levels
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: production-orders
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: capacity-utilization-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: rework-requirements
+    stream_type: STREAMS
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Optimize production schedules based on demand and inventory
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure timely material availability for production
+  - component: Exception Management
+    type: process_builder
+    function: Identify and address deviations proactively
+  - component: Remote Functions
+    type: process_builder
+    function: Reallocate resources to meet demand efficiently
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end production planning and control decisions to
+      maximize ebitda, minimize cogs, and optimize working capital. and approve
+      the recommended action.

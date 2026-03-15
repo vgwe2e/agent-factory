@@ -1,0 +1,24 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Data collection
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predictive analytics
+    confidence: confirmed
+    capability: Predictive analytics
+process_builder:
+  - name: Remote Functions
+    purpose: Network optimization
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize multi-echelon service parts inventory and distribution to
+      reduce working capital, cut cogs, and improve otif and order capture
+      across dealer networks. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

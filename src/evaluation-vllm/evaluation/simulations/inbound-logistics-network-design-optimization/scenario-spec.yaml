@@ -1,0 +1,70 @@
+objective: >-
+  Optimize inbound logistics network design, carrier strategy, mode/lanes, and
+  warehouse footprint to reduce COGS, lower working capital, and improve on-time
+  delivery.
+trigger: Periodic review of inbound logistics network performance and cost analysis.
+decision: >-
+  Jointly optimize logistics network design, carrier strategy, mode/lanes, and
+  warehouse footprint.
+expected_action: >-
+  Run simulations, select optimal network configurations, carriers, and modes,
+  and implement changes.
+expected_outcome: >-
+  Reduced inbound COGS, lower working capital, improved on-time delivery, and
+  enhanced sustainability.
+rationale: >-
+  Coordinating multiple L4 decisions with constraint-aware automation will cut
+  inbound costs and stockouts, accelerate decision cycles, and improve overall
+  logistics efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Historical Logistics Data
+    source: SAP S/4HANA
+    purpose: Provide baseline data for simulation and optimization.
+  - name: Carrier Contracts
+    source: SAP S/4HANA
+    purpose: Evaluate current and potential carrier contracts.
+  - name: Warehouse Locations
+    source: SAP S/4HANA
+    purpose: Identify existing and potential warehouse locations.
+  - name: Transportation Modes and Lanes
+    source: SAP S/4HANA
+    purpose: Analyze current transportation modes and lanes.
+happy_path:
+  - step: Extract historical logistics data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for simulation.
+  - step: Simulate and model different logistics network configurations.
+    stage: analyze
+    component: AutoML
+    purpose: Identify optimal network designs.
+  - step: Evaluate carrier contracts and select optimal carriers.
+    stage: analyze
+    component: Remote Functions
+    purpose: Determine best carrier strategy.
+  - step: Optimize warehouse locations and internal layouts.
+    stage: analyze
+    component: AutoML
+    purpose: Enhance material flow and reduce costs.
+  - step: Develop and implement mode and lane optimization strategies.
+    stage: analyze
+    component: Remote Functions
+    purpose: Minimize COGS and improve delivery speed.
+  - step: Present optimized logistics network design for approval.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure human-in-the-loop review and acceptance.
+branches:
+  - condition: Insufficient data available for simulation.
+    response: Request additional data from SAP S/4HANA.
+    outcome: Resume simulation after data collection.
+  - condition: Approved changes conflict with existing contracts.
+    response: Negotiate contract modifications with carriers.
+    outcome: Implement revised logistics network design.
+  - condition: Sustainability initiatives exceed budget constraints.
+    response: Prioritize cost-effective green logistics actions.
+    outcome: Balance environmental impact with financial considerations.

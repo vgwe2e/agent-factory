@@ -1,0 +1,42 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: recall-campaign-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: logistics-costs
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: defective-part-returns
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: obsolete-surplus-parts
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Predict required parts volume for recall campaigns.
+  - component: Remote Functions
+    type: process_builder
+    function: Place orders with suppliers considering lead times and costs.
+  - component: Process Builder
+    type: process_builder
+    function: Ensure timely delivery while minimizing logistics costs.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Optimize working capital by choosing store, scrap, recycle, or return
+      options.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize recall parts supply chain and logistics coordination to
+      reduce working capital, prevent stockouts, and improve otif while lowering
+      cogs and ebitda. and approve the recommended action.

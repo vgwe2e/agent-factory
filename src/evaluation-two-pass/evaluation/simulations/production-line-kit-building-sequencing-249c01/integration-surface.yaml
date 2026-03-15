@@ -1,0 +1,64 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: MES
+    type: MES
+    status: tbd
+  - name: Warehouse Management System (WMS)
+    type: WMS
+    status: tbd
+  - name: Supplier Portal / TMS
+    type: Supplier Portal / TMS
+    status: tbd
+aera_ingestion:
+  - stream_name: production-schedule-line-level-sequence-takt
+    stream_type: delta_batch
+    source: SAP S/4HANA (Production Planning)
+  - stream_name: kit-boms-kit-definitions
+    stream_type: delta_batch
+    source: SAP S/4HANA / PLM
+  - stream_name: multi-echelon-inventory-levels-plant-dc-supplier-buffers
+    stream_type: delta_batch
+    source: SAP S/4HANA / WMS
+  - stream_name: line-consumption-telemetry-consumption-rates-anomalies
+    stream_type: Event Stream
+    source: MES
+  - stream_name: sequencing-constraints-changeover-costs
+    stream_type: Event Stream
+    source: Production Planning / MES
+  - stream_name: supplier-etas-and-carrier-schedules
+    stream_type: Event Stream
+    source: Supplier Portal / TMS
+  - stream_name: material-handling-capacity-and-routing-rules
+    stream_type: Event Stream
+    source: WMS / Plant Operations
+processing:
+  - component: Process Builder (IF)
+    type: process_builder
+    function: >-
+      Apply business rules and thresholds to determine auto-execute vs. human
+      review.
+  - component: Remote Functions (ERP Writeback) + Process Builder (Action Item)
+    type: process_builder
+    function: >-
+      Persist plan to ERP and initiate logistics/supplier workflows for JIS
+      execution.
+  - component: UI Screen (dashboard) + Notification
+    type: process_builder
+    function: >-
+      Provide visibility, monitor OTIF/COGS impacts and route exceptions into
+      CWB when needed.
+  - component: Agentic AI (Multi-Agent Pipeline) + Remote Functions
+    type: agent_teams
+    function: >-
+      Produce optimized, constraint-aware delivery and kit sequences using
+      agentic reasoning and optimization logic.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review orchestrate line-side material delivery (jis, replenishment, waste
+      reduction) across production lines by coordinating multi-echelon inventory
+      and dynamic sequencing constraints to minimize cogs and improve otif. and
+      approve the recommended action.

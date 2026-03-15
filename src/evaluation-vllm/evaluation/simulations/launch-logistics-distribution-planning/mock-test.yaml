@@ -1,0 +1,40 @@
+decision: >-
+  Optimize logistics and distribution planning for new automotive models to
+  reduce COGS, protect service levels, and accelerate time-to-market.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Automotive model launch announcement
+  parameters:
+    objective: Launch Logistics & Distribution Planning
+    key_inputs:
+      - Model Launch Schedule
+      - Carrier Costs
+      - Service Level Requirements
+      - Regulatory Compliance Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Design optimal inbound logistics network, plan outbound distribution
+    network, develop packaging and containerization strategy, ensure customs and
+    trade compliance, create contingency logistics plan
+  outcome: >-
+    Reduced COGS, protected service levels, accelerated time-to-market,
+    optimized multi-echelon stock positioning, and improved OTIF.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - AutoML
+    - Safety Stock Service
+    - RCA Service
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Leverage Aera's agentic AI capabilities to coordinate semi-autonomous
+  decision-making across various logistics functions, ensuring efficient and
+  compliant operations during automotive model launches.

@@ -1,0 +1,40 @@
+decision: >-
+  Optimize transportation modes, lanes, and routes to minimize logistics costs
+  and stockouts while improving on-time delivery metrics.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic review of transportation strategy and mode optimization needs.
+  parameters:
+    objective: >-
+      Unify multimodal transport design, carrier strategy, lane optimization,
+      and flow analysis to minimize COGS and improve OTIF across Ford's
+      automotive parts network.
+    key_inputs:
+      - Carrier Performance Data
+      - Freight Lane Data
+      - SKU Location Data
+      - Special Cargo Requirements
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate end-to-end transportation decisions with cross-system
+    orchestration, focusing on continuous, near-real-time mode selection, lane
+    balancing, and capacity-aware routing.
+  outcome: >-
+    Reduced logistics costs, minimized stockouts, and improved on-time delivery
+    metrics.
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Cortex Auto Forecast
+    - RCA Service
+    - Process Builder
+    - Dashboard
+rationale: >-
+  The initiative aims to leverage AI and ML for deterministic decision-making to
+  enhance overall supply chain efficiency and cost-effectiveness.

@@ -1,0 +1,57 @@
+decision: >-
+  Choosing purchase order creation quantity and terms between immediate PO
+  issuance and deferred/approval-required options, balancing total cost of
+  ownership, lead-time risk, and contract compliance.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    New material or service request submitted (S4 procurement request or
+    procurement portal).
+  parameters:
+    objective: >-
+      Automatically create Purchase Orders in S4 for approved material/service
+      requests while balancing cost, lead-time risk, and contract compliance.
+    key_inputs:
+      - Purchase / Procurement Request
+      - Material Master (prices, UoM, lead times)
+      - Forecasted Demand / Recommended Qty
+      - Inventory On Hand & Reserved
+      - Available-to-Promise (ATP) & Supply Constraints
+      - Supplier Contracts & Approved Terms
+      - Budget / Financial Approval Limits
+      - Supplier Performance / Qualification
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Kinaxis RapidResponse
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Freight
+      - Contract Repository
+      - Supplier Portal / Catalog
+expected_output:
+  action: >-
+    Evaluate request against inventory, forecast, supplier contracts, lead
+    times, budget and business rules in Process Builder; auto-issue PO to S4 via
+    Remote Functions when within rules, otherwise open a CWB Lifecycle approval
+    or Action Item for buyer review; notify stakeholders and record transaction.
+  outcome: >-
+    Purchase Order created in S4 with legal/commercial/financial terms recorded,
+    financial commitment reserved or approval workflow created, procurement and
+    supplier notified, and transaction logged in Subject Areas for audit and
+    downstream planning.
+  affected_components:
+    - STREAMS
+    - Process Builder
+    - Remote Functions
+    - Notification
+    - Dashboard
+rationale: >-
+  PO creation is deterministic and governed by enterprise rules (contracts,
+  budget, ATP, supplier approvals). Automating reduces cycle time, enforces
+  compliance, and ensures financial commitments are captured in ERP while
+  surfacing exceptions for human review.

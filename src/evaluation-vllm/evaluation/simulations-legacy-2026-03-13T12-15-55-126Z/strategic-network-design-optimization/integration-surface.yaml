@@ -1,0 +1,42 @@
+source_systems:
+  - name: SAP S/4HANA
+    status: identified
+aera_ingestion:
+  - stream_name: network_nodes
+    stream_type: Reference Stream
+    source: SAP S/4HANA
+  - stream_name: financial_metrics
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: network_footprint_definition
+    type: Model
+    function: Define global network nodes and their relationships
+  - component: hub_spoke_model_development
+    type: Model
+    function: Develop regional hub and spoke configurations
+  - component: scenario_planning
+    type: Simulation
+    function: Simulate future states and run scenario planning
+  - component: business_case_development
+    type: Analysis
+    function: Develop business case for network redesign
+  - component: merger_integration_planning
+    type: Planning
+    function: Plan network integration for post-merger/acquisition
+ui_surface:
+  - component: network_footprint_definition
+    screen: Network Footprint Editor
+    purpose: Define and visualize global network footprint
+  - component: hub_spoke_model_development
+    screen: Hub & Spoke Configuration
+    purpose: Configure regional hub and spoke models
+  - component: scenario_planning
+    screen: Scenario Simulator
+    purpose: Run and compare scenarios
+  - component: business_case_development
+    screen: Business Case Builder
+    purpose: Build and analyze business cases
+  - component: merger_integration_planning
+    screen: M&A Integration Planner
+    purpose: Plan and execute network integration for M&A

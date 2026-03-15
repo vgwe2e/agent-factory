@@ -1,0 +1,8 @@
+groundednessScore: 25
+integrationConfidenceScore: 100
+ambiguityRiskScore: 57
+implementationReadinessScore: 58
+verdict: REVIEW
+reasons:
+  - Low groundedness (25) from confirmed vs inferred component references.
+  - Decision flow failed Mermaid validation.

@@ -1,0 +1,153 @@
+objective: >-
+  Automate unified risk segmentation, assessment, and proactive mitigation
+  across inventory, supplier, and promotion risks to protect working capital and
+  EBITDA across SKU/location matrices.
+trigger: >-
+  Scheduled daily risk-scoring pipeline (batch) detects SKU/location cumulative
+  risk score above configurable threshold OR user-initiated risk scan via
+  Agentic AI.
+decision: >-
+  Allocate escalation and mitigation effort among competing risk indicators
+  (inventory write-off exposure, supplier volatility, promotion mispricing) by
+  selecting which items to auto-mitigate, which to surface for human review, and
+  which to suppress through adaptive thresholds.
+expected_action: >-
+  Consolidate inputs, compute unified risk segments and root causes via Cortex
+  RCA and agentic reasoning, generate ranked mitigation recommendations,
+  automatically execute low-risk automated mitigations via Remote Functions
+  (S4/Kinaxis/Blue Yonder writebacks, expedite orders), and route
+  high-uncertainty or high-impact items to CWB Lifecycle for human approval.
+expected_outcome: >-
+  Earlier detection and prioritized mitigation of high-impact risks, fewer
+  inventory write-offs, reduced promotion mispricing exposure, faster
+  supplier-contingency response, and measurable improvement in working capital
+  and margin protection across SKU/location clusters.
+rationale: >-
+  Agentic AI (Agent Team + Process Builder) coordinates across data ingestion
+  (DDM/STREAMS), ML-driven root-cause segmentation (Cortex RCA Service) and
+  deterministic actions (Remote Functions + CWB Lifecycle). This hybrid
+  architecture enables adaptive, conversational investigation of ambiguous cases
+  while preserving automated, auditable writebacks to ERPs and APS systems for
+  mitigation execution.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (Order Expediting / Rebalancing / FG Safety Stock)
+    type: APS
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Advanced Analytics
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: Logistics Provider
+    status: identified
+key_inputs:
+  - name: Inventory on-hand & location balances
+    source: S4 / Blue Yonder WMS
+    purpose: Calculate exposure to write-offs, aging, and rebalancing opportunity
+    preferred_stream_type: scheduled_batch
+  - name: Forecasts and forecast error / bias
+    source: SAS / Kinaxis RapidResponse
+    purpose: Detect demand-driven risk and quantify forecast-driven inventory exposure
+    preferred_stream_type: scheduled_batch
+  - name: Supplier risk & lead-time volatility
+    source: S4 + Kinaxis + procurement feeds
+    purpose: Assess supplier-side disruption probability and mitigation options
+    preferred_stream_type: scheduled_batch
+  - name: Promotion pricing and uplift plans
+    source: S4 / Promotion Planning
+    purpose: Identify promotion mispricing and margin risk vs. planned uplift
+    preferred_stream_type: scheduled_batch
+  - name: Open POs, inbound arrivals, and transit status
+    source: S4 / Uber Freight TMS / 3PL Uber Freight
+    purpose: >-
+      Support mitigation actions (expedite, diversion, cancel) and working
+      capital impact
+    preferred_stream_type: scheduled_batch
+  - name: Historical write-offs & adjustment history
+    source: S4 / Finance reports
+    purpose: >-
+      Train segmentation and estimate exposure magnitude for suggested
+      mitigations
+    preferred_stream_type: scheduled_batch
+  - name: Working capital KPIs (DSO, DPO, Inventory days)
+    source: Finance (S4 / reporting)
+    purpose: Assess organizational impact and prioritization of mitigation actions
+    preferred_stream_type: scheduled_batch
+happy_path:
+  - step: >-
+      Consolidate and normalize all risk-related feeds into Subject Areas via
+      DDM/Crawlers and STREAMS
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Unify risk definitions, clean and prepare SKU/location facts and
+      dimensions for analysis
+  - step: >-
+      Perform ML-driven segmentation and root-cause analysis, and generate risk
+      scores and explanations
+    stage: analyze
+    component: Cortex RCA Service + Data Science
+    purpose: >-
+      Classify risks (write-off, supplier, promotion) and surface feature impact
+      for each SKU/location
+  - step: >-
+      Agentic pipeline ranks items by impact and confidence; Process Builder
+      evaluates rules and routes items to automated mitigation or human review
+    stage: decide
+    component: Process Builder (IF + Rules) + Agent Team
+    purpose: >-
+      Select mitigation path balancing detection sensitivity vs. workload and
+      WCM/EBITDA impact
+  - step: >-
+      Execute low-risk automated mitigations and orchestration (ERP writebacks,
+      Kinaxis reprioritize/replan, create expediting via TMS) via Remote
+      Functions and Process Builder actions
+    stage: act
+    component: Remote Functions + Process Builder Action Item
+    purpose: >-
+      Implement recommended changes (cancel/expedite/reprice/reallocate) and
+      record audit trail
+  - step: >-
+      Surface recommendations and outcomes in CWB UI and send notifications;
+      loop back flagged items for human approval or tuning
+    stage: review
+    component: CWB Lifecycle + UI Screen + Notification
+    purpose: >-
+      Enable human-in-the-loop approvals for high-impact or low-confidence cases
+      and capture decisions for learning
+branches:
+  - condition: Low model confidence or conflicting signals across sources
+    response: >-
+      Agent Team prompts human analyst via CWB Lifecycle with consolidated
+      evidence and recommended actions for approval
+    outcome: >-
+      Human-in-the-loop decision ensures high-impact items are validated; case
+      appended to model monitoring for retraining
+  - condition: >-
+      High-impact risk but mitigation blocked by supplier constraints (no
+      alternate supply, long lead-times)
+    response: >-
+      Escalate to procurement with templated negotiation playbook (Agentic AI),
+      trigger Kinaxis replan for reallocation, and create finance alert for WCM
+      provisioning
+    outcome: >-
+      Coordinated cross-functional mitigation reduces exposure or secures
+      contingency actions while recording working capital impact
+  - condition: Transient spike flagged as false positive (single-day anomaly)
+    response: >-
+      Auto-suppress and adjust detection sensitivity for the SKU/location; log
+      event and decrement alert priority
+    outcome: >-
+      Reduce analyst workload and alert noise while preserving auditability and
+      the ability to revert sensitivity changes

@@ -1,0 +1,136 @@
+objective: >-
+  Autonomously produce conflict-free, cost-optimized weekly and long-range
+  production master production schedules (MPS) and build sequences across
+  vehicle platforms and components to reduce COGS, improve line efficiency, and
+  increase on-time delivery.
+trigger: >-
+  Scheduled weekly planning cadence or material/constraint change event (delta
+  from SAP S/4HANA) that impacts production windows, capacity, or dealer
+  allocations.
+decision: >-
+  Determine an optimal, conflict-free multi-echelon MPS and vehicle build
+  sequence that balances line load, minimizes changeovers, respects capacity and
+  due-date constraints, and minimizes total manufacturing cost (COGS).
+expected_action: >-
+  Orchestrate end-to-end data ingestion, run deterministic optimization solver
+  to generate MPS and production sequences, validate feasibility against
+  multi-echelon constraints, write optimized schedules back to SAP S/4HANA, and
+  surface recommendations for planner review (with exception handling).
+expected_outcome: >-
+  Conflict-free production schedules and build sequences written to SAP S/4HANA;
+  measurable COGS reduction, fewer changeovers, improved line utilization,
+  higher on-time delivery rates, and reduced manual rework during weekly
+  planning cycles.
+rationale: >-
+  A deterministic, process-driven optimization engine coordinates demand,
+  capacity, inventory, and sequence constraints across echelons. Process Builder
+  orchestrates data and solver steps, Remote Functions execute the optimization
+  and SAP writebacks, and CWB/UI screens handle exceptions and planner
+  oversight—delivering repeatable, auditable COGS improvements at scale.
+source_systems:
+  - name: SAP S/4HANA
+    status: identified
+  - name: MES / Plant Execution System
+    status: tbd
+  - name: Dealer Allocation System / CRM
+    status: tbd
+key_inputs:
+  - name: Dealer allocations & demand orders
+    source: SAP S/4HANA
+    purpose: >-
+      Downstream demand signal and order due dates used to define production
+      requirements and priorities.
+    preferred_stream_type: batch
+  - name: Long-range capacity plans & work center calendars
+    source: SAP S/4HANA
+    purpose: >-
+      Available capacity, shifts, and planned outages used as hard constraints
+      in sequencing and MPS.
+    preferred_stream_type: batch
+  - name: BOMs, routings, changeover matrices
+    source: SAP S/4HANA
+    purpose: >-
+      Item-level manufacturing processes and changeover costs/times required to
+      compute sequence-dependent costs and feasibility.
+    preferred_stream_type: batch
+  - name: Inventory on-hand & inbound receipts
+    source: SAP S/4HANA
+    purpose: >-
+      Component availability and allocation rules for multi-echelon feasibility
+      checks.
+    preferred_stream_type: batch
+  - name: Cost parameters (COGS drivers, labor rates, material costs)
+    source: tbd
+    purpose: >-
+      Objective weights for the deterministic solver to minimize overall COGS
+      and sequence costs.
+  - name: Business constraints & rules (service levels, platform prioritization)
+    source: tbd
+    purpose: >-
+      Policy constraints applied in the optimization model to enforce business
+      objectives and allocations.
+happy_path:
+  - step: >-
+      Ingest master and transactional data for the planning horizon from SAP
+      S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Bring demand, capacity, BOM, inventory and master data into Aera Subject
+      Areas for planning use.
+  - step: >-
+      Transform and consolidate inputs into planning subject areas and
+      validation checks.
+    stage: analyze
+    component: STREAMS + Subject Areas
+    purpose: >-
+      Normalize and validate multi-echelon data, flag data quality issues and
+      generate aggregated planning views.
+  - step: >-
+      Orchestrate deterministic optimization to produce conflict-free MPS and
+      build sequences.
+    stage: decide
+    component: Process (Process Builder) -> Remote Functions (optimization solver)
+    purpose: >-
+      Run solver with multi-echelon constraints and cost objective to generate
+      optimized schedule and sequence.
+  - step: >-
+      Persist optimized schedules and sequences back to SAP S/4HANA and update
+      planning Subject Areas.
+    stage: act
+    component: Remote Functions (SAP writeback)
+    purpose: >-
+      Write MPS, production orders, and sequence assignments into SAP S/4HANA
+      and refresh internal views.
+  - step: Surface recommendations and exceptions for planner review and approval.
+    stage: review
+    component: CWB Lifecycle + UI Screens
+    purpose: >-
+      Present schedules, exception list, and key metrics for human validation,
+      accept/reject or manual override.
+branches:
+  - condition: >-
+      Solver returns infeasible solution due to hard capacity or inventory
+      conflicts
+    response: >-
+      Process Builder triggers a rules branch to relax non-critical constraints
+      (per policy) or create exception CWB items for planner intervention.
+    outcome: >-
+      Either a feasible alternative schedule is produced with policy-guided
+      relaxations or exceptions are routed to planners for manual resolution.
+  - condition: Optimization run exceeds SLA or times out
+    response: >-
+      Fallback to a deterministic heuristic sequence (fast approximation) via
+      Remote Functions and surface a 'best-effort' schedule while alerting
+      planners.
+    outcome: >-
+      Planners receive a timely, suboptimal schedule to avoid planning delays
+      and can request a re-run or manual adjustments.
+  - condition: Planner rejects or overrides optimized schedule in CWB
+    response: >-
+      Capture override reason, re-run targeted localized optimization
+      (subsequence) via Process Builder + Remote Functions, and write accepted
+      changes back to SAP S/4HANA.
+    outcome: >-
+      System preserves audit trail, implements planner adjustments, and updates
+      downstream systems while learning policy exceptions for future runs.

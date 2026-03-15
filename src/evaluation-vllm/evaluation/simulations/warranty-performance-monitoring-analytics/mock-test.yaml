@@ -1,0 +1,41 @@
+decision: >-
+  Select and schedule monthly warranty cost analysis actions and determine key
+  drivers to report for COGS impact and potential cost reductions
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Monthly warranty cost data update from SAP S/4HANA
+  parameters:
+    objective: Warranty Performance Monitoring & Analytics
+    key_inputs:
+      - Monthly Warranty Costs
+      - Warranty Claims Data
+      - Dealer Claim Data
+      - Field Quality Reports
+      - Product and Market Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Generate monthly warranty cost trend reports, prioritize quality
+    improvements for top warranty concerns, intervene with underperforming
+    dealers, guide comprehensive problem resolution decisions, proactively
+    mitigate future warranty costs
+  outcome: >-
+    Reduced COGS and improved profitability through cost containment and
+    supplier/part-level risk mitigation
+  affected_components:
+    - DDM/Crawlers
+    - STREAMS
+    - Cortex Auto Forecast
+    - RCA Service
+    - AutoML
+    - Action Item
+    - Dashboard
+rationale: >-
+  Automate warranty cost trend analysis, component-level failure linkage, dealer
+  benchmarking, field issue linkage, and predictive warranty cost modeling to
+  reduce COGS and improve profitability.

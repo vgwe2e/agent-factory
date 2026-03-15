@@ -1,0 +1,43 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: To collect regional sales data for global aggregation.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: To generate a unified global sales forecast.
+    confidence: confirmed
+    capability: To generate a unified global sales forecast.
+  - name: AutoML
+    purpose: >-
+      To optimize the vehicle configuration mix based on profitability and
+      supply constraints.
+    confidence: inferred
+    capability: >-
+      To optimize the vehicle configuration mix based on profitability and
+      supply constraints.
+  - name: DDM/Crawlers
+    purpose: To enhance forecast accuracy with market intelligence.
+    confidence: inferred
+    capability: To enhance forecast accuracy with market intelligence.
+  - name: Cortex Monitoring
+    purpose: To evaluate forecast performance and identify areas for improvement.
+    confidence: confirmed
+    capability: To evaluate forecast performance and identify areas for improvement.
+process_builder:
+  - name: Remote Functions
+    purpose: >-
+      To optimize COGS and capacity utilization based on demand signals and ramp
+      timelines.
+    confidence: inferred
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end demand forecasting, market-intelligent mix
+      planning, and model-launch volume alignment to improve revenue capture,
+      reduce working capital tied to over/under forecasting, and optimize cogs.
+      and approve the recommended action.
+    confidence: confirmed
+    component_type: display

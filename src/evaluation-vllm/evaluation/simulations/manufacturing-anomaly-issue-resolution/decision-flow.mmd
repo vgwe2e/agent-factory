@@ -1,0 +1,23 @@
+flowchart TD
+  A[Trigger: Detection of a manufacturing anomaly on the production line.]
+  A --> N1[Stream: DDM/Crawlers - Detect production line stoppage]
+  N1 --> N2[Cortex: RCA Service - Analyze root cause]
+  N2 --> N3{Agent: Agentic AI - Select remediation actions}
+  N3 -->|Primary| N4[PB: Remote Functions - Resume production]
+  N4 --> N5[PB: Remote Functions - Contain defective parts]
+  N5 --> N6[PB: Process Builder - Escalate critical issues]
+  N6 --> N7[PB: Remote Functions - Implement corrective actions]
+  N7 --> N8[PB: Subject Areas - Verify effectiveness]
+  N8 --> N9{Agent: Agentic AI - Triage aftermarket issues}
+  N9 --> N10[PB: Remote Functions - Address aftermarket issues]
+  N10 --> Z1[Outcome: Reduced COGS, minimized waste, improved OTIF, and measurable EBITDA uplift through faster resolution and lower defect-related costs.]
+  N3 -->|High severity issue detected| B1[Immediate escalation to senior management]
+  B1 --> O1[Outcome: Faster resolution]
+  O1 --> End[End]
+  N3 -->|Insufficient data for root cause anal...| B2[Request additional data from operators]
+  B2 --> O2[Outcome: Enhanced analysis]
+  O2 --> End[End]
+  N3 -->|No actionable corrective actions avai...| B3[Initiate new process improvement project]
+  B3 --> O3[Outcome: Long-term solution development]
+  O3 --> End[End]
+  Z1 --> End[End]

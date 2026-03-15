@@ -1,0 +1,31 @@
+streams:
+  - name: STREAMS
+    purpose: Consolidate demand and supply inputs into Subject Areas
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict per-line/shift labor demand and identify upcoming gaps
+    confidence: confirmed
+    capability: Predict per-line/shift labor demand and identify upcoming gaps
+process_builder:
+  - name: Agent Team
+    purpose: >-
+      Generate prioritized staffing plan balancing cost, certifications, and
+      OTIF
+    confidence: confirmed
+    node_type: integration
+  - name: Process Builder + Remote Functions
+    purpose: Execute schedule updates in SAP S/4HANA and send contingent requisitions
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: Human-in-the-loop approval for high-cost or high-risk staffing changes
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: UI Screen (dashboard)
+    purpose: Provide visibility into labor plan, cost impact, and OTIF risk
+    confidence: confirmed
+    component_type: display

@@ -1,0 +1,59 @@
+source_systems:
+  - name: SAP S/4HANA (S4)
+    type: ERP
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting
+    type: Statistical forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / Supply planning
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL (Uber Freight / carrier systems)
+    type: Logistics partner
+    status: identified
+aera_ingestion:
+  - stream_name: touchless-demand-signals-sales-promotions-pos-surge
+    stream_type: Event Stream
+    source: SAS / Advanced Statistical Forecasting
+  - stream_name: time-series-demand-forecasts-and-confidence-intervals
+    stream_type: STREAMS
+    source: Cortex Auto Forecast and SAS
+  - stream_name: inventory-on-hand-reserved-and-available-to-promise-atp
+    stream_type: STREAMS
+    source: SAP S/4HANA, Blue Yonder WMS
+  - stream_name: open-orders-inbound-receipts-and-supplier-lead-times
+    stream_type: STREAMS
+    source: SAP S/4HANA, Kinaxis RapidResponse
+  - stream_name: shortage-propagation-constraint-alerts
+    stream_type: STREAMS
+    source: Kinaxis RapidResponse
+  - stream_name: safety-stock-targets-and-fg-safety-stock-model-outputs
+    stream_type: STREAMS
+    source: Kinaxis (FG Safety Stock Modeling)
+  - stream_name: business-priority-rules-and-margin-protection-policies
+    stream_type: Event Stream
+    source: Planning policy repository / UI Screen inputs
+  - stream_name: >-
+      operational-constraints-production-capacity-routing-transportation-lead-times
+    stream_type: STREAMS
+    source: Kinaxis RapidResponse, Uber Freight TMS, SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast + RCA Service
+    type: cortex
+    function: Identify unfulfilled demand, root causes, and confidence of signal
+  - component: Remote Functions -> Kinaxis RapidResponse / SAP S/4HANA
+    type: process_builder
+    function: Reallocate inventory, reprioritize production, or create expedite orders
+  - component: Agent Team + Process Builder (IF + Rules) + CWB Lifecycle
+    type: agent_teams
+    function: Select autonomous actions within policy constraints or flag for approval
+ui_surface:
+  - component: UI Screens (report/dashboard) + Notification
+    screen: Primary
+    purpose: Provide visibility, allow manual override, and capture decision history

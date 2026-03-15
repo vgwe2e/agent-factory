@@ -1,0 +1,38 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: carrier-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: shipment-plans
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: telematics-data
+    stream_type: Event Stream
+    source: IoT Devices
+  - stream_name: contract-terms
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Predict optimal TMS configurations.
+  - component: UI Screens
+    type: cortex
+    function: Provide actionable insights into logistics performance.
+  - component: Remote Functions
+    type: process_builder
+    function: Implement optimized configurations.
+  - component: Cortex Monitoring
+    type: process_builder
+    function: Ensure continuous improvement and accuracy.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review unify l4 logistics processes into a single decision-driven
+      orchestration layer to optimize transportation, carrier management,
+      logistics analytics, and fleet telematics. and approve the recommended
+      action.

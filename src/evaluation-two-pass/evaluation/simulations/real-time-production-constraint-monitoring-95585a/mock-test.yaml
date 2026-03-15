@@ -1,0 +1,59 @@
+decision: >-
+  Select an optimal mitigation plan (reallocate lines, adjust schedules,
+  expedite supplier orders, reroute logistics) and decide whether to
+  auto-execute changes or escalate for human approval.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Scheduled detection run (e.g., 30-minute cycle) or event: production line
+    utilization > threshold OR supplier shortage/late shipment alert from
+    ERP/EDI.
+  parameters:
+    objective: >-
+      Autonomously detect multi-plant production constraints and supplier
+      shortages, simulate mitigation trade-offs across procurement, production
+      scheduling, and logistics, and execute coordinated actions to minimize
+      COGS and improve on-time delivery with measurable P&L impact.
+    key_inputs:
+      - Production orders & routings
+      - Equipment utilization & capacity telemetry
+      - Supplier shortages & PO status
+      - Inventory on-hand and safety stock
+      - Logistics ETAs and shipment status
+      - Demand forecast & priority signals
+    source_systems:
+      - SAP S/4HANA
+      - Plant MES / SCADA
+      - Supplier EDI / Portal
+      - TMS / Logistics Provider
+expected_output:
+  action: >-
+    Process Builder ingests cross-system data, invokes RCA Service and Remote
+    Functions to identify bottlenecks and simulate mitigation scenarios, applies
+    deterministic rules to select the best plan, executes writebacks to SAP
+    S/4HANA via Remote Functions (scheduling/Purchase Order updates), and
+    surfaces recommendations/changes via CWB/UI and notifications.
+  outcome: >-
+    Faster resolution of emergent constraints, improved on-time in-full (OTIF),
+    reduced expedited costs and COGS, measurable throughput gains and P&L
+    improvement versus baseline within defined evaluation window.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - RCA Service + Cortex Auto Forecast
+    - Process Builder (IF, Rules) + Remote Functions (simulation)
+    - Remote Functions -> SAP S/4HANA (Transaction)
+    - UI Screens (dashboard & CWB) + Notification
+    - Dashboard
+rationale: >-
+  Deterministic, process-driven orchestration is required to coordinate
+  repeatable cross-functional actions (procurement, scheduling, logistics).
+  Process Builder provides visual orchestration and rules/IF branching;
+  STREAMS/DDM ingest authoritative SAP data; RCA Service identifies bottlenecks;
+  Remote Functions run simulation and perform safe ERP writebacks; CWB
+  Lifecycle/UI provide human-in-the-loop when exceptions or approvals are
+  required. This enables automated, auditable, and measurable execution across
+  the enterprise.

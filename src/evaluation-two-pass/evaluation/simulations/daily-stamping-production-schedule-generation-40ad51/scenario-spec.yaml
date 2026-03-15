@@ -1,0 +1,136 @@
+objective: >-
+  Autonomously generate and synchronize daily stamping production schedules
+  across plants and suppliers to minimize changeovers and idle time, maximize
+  capacity utilization, and trigger expedited actions to meet delivery
+  commitments.
+trigger: >-
+  Daily scheduled run (nightly planning window) plus event-driven triggers for
+  expedited orders or capacity-impacting incidents (e.g., high-priority sales
+  order, machine outage).
+decision: >-
+  Produce an optimized daily stamping schedule selecting lines, time slots, and
+  sequence to meet demand while minimizing changeovers and idle time; if
+  capacity shortfalls or expedited orders are detected, generate supplier
+  expedited actions and exception CWB items.
+expected_action: >-
+  Execute deterministic scheduling solver, write finalized schedule to MES and
+  SAP S/4HANA, create/adjust supplier expedited POs or ASN requests, and open
+  CWB exceptions for any manual approvals; notify plant planners and line
+  operators.
+expected_outcome: >-
+  Lower COGS via reduced changeovers and optimized runs, improved on-time
+  delivery, better capacity utilization, and reduced working capital through
+  synchronized MRP and targeted expedites.
+rationale: >-
+  A process-driven orchestration (Process Builder + deterministic solver via
+  Remote Functions) coordinates transformed master/data (STREAMS/DDM) and
+  short-term signals (Cortex Auto Forecast optional) to produce repeatable,
+  auditable daily schedules. Agentic components handle conversational/exceptions
+  routing; Remote Functions enable robust MES/ERP/supplier write-backs. This
+  hybrid ensures speed, determinism, and human-in-the-loop exception handling
+  where needed.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant MES
+    type: MES
+    status: tbd
+  - name: Supplier Portal / APIs
+    type: Supplier System
+    status: tbd
+  - name: Plant Control / SCADA
+    type: OT
+    status: tbd
+key_inputs:
+  - name: Demand Plan & Confirmed Orders
+    source: SAP S/4HANA
+    purpose: Determine production requirements and delivery priorities
+    preferred_stream_type: batch (daily)
+  - name: On-hand Inventory & MRP Recommendations
+    source: SAP S/4HANA
+    purpose: >-
+      Calculate available stock, material shortfalls, and net requirements for
+      scheduling
+    preferred_stream_type: batch (daily)
+  - name: Line Capacity, Status & Downtime
+    source: Plant MES
+    purpose: >-
+      Establish real-time available capacity, current running orders, and
+      constraints for sequencing
+    preferred_stream_type: near-real-time
+  - name: Changeover Times & Tooling Constraints
+    source: Subject Areas / Master Data
+    purpose: Quantify sequence-dependent setup costs to minimize changeovers
+  - name: Supplier Lead Time & Expedited Capacity
+    source: Supplier Portal / APIs
+    purpose: Assess external capacity and execute expedited purchase or ASN actions
+    preferred_stream_type: near-real-time
+happy_path:
+  - step: Ingest master, orders, inventory, and capacity data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Collect SAP S/4HANA orders/inventory and MES capacity data for the
+      planning window
+  - step: Transform and validate scheduling dataset
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Cleanse, join, and produce subject-area-ready facts (demand, inventory,
+      capacity, changeover matrix)
+  - step: Compute optimized line-level sequence and capacity allocation
+    stage: analyze
+    component: Remote Functions
+    purpose: >-
+      Run deterministic scheduling solver (sequence optimization, minimize
+      changeovers, respect constraints) and produce candidate schedule
+  - step: Apply business rules and exceptions, finalize plan
+    stage: decide
+    component: Process Builder (Process + Rules)
+    purpose: >-
+      Enforce release rules, prioritize customer commitments, detect exceptions
+      and determine automated vs. human approval paths (generate CWB if needed)
+  - step: Execute schedule and upstream/downstream write-backs
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Write final schedule to MES, update SAP S/4HANA MRP/schedule confirms, and
+      send expedited POs/ASN requests to suppliers
+  - step: Surface plan and exceptions to planners/operators
+    stage: surface
+    component: UI Screen
+    purpose: >-
+      Provide dashboard of schedule, KPIs, and CWB list for review or manual
+      override
+branches:
+  - condition: >-
+      Solver identifies capacity shortfall that cannot be resolved by local
+      resequencing
+    response: >-
+      Process Builder triggers supplier expedited flow via Remote Functions and
+      opens CWB Lifecycle items for planner approval when cost/lead-time
+      tradeoffs exceed thresholds
+    outcome: >-
+      Supplier expedite requested and routed for approval; if approved, supplier
+      PO/ASN updates are executed; otherwise schedule flags for alternative
+      recovery actions
+  - condition: MES or ERP writeback fails or returns inconsistent state
+    response: >-
+      Automated retry logic in Remote Functions with escalation: create
+      notification and action item for plant operations and lock affected
+      schedule segments
+    outcome: >-
+      Manual intervention scheduled; schedule segments held to prevent incorrect
+      execution until resolved
+  - condition: >-
+      Excessive changeover cost or overtime required to meet committed
+      deliveries
+    response: >-
+      Process Builder evaluates cost trade-off rules and either reschedules
+      lower-priority runs, applies overtime via Remote Functions, or surfaces
+      CWB for executive approval
+    outcome: >-
+      Decision applied that balances cost vs. service level; resulting schedule
+      either increases cost (overtime/expedites) or relaxes delivery targets for
+      non-critical orders

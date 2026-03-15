@@ -1,0 +1,36 @@
+decision: >-
+  Optimize plant and line capacity allocation, manpower and equipment resource
+  allocation, and identify and resolve production bottlenecks.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Monthly demand forecast update from SAP S/4HANA
+  parameters:
+    objective: Capacity Planning & Optimization
+    key_inputs:
+      - Demand Forecast
+      - Production Schedule
+      - Current Capacity Utilization
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Generate optimized capacity plans and resource allocations, implement
+    corrective actions for identified bottlenecks, provide reporting on capacity
+    utilization, and recommend capital investments.
+  outcome: >-
+    Reduced COGS, improved line throughput, and better alignment of capacity
+    with demand signals.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - RCA Service
+    - Remote Functions
+    - Process Builder
+    - UI Screens
+rationale: >-
+  This scenario leverages AI/ML to model and optimize capacity planning and
+  resource allocation, ensuring efficient production and cost reduction.

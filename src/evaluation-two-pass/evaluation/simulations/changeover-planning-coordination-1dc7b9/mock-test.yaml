@@ -1,0 +1,54 @@
+decision: >-
+  Which changeover plan minimizes total production cost while meeting demand and
+  violating minimal changeover time constraints
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Daily scheduled run (nightly master schedule) or ad-hoc production change
+    event (new urgent order, line outage, or demand revision).
+  parameters:
+    objective: >-
+      Automatically generate and release changeover-aware, multi-plant
+      production schedules that minimize total production cost while meeting
+      demand and operational constraints, with continuous execution monitoring
+      and autonomous exception handling.
+    key_inputs:
+      - Production Orders & MRP Results
+      - Routing, BOM, Work Centers, Standard Times
+      - Line Capacity & Real-time Run State
+      - Changeover Time Matrix (model/variant pair)
+      - Demand Forecast & Prioritization Rules
+      - Business Policies & Constraint Set
+    source_systems:
+      - SAP S/4HANA
+      - MES / Line Control
+      - Plant Historian / OEE
+expected_output:
+  action: >-
+    Ingest master production data and runtime telemetry, run a deterministic
+    scheduling solver that optimizes sequencing and changeovers across
+    platforms, present recommended schedule for CWB review/auto-accept, write
+    approved schedule to SAP S/4HANA, and continuously monitor execution to
+    auto-reschedule or create exceptions.
+  outcome: >-
+    Synchronized multi-plant schedules with lower total COGS, improved on-time
+    delivery, reduced changeover overhead, and lower working capital through
+    reduced WIP and fewer emergency expedited actions.
+  affected_components:
+    - STREAMS
+    - Remote Functions (solver) invoked by Process Builder
+    - CWB Lifecycle (recommendation view)
+    - Process (Process Builder) + Remote Functions (SAP writeback)
+    - Subject Areas + Process (Rules & Notifications)
+    - Dashboard
+rationale: >-
+  Deterministic optimization (solver) yields globally optimal sequencing given
+  hard constraints (capacity, minimal changeover times). Process Builder
+  orchestrates end-to-end flows (data ingestion, optimization, writeback,
+  monitoring). STREAMS/Subject Areas ensure reliable data and adherence
+  analytics; CWB Lifecycle provides human-in-the-loop exception handling for
+  infeasible or high-impact changes.

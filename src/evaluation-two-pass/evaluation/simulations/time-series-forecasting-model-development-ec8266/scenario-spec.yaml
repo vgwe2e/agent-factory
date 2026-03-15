@@ -1,0 +1,123 @@
+objective: >-
+  Autonomously develop, deploy, and operate time-series demand models and
+  integrated forecast optimization across supplier-plant-DC network to reduce
+  stockouts and excess, tighten COGS, and lower working capital.
+trigger: >-
+  Scheduled weekly forecast cycle or arrival of new sales/inventory snapshot
+  from SAP S/4HANA
+decision: >-
+  Select and deploy the optimal demand forecast and inventory plan across
+  multi-echelon network (supplier → plant → DC) and determine automated vs.
+  human-reviewed writeback to SAP S/4HANA
+expected_action: >-
+  Orchestrate data ingest and transformation, run Cortex Auto Forecast to
+  generate demand forecasts and driver explainability, apply business rules and
+  optimization in Process Builder, create CWB recommendations for exceptions,
+  and write accepted forecasts/plans back to SAP S/4HANA via Remote Functions
+expected_outcome: >-
+  Improved forecast accuracy and explainability, reduced stockouts and excess
+  inventory across supplier-plant-DC tiers, lower working capital and tighter
+  COGS, and auditable human-in-the-loop exceptions when needed
+rationale: >-
+  A deterministic, process-driven DI route coordinates ETL, automated
+  forecasting, rule-based decisioning, and controlled writebacks. Using Cortex
+  forecasting and Process Builder orchestration enables repeatable model
+  development, operational deployment, and measurable KPI improvements across
+  the supply network while preserving ERP data integrity via Remote Functions
+  and CWB-based approvals.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Market Data Provider
+    status: tbd
+  - name: Supplier Collaboration Portal
+    status: tbd
+key_inputs:
+  - name: historical_sales_orders
+    source: SAP S/4HANA
+    purpose: >-
+      Primary time-series demand history for model training and baseline
+      forecasts
+    preferred_stream_type: STREAMS
+  - name: inventory_on_hand_by_location
+    source: SAP S/4HANA
+    purpose: >-
+      Current multi-echelon inventory snapshot to compute safety stock and
+      replenishment needs
+    preferred_stream_type: STREAMS
+  - name: supplier_lead_times_and_lot_sizes
+    source: Supplier Collaboration Portal
+    purpose: >-
+      Constrain replenishment and multi-echelon planning, drive safety stock and
+      order cadence
+  - name: production_capacity_and_schedule
+    source: SAP S/4HANA
+    purpose: Align forecasts to plant capacity and feasible production plans
+    preferred_stream_type: STREAMS
+  - name: market_signals_and_promotions
+    source: Market Data Provider
+    purpose: >-
+      Demand drivers and external covariates for improved forecast accuracy and
+      explainability
+happy_path:
+  - step: Ingest master and transactional data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Pull historical sales, inventory, supplier, and production data from SAP
+      S/4HANA and external providers
+  - step: Transform and aggregate into subject areas/time-series
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Cleanse, aggregate to SKU-location-time, and create Subject Areas for
+      forecasting and inventory metrics
+  - step: Train and generate forecasts with explainability
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: >-
+      Auto-select algorithms, produce demand forecasts and SHAP driver
+      explanations across SKUs and tiers
+  - step: Orchestrate decision rules and optimization
+    stage: decide
+    component: Process Builder
+    purpose: >-
+      Apply business rules, safety-stock optimization, and select forecast
+      variants; flag exceptions for CWB
+  - step: Execute writeback and procurement actions
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Write accepted forecasts and replenishment plans back to SAP S/4HANA and
+      trigger PO creation or change notifications
+  - step: Human review for exceptions and present KPIs
+    stage: review
+    component: CWB Lifecycle
+    purpose: >-
+      Present exception recommendations for planner approval/override with audit
+      trail; surface results in UI Screens dashboard
+branches:
+  - condition: Forecast accuracy (MAPE) for a segment exceeds acceptable threshold
+    response: >-
+      Trigger automated retrain using alternative features or raise Data Science
+      subprocess; hold automated writeback for affected SKUs and create CWB for
+      planner review
+    outcome: >-
+      Models retrained and validated; prevents propagation of poor forecasts
+      into supply chain; human approval required before writeback
+  - condition: Supplier lead times or lot sizes change materially (disruption detected)
+    response: >-
+      Process Builder applies constrained optimization and switches to
+      supply-constrained plan; notify procurement and suppliers via Notification
+      node
+    outcome: >-
+      Adjusted plans prioritize available capacity, reduce stockout risk, and
+      engage procurement for remediation
+  - condition: Planner overrides forecast recommendation in CWB
+    response: >-
+      Capture override via CWB Lifecycle, log rationale, and suspend automatic
+      writeback for that SKU until next governance window
+    outcome: >-
+      Human-inspected changes are auditable and isolate manual decisions from
+      automated pipeline while preserving data lineage

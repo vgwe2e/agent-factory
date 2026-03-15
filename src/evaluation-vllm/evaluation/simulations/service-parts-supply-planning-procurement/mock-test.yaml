@@ -1,0 +1,50 @@
+decision: >-
+  Which service parts Production Order to place with suppliers, aligning with
+  demand, lead times, and cost to minimize COGS; assess and ensure supplier
+  capacity for current and future service part demand, selecting sourcing paths
+  to meet requirements while controlling COGS; negotiate and manage long-term
+  supply agreements for service parts based on demand forecasts, pricing, and
+  supply risk; identify and source aftermarket suppliers, selecting among
+  alternatives to optimize cost and availability for service parts; escalate and
+  resolve critical part shortages for vehicle repairs by determining escalation
+  actions and resolution paths.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic service parts demand forecast update or detected shortage.
+  parameters:
+    objective: >-
+      Optimize service parts production ordering, supplier capacity planning,
+      aftermarket sourcing, and shortage escalation to reduce COGS, prevent
+      stockouts, and improve EBITDA and working capital.
+    key_inputs:
+      - Service Parts Demand Forecast
+      - Supplier Capacity Data
+      - Long-Term Supply Agreements
+      - Aftermarket Supplier Data
+      - Critical Part Shortages
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Place optimized production orders with suppliers; ensure adequate supplier
+    capacity through negotiation and agreement management; source aftermarket
+    suppliers to optimize cost and availability; escalate and resolve critical
+    part shortages efficiently.
+  outcome: >-
+    Reduced COGS, minimized stockouts, improved EBITDA, and accelerated issue
+    resolution.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Remote Functions
+    - Exception Management
+    - Dashboard
+rationale: >-
+  Coordinating replenishment, capacity, and supplier selection across the
+  service parts network will yield measurable improvements in financial metrics
+  and operational efficiency.

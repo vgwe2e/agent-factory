@@ -1,0 +1,77 @@
+objective: >-
+  Orchestrating deterministic, semi-autonomous capacity decisions across
+  monthly, quarterly, and mid-term horizons to optimize production volumes,
+  balance line capacities, and prevent capacity shortfalls.
+trigger: Monthly, quarterly, and mid-term capacity planning cycles.
+decision: >-
+  Allocate available plant and line capacity to vehicle programs based on demand
+  forecasts, validate quarterly build plans against internal and supplier
+  capacity constraints, review and formalize supplier capacity commitments,
+  review and update tactical capacity plan assumptions, adjust upcoming build
+  plans due to capacity shortfalls.
+expected_action: >-
+  Automate capacity allocation and validation processes, generate reports for
+  capacity gap analysis and assumption reviews, provide recommendations for
+  build plan adjustments.
+expected_outcome: >-
+  Reduced COGS, improved OTIF, synchronized cross-plant and cross-supplier
+  capacity planning.
+rationale: >-
+  Unify capacity allocation, validation, gap analysis, and plan adjustments to
+  optimize production and reduce costs.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Demand Forecasts
+    source: SAP S/4HANA
+    purpose: Basis for capacity allocation
+    preferred_stream_type: STREAMS
+  - name: Internal Capacity Constraints
+    source: SAP S/4HANA
+    purpose: Validation of build plans
+    preferred_stream_type: STREAMS
+  - name: Supplier Capacity Commitments
+    source: SAP S/4HANA
+    purpose: Medium-term capacity gap analysis
+    preferred_stream_type: STREAMS
+  - name: Tactical Capacity Plan Assumptions
+    source: SAP S/4HANA
+    purpose: Review and update assumptions
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Retrieve demand forecasts
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect demand data
+  - step: Allocate capacity based on forecasts
+    stage: analyze
+    component: STREAMS
+    purpose: Optimize capacity allocation
+  - step: Validate build plans against constraints
+    stage: analyze
+    component: STREAMS
+    purpose: Ensure feasibility
+  - step: Analyze medium-term capacity gaps
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Identify mismatches
+  - step: Review and update assumptions
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Reflect new realities
+  - step: Adjust build plans if necessary
+    stage: act
+    component: Remote Functions
+    purpose: Protect COGS and delivery commitments
+branches:
+  - condition: Identified capacity shortfall
+    response: Trigger build plan adjustment workflow
+    outcome: Updated build plans
+  - condition: Supplier capacity commitment mismatch
+    response: Notify stakeholders
+    outcome: Resolved capacity issues
+  - condition: Infeasible build plan
+    response: Request manual review
+    outcome: Approved or revised build plan

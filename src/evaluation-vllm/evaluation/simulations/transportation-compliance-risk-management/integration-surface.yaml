@@ -1,0 +1,42 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: shipment-details
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: carrier-safety-records
+    stream_type: Event Stream
+    source: External Databases
+  - stream_name: incident-reports
+    stream_type: Event Stream
+    source: Internal Systems
+  - stream_name: permit-requirements
+    stream_type: Event Stream
+    source: Regulatory Bodies
+processing:
+  - component: AutoML
+    type: cortex
+    function: To ensure compliance with global HazMat regulations.
+  - component: Data Quality & Validation
+    type: cortex
+    function: To ensure carriers meet safety standards.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: To minimize risk and cost.
+  - component: Remote Functions
+    type: process_builder
+    function: To maintain compliance and reduce delays.
+  - component: Process Builder
+    type: process_builder
+    function: To handle transportation incidents effectively.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review minimize cogs impact from compliance delays and incidents, improve
+      on-time delivery, and reduce working capital tied to risk events by
+      automating policy-driven routing, carrier selection, incident response,
+      and regulatory permitting across global transportation networks. and
+      approve the recommended action.

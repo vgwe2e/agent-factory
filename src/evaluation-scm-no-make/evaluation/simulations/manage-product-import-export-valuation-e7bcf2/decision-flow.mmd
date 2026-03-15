@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New shipment record, a tariff/rate change, a new trade agreement, or scheduled periodic landed-cost recalculation.]
+  A --> N1[Stream: STREAMS - Consolidate master, shipment, tariff and freight data into canonical landed-cost dataset]
+  N1 --> N2[Cortex: Remote Functions - Run deterministic landed-cost calculation applying tariff rules and trade-agreement logic]
+  N2 --> N3{PB: Process Builder (IF) + CWB Lifecycle - Evaluate results against thresholds and policy rules to decide auto-apply vs approval}
+  N3 -->|Primary| N4[PB: Remote Functions + Subject Areas - Apply approved landed-cost updates and write back valuation to ERP and planning store]
+  N4 --> N5[UI: UI Screen + Notification - Surface results, audit trail and exception tasks to finance and trade teams]
+  N5 --> Z1[Outcome: Accurate landed cost recorded in product valuation and planning Subject Areas, exceptions captured and routed for approval, audit trail of tariff sources and computations, and downstream systems updated (ERP/WMS/TMS).]
+  N3 -->|Missing or invalid HS/tariff classifi...| B1[Create CWB exception via Process Builder - UI Screen for manual classification; optionally call Agent Team for suggested HS via data-science or lookup]
+  B1 --> O1[Outcome: HS codes assigned manually, dataset refreshed, and landed-cost recalculated]
+  O1 --> End[End]
+  N3 -->|Calculated landed-cost delta exceeds ...| B2[Route to CWB Lifecycle for finance/commodity approval with supporting audit trail and source-rate links]
+  B2 --> O2[Outcome: Costs held until approved; once approved, Remote Functions write back to S4 and Subject Areas; if rejected, revert to prior valuation and create reconciliation task]
+  O2 --> End[End]
+  N3 -->|Tariff rate source unavailable or inc...| B3[Fallback to last-known rates, flag calculations and raise Notification for tariff-data reconciliation]
+  B3 --> O3[Outcome: Calculations proceed using fallback rates but are flagged for audit and remediation; reconciliation tasks created]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,155 @@
+objective: >-
+  Coordinate inbound deliveries, perform inspection against quality criteria,
+  and decide accept/reject (or partial) with automated ERP/WMS updates and
+  supplier/3PL notifications.
+trigger: >-
+  Advance Shipping Notice (ASN) arrival or dock scan indicating physical receipt
+  at receiving dock
+decision: >-
+  Choose whether to accept inbound goods, partially accept/quarantine, or
+  reject/return based on inspection results balancing supplier performance,
+  quality risk, and cost impact
+expected_action: >-
+  Automatically gather ASN/PO/manifest, present an agent-guided inspection
+  checklist to the inspector, compute recommendation
+  (accept/partial/quarantine/reject) with supplier-risk and cost context,
+  capture human approval/override via CWB, and execute ERP/WMS writebacks and
+  notifications via Remote Functions.
+expected_outcome: >-
+  Accepted receipts posted to S4 and routed for putaway in Blue Yonder WMS;
+  rejects/quarantines create hold locations and return workflows; partial
+  receipts post partial quantities and trigger replenishment/expedite in
+  Kinaxis; exceptions and supplier notifications recorded in CWB and audit
+  trail.
+rationale: >-
+  Agentic route combines Process Builder orchestration, AI-guided inspection
+  assistance (Agent Team) and human-in-the-loop approval (CWB Lifecycle) to
+  handle unstructured inspection judgment while ensuring deterministic ERP/WMS
+  updates via Remote Functions. This balances efficiency, traceability, and
+  supplier-risk-aware decisioning.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: Supply Chain Planning
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Analytics
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS/3PL
+    status: identified
+  - name: Supplier Portal / External Documents
+    status: tbd
+key_inputs:
+  - name: Advance Shipping Notice (ASN)
+    source: Supplier / Carrier (via EDI/API)
+    purpose: >-
+      Pre-alert of inbound shipment details for matching to PO and scheduling
+      receiving
+    preferred_stream_type: DDM/Crawlers
+  - name: Purchase Order (PO) / PO Line
+    source: S4 (SAP)
+    purpose: >-
+      Authoritative order and expected quantities/products for receipt matching
+      and accounting
+    preferred_stream_type: STREAMS
+  - name: Carrier Manifest / Bill of Lading
+    source: Uber Freight / Carrier
+    purpose: >-
+      Carrier-level shipment details to reconcile received packages and carrier
+      claims
+    preferred_stream_type: DDM/Crawlers
+  - name: Inspection Criteria / Quality Specifications
+    source: S4 Quality Management or Quality SOP repository
+    purpose: >-
+      Rules and acceptance thresholds used to evaluate physical inspection
+      results
+    preferred_stream_type: STREAMS
+  - name: WMS Receiving Scan / Dock Scan
+    source: Blue Yonder WMS
+    purpose: Confirm physical receipt, pallet/package identifiers, and putaway status
+    preferred_stream_type: DDM/Crawlers
+  - name: Supplier Performance & Historical Quality
+    source: S4 / Kinaxis / SAS analytics
+    purpose: >-
+      Contextual scoring for supplier risk used in weighted accept/reject
+      recommendations
+    preferred_stream_type: STREAMS
+  - name: Physical Inspection Results (measurements, photos, notes)
+    source: Inspector via UI Screen / Agent Team interaction
+    purpose: Primary evidence used to make accept/reject decision
+  - name: Cost Impact / Expedite Estimate
+    source: S4 / Kinaxis calculation or Remote Function
+    purpose: Estimate downstream cost implications to inform disposition decision
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: >-
+      Ingest ASN, PO and carrier manifest; schedule receiving window and
+      allocate dock
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect external shipment and PO data, trigger receiving process
+  - step: >-
+      Match ASN to PO, validate quantities, and compute supplier-risk and
+      expected inspection rules
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Transform and validate inbound data and derive inspection triggers and
+      risk context
+  - step: >-
+      Agent-guided inspection: present checklist, capture measurements, photos
+      and free-text, and run acceptance heuristics
+    stage: decide
+    component: Agent Team
+    purpose: >-
+      Assist inspector with unstructured guidance and produce a recommended
+      disposition with rationale
+  - step: >-
+      Present recommendation to inspector/quality reviewer in CWB for approval
+      or override
+    stage: review
+    component: CWB Lifecycle
+    purpose: >-
+      Human-in-the-loop decision capture (accept/partial/quarantine/reject) with
+      audit trail
+  - step: >-
+      Execute decision: write acceptance/return/quarantine to S4 and update Blue
+      Yonder WMS; trigger supplier/3PL notifications and create exceptions or
+      expedites in Kinaxis as needed
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Reliable ERP/WMS writebacks and cross-system notifications/workflow
+      creation
+  - step: >-
+      Surface results and KPIs: receipt status, quality exceptions, supplier
+      scorecard and open actions
+    stage: surface
+    component: UI Screen
+    purpose: Operational visibility and follow-up tracking for stakeholders
+branches:
+  - condition: Inspection passes within defined tolerance and supplier-risk is low
+    response: >-
+      Auto-accept recommendation; inspector confirms quickly; system posts
+      receipt and triggers putaway
+    outcome: Receipt posted to S4; WMS putaway initiated; no exception created
+  - condition: Critical failure (safety/critical spec) detected during inspection
+    response: >-
+      Quarantine material, create return-to-supplier disposition and notify
+      supplier/3PL; generate quality exception and claim
+    outcome: >-
+      Material held in WMS quarantine, return workflow created, supplier
+      notified, claims/credit process initiated
+  - condition: Quantity mismatch or partial damage (partial pass)
+    response: >-
+      Partial accept: post received quantity, quarantine remainder, and create
+      expedite/replenishment request in Kinaxis
+    outcome: >-
+      Partial receipts posted in S4/WMS; replenish/expedite order created in
+      Kinaxis; exception tracked in CWB

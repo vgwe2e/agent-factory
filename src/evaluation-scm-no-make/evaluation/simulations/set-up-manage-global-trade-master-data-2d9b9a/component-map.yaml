@@ -1,0 +1,47 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Centralize source data and documents for downstream processing
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: >-
+      Create canonical master data view and derive classification candidates and
+      risk signals
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Remote Functions
+    purpose: >-
+      Call external screening/license services and apply regulatory rule engine
+      to produce decision inputs
+    confidence: inferred
+    capability: >-
+      Call external screening/license services and apply regulatory rule engine
+      to produce decision inputs
+process_builder:
+  - name: Process Builder & CWB Lifecycle
+    purpose: Apply deterministic thresholds to choose auto-action vs human review
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Persist authoritative data and enforce shipment action in ERP/TMS
+    confidence: inferred
+    node_type: act
+  - name: UI Screen & Notification
+    purpose: >-
+      Enable human-in-the-loop decisions with context and close the loop with
+      alerts
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate and semi-autonomously execute global trade compliance
+      decisions (license validation/issuance, master data confirmation for hs
+      codes/incoterms/trade classifications, restricted party screening) to
+      reduce compliance risk, improve duty/tax accuracy (cogs), and accelerate
+      license-to-ship and supplier onboarding. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

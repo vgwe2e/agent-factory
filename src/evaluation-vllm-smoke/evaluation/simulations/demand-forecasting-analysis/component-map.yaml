@@ -1,0 +1,64 @@
+streams:
+  - name: Global Sales Forecast Aggregation
+    purpose: Consolidate regional sales forecasts across all Ford business divisions.
+    confidence: inferred
+  - name: Market Intelligence Integration
+    purpose: Incorporate external market data to improve demand forecasting accuracy.
+    confidence: inferred
+  - name: Forecast Accuracy Measurement & Reporting
+    purpose: >-
+      Track and report the accuracy of demand forecasts against actual
+      production and sales performance.
+    confidence: confirmed
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Automate end-to-end demand forecasting using time-series forecasting
+      algorithms.
+    confidence: confirmed
+  - name: Data Quality & Validation
+    purpose: Ensure data quality and consistency for accurate forecasting.
+    confidence: inferred
+process_builder:
+  - name: Global Sales Forecast Aggregation Process
+    purpose: >-
+      Aggregate regional forecasts into a global view, balancing regional
+      variability with enterprise alignment.
+    confidence: confirmed
+  - name: Vehicle Configuration Mix Planning Process
+    purpose: >-
+      Forecast demand for specific vehicle configurations, balancing mix
+      profitability, capacity, and supply constraints.
+    confidence: confirmed
+  - name: Market Intelligence Integration Process
+    purpose: Integrate external market data into demand forecasting.
+    confidence: confirmed
+  - name: Forecast Accuracy Measurement & Reporting Process
+    purpose: >-
+      Measure and report forecast accuracy against production and sales,
+      deciding on corrective actions.
+    confidence: confirmed
+  - name: New Model Launch Volume Planning Process
+    purpose: Determine initial production volumes and ramp-up profiles for new models.
+    confidence: confirmed
+agent_teams:
+  - name: Market Intelligence Agent Team
+    purpose: >-
+      Assist in integrating and analyzing external market data for improved
+      forecasting.
+    confidence: confirmed
+ui:
+  - name: Global Sales Forecast Dashboard
+    purpose: Display consolidated global sales forecasts and regional breakdowns.
+    confidence: confirmed
+  - name: Vehicle Configuration Mix Planning Dashboard
+    purpose: Show demand forecasts for specific vehicle configurations.
+    confidence: confirmed
+  - name: Forecast Accuracy Reporting Screen
+    purpose: Present forecast accuracy metrics and reports.
+    confidence: confirmed
+  - name: New Model Launch Volume Planning Screen
+    purpose: >-
+      Provide tools for setting initial production volumes and ramp-up profiles
+      for new models.
+    confidence: inferred

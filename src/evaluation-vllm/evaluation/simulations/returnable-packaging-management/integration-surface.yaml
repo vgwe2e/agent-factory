@@ -1,0 +1,28 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: returnable-container-usage-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: maintenance-records
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast
+    type: process_builder
+    function: To minimize working capital while preserving service levels.
+  - component: Process Builder
+    type: process_builder
+    function: To optimize inventory position and working capital.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review jointly optimize returnable container loop sizing, empty packaging
+      collection, and packaging tracking to reduce working capital, lower cogs,
+      and improve order fulfillment otif. and approve the recommended action.

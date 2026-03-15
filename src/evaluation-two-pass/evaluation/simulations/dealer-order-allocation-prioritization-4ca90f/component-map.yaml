@@ -1,0 +1,47 @@
+streams:
+  - name: STREAMS
+    purpose: Consolidate and validate inputs for planning run
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Agent Team
+    purpose: >-
+      Run constraint negotiation, cost optimization, and conflict resolution
+      across echelons
+    confidence: confirmed
+    node_type: integration
+  - name: CWB Lifecycle
+    purpose: >-
+      Enforce allocation policies and enable human overrides for prioritized
+      exceptions
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Writeback MPS, create/adjust production orders, and update allocations in
+      SAP S/4HANA
+    confidence: inferred
+    node_type: act
+  - name: Notification
+    purpose: Alert impacted teams of committed schedule and highlight exceptions
+    confidence: confirmed
+    node_type: communication
+  - name: UI Screen
+    purpose: >-
+      Enable planners to inspect, simulate overrides, and trigger
+      re-optimization
+    confidence: confirmed
+    node_type: integration
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously generate conflict-free, cost-optimized multi-scroll
+      master production schedules (weekly + long-range) that allocate production
+      slots to dealer and fleet orders while respecting multi-echelon
+      constraints to reduce cogs, improve line efficiency, and increase otif
+      across vehicle platforms and components. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

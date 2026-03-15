@@ -1,0 +1,75 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Portal / EDI / ASN feeds
+    type: external_api
+    status: tbd
+  - name: 3PL / TMS (transportation availability)
+    type: external_api
+    status: tbd
+  - name: Aera Cortex services (Cortex Auto Forecast, Safety Stock, RCA)
+    type: platform_service
+    status: tbd
+aera_ingestion:
+  - stream_name: production-schedule-capacity-by-plant
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: inventory-balances-on-hand-by-location
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: open-purchase-orders-supplier-acknowledgements
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: supplier-shortage-allocation-alerts
+    stream_type: DDM/Crawlers
+    source: Supplier Portal / EDI / ASN feeds
+  - stream_name: demand-forecast-updated-s-op-signals
+    stream_type: Event Stream
+    source: Cortex Auto Forecast
+  - stream_name: transportation-capacity-eta-windows
+    stream_type: DDM/Crawlers
+    source: 3PL / TMS
+  - stream_name: cost-inputs-material-cost-expedite-cost-penalty-otd-impact
+    stream_type: STREAMS
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Auto Forecast + RCA Service (via Process Builder - Data View)
+    type: cortex
+    function: >-
+      Identify bottlenecks (plant-level capacity, supplier shortfall) and
+      quantify demand/service exposure and cost impact
+  - component: >-
+      Process Builder - Rules + Remote Functions (scenario simulation & cost
+      calculus)
+    type: process_builder
+    function: >-
+      Simulate schedule shifts, PO expedites, and reroutes; score alternatives
+      on COGS, service level, and feasibility constraints
+  - component: >-
+      Process Builder - Action Item + Remote Functions (API writeback to SAP
+      S/4HANA)
+    type: process_builder
+    function: >-
+      Apply approved schedule changes, update POs, and issue logistics
+      instructions; write auditable changes back to ERP or route to supplier
+      actions
+  - component: CWB Lifecycle (Action Item / UI Screen)
+    type: process_builder
+    function: >-
+      Route scenarios exceeding risk/cost thresholds for approval, or capture
+      overrides and rationale for auditability
+  - component: Process Builder - Notification + UI Screen (dashboard)
+    type: process_builder
+    function: >-
+      Communicate executed actions, expected OTD improvements, and P&L impact to
+      planners, procurement, and leadership
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously detect multi-plant capacity and supplier-driven
+      constraints, evaluate mitigation trade-offs across procurement, production
+      scheduling, and logistics, and execute coordinated actions to minimize
+      cogs impact while improving on-time delivery and measurable p&l outcomes.
+      and approve the recommended action.

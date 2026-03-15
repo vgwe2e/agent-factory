@@ -1,0 +1,43 @@
+decision: >-
+  Select remediation actions to improve supplier performance within SMI
+  programs, decide which supplier and order plan to commit to for forecasts
+  shared with suppliers, adjust parameters of the VMI program to optimize
+  inventory levels and service, and jointly identify and implement inventory
+  reduction opportunities with suppliers
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Periodic review of supplier-managed inventory performance and demand
+    forecasts
+  parameters:
+    objective: Supplier Collaboration for Inventory Optimization
+    key_inputs:
+      - SMI Performance Metrics
+      - Demand Forecasts
+      - VMI Program Parameters
+      - Inventory Levels
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate SMI performance reviews and recommend remediation actions, share
+    demand forecasts with suppliers and secure production commitments,
+    continuously monitor and adjust VMI program parameters, collaborate with
+    suppliers to implement inventory reduction initiatives
+  outcome: >-
+    Reduced COGS, improved revenue protection through better availability,
+    optimized working capital, and enhanced OTIF performance
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Monitoring
+    - Remote Functions
+    - Agentic AI
+    - Dashboard
+rationale: >-
+  Leverage autonomous supplier collaboration and real-time VMI replenishment to
+  optimize inventory levels and service, reducing excess inventory and
+  preventing stockouts.

@@ -1,0 +1,68 @@
+objective: >-
+  End-to-end automated handling of supplier PO acknowledgments, discrepancy
+  resolutions, PO system integration, and escalation for unacknowledged POs
+  across a multi-echelon automotive supply network.
+trigger: Receipt of supplier acknowledgment via EDI or portal.
+decision: >-
+  Which supplier acknowledgment discrepancy to resolve and which auto-correct or
+  escalate action to take, balancing correction cost, supplier reliability, and
+  impact on COGS.
+expected_action: >-
+  Automatically process supplier acknowledgments and resolve discrepancies,
+  adjust PO terms or initiate negotiations with suppliers, maintain and optimize
+  PO data exchange integrations, send reminders or escalate unacknowledged POs.
+expected_outcome: >-
+  Reduced cycle time, improved COGS, timely PO closure, and strengthened working
+  capital through efficient acknowledgment and issue resolution.
+rationale: >-
+  Automate PO acknowledgment and discrepancy resolution to streamline supplier
+  communication, reduce errors, and enhance overall supply chain efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Supplier Acknowledgment
+    source: SAP S/4HANA
+    purpose: Process acknowledgment and detect discrepancies
+  - name: PO Terms
+    source: SAP S/4HANA
+    purpose: Compare with supplier acknowledgment terms
+  - name: Supplier Reliability Data
+    source: SAP S/4HANA
+    purpose: Inform decision-making on auto-correction or escalation
+happy_path:
+  - step: Receive supplier acknowledgment
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest acknowledgment data
+  - step: Detect discrepancies
+    stage: analyze
+    component: STREAMS
+    purpose: Identify differences between PO and acknowledgment
+  - step: Resolve discrepancies
+    stage: decide
+    component: Remote Functions
+    purpose: Apply rules to correct or escalate discrepancies
+  - step: Update PO terms
+    stage: act
+    component: Remote Functions
+    purpose: Adjust PO terms based on acknowledgment
+  - step: Maintain PO integration
+    stage: act
+    component: Remote Functions
+    purpose: Ensure seamless PO data exchange
+  - step: Escalate unacknowledged POs
+    stage: act
+    component: Remote Functions
+    purpose: Send reminders or escalate issues
+branches:
+  - condition: High discrepancy cost
+    response: Escalate to human review
+    outcome: Manual intervention for high-cost discrepancies
+  - condition: Supplier reliability low
+    response: Escalate to negotiation team
+    outcome: Negotiate terms with unreliable suppliers
+  - condition: Integration failure
+    response: Trigger rollback and retry
+    outcome: Ensure reliable PO data exchange

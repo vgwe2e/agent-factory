@@ -1,0 +1,75 @@
+objective: >-
+  Automate end-to-end customer order modification and cancellation with
+  validation, impact assessment, communication, and governance to reduce COGS
+  impact, preserve OTIF, and improve cash flow.
+trigger: Customer or dealer initiates an order change or cancellation request.
+decision: >-
+  Should a customer/dealer-initiated change to an order be accepted, modified,
+  or rejected, and how to re-seat production/delivery constraints accordingly.
+expected_action: >-
+  Validate and process order changes, manage order cancellations and issue
+  refunds, communicate impact assessments and decisions to relevant
+  stakeholders.
+expected_outcome: >-
+  Reduced COGS impact, preserved OTIF, improved cash flow through timely refunds
+  and accurate order fulfillment.
+rationale: >-
+  Automating order modifications and cancellations ensures rapid, cost-aware
+  decision-making, reducing operational costs and improving customer
+  satisfaction.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Order Change Request
+    source: SAP S/4HANA
+    purpose: Initiate order change process
+    preferred_stream_type: STREAMS
+  - name: Order Cancellation Request
+    source: SAP S/4HANA
+    purpose: Initiate order cancellation process
+    preferred_stream_type: STREAMS
+  - name: Production Schedule
+    source: SAP S/4HANA
+    purpose: Assess impact on production
+    preferred_stream_type: STREAMS
+  - name: Delivery Schedule
+    source: SAP S/4HANA
+    purpose: Assess impact on delivery
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Receive order change/cancellation request
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest request data
+  - step: Validate request against policies
+    stage: analyze
+    component: Remote Functions
+    purpose: Ensure request meets criteria
+  - step: Assess impact on production and delivery
+    stage: analyze
+    component: STREAMS
+    purpose: Evaluate schedule impacts
+  - step: Determine decision (accept
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Make informed decision
+  - step: Communicate decision to customer
+    stage: notify
+    component: Notification
+    purpose: Inform customer of outcome
+  - step: Update order status and issue refund if applicable
+    stage: act
+    component: Remote Functions
+    purpose: Finalize order status and financial adjustments
+branches:
+  - condition: Request exceeds policy limits
+    response: Escalate to supervisor
+    outcome: Manual review and decision
+  - condition: Impact assessment indicates significant disruption
+    response: Modify request or escalate
+    outcome: Adjusted request or manual intervention
+  - condition: Customer requests expedited refund
+    response: Expedite refund process
+    outcome: Faster refund issuance

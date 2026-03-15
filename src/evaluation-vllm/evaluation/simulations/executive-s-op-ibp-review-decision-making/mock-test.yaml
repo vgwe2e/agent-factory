@@ -1,0 +1,39 @@
+decision: >-
+  Cross-functional team consensus on procurement and capacity plans; executive
+  approval of demand, supply, and financial plans; strategic trade-off
+  decisions.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Scheduled S&OP/IBP meeting kickoff.
+  parameters:
+    objective: >-
+      Automate consensus-building, demand and supply reviews, financial
+      alignment, and strategic trade-offs within S&OP/IBP to improve OTIF,
+      reduce stockouts and excess, and optimize EBITDA and working capital.
+    key_inputs:
+      - Demand Plan Data
+      - Supply Plan Scenarios
+      - Financial Implications
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automated presentation and approval of consolidated demand and supply plans,
+    financial alignment, and strategic trade-offs.
+  outcome: >-
+    Improved OTIF, reduced stockouts and excess inventory, optimized EBITDA and
+    working capital.
+  affected_components:
+    - DDM/Crawler
+    - Cortex Auto Forecast
+    - AutoML
+    - Cortex Monitoring
+    - CWB Lifecycle
+    - UI Screens
+rationale: >-
+  Automating the S&OP/IBP review and decision-making process enhances
+  efficiency, reduces errors, and ensures alignment across all functional areas.

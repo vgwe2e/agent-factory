@@ -1,0 +1,132 @@
+objective: >-
+  Continuously monitor and audit quality performance of raw material and
+  blank/coil suppliers to determine audit frequency, sampling plans, and
+  remediation triggers that maintain incoming material quality.
+trigger: >-
+  Scheduled batch run (e.g., weekly) plus exception triggers when incoming
+  defect rate or quality notifications in SAP S/4HANA exceed defined thresholds.
+decision: >-
+  For a given supplier-material pair, decide audit frequency, sampling plan, and
+  remediation triggers (e.g., supplier corrective actions, shipment holds,
+  escalation) to manage supplier quality risk.
+expected_action: >-
+  Agentic AI (Agent Team) synthesizes inspection, historical and contextual
+  signals, recommends audit cadence and sampling plan; Process Builder
+  orchestrates approval routing (CWB Lifecycle) and uses Remote Functions to
+  create quality notifications, blocks or audit events in SAP S/4HANA;
+  Notifications surface recommendations to supplier quality owners and
+  suppliers.
+expected_outcome: >-
+  High-risk suppliers receive prioritized audits and stronger
+  sampling/remediation rules; quality exceptions are triaged and written back to
+  SAP S/4HANA; improved defect capture, reduced escapes, and closed-loop
+  remediation tracked in enterprise systems.
+rationale: >-
+  Agentic route (composite score 0.9532) is appropriate because supplier quality
+  monitoring requires adaptive reasoning across structured inspection data,
+  historical patterns, and unstructured context (audit notes). Medium
+  implementation complexity: requires SAP S/4HANA integration (identified), Root
+  Cause Analysis (RCA Service), Process Builder orchestration, Agent Team for
+  recommendations, and Remote Functions for ERP writeback and action automation.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Quality Management System (QMS)
+    type: QMS
+    status: tbd
+  - name: Laboratory/Inspection System (LIMS)
+    type: LIMS
+    status: tbd
+  - name: Supplier Portal / Documents
+    type: Supplier Portal
+    status: tbd
+key_inputs:
+  - name: Incoming inspection results (IQC) & quality notifications
+    source: SAP S/4HANA (QM)
+    purpose: >-
+      Measure defect counts, defect types, severity and inspection outcomes for
+      supplier-material lots
+    preferred_stream_type: STREAMS
+  - name: Supplier master & contract terms
+    source: SAP S/4HANA (Vendor Master)
+    purpose: >-
+      Identify supplier capabilities, agreed sampling/audit clauses, lead times
+      and contact points
+    preferred_stream_type: STREAMS
+  - name: Historical defect rates & trend series
+    source: Subject Areas / aggregated STREAMS tables
+    purpose: Trend analysis and risk scoring over time to detect degradation
+    preferred_stream_type: STREAMS
+  - name: Inspection lot metadata (batch, coil/blank IDs, material spec)
+    source: SAP S/4HANA / LIMS
+    purpose: Link defects to material lots and support root cause analysis
+    preferred_stream_type: STREAMS
+  - name: Supplier-provided evidence (certs, photos, corrective action reports)
+    source: Supplier Portal / Documents
+    purpose: Context for agent assessment and audit validation
+    preferred_stream_type: DDM/Crawlers
+happy_path:
+  - step: >-
+      Ingest supplier inspection results, supplier master, and lot metadata into
+      the platform
+    stage: ingest
+    component: STREAMS
+    purpose: Centralize and normalize quality and master data for analysis
+  - step: Perform root-cause and pattern analysis across defects and lot metadata
+    stage: analyze
+    component: RCA Service
+    purpose: >-
+      Identify drivers, correlated features, and compute supplier-material risk
+      scores
+  - step: >-
+      Agentic AI synthesizes signals and formulates recommended audit frequency,
+      sampling plan, and remediation triggers
+    stage: decide
+    component: Process Builder + Agent Team
+    purpose: Generate explainable recommendations and confidence scores for actions
+  - step: >-
+      Orchestrate approvals and create operational actions (quality
+      notifications, audit events, shipment holds) in SAP
+    stage: act
+    component: Remote Functions + CWB Lifecycle
+    purpose: >-
+      Automate ERP writebacks and route decisions for human-in-the-loop
+      approvals where needed
+  - step: Notify supplier quality owners and surface recommendations for review
+    stage: notify
+    component: Notification
+    purpose: >-
+      Alert stakeholders and provide CWB/UI links to recommendation details and
+      audit scheduling
+branches:
+  - condition: >-
+      Defect rate for supplier-material exceeds critical threshold
+      (high-confidence signal)
+    response: >-
+      Agent recommends immediate audit, sample escalation, and temporary
+      shipment hold; Process Builder auto-creates quality notifications and an
+      audit event via Remote Functions, and notifies escalation group.
+    outcome: >-
+      Immediate QA hold recorded in SAP, supplier notified, onsite audit
+      scheduled and remediation tracked.
+  - condition: >-
+      Insufficient or low-coverage inspection data for the supplier-material
+      (data completeness < threshold)
+    response: >-
+      Agent requests additional evidence from supplier portal and flags record
+      for manual review; monitoring pauses automated action until required data
+      is available.
+    outcome: >-
+      No automated audit scheduled; workflow awaits supplier evidence or manual
+      quality owner decision to proceed.
+  - condition: >-
+      Agent confidence low or contradictory signals (low recommendation
+      confidence)
+    response: >-
+      Route recommendation to CWB Lifecycle for human review and override;
+      include RCA Service findings and candidate sampling plans for the
+      reviewer.
+    outcome: >-
+      Decision deferred to supplier quality manager; audit/sampling plan
+      established after manual approval, preserving traceability.

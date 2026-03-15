@@ -1,0 +1,48 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Harmonize SKU/location masters, inventory, forecast, promotions and
+      constraint feeds into subject areas
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: Cortex Auto Forecast + RCA Service
+    purpose: >-
+      Produce recommended requirement, safety stock, and rebalancing actions
+      with confidence and impact estimates
+    confidence: confirmed
+    capability: >-
+      Produce recommended requirement, safety stock, and rebalancing actions
+      with confidence and impact estimates
+process_builder:
+  - name: Remote Functions + Process Builder (Action Item)
+    purpose: >-
+      Write adjustments to S4/Kinaxis and signal 3PL/TMS for transport or
+      fulfillment changes
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle + Notification + UI Screen
+    purpose: >-
+      Ensure audit trail, stakeholder visibility, and measure change impact
+      (waste, COGS, service levels)
+    confidence: confirmed
+    node_type: review
+agent_teams:
+  - name: Process Builder (IF, Rules) + Agent Team
+    purpose: >-
+      Apply governance: auto-execute high-confidence, create CWB for approvals
+      for others
+    confidence: confirmed
+    role: >-
+      Apply governance: auto-execute high-confidence, create CWB for approvals
+      for others
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end data orchestration for sku x location across
+      hershey to harmonize forecasts, inventory, and supplier requirements so
+      autonomous recommendations and actions reduce waste, improve cogs, and
+      protect revenue during promotional and demand variability. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

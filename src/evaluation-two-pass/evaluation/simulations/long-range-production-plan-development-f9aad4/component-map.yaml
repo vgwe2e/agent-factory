@@ -1,0 +1,37 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect canonical source data for planning
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Cleanse and shape inputs for optimization
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Remote Functions (optimization solver)
+    purpose: Generate cost-minimized, constraint-compliant production schedule
+    confidence: inferred
+    node_type: decide
+  - name: Remote Functions
+    purpose: Execute plan in ERP and persist planning artifacts
+    confidence: inferred
+    node_type: act
+  - name: UI Screen
+    purpose: Enable visibility, audit, and optional manual overrides
+    confidence: confirmed
+    node_type: integration
+  - name: Cortex Monitoring
+    purpose: Measure outcomes, detect drift, and trigger continuous improvement
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously generate conflict-free, multi-horizon mps schedules
+      that minimize cogs while honoring multi-echelon constraints (capacity,
+      supplier lead times, inventory targets) across ford vehicle platforms and
+      components. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

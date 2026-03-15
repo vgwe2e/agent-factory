@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Periodic cost-structure review or scheduled category review (monthly/quarterly) that flags material/commodity items with high COGS contribution, fragmented supplier base, or low contract coverage.]
+  A --> N1[Stream: DDM/Crawlers - Ingest consolidated data (costs, contracts, suppliers, demand, inventory) into the DI platform]
+  N1 --> N2[Stream: STREAMS - Transform and compute should-cost, consolidation ROI and supplier capability scores]
+  N2 --> N3{PB: Process (Process Builder) + Rules - Prioritize opportunities and generate sourcing profiles using deterministic rules and a Process Builder workflow}
+  N3 -->|Primary| N4[PB: Action Item + Remote Functions - Execute sourcing actions: route negotiations, create PO/contract change proposals and schedule supplier engagements]
+  N4 --> N5[PB: Notification + UI Screen - Notify stakeholders and surface sourcing plan, expected savings and risk mitigations on dashboard]
+  N5 --> Z1[Outcome: Measurable COGS reduction for targeted categories, increased contract-covered spend, fewer suppliers per commodity where appropriate, and improved supplier resilience (reduced risk scores and faster mitigation actions).]
+  N3 -->|Insufficient contract coverage or leg...| B1[Route to CWB Lifecycle for manual approval and contracting subprocess; create negotiation action items and legal review subprocess]
+  B1 --> O1[Outcome: Opportunity placed into contracting pipeline; partial or staged consolidation plan with milestone-based execution]
+  O1 --> End[End]
+  N3 -->|Target suppliers flagged as high risk...| B2[Require dual-sourcing or alternate supplier inclusion and generate risk mitigation plan via Process Builder]
+  B2 --> O2[Outcome: Adjusted sourcing profile that preserves resilience (reduced single-source exposure) with lower immediate COGS impact]
+  O2 --> End[End]
+  N3 -->|Computed savings/ROI below threshold ...| B3[Escalate to category manager for manual review and defer automation; flag for monitoring and re-evaluation]
+  B3 --> O3[Outcome: No consolidation executed; item monitored for future opportunity as inputs change]
+  O3 --> End[End]
+  Z1 --> End[End]

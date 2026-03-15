@@ -1,0 +1,32 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: To gather necessary data for supply chain mapping.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: AutoML
+    purpose: To detect potential risks in the supply chain.
+    confidence: inferred
+    capability: To detect potential risks in the supply chain.
+  - name: RCA Service
+    purpose: To assess supplier financial stability and take actions.
+    confidence: inferred
+    capability: To assess supplier financial stability and take actions.
+process_builder:
+  - name: Process Builder
+    purpose: To create proactive strategies for supply continuity.
+    confidence: confirmed
+    node_type: decide
+  - name: CWB Lifecycle
+    purpose: To enable human-in-the-loop decision-making.
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review jointly optimize supply risk detection, contingency sourcing, and
+      financial health guardrails across ford's multi-echelon supplier network.
+      and approve the recommended action.
+    confidence: confirmed
+    component_type: display

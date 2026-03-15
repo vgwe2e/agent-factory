@@ -1,0 +1,69 @@
+objective: >-
+  Coordinated NPI demand forecasting across pre-launch, pilot, ramp-up, and
+  feature/trim segmentation to enable autonomous adjustments to production,
+  supplier replenishment, and capacity planning.
+trigger: New product introduction (NPI) announcement.
+decision: >-
+  Adjust demand plan based on pre-launch order bank analysis, pilot program
+  simulation, ramp-up projection, and feature/trim level demand segmentation.
+expected_action: >-
+  Automate adjustments to production, supplier replenishment, and capacity
+  planning based on forecasted demand.
+expected_outcome: >-
+  Reduced working capital tied to NPI stock, improved launch OTIF, and better
+  alignment of supplier and plant capacities with market reception.
+rationale: >-
+  Unify forecasting inputs and automate ramp decisions to optimize production
+  and inventory management.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Pre-orders and Reservations
+    source: SAP S/4HANA
+    purpose: Gauge initial market interest and demand.
+  - name: Early Production Builds
+    source: SAP S/4HANA
+    purpose: Validate market assumptions and production readiness.
+  - name: Ramp-Up Volumes
+    source: SAP S/4HANA
+    purpose: Project vehicle production ramp-up curve and sales volumes.
+  - name: Feature and Trim Level Data
+    source: SAP S/4HANA
+    purpose: Forecast demand for specific vehicle features and trims.
+happy_path:
+  - step: Ingest pre-orders and reservations data.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect initial market interest data.
+  - step: Analyze pre-orders and reservations using Cortex Auto Forecast.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Determine initial market interest and adjust demand plan.
+  - step: Simulate demand for early production builds and pilot programs.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Validate market assumptions and production readiness.
+  - step: Project ramp-up volumes and sales for new model launches.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Choose production and distribution pace.
+  - step: Forecast demand for specific vehicle features and trims.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Select feature-level mix that aligns with production capacity.
+  - step: Present recommendations for production and supplier adjustments.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Enable human-in-the-loop review and approval.
+branches:
+  - condition: Market interest is lower than expected.
+    response: Adjust production ramp-up and supplier orders accordingly.
+    outcome: Reduced inventory risk and optimized production capacity.
+  - condition: Market interest is higher than expected.
+    response: Accelerate production ramp-up and increase supplier orders.
+    outcome: Meet increased demand and avoid stockouts.
+  - condition: Feature/trim level demand is uneven.
+    response: Adjust production mix to align with dealer demand.
+    outcome: Optimize revenue and minimize inventory risk.

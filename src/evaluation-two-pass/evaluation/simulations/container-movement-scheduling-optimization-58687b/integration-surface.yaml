@@ -1,0 +1,70 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Carrier TMS
+    type: TMS
+    status: tbd
+  - name: Warehouse Management System
+    type: WMS
+    status: tbd
+  - name: Supplier Portal
+    type: Portal
+    status: tbd
+  - name: Telematics / GPS
+    type: Telematics
+    status: tbd
+aera_ingestion:
+  - stream_name: container-inventory-positions-loaded-empty-damaged
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: location-master-lead-times-transit-matrix
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: transport-rates-carrier-capacity-and-constraints
+    stream_type: batch
+    source: Carrier TMS
+  - stream_name: carrier-performance-history-otd-reliability
+    stream_type: batch
+    source: Carrier TMS
+  - stream_name: supplier-receipt-schedules-and-compliance-records
+    stream_type: batch
+    source: Supplier Portal
+  - stream_name: production-delivery-schedules-demand-for-containers
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: telematics-location-in-transit-status
+    stream_type: Event Stream
+    source: Telematics / GPS
+processing:
+  - component: Subject Areas
+    type: cortex
+    function: >-
+      Aggregate inventories, lead times, demand windows and cost parameters for
+      solver
+  - component: Remote Functions
+    type: cortex
+    function: >-
+      Generate cost-minimized movement plan (routes, carriers, timings)
+      respecting constraints
+  - component: Process Builder
+    type: process_builder
+    function: >-
+      Auto-approve plans that meet thresholds; create CWB Lifecycle exceptions
+      for conflicts
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Write schedule to SAP S/4HANA and push instructions/notifications to
+      carriers
+  - component: UI Screen
+    type: process_builder
+    function: Provide visibility, manual override and audit trail for plan decisions
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously schedule and route returnable containers across
+      multi-echelon network to minimize transport cost and cycle time while
+      meeting service requirements and supplier receipt compliance. and approve
+      the recommended action.

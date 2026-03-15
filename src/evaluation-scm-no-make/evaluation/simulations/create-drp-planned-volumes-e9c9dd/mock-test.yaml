@@ -1,0 +1,59 @@
+decision: >-
+  Select and execute DRP planned volumes across allocation scenarios (current vs
+  expanded) that balance COGS impact and service levels, then release STRs and
+  distribute plan impacts with exception handling and reconciliation.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    Scheduled DRP planning window or a demand/inventory signal (e.g., forecast
+    deviation, stockout risk, or replenishment threshold breach).
+  parameters:
+    objective: >-
+      Automate end-to-end DRP decisions to generate, validate, and execute
+      multi-echelon planned volumes (DRP) with autonomous STR release and
+      closed-loop exception handling to reduce COGS, improve working capital,
+      and protect EBITDA.
+    key_inputs:
+      - Demand Forecast (time series)
+      - Inventory Positions & On-hand
+      - Safety Stock Models / Parameters
+      - Open Orders & Allocations
+      - Transportation Constraints & Lead Times
+      - DRP Parameters (policy knobs)
+      - Shortage Propagation Signals
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Kinaxis RapidResponse
+      - Kinaxis (FG Safety Stock Modeling / Rebalancing / Order Expediting)
+      - Blue Yonder WMS
+      - Uber Freight (3PL / TMS)
+      - Advanced Statistical Forecasting in SAS
+expected_output:
+  action: >-
+    Orchestrate data ingestion, run demand & inventory analyses, generate ranked
+    DRP allocation scenarios, present recommended DRP planned volumes via
+    agentic AI and CWB lifecycle for exception overrides, execute STR releases
+    and plan writebacks to S4/Kinaxis, and route exceptions for rapid
+    remediation.
+  outcome: >-
+    Autonomous, repeatable DRP cycles that lower COGS, reduce inventory and
+    working capital, maintain service levels, ensure rapid execution of STR
+    releases, and provide auditable exception handling and impact distribution.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex Auto Forecast + Safety Stock Service + Remote Functions
+    - CWB Lifecycle + UI Screen
+    - Remote Functions (ERP/Kinaxis writeback) + Process Builder
+    - Notification + Data View
+    - Process Builder + Agent Team (agentic_ai)
+    - Dashboard
+rationale: >-
+  Combines Process Builder orchestration, Cortex analytics, Remote Functions for
+  execution, and agentic AI for adaptive reasoning and human-in-the-loop
+  approvals to close the DRP loop across enterprise systems and ensure fast,
+  data-driven decisions with operational writebacks.

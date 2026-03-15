@@ -1,0 +1,63 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier EDI/API Gateway
+    status: tbd
+  - name: Supplier Portal / Partner Systems
+    status: tbd
+aera_ingestion:
+  - stream_name: bom-release-eco
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: production-schedule-finite-plan-confirmed-orders
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: on-hand-inventory-reservations
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: supplier-lead-times-capacity-constraints
+    stream_type: Event Stream
+    source: Supplier Portal / Supplier EDI or SAP master data
+  - stream_name: demand-forecast-seasonality-adjustments
+    stream_type: Subject Areas
+    source: Cortex Auto Forecast / Subject Areas
+  - stream_name: safety-stock-inventory-policy-parameters
+    stream_type: Event Stream
+    source: Planning policy tables (SAP S/4HANA) or Safety Stock Service
+  - stream_name: open-pos-and-asn-status
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA / Supplier EDI
+processing:
+  - component: Cortex Auto Forecast / Safety Stock Service
+    type: cortex
+    function: Generate demand projections and target buffers to inform net requirements.
+  - component: Remote Functions + Process Builder (Transaction)
+    type: process_builder
+    function: >-
+      Persist release orders in ERP and send supplier-facing releases via
+      EDI/API or portal.
+  - component: CWB Lifecycle / UI Screen
+    type: process_builder
+    function: >-
+      Allow planners to approve, modify, or escalate constrained releases before
+      finalization.
+  - component: Agentic AI (Process Builder orchestrating Agent Team + RCA Service)
+    type: agent_teams
+    function: >-
+      Weigh cost, capacity, lead time, and risk to produce prioritized supplier
+      release schedules.
+  - component: Process Builder Notification / Agent Team
+    type: agent_teams
+    function: >-
+      Ensure suppliers and internal stakeholders receive timely release and
+      exception information.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end mrp decisions to generate and transmit supplier
+      material release schedules that balance cost, supplier capacity, and
+      production needs across a multi-echelon automotive network to reduce cogs,
+      improve otif, and optimize working capital. and approve the recommended
+      action.

@@ -1,0 +1,28 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-schedules
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: equipment-status
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: empty-container-availability
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Remote Functions
+    type: process_builder
+    function: Maximize throughput while minimizing downtime and maintenance costs.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce working capital and cogs while improving otif by automating
+      end-to-end material flow decisions across plants, suppliers, and dcs. and
+      approve the recommended action.

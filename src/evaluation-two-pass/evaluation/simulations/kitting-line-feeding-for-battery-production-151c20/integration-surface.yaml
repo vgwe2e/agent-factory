@@ -1,0 +1,58 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Warehouse Execution System (WES)
+    status: tbd
+  - name: Manufacturing Execution System (MES)
+    status: tbd
+  - name: Supplier Portal / EDI
+    status: tbd
+  - name: Inspection / Quality Devices (OCR, sensors)
+    status: tbd
+aera_ingestion:
+  - stream_name: advanced-shipping-notice-asn-inbound-shipment
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: on-hand-inventory-and-lot-serial-master
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: line-production-schedule-takt-rates
+    stream_type: Event Stream
+    source: MES
+  - stream_name: warehouse-capacity-staging-layout
+    stream_type: Event Stream
+    source: Warehouse Execution System (WES)
+  - stream_name: inspection-results-quality-flags
+    stream_type: Event Stream
+    source: Inspection / Quality Devices
+  - stream_name: supplier-performance-carrier-eta-history
+    stream_type: Event Stream
+    source: Supplier Portal / TMS (tbd)
+processing:
+  - component: Agent Team
+    type: process_builder
+    function: >-
+      Produce prioritized kitting plan and line-feed schedule optimizing feed
+      rates and buffer targets.
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Trigger WES pick/putaway, create kit assemblies, and record reservations
+      in SAP for traceability.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Provide human-in-the-loop approval for high-risk changes or exceptions.
+  - component: Process Builder
+    type: process_builder
+    function: >-
+      Close the loop with notifications and update planning data for continuous
+      adjustment.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously orchestrate inbound material receipt, quality
+      screening, kitting, and timed line-feeding for battery assembly lines to
+      reduce cogs, minimize stockouts, and improve otif across multi-echelon
+      suppliers and warehouses. and approve the recommended action.

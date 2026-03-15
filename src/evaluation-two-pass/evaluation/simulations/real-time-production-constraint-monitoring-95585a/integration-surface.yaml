@@ -1,0 +1,60 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Plant MES / SCADA
+    type: MES
+    status: tbd
+  - name: Supplier EDI / Portal
+    type: Supplier Portal / EDI
+    status: tbd
+  - name: TMS / Logistics Provider
+    type: TMS
+    status: tbd
+aera_ingestion:
+  - stream_name: production-orders-routings
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: equipment-utilization-capacity-telemetry
+    stream_type: STREAMS
+    source: Plant MES / SCADA
+  - stream_name: supplier-shortages-po-status
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA / Supplier EDI
+  - stream_name: inventory-on-hand-and-safety-stock
+    stream_type: DDM/Crawlers
+    source: SAP S/4HANA
+  - stream_name: logistics-etas-and-shipment-status
+    stream_type: DDM/Crawlers
+    source: TMS / Logistics Provider
+  - stream_name: demand-forecast-priority-signals
+    stream_type: Event Stream
+    source: Cortex Auto Forecast
+processing:
+  - component: RCA Service + Cortex Auto Forecast
+    type: cortex
+    function: Identify highest-impact constraints and quantify demand/lead-time drivers.
+  - component: Process Builder (IF, Rules) + Remote Functions (simulation)
+    type: process_builder
+    function: >-
+      Compare trade-offs (throughput, OTIF, cost) and pick the plan meeting
+      business goals.
+  - component: Remote Functions -> SAP S/4HANA (Transaction)
+    type: process_builder
+    function: >-
+      Apply changes atomically to ERP and downstream systems to resolve the
+      constraint.
+  - component: UI Screens (dashboard & CWB) + Notification
+    type: process_builder
+    function: >-
+      Provide audit trail, KPI impact (throughput, OTIF, cost) and human
+      approvals if required.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review autonomously detect multi-plant production constraints and supplier
+      shortages, simulate mitigation trade-offs across procurement, production
+      scheduling, and logistics, and execute coordinated actions to minimize
+      cogs and improve on-time delivery with measurable p&l impact. and approve
+      the recommended action.

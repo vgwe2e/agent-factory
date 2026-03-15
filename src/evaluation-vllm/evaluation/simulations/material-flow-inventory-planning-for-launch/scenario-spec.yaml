@@ -1,0 +1,71 @@
+objective: >-
+  Optimize multi-echelon stock rebalancing, buffer safety stocks, and end-to-end
+  launch material availability to reduce working capital, protect EBITDA, and
+  improve on-time launch delivery.
+trigger: New product launch initiation.
+decision: >-
+  Initial parts order quantities, buffer levels, BOM release, constraint
+  mitigation, end-of-life planning, and shortage recovery actions.
+expected_action: >-
+  Automate deterministic and semi-autonomous decisions across initial orders,
+  BOM release, constraint mitigation, end-of-life planning, and shortage
+  recovery.
+expected_outcome: Reduced working capital, protected EBITDA, improved on-time launch delivery.
+rationale: >-
+  Automating these decisions ensures optimal material flow and inventory
+  planning, reducing risks and improving efficiency.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Initial Parts Order Quantities
+    source: SAP S/4HANA
+    purpose: Determine initial order quantities for new product launch.
+  - name: BOM Release Schedule
+    source: SAP S/4HANA
+    purpose: Manage BOM release and updates for new products.
+  - name: Material Constraints
+    source: SAP S/4HANA
+    purpose: Identify potential material constraints and mitigation actions.
+  - name: End-of-Life Plans
+    source: SAP S/4HANA
+    purpose: Plan end-of-life for phased-out components.
+  - name: Material Shortages
+    source: SAP S/4HANA
+    purpose: Identify and manage material shortages during launch.
+happy_path:
+  - step: Retrieve initial parts order quantities and buffer levels.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect initial order and buffer data from SAP S/4HANA.
+  - step: Analyze BOM release schedule and material constraints.
+    stage: analyze
+    component: STREAMS
+    purpose: Evaluate BOM release and identify potential constraints.
+  - step: Determine optimal buffer levels and mitigation actions.
+    stage: decide
+    component: Remote Functions
+    purpose: Calculate optimal buffer levels and mitigation strategies.
+  - step: Plan end-of-life for phased-out components.
+    stage: decide
+    component: Remote Functions
+    purpose: Develop end-of-life plans for old components.
+  - step: Execute initial orders and buffer adjustments.
+    stage: act
+    component: Remote Functions
+    purpose: Implement initial orders and buffer changes.
+  - step: Monitor and escalate material shortages.
+    stage: review
+    component: Exception Management
+    purpose: Track and address any material shortages.
+branches:
+  - condition: High material constraint risk detected.
+    response: Initiate alternative sourcing and expediting actions.
+    outcome: Mitigate EBITDA impact through proactive supply chain actions.
+  - condition: Significant material shortage identified.
+    response: Escalate to senior management for expedited recovery.
+    outcome: Ensure timely resolution of critical shortages.
+  - condition: End-of-life transition risks identified.
+    response: Adjust production schedules and inventory levels.
+    outcome: Minimize transition risks and optimize working capital.

@@ -1,0 +1,74 @@
+objective: >-
+  Reduce COGS in Ford's multi-site automotive supply chain through coordinated
+  cost engineering and dynamic supplier negotiations.
+trigger: Periodic review of supply chain costs and performance metrics.
+decision: >-
+  Select optimal suppliers and options that balance price, quality, lead time,
+  and lifecycle costs; develop should-cost targets and negotiation strategies;
+  lead VA/VE initiatives; identify and mitigate cost drivers.
+expected_action: >-
+  Implement TCO modeling, should-cost analysis, VA/VE initiatives, and cost
+  driver mitigation strategies.
+expected_outcome: >-
+  Measurable reductions in material costs, manufacturing costs, and supplier
+  terms while maintaining or improving product quality and delivery performance.
+rationale: >-
+  Coordinating end-to-end cost engineering with dynamic supplier negotiations
+  and value-focused design decisions can significantly reduce COGS in a
+  multi-site automotive supply chain.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Vehicle Line Costs
+    source: SAP S/4HANA
+    purpose: To evaluate total cost of ownership across vehicle lines.
+  - name: Component Costs
+    source: SAP S/4HANA
+    purpose: To conduct should-cost analysis and develop negotiation strategies.
+  - name: VA/VE Proposals
+    source: Engineering Teams
+    purpose: To assess potential cost reductions and performance improvements.
+  - name: Commodity Market Data
+    source: External APIs
+    purpose: To identify key cost drivers and develop mitigation strategies.
+happy_path:
+  - step: Ingest vehicle line costs from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for TCO modeling.
+  - step: Analyze vehicle line costs using TCO models.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Evaluate total cost of ownership across vehicle lines.
+  - step: Develop should-cost targets and negotiation strategies.
+    stage: analyze
+    component: AutoML
+    purpose: >-
+      Compare estimated vs actual component costs under multiple market
+      scenarios.
+  - step: >-
+      Lead VA/VE initiatives to propose cost-reduction and performance
+      improvements.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Select which changes to pursue given constraints and impact.
+  - step: Identify key cost drivers in commodities.
+    stage: analyze
+    component: RCA Service
+    purpose: Determine strategies to mitigate their impact on profitability.
+  - step: Implement selected strategies and monitor outcomes.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure effective execution and continuous improvement.
+branches:
+  - condition: High variance in component costs.
+    response: Adjust should-cost targets and re-evaluate negotiation strategies.
+    outcome: Improved cost alignment and negotiation leverage.
+  - condition: Significant VA/VE proposal rejected.
+    response: Review and adjust VA/VE proposals based on feedback.
+    outcome: Enhanced proposal acceptance rate and cost reduction.
+  - condition: Unfavorable commodity market trends.
+    response: Implement hedging and supplier diversification strategies.
+    outcome: Reduced exposure to market volatility and improved profitability.

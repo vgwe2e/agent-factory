@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New customer order, order change, or supplier inbound readiness update (ETA/ASN) ingested into the platform.]
+  A --> N1[Stream: STREAMS - Consolidate order, ATP/CTP, inbound readiness, inventory and forecast feeds into a unified subject area.]
+  N1 --> N2[Cortex: Process Builder - Rules - Evaluate viability of existing promises against supplier inbound readiness and shortage propagation rules.]
+  N2 --> N3{PB: Remote Functions - Compute revised promises and recommended actions (hold, delay, split, expedite) using margin and SLA heuristics.}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute automated writebacks for approved adjustments and trigger downstream expediting actions where allowed.]
+  N4 --> N5[UI: CWB Lifecycle - Surface recommendations and exceptions for human review and capture override decisions.]
+  N5 --> Z1[Outcome: Reduced backorders and expedited delays for high-value demand, improved OTIF, prioritized expediting where margins justify it, and synchronized commitments between Fulfill and Source domains with auditable writebacks.]
+  N3 -->|Supplier inbound readiness is 'not re...| B1[Demote promises to later feasible dates, flag orders for backorder processing, and notify Sales/Customer Service via CWB and Notification nodes.]
+  B1 --> O1[Outcome: Orders are decommitted to realistic dates, backorders reduced from surprise shortages; potential revenue at risk is clearly flagged for follow-up.]
+  O1 --> End[End]
+  N3 -->|Partial supplier readiness with limit...| B2[Prioritize high-margin/high-service-level orders for expediting via Kinaxis order expediting and update promises for lower-priority orders.]
+  B2 --> O2[Outcome: Revenue-protecting orders fulfilled sooner at controlled expedite cost; lower-priority orders delayed with communicated expectations.]
+  O2 --> End[End]
+  N3 -->|Sales or customer-facing user overrid...| B3[Persist override, trigger targeted contingency actions (expedite, split shipments, or absorb margin impact) via Remote Functions and log rationale.]
+  B3 --> O3[Outcome: Customer commitments honored per business decision, with expedited costs and margin impacts recorded for review.]
+  O3 --> End[End]
+  Z1 --> End[End]

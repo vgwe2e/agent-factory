@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect supplier performance metrics
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Identify performance trends and anomalies
+    confidence: confirmed
+    capability: Identify performance trends and anomalies
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Recommend actions or supplier changes
+    confidence: confirmed
+    node_type: decide
+  - name: Process Builder
+    purpose: Plan and conduct quality audits
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomous monitoring and management of stamping supplier
+      performance, part quality, tooling/die supplier governance, pricing
+      negotiations, and production schedule alignment to reduce cogs, prevent
+      delays, and improve otif. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

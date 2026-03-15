@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Daily production start or significant demand/capacity signal change.]
+  A --> N1[Stream: DDM/Crawlers - Ingest daily build schedule, material availability, line capacity, change orders, downtime events, OEE metrics, and demand/capacity signals from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze data to determine optimal daily build schedule, line sequencing, change order implementation, downtime recovery, OEE-driven improvements, and short-term volume adjustments.]
+  N2 --> N3{PB: CWB Lifecycle - Decide on the best course of action based on the analysis results.}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute the approved production plans, including rescheduling, resequencing, implementing change orders, and adjusting production volumes.]
+  N4 --> N5[PB: UI Screens - Monitor and track adherence to the daily build schedule and production performance.]
+  N5 --> Z1[Outcome: Improved adherence to build schedules, minimized cycle times, controlled COGS impact from change orders, reduced downtime impact, enhanced OEE, and balanced production volumes.]
+  N3 -->|Detected significant deviation from t...| B1[Trigger rescheduling and resequencing actions.]
+  B1 --> O1[Outcome: Adjust production plans to align with the original targets.]
+  O1 --> End[End]
+  N3 -->|Approved change orders require immedi...| B2[Prioritize change order execution and update production plans.]
+  B2 --> O2[Outcome: Minimize COGS impact from change orders.]
+  O2 --> End[End]
+  N3 -->|Production downtime exceeds predefine...| B3[Initiate recovery actions and reschedule affected builds.]
+  B3 --> O3[Outcome: Minimize downtime impact on COGS and production targets.]
+  O3 --> End[End]
+  Z1 --> End[End]

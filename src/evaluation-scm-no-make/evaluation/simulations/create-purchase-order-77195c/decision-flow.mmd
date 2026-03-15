@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: New material or service request submitted (S4 procurement request or procurement portal).]
+  A --> N1[Stream: STREAMS - Ingest new purchase request and enrich with master data]
+  N1 --> N2[Stream: STREAMS - Compute net requirement and recommended order quantity]
+  N2 --> N3{PB: Process Builder - Evaluate rules to decide auto-issue vs approval and finalize terms}
+  N3 -->|Primary| N4[PB: Remote Functions - Create PO in S4 and persist transaction]
+  N4 --> N5[PB: Notification - Notify stakeholders and surface PO for audit and downstream planning]
+  N5 --> Z1[Outcome: Purchase Order created in S4 with legal/commercial/financial terms recorded, financial commitment reserved or approval workflow created, procurement and supplier notified, and transaction logged in Subject Areas for audit and downstream planning.]
+  N3 -->|Estimated PO value exceeds budget/app...| B1[Open CWB Lifecycle approval Action Item routed to finance and procurement; hold PO creation until approval.]
+  B1 --> O1[Outcome: PO creation deferred; financial approval recorded; on-approval the process resumes to create PO.]
+  O1 --> End[End]
+  N3 -->|Supplier is not approved or contract ...| B2[Route to sourcing team via Process Builder Subprocess for supplier qualification or contract negotiation.]
+  B2 --> O2[Outcome: Sourcing intervention to approve supplier or apply correct contract; PO creation paused until resolution.]
+  O2 --> End[End]
+  N3 -->|Inventory/forecast discrepancy sugges...| B3[Create an Action Item for buyer review with recommendations (consolidate, split, or postpone).]
+  B3 --> O3[Outcome: Buyer adjusts order recommendation; updated decision re-evaluated and either auto-issued or sent for approval.]
+  O3 --> End[End]
+  Z1 --> End[End]

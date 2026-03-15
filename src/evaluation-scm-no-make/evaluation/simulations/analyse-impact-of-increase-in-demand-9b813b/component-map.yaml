@@ -1,0 +1,41 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: Consolidate authoritative inputs for analysis
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: Cortex Auto Forecast + Safety Stock Service
+    purpose: >-
+      Produce baseline and risk-adjusted demand/safety-stock scenarios with
+      impact metrics
+    confidence: confirmed
+    capability: >-
+      Produce baseline and risk-adjusted demand/safety-stock scenarios with
+      impact metrics
+process_builder:
+  - name: Process Builder + CWB Lifecycle
+    purpose: >-
+      Automatically rank scenarios, apply business rules, and surface CWB
+      recommendations for accept/reject/override
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions -> S4 / Kinaxis RapidResponse
+    purpose: Implement adjustments across ERP/APS with transactional guarantees
+    confidence: inferred
+    node_type: act
+  - name: UI Screen (CWB) + Notification
+    purpose: >-
+      Provide audit trail, allow overrides, and inform procurement/operations
+      teams
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review orchestrate integrated demand-impact and safety-stock sensitivity
+      analyses across skus/locations to auto-generate risk-adjusted scenarios
+      and execute semi-autonomous actions that protect revenue and optimize
+      working capital. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

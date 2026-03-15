@@ -1,0 +1,56 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Collect and normalize spot demand triggers, inventory positions, and
+      external market feeds into Subject Areas
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: Cortex (RCA Service + AutoML) + Remote Functions
+    purpose: >-
+      Score supplier market offers vs contract terms, forecast price impact, and
+      compute cost/risk tradeoffs
+    confidence: confirmed
+    capability: >-
+      Score supplier market offers vs contract terms, forecast price impact, and
+      compute cost/risk tradeoffs
+process_builder:
+  - name: CWB Lifecycle + UI Screen
+    purpose: >-
+      Human-in-the-loop approval for high-risk or override cases and to capture
+      final negotiation terms
+    confidence: confirmed
+    node_type: review
+  - name: Process Builder (Notification) + Dashboard
+    purpose: >-
+      Inform procurement, finance, and logistics; surface cost savings, supplier
+      selections, and execution metrics
+    confidence: confirmed
+    node_type: notify
+agent_teams:
+  - name: Process Builder (IF, Rules) + Agent Team (agentic_ai)
+    purpose: >-
+      Agent proposes aggregated auction or targeted buys and shortlists
+      suppliers using rules and agent reasoning
+    confidence: confirmed
+    role: >-
+      Agent proposes aggregated auction or targeted buys and shortlists
+      suppliers using rules and agent reasoning
+  - name: Process Builder (Action Item, Remote Functions) + Agent Team
+    purpose: >-
+      Trigger automated RFP/bid flows to suppliers, collect responses, and write
+      approved POs back to S4
+    confidence: confirmed
+    role: >-
+      Trigger automated RFP/bid flows to suppliers, collect responses, and write
+      approved POs back to S4
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automate end-to-end spot buy orchestration to minimize cogs and
+      protect ebitda by combining touchless demand signals, real-time supplier
+      markets, and contract terms to dynamically select suppliers, negotiate
+      terms, and execute purchases with minimal manual intervention. and approve
+      the recommended action.
+    confidence: confirmed
+    component_type: display

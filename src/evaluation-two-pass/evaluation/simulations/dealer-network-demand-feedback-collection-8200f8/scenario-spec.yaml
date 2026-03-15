@@ -1,0 +1,144 @@
+objective: >-
+  Autonomously harmonize demand signals from sales/marketing, dealer network,
+  product development, and executive reviews into a single reconciled demand
+  plan that optimizes working capital and revenue impact while reducing
+  stockouts and excess inventory.
+trigger: >-
+  Weekly demand cycle or major event (promotion launch, product launch,
+  significant dealer input, or executive adjustment).
+decision: >-
+  Determine signal trust weights and reconcile competing demand inputs to
+  produce a unified demand plan and confidence score, escalating to human review
+  when confidence or consensus thresholds are not met.
+expected_action: >-
+  Agentic orchestration reconciles inputs, generates a reconciled demand plan
+  with confidence metadata, writes final plan to SAP S/4HANA via Remote
+  Functions, and surfaces exceptions/recommendations through CWB Lifecycle for
+  stakeholder review when required.
+expected_outcome: >-
+  A single authoritative demand plan aligned across functions with lower
+  stockouts and excess, improved service levels, measurable reduction in working
+  capital tied to inventory, and auditable rationale for changes and overrides.
+rationale: >-
+  Agentic AI combined with Process Builder enables adaptive multi-agent
+  reconciliation across structured and unstructured inputs. Cortex Auto Forecast
+  provides robust baselines; STREAMS and DDM ingest and normalize source data;
+  Remote Functions ensure controlled SAP writeback. CWB Lifecycle and
+  notifications provide safe human-in-the-loop when confidence is low or
+  executives intervene.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer Portal / Dealer Network API
+    type: Dealer Portal API
+    status: tbd
+  - name: Marketing Automation / Promotion Calendar
+    type: Marketing system
+    status: tbd
+  - name: Product Management / PLM
+    type: Product Management tool
+    status: tbd
+  - name: Executive Consensus Inputs (CWB / Email)
+    type: Manual / CWB
+    status: tbd
+key_inputs:
+  - name: Historical sales and shipment data
+    source: SAP S/4HANA
+    purpose: Baseline demand history, trend and seasonality detection for forecasting
+    preferred_stream_type: batch
+  - name: Dealer network demand signals & market intelligence
+    source: Dealer Portal / Dealer Network API
+    purpose: >-
+      Local market adjustments, short-term order intent, promotional lift
+      observations
+    preferred_stream_type: api
+  - name: Marketing promotions and calendar
+    source: Marketing Automation / Promotion Calendar
+    purpose: Planned demand uplifts and timing for promotional impacts
+    preferred_stream_type: batch
+  - name: Product launch / engineering constraints
+    source: Product Management / PLM
+    purpose: >-
+      New product timing, phasing, and supply constraints impacting demand
+      realization
+    preferred_stream_type: batch
+  - name: Executive adjustments and consensus directives
+    source: Executive Consensus Inputs (CWB / Email)
+    purpose: Strategic overrides and prioritization signals to guide reconciliation
+  - name: Current inventory and supply constraints
+    source: SAP S/4HANA
+    purpose: Inventory-position-informed reconciliation to balance stockout vs. excess
+    preferred_stream_type: batch
+  - name: Baseline statistical forecast
+    source: Cortex Auto Forecast
+    purpose: Algorithmic baseline for reconciliation and confidence scoring
+happy_path:
+  - step: >-
+      Ingest and normalize historicals, inventory, dealer signals, promotions,
+      and product plans into the Subject Area
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: Create a consistent, validated dataset for analysis and agent consumption
+  - step: >-
+      Generate baseline forecasts and anomaly flags using time-series models and
+      feature engineering
+    stage: analyze
+    component: Cortex Auto Forecast + STREAMS
+    purpose: >-
+      Provide algorithmic baseline forecasts with confidence metrics and
+      explainability
+  - step: >-
+      Orchestrate Agentic reconciliation to weigh signals, surface conflicts,
+      and propose a reconciled demand plan
+    stage: decide
+    component: Process Builder + Agent Team (Agentic AI)
+    purpose: >-
+      Apply multi-agent reasoning and rule-based guardrails to produce a
+      reconciled plan and confidence score
+  - step: >-
+      If confidence above threshold, finalize plan and writeback to ERP;
+      otherwise open CWB for review
+    stage: act
+    component: Remote Functions + CWB Lifecycle
+    purpose: >-
+      Perform controlled SAP S/4HANA writeback or route exceptions for
+      human-in-the-loop approval
+  - step: >-
+      Notify stakeholders and collect any manual overrides or clarifications via
+      CWB/UI
+    stage: notify
+    component: Notification + UI Screen (Action Item / CWB view)
+    purpose: Ensure cross-functional visibility and allow fast overrides when needed
+  - step: >-
+      Surface reconciled plan, confidence, and metric KPIs on dashboards for
+      review and continuous learning
+    stage: surface
+    component: Data View / Dashboard
+    purpose: >-
+      Provide traceability, performance tracking (stockouts, excess, working
+      capital) and inputs for model refinement
+branches:
+  - condition: Low confidence or high disagreement among key inputs (below threshold)
+    response: >-
+      Open CWB Lifecycle for cross-functional consensus review; Agent Team
+      summarizes disagreements and recommended adjustments.
+    outcome: >-
+      Human-in-the-loop resolves conflicts; final plan is revised and written to
+      SAP with recorded rationale.
+  - condition: Missing or delayed dealer inputs for prioritized SKUs/regions
+    response: >-
+      Agent Team triggers targeted dealer outreach (Action Item/Notification)
+      and applies conservative buffer rules via Process Builder until inputs
+      arrive.
+    outcome: >-
+      Temporary conservative plan reduces stockout risk; plan updates when
+      dealer inputs received and reconciled.
+  - condition: Executive urgent override or strategic directive flagged
+    response: >-
+      Honor executive consensus flag within reconciliation logic, log override
+      rationale, and recalculate downstream parameters (safety stock,
+      allocations) via Remote Functions.
+    outcome: >-
+      Demand plan aligns with executive priorities with auditable trail and
+      adjusted inventory decisions.

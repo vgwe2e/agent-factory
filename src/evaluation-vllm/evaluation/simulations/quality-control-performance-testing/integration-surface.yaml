@@ -1,0 +1,41 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: quality-check-results
+    stream_type: Event Stream
+    source: In-Process Inspections
+  - stream_name: engine-performance-data
+    stream_type: Event Stream
+    source: Engine Dyno & Hot Tests
+  - stream_name: transmission-test-data
+    stream_type: Event Stream
+    source: Transmission Shift & Functionality Tests
+  - stream_name: non-conformance-reports
+    stream_type: Event Stream
+    source: Non-Conforming Product Disposition
+  - stream_name: quality-data
+    stream_type: Event Stream
+    source: Quality Data Collection & Root Cause Analysis
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: To predict potential issues and optimize test sequences.
+  - component: Process Builder
+    type: process_builder
+    function: To validate engine performance and durability.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: To authorize rework, scrap, or concession requests.
+  - component: Remote Functions
+    type: process_builder
+    function: To address recurring manufacturing issues and improve yield.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce cogs from test-related waste, improve working capital
+      through faster disposition decisions, and tighten yield during platform
+      launches across multiple vehicle programs. and approve the recommended
+      action.

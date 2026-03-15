@@ -1,0 +1,81 @@
+objective: >-
+  Synchronize press setup, stamping production, in-process quality monitoring,
+  and post-stamping handling to minimize COGS, reduce changeovers, prevent
+  defects, and improve OTIF.
+trigger: Start of a new production run or changeover event.
+decision: >-
+  Determine optimal press setup, tooling installation, production run
+  configuration, quality adjustments, and post-stamping handling steps.
+expected_action: >-
+  Execute optimized press setup, approve first-piece inspection, configure
+  stamping production runs, adjust in-process quality, collect production data,
+  and handle parts post-stamping.
+expected_outcome: >-
+  Minimized COGS, reduced changeovers, prevented defects, improved OTIF, and
+  optimized overall production efficiency.
+rationale: >-
+  By leveraging real-time data and AI-driven insights, the solution will enable
+  synchronized and efficient press operations, leading to significant cost
+  savings and improved quality.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Production Specifications
+    source: SAP S/4HANA
+    purpose: Define press setup and tooling requirements.
+  - name: First-Piece Inspection Results
+    source: SAP S/4HANA
+    purpose: Validate initial stamped parts.
+  - name: Stamping Production Metrics
+    source: SAP S/4HANA
+    purpose: Monitor and optimize production runs.
+  - name: Quality Adjustments
+    source: SAP S/4HANA
+    purpose: Identify and apply necessary quality improvements.
+  - name: Production Data
+    source: SAP S/4HANA
+    purpose: Collect and report key production metrics.
+  - name: Post-Stamping Handling Instructions
+    source: SAP S/4HANA
+    purpose: Ensure proper part handling and packaging.
+happy_path:
+  - step: Retrieve production specifications from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Fetch required data for press setup.
+  - step: Plan and execute press setup and tooling installation.
+    stage: analyze
+    component: Agentic AI
+    purpose: Optimize changeover time and readiness.
+  - step: Perform first-piece inspection and approve results.
+    stage: decide
+    component: Agentic AI
+    purpose: Set acceptance criteria for full production.
+  - step: Configure stamping production run based on optimized settings.
+    stage: act
+    component: Agentic AI
+    purpose: Maximize COGS improvement and meet throughput.
+  - step: Continuously monitor and adjust in-process quality.
+    stage: analyze
+    component: Agentic AI
+    purpose: Minimize defects and rework.
+  - step: Collect and report production metrics.
+    stage: review
+    component: Agentic AI
+    purpose: Optimize overall scheduling and capacity.
+  - step: Handle and package parts post-stamping.
+    stage: act
+    component: Agentic AI
+    purpose: Minimize damage and ensure throughput.
+branches:
+  - condition: First-piece inspection fails.
+    response: Reconfigure press setup and retry inspection.
+    outcome: Ensure initial stamped parts meet specifications.
+  - condition: Quality adjustments exceed tolerance limits.
+    response: Halt production and investigate root cause.
+    outcome: Prevent defective parts from entering production.
+  - condition: Post-stamping handling instructions are missing.
+    response: Generate default handling instructions.
+    outcome: Ensure proper part handling and packaging.

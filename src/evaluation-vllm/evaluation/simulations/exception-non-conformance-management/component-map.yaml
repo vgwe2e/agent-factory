@@ -1,0 +1,41 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and ingest critical issue data from SAP S/4HANA.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Monitoring
+    purpose: Evaluate the severity and context of the detected issue.
+    confidence: confirmed
+    capability: Evaluate the severity and context of the detected issue.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: >-
+      Decide the best course of action based on predefined rules and business
+      logic.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: >-
+      Implement the selected action, such as halting production or initiating
+      rework.
+    confidence: inferred
+    node_type: act
+  - name: Cortex Monitoring
+    purpose: Ensure the action taken is effective and monitor for any further issues.
+    confidence: confirmed
+    node_type: review
+  - name: Notification
+    purpose: Inform relevant stakeholders about the action taken and its outcome.
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unify and automate exception handling across production stop &
+      hold, rework/repair, deviation & ecas, critical issue escalation, scrap
+      disposition, and root cause analyses to reduce cogs and improve otif and
+      line efficiency. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

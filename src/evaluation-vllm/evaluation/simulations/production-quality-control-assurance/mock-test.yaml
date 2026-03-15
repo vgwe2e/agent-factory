@@ -1,0 +1,46 @@
+decision: >-
+  Coordinate automated inspection decisions, defect-root-cause actions, and
+  adaptive rework/no-rework routing.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Production start and completion events, incoming material receipt
+    notifications.
+  parameters:
+    objective: >-
+      Reduce waste, prevent rework delays, and improve first-pass yields through
+      coordinated automated inspection decisions, defect-root-cause actions, and
+      adaptive rework/no-rework routing.
+    key_inputs:
+      - Production Stage Data
+      - End-of-Line Audit Results
+      - Non-Conformance Reports
+      - Quality Control Plans
+      - Incoming Material Data
+      - Production Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Perform quality checks at defined stages, manage end-of-line audits and
+    rework, identify and address root causes of non-conformances, enforce
+    Quality Control Plans, conduct incoming material inspections, and implement
+    production improvements to increase FTT yield.
+  outcome: >-
+    Reduced waste, minimized rework delays, improved first-pass yields, and
+    enhanced overall production quality.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Monitoring
+    - CWB Lifecycle
+    - Remote Functions
+    - UI Screens
+    - Notification
+    - Dashboard
+rationale: >-
+  Coordinating automated inspection decisions and adaptive rework routing will
+  optimize production quality, reduce costs, and improve on-time throughput.

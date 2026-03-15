@@ -1,0 +1,68 @@
+objective: Supplier Collaboration for Inventory Optimization
+trigger: Periodic review of supplier-managed inventory performance and demand forecasts
+decision: >-
+  Select remediation actions to improve supplier performance within SMI
+  programs, decide which supplier and order plan to commit to for forecasts
+  shared with suppliers, adjust parameters of the VMI program to optimize
+  inventory levels and service, and jointly identify and implement inventory
+  reduction opportunities with suppliers
+expected_action: >-
+  Automate SMI performance reviews and recommend remediation actions, share
+  demand forecasts with suppliers and secure production commitments,
+  continuously monitor and adjust VMI program parameters, collaborate with
+  suppliers to implement inventory reduction initiatives
+expected_outcome: >-
+  Reduced COGS, improved revenue protection through better availability,
+  optimized working capital, and enhanced OTIF performance
+rationale: >-
+  Leverage autonomous supplier collaboration and real-time VMI replenishment to
+  optimize inventory levels and service, reducing excess inventory and
+  preventing stockouts.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: SMI Performance Metrics
+    source: SAP S/4HANA
+    purpose: Evaluate supplier performance
+  - name: Demand Forecasts
+    source: SAP S/4HANA
+    purpose: Share with suppliers for production commitments
+  - name: VMI Program Parameters
+    source: SAP S/4HANA
+    purpose: Monitor and adjust for optimal inventory levels
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: Identify reduction opportunities
+happy_path:
+  - step: Retrieve SMI performance metrics
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect supplier performance data
+  - step: Analyze SMI performance and generate recommendations
+    stage: analyze
+    component: Agentic AI
+    purpose: Identify remediation actions
+  - step: Share demand forecasts with suppliers
+    stage: act
+    component: Remote Functions
+    purpose: Secure production commitments
+  - step: Monitor VMI program parameters
+    stage: analyze
+    component: Cortex Monitoring
+    purpose: Ensure optimal inventory levels
+  - step: Collaborate with suppliers on inventory reduction initiatives
+    stage: decide
+    component: Agentic AI
+    purpose: Implement joint reduction strategies
+branches:
+  - condition: Supplier performance below threshold
+    response: Initiate remediation actions
+    outcome: Improved supplier adherence to SMI program terms
+  - condition: Insufficient inventory levels detected
+    response: Adjust VMI parameters
+    outcome: Optimized inventory levels and reduced stockouts
+  - condition: Excess inventory identified
+    response: Collaborate on reduction initiatives
+    outcome: Reduced working capital and COGS

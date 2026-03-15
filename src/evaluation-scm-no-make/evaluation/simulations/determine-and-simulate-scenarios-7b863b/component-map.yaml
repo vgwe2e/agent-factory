@@ -1,0 +1,45 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      Extract and normalize forecasts, inventory, capacity, revenue and open
+      orders into subject area
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Remote Functions
+    purpose: >-
+      Apply deterministic rules and revenue-impact calculations to create
+      prioritized scenario options
+    confidence: inferred
+    capability: >-
+      Apply deterministic rules and revenue-impact calculations to create
+      prioritized scenario options
+process_builder:
+  - name: Rules
+    purpose: >-
+      Apply decision thresholds (revenue at risk, service level, working
+      capital) to pick top scenarios to simulate
+    confidence: confirmed
+    node_type: control_flow
+  - name: CWB Lifecycle
+    purpose: >-
+      Record recommended supply option with rationale, allow human
+      approve/reject/override, and audit decision
+    confidence: confirmed
+    node_type: review
+  - name: Remote Functions
+    purpose: >-
+      Writeback chosen supply updates to S4 / Kinaxis and trigger notifications
+      to planning, logistics, and finance
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review orchestrate end-to-end supply scenario planning to protect revenue
+      and optimize cash flow by evaluating deterministic supply options,
+      simulating multi-scenario outcomes, and executing auditable supply plan
+      writebacks across skus and locations. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

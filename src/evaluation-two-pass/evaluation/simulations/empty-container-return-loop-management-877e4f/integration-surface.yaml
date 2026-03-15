@@ -1,0 +1,51 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Supplier Portal / EDI
+    status: tbd
+  - name: 3PL / TMS
+    status: tbd
+aera_ingestion:
+  - stream_name: container-inventory-movements-positions-ownership-location-age
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: plant-consumption-production-schedules
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: supplier-lead-times-return-window-commitments
+    stream_type: Event Stream
+    source: Supplier Portal / EDI
+  - stream_name: transport-capacity-and-routing-constraints
+    stream_type: Event Stream
+    source: 3PL / TMS
+  - stream_name: container-turnover-forecast
+    stream_type: time-series
+    source: Cortex Auto Forecast
+processing:
+  - component: >-
+      Process Builder (Process) calling Cortex Auto Forecast + Remote Functions
+      (optimization engine)
+    type: process_builder
+    function: >-
+      Combine forecasts with constraints (supplier lead times, transport
+      capacity, service SLAs) to compute pickup quantities/times and
+      consolidation plans
+  - component: Process Builder (Transaction) + Remote Functions (ERP writeback)
+    type: process_builder
+    function: >-
+      Write return orders into SAP S/4HANA and trigger transport bookings or
+      carrier APIs for pickups
+  - component: UI Screen + Process Builder Notification
+    type: process_builder
+    function: >-
+      Provide visibility of schedules via planner UI, send supplier
+      notifications, and open Action Items for exceptions
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review orchestrate and optimize the return flow of empty returnable
+      containers from plants back to suppliers to minimize cogs and working
+      capital while ensuring container availability and supplier compliance. and
+      approve the recommended action.

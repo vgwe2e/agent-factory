@@ -1,0 +1,133 @@
+objective: >-
+  Automatically detect regional demand mismatches and orchestrate cross-region
+  inventory repositioning to align supply with regional demand signals, reducing
+  emergency transfers and regional COGS while improving service levels.
+trigger: >-
+  Scheduled detection job (e.g., hourly/batch) or incoming forecast update where
+  regional demand imbalance between Region A and Region B exceeds configured
+  threshold.
+decision: >-
+  Execute an automated cross-region inventory transfer (quantity, source DC,
+  destination DC, timing) versus escalate for manual intervention.
+expected_action: >-
+  Consolidate demand and inventory signals, evaluate transfer feasibility and
+  ROI using deterministic business rules and optimization, create transfer
+  orders in S4, book transport with Uber Freight TMS (or 3PL), and update
+  planning systems (Kinaxis) and WMS (Blue Yonder).
+expected_outcome: >-
+  Balanced regional inventories aligned to demand signals, fewer emergency
+  expedites, improved regional service levels, reduced inter-regional transfer
+  cost and COGS, and synchronized planning/fulfillment state across S4, Kinaxis
+  and WMS.
+rationale: >-
+  Use Process Builder to orchestrate periodic detection and deterministic
+  rule-based decisioning (fast, auditable). STREAMS consolidates and validates
+  source data; Remote Functions perform non‑SQL calculations and API writebacks
+  to S4/TMS; integrating with Kinaxis ensures planning state and shortage
+  propagation are updated. This hybrid of deterministic rules + orchestrated
+  writebacks minimizes latency and human effort while preserving control for
+  exceptions.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (Rebalancing / Shortage / Expediting)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS/3PL
+    status: identified
+  - name: SAS (Advanced Statistical Forecasting)
+    type: Forecasting
+    status: identified
+key_inputs:
+  - name: Regional demand forecasts (per SKU, per DC)
+    source: SAS / Kinaxis RapidResponse
+    purpose: >-
+      Detect geographic demand shifts and compute required replenishment at
+      region/DC level
+  - name: Inventory on hand & available (per SKU, per DC)
+    source: S4 / Blue Yonder WMS
+    purpose: Determine transferable available stock and constraints
+  - name: Open orders, allocations and safety stock targets
+    source: S4 / Kinaxis (FG Safety Stock Modeling)
+    purpose: Protect allocations and safety stock when sizing transfers
+  - name: Transfer lead times, transit cost and capacity
+    source: Uber Freight TMS / S4 / Kinaxis
+    purpose: Estimate arrival times, cost benefit and feasibility of transfers
+  - name: DC capacity & storage constraints
+    source: S4 / Blue Yonder WMS
+    purpose: Ensure destination DC can receive and store inbound transfers
+  - name: >-
+      Business rules and thresholds (imbalance % , min transfer qty, cost vs
+      benefit)
+    source: Planning policy configuration (Aera Process Builder / Admin)
+    purpose: Drive deterministic decisioning and escalation rules
+  - name: Shortage propagation / planning consumption
+    source: Kinaxis RapidResponse
+    purpose: Update plan impacts after transfers are committed
+happy_path:
+  - step: Ingest source signals (forecasts, inventory, orders, transport)
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      Consolidate and validate regional forecasts, inventory, allocations and
+      transport data into Subject Areas/Data Views
+  - step: Compute imbalance and candidate transfer set
+    stage: analyze
+    component: Process Builder (Rules + Data View)
+    purpose: >-
+      Apply deterministic rules to detect regional imbalance and generate
+      prioritized SKU/DC transfer candidates
+  - step: Evaluate feasibility and ROI for each candidate
+    stage: decide
+    component: Process Builder (Remote Functions)
+    purpose: >-
+      Calculate transfer quantity considering safety stock, lead times,
+      transport cost and DC capacity; decide auto-execute vs escalate
+  - step: Execute transfer transactions and transport booking
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Create transfer orders in S4, update Blue Yonder WMS and book carrier
+      capacity via Uber Freight APIs
+  - step: Surface results and notify stakeholders
+    stage: notify
+    component: Process Builder (Notification) + UI Screen / Dashboard
+    purpose: >-
+      Notify planners and operations of executed transfers and surface a summary
+      in planner dashboard and Subject Areas
+branches:
+  - condition: >-
+      Insufficient transferable inventory at source DC to satisfy recommended
+      transfer
+    response: >-
+      Trigger Kinaxis RapidResponse shortage propagation and route to CWB
+      Lifecycle for prioritization / partial fulfillment or expedited
+      production; create action item for planners
+    outcome: >-
+      Partial or delayed transfer with planner intervention; constraints
+      recorded for downstream planning
+  - condition: >-
+      Estimated transport cost or lead time makes transfer net-negative vs
+      emergency replenishment
+    response: >-
+      Abort automated transfer, log decision, and notify planners with
+      recommended alternatives (local expedite, supplier expedite); surface cost
+      comparison
+    outcome: >-
+      Avoids costly transfers; planners receive actionable alternatives and
+      rationale
+  - condition: Transport capacity unavailable for required timing
+    response: >-
+      Schedule a prioritized partial transfer (top SKUs) and create a follow-up
+      Process Builder wait + retry; if retry fails, escalate to CWB Lifecycle
+    outcome: >-
+      Critical SKUs moved on available capacity; non-critical items
+      queued/escalated for manual handling

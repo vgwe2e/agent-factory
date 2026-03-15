@@ -1,0 +1,40 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: npi-announcement
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: supply-chain-infrastructure-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: pilot-build-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-and-logistics-capacity-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: ramp-up-monitoring-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: post-launch-optimization-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Process Builder
+    type: cortex
+    function: Align sourcing, capacity, and ramp plans for pilot programs
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure readiness for NPI ramp-up and allocate buffers
+  - component: Process Builder
+    type: process_builder
+    function: Identify and resolve emerging issues during ramp-up
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize the end-to-end npi network for ford by synchronizing
+      capacity validation, pilot build coordination, ramp-up monitoring, and
+      post-launch optimization. and approve the recommended action.

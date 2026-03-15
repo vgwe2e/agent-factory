@@ -1,0 +1,147 @@
+objective: >-
+  Automatically synchronize pricing, rebates, and price-protection actions
+  across Direct, Distributor, and Retail channels to prevent channel-induced
+  margin erosion while preserving channel integrity and financial controls.
+trigger: >-
+  Scheduled orchestration (daily) or event-driven update when pricing/rebate
+  contract, forecast, or network constraint data changes in source systems.
+decision: >-
+  Dynamically determine coordinated channel actions (price adjustments, rebate
+  accrual updates, and price-protection commitments) that maximize consolidated
+  gross margin subject to finance margin floors, contractual constraints, and
+  network/availability limits.
+expected_action: >-
+  Process Builder evaluates margin impact using demand forecasts and network
+  constraints, applies deterministic business rules to select coordinated
+  price/rebate actions, executes ERP writebacks via Remote Functions to S4 for
+  approved changes, and notifies Sales/Finance/Planning stakeholders. Exceptions
+  are routed to CWB Lifecycle for manual approval.
+expected_outcome: >-
+  Aligned cross-channel pricing and rebate decisions that maintain target gross
+  margins, accurate rebate accruals, minimized channel margin erosion, automated
+  ERP updates with audit trail, and timely stakeholder visibility for
+  exceptions.
+rationale: >-
+  A deterministic, process-driven approach uses authoritative data from ERP,
+  demand forecasts, and APS to enforce finance-approved margin floors and
+  contractual rules. Automating coordination reduces reactive discounting,
+  prevents margin leakage across channels, and preserves channel partner
+  commitments while enabling controlled human intervention for exceptions.
+  Medium complexity due to ERP writebacks, multi-system integration, and finance
+  controls.
+source_systems:
+  - name: S4
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Analytics
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight TMS
+    type: TMS
+    status: identified
+  - name: 3PL Uber Freight
+    type: 3PL
+    status: identified
+key_inputs:
+  - name: Pricing & Rebate Master
+    source: S4
+    purpose: >-
+      Authoritative prices, rebate terms, price-protection clauses and
+      contractual constraints for each channel/partner.
+    preferred_stream_type: STREAMS
+  - name: Demand Forecast (time-series)
+    source: SAS (Advanced Statistical Forecasting)
+    purpose: >-
+      Projected demand by channel/SKU to estimate revenue and margin impact of
+      price/rebate actions.
+    preferred_stream_type: Report Data
+  - name: Network Constraints & Availability
+    source: Kinaxis RapidResponse
+    purpose: >-
+      Supply limits, shortage propagation and replenishment timing that
+      constrain feasible channel actions.
+    preferred_stream_type: Report Data
+  - name: Channel Sales Commitments / Orders
+    source: S4
+    purpose: >-
+      Committed channel volumes and open orders to ensure actions do not breach
+      agreements.
+    preferred_stream_type: STREAMS
+  - name: Finance Margin Targets & Floors
+    source: Finance (manual / Data View)
+    purpose: >-
+      Governance constraints that actions must respect to preserve corporate
+      margin objectives.
+  - name: Historical Channel Performance
+    source: SAS / Subject Areas
+    purpose: >-
+      Baseline elasticity, rebate utilization and past channel migration
+      patterns used in impact calculations.
+    preferred_stream_type: Subject Areas
+happy_path:
+  - step: >-
+      Ingest authoritative pricing, rebate contracts, sales commitments, demand
+      forecasts and network constraints into platform subject areas.
+    stage: ingest
+    component: STREAMS
+    purpose: Consolidate and validate inputs for downstream analysis.
+  - step: >-
+      Normalize and compute baseline gross margin per SKU-channel and project
+      margin delta for candidate price/rebate actions.
+    stage: analyze
+    component: Process Builder (Stream -> Data View)
+    purpose: Create consistent margin view and scenario inputs for deterministic rules.
+  - step: >-
+      Evaluate deterministic rules (finance margin floors, contract constraints,
+      availability) and select coordinated action set.
+    stage: decide
+    component: Process Builder (IF + Rules)
+    purpose: >-
+      Automatically decide approved actions or flag exceptions based on
+      thresholds and rules.
+  - step: >-
+      Execute approved actions: write price/rebate updates to S4 and update
+      rebate accruals; create audit transaction and send confirmations.
+    stage: act
+    component: Remote Functions (ERP writeback) / Transaction
+    purpose: Persist decisions to ERP with transactional integrity and recordability.
+  - step: >-
+      Notify stakeholders and surface updated margin dashboards and exception
+      work items for manual review.
+    stage: review
+    component: Notification + Data View
+    purpose: >-
+      Provide visibility, audit trail, and routing of exceptions to
+      Sales/Finance/Planning via CWB if needed.
+branches:
+  - condition: >-
+      Proposed coordinated actions violate finance margin floors or contractual
+      protections
+    response: >-
+      Create a CWB Lifecycle exception and route to Finance + Sales for approval
+      with recommended mitigations.
+    outcome: >-
+      No automated writeback; manual approval or modified action applied after
+      sign-off.
+  - condition: >-
+      Key data feeds (pricing, forecast, availability) are stale or missing
+      beyond acceptable age thresholds
+    response: >-
+      Pause automated decisioning, generate data-owner notification, and mark
+      affected SKUs as 'data exception' in report.
+    outcome: >-
+      Prevents incorrect automated changes until data is remediated; preserves
+      auditability.
+  - condition: ERP writeback failure or partial transaction due to downstream conflict
+    response: >-
+      Rollback Transaction, create an exception record, and notify IT/Operations
+      with diagnostic payload for remediation.
+    outcome: >-
+      System state remains consistent; manual intervention required to re-run or
+      correct the change.

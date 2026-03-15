@@ -1,0 +1,35 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: demand-forecasts
+    stream_type: Event Stream
+    source: Cortex Auto Forecast
+  - stream_name: service-level-requirements
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Safety Stock Service
+    type: cortex
+    function: Determine safety stock levels based on demand variability.
+  - component: Remote Functions
+    type: cortex
+    function: Assess the financial impact of proposed inventory strategies.
+  - component: Process Builder
+    type: process_builder
+    function: Create strategies to optimize inventory deployment and rebalancing.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Obtain approval for inventory adjustments and deployment strategies.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review optimize global inventory targets, safety stock, excess/obsolete
+      inventory mitigation, deployment/rebalancing, and working capital impact
+      analysis across ford’s multi-echelon network. and approve the recommended
+      action.

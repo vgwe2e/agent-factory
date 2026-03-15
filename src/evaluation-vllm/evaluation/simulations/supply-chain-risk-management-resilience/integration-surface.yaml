@@ -1,0 +1,37 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: supply-chain-risk-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: geopolitical-event-data
+    stream_type: Event Stream
+    source: External Feeds
+  - stream_name: disaster-recovery-plans
+    stream_type: Event Stream
+    source: Internal Systems
+  - stream_name: supplier-data
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: disruption-scenarios
+    stream_type: Event Stream
+    source: Internal Models
+processing:
+  - component: AutoML
+    type: cortex
+    function: Identify potential geopolitical risks.
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Evaluate network vulnerability under different scenarios.
+  - component: Process Builder
+    type: process_builder
+    function: Create and maintain disaster recovery plans.
+  - component: Remote Functions
+    type: process_builder
+    function: Develop strategies to mitigate single-source risks.
+ui_surface:
+  - component: UI Screens
+    screen: Primary
+    purpose: Present recommendations for resilient sourcing and capacity responses.

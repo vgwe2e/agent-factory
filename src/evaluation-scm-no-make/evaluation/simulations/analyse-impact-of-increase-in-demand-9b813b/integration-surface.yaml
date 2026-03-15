@@ -1,0 +1,65 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS - Advanced Statistical Forecasting
+    type: forecasting
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS / planning
+    status: identified
+  - name: Kinaxis (FG safety stock & rebalancing / order expediting)
+    type: planning_services
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: 3PL/TMS
+    status: identified
+aera_ingestion:
+  - stream_name: touchless-demand-forecast-uplift-flags
+    stream_type: API
+    source: Cortex Auto Forecast / SAS forecasts / S4 sales orders
+  - stream_name: on-hand-inventory-and-transactions
+    stream_type: API
+    source: Blue Yonder WMS / S4
+  - stream_name: safety-stock-baselines-and-service-level-targets
+    stream_type: API
+    source: Kinaxis RapidResponse / Kinaxis safety stock models
+  - stream_name: capacity-production-constraints
+    stream_type: API
+    source: S4 manufacturing / Kinaxis APS
+  - stream_name: logistics-lead-times-and-constraints
+    stream_type: API
+    source: Uber Freight / Blue Yonder WMS
+  - stream_name: business-policies-and-tolerance-thresholds
+    stream_type: Event Stream
+    source: Planning team input (UI Screen / Configuration)
+processing:
+  - component: Cortex Auto Forecast + Safety Stock Service
+    type: cortex
+    function: >-
+      Produce baseline and risk-adjusted demand/safety-stock scenarios with
+      impact metrics
+  - component: Process Builder + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Automatically rank scenarios, apply business rules, and surface CWB
+      recommendations for accept/reject/override
+  - component: Remote Functions -> S4 / Kinaxis RapidResponse
+    type: process_builder
+    function: Implement adjustments across ERP/APS with transactional guarantees
+  - component: UI Screen (CWB) + Notification
+    type: process_builder
+    function: >-
+      Provide audit trail, allow overrides, and inform procurement/operations
+      teams
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review orchestrate integrated demand-impact and safety-stock sensitivity
+      analyses across skus/locations to auto-generate risk-adjusted scenarios
+      and execute semi-autonomous actions that protect revenue and optimize
+      working capital. and approve the recommended action.

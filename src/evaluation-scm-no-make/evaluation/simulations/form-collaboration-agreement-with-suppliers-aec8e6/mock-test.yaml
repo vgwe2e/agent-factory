@@ -1,0 +1,63 @@
+decision: >-
+  Select the best-fit supplier and collaboration model (equal collaboration vs
+  exclusive partnership) balancing projected innovation value, supplier risk,
+  and financial thresholds.
+input:
+  financial_context:
+    annual_revenue: 11202000000
+    cogs: 5901000000
+    ebitda: 3353000000
+    inventory_value: 1254000000
+  trigger: >-
+    An approved category innovation initiative reaches the L4 activity 'form
+    Collaboration Agreement With Suppliers' in the innovation pipeline.
+  parameters:
+    objective: >-
+      Automate end-to-end category innovation collaboration: select supplier and
+      collaboration model, execute agreements and procurement actions, and
+      measure initiative performance to drive revenue, EBITDA uplift, and
+      working capital improvements across multiple SKUs and suppliers.
+    key_inputs:
+      - approved_initiative_record
+      - supplier_master_and_profiles
+      - demand_forecasts_by_SKU
+      - inventory_and_safety_stock
+      - procurement_terms_and_pricing
+      - financial_targets_and_thresholds
+      - supplier_risk_scores
+      - collaboration_model_templates
+    source_systems:
+      - S4 (SAP S/4HANA)
+      - SAS
+      - Kinaxis RapidResponse
+      - Kinaxis (general)
+      - Blue Yonder WMS
+      - Uber Freight TMS
+      - 3PL Uber Freight
+expected_output:
+  action: >-
+    Agentic workflow (Process Builder + Agent Team) scores suppliers, recommends
+    collaboration model, drafts agreement template, routes for approval (CWB
+    Lifecycle), and executes downstream writebacks (Remote Functions) to S4 and
+    logistics systems to initiate procurement and inventory actions.
+  outcome: >-
+    Signed supplier collaboration agreements for prioritized initiatives,
+    procurement and replenishment actions created in S4/TMS/WMS, tracked
+    initiative KPIs (revenue uplift, EBITDA impact, working capital), and
+    closed-loop monitoring for performance and rebalancing.
+  affected_components:
+    - DDM/Crawlers + STREAMS
+    - Cortex Auto Forecast + RCA Service + Data Science
+    - CWB Lifecycle + UI Screen
+    - Remote Functions + Process Builder (Action Item)
+    - >-
+      Process Builder Notification + Cortex Monitoring + Dashboard (Subject
+      Areas)
+    - Process Builder -> Agent Team (agentic_ai) + Rules IF node
+    - Dashboard
+rationale: >-
+  Coordinating supplier selection, contracting, and operational execution via
+  agentic AI shortens cycle time, aligns demand/inventory/procurement actions,
+  and enables measurable financial uplift. Using Process Builder for
+  orchestration, Cortex services for analysis, and Remote Functions for ERP/TMS
+  writebacks provides a practical, medium-complexity implementation path.

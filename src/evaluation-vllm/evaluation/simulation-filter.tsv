@@ -1,0 +1,147 @@
+l3_name	verdict	groundedness_score	integration_confidence_score	ambiguity_risk_score	implementation_readiness_score	reasons
+New Product Introduction (NPI) Network Readiness	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.
+Demand Signal Sensing & Adjustment	ADVANCE	80	100	10	91	Scenario is grounded, integration-aware, and implementation-ready.
+Returnable Packaging Management	ADVANCE	80	100	10	91	Scenario is grounded, integration-aware, and implementation-ready.
+Stamping Supplier & Outsource Management	ADVANCE	80	100	10	91	Scenario is grounded, integration-aware, and implementation-ready.
+Supplier Capacity Management	ADVANCE	80	100	10	91	Scenario is grounded, integration-aware, and implementation-ready.
+Supply Planning & Production Scheduling	ADVANCE	80	100	10	91	Scenario is grounded, integration-aware, and implementation-ready.
+Material Flow & In-Plant Logistics	ADVANCE	75	100	13	89	Scenario is grounded, integration-aware, and implementation-ready.
+New Product Introduction (NPI) Demand Forecasting	ADVANCE	75	100	13	89	Scenario is grounded, integration-aware, and implementation-ready.
+New Product Introduction (NPI) Production Planning	ADVANCE	75	100	13	89	Scenario is grounded, integration-aware, and implementation-ready.
+Production Planning & Material Flow Management	ADVANCE	75	100	13	89	Scenario is grounded, integration-aware, and implementation-ready.
+Request for Quote (RFQ) & Bid Management	ADVANCE	75	100	13	89	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Master Data & Bill of Material (BOM) Management	ADVANCE	75	100	13	89	Scenario is grounded, integration-aware, and implementation-ready.
+Vehicle & Part Order Allocation	ADVANCE	75	100	13	89	Scenario is grounded, integration-aware, and implementation-ready.
+Exception & Non-Conformance Management	ADVANCE	71	100	14	87	Scenario is grounded, integration-aware, and implementation-ready.
+Line-side Material Delivery	ADVANCE	71	100	14	87	Scenario is grounded, integration-aware, and implementation-ready.
+Logistics Technology & Data Management	ADVANCE	71	100	14	87	Scenario is grounded, integration-aware, and implementation-ready.
+New Program & Lifecycle S&OP Integration	ADVANCE	71	100	14	87	Scenario is grounded, integration-aware, and implementation-ready.
+OTA Software Deployment & Management	ADVANCE	71	100	14	87	Scenario is grounded, integration-aware, and implementation-ready.
+Parts Supply Chain & Logistics Coordination	ADVANCE	71	100	14	87	Scenario is grounded, integration-aware, and implementation-ready.
+PO Performance Analysis & Continuous Improvement	ADVANCE	71	100	14	87	Scenario is grounded, integration-aware, and implementation-ready.
+Production Quality Control & Assurance	ADVANCE	71	100	14	87	Scenario is grounded, integration-aware, and implementation-ready.
+Commercial Change Management	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Constraint & Exception Management	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Constraint Identification & Resolution	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Contract Management & Lifecycle	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Executive S&OP / IBP Review & Decision Making	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Inbound Logistics Exception Management	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Indirect Spend Analytics & Optimization	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Inventory Performance Monitoring & Analytics	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Invoice & Payment Processing (P2P part)	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Manufacturing Quality Process Engineering	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Paint Shop Maintenance & Reliability	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Process Validation & Simulation	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Procurement Technology & Digitalization	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Production Planning & Execution Control	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Quality Control & Performance Testing	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Logistics Operations	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Strategic Demand Planning & Scenario Modeling	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Tactical Capacity Planning	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Transportation Strategy & Mode Optimization	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.
+Dealer Claims Submission & Front-End Validation	ADVANCE	80	100	30	83	Decision flow failed Mermaid validation.
+Data Analytics & Performance Management	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Dealer & Customer Delivery Operations	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Digital Manufacturing & Automation Process Design	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Drive Unit Component & Sub-Assembly	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Goods Receipt, Invoice Verification & Resolution	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+In-Process Component & Assembly Verification	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Master Production Scheduling (MPS)	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Order Fulfillment & Picking	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Order to Production Scheduling Integration	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Packaging Inventory Management	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Demand Forecasting	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Transportation Planning & Scheduling	ADVANCE	60	100	20	82	Scenario is grounded, integration-aware, and implementation-ready.
+Battery Pack Assembly	ADVANCE	75	100	33	81	Decision flow failed Mermaid validation.
+Commodity Data Analytics & Reporting	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Continuous Improvement & Data Analytics	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Customer Order Modification & Cancellation	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Data & Analytics for Production Performance	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Demand & Supply Data Integration	ADVANCE	75	100	33	81	Decision flow failed Mermaid validation.
+Finished Powertrain Logistics & Outbound Preparation	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Inventory Positioning & Optimization	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Inventory & Working Capital Optimization	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Launch Risk & Issue Management	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Logistics Performance Management & Analytics	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Mobile Service Delivery & Dispatch	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+New Supplier Quality Assessment & Selection	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Non-Conformance & Rework Management	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Production Schedule Execution & Monitoring	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Purchase Order Creation & Issuance	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Inventory Management	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Strategic Network Design & Optimization	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Warranty Performance Monitoring & Analytics	ADVANCE	57	100	21	81	Scenario is grounded, integration-aware, and implementation-ready.
+Aggregate Supply Planning & Capacity	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Battery Module Assembly	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Capacity Planning & Optimization	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Compliance & Risk Management	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Continuous Improvement & Digital Transformation	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Continuous Process Improvement & Optimization	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Data & Technology Enablement for IBP	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Data & Technology Management for S&OP	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Demand Sensing & Forecasting	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Die Engineering & Management	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Financial Integration & Profitability Analysis	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Inbound Receiving & Putaway	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Indirect Sourcing Strategy & Planning	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Internal Production Logistics & Material Handling	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Inventory Strategy & Policy Definition	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Labor & Skills Capacity Planning	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Logistics Capital Planning & Investment	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Logistics Technology & Digitalization Strategy	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Manufacturing Engineering & Process Optimization	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Material Handling & Preparation	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+New Product Introduction (NPI) Capacity Assessment	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Predictive Maintenance (PdM) & Condition Monitoring	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Press Operations & Production Execution	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Pricing Management	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Production Planning & Control	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Production Planning & Scheduling (Stamping)	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Production Planning & Sequencing Integration	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Regulatory & Trade Policy Compliance	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Requisition-to-Order Processing	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Risk Management & Scenario Planning	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Inventory & Distribution	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Inventory Planning & Replenishment	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Service Parts Supply Planning & Procurement	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Supplier Acknowledgment & Communication	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Supplier Launch Readiness & Support	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Supplier Quality & Development	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Supply Base Risk & Resilience Management	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Supply Chain Risk Management & Resilience	ADVANCE	50	100	25	78	Scenario is grounded, integration-aware, and implementation-ready.
+Quality Management & Control	ADVANCE	63	100	39	75	Decision flow failed Mermaid validation.
+Launch Program Strategy & Governance	ADVANCE	60	100	40	74	Decision flow failed Mermaid validation.
+Capacity Scenario Modeling & Simulation	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Cost & Value Optimization Initiatives	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Customer Experience & Technical Support for Connected Services	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Demand Forecasting & Analysis	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Demand Planning & Forecasting	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Manufacturing Anomaly & Issue Resolution	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Material Requirements Planning (MRP) Integration	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Service Parts Regulatory Compliance & Quality Assurance	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Sourcing Risk Management	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Statistical Demand Modeling & Analytics	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Transportation Compliance & Risk Management	REVIEW	43	100	29	74	Low groundedness (43) from confirmed vs inferred component references.
+Drive Unit Final Assembly & Testing	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Emergency & Critical Parts Fulfillment	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Inbound Logistics Network Design & Optimization	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Integrated Financial & Operational Reconciliation	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Manufacturing Process Quality Audits	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Service Parts Inventory Planning & Optimization	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Service Parts Network Strategy & Optimization	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Supplier Collaboration for Inventory Optimization	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Topcoat Application	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Warehouse & Distribution Center Network Management	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Warehouse & Inventory Management	REVIEW	40	100	30	73	Low groundedness (40) from confirmed vs inferred component references.
+Launch Logistics & Distribution Planning	REVIEW	38	100	31	72	Low groundedness (38) from confirmed vs inferred component references.
+Cost & Value Optimization (Sourcing Phase)	REVIEW	33	100	33	70	Low groundedness (33) from confirmed vs inferred component references.
+Field Quality & Warranty Performance Management	REVIEW	33	100	33	70	Low groundedness (33) from confirmed vs inferred component references.
+Multi-Echelon Inventory Optimization	REVIEW	33	100	33	70	Low groundedness (33) from confirmed vs inferred component references.
+Inventory & Material Flow Strategy	REVIEW	29	100	36	68	Low groundedness (29) from confirmed vs inferred component references.
+Finished Goods Handling & Dispatch	REVIEW	25	100	38	66	Low groundedness (25) from confirmed vs inferred component references.
+Material Flow & Inventory Planning for Launch	REVIEW	40	100	50	65	Low groundedness (40) from confirmed vs inferred component references. | Decision flow failed Mermaid validation.
+New Product Introduction & Lifecycle Planning	REVIEW	33	100	53	62	Low groundedness (33) from confirmed vs inferred component references. | Decision flow failed Mermaid validation.
+Operator & Automated Quality Inspections	REVIEW	25	100	57	58	Low groundedness (25) from confirmed vs inferred component references. | Decision flow failed Mermaid validation.
+Service Parts Network Design & Operations	REVIEW	25	100	57	58	Low groundedness (25) from confirmed vs inferred component references. | Decision flow failed Mermaid validation.
+Body-In-White (BIW) Assembly Execution	HOLD	20	100	40	64	Low groundedness (20) from confirmed vs inferred component references.
+Commodity Strategy & Roadmap Development	HOLD	20	100	40	64	Low groundedness (20) from confirmed vs inferred component references.

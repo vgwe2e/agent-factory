@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Demand signals, project timelines, and critical material needs.]
+  A --> N1[Stream: DDM/Crawlers - Collect demand signals and supplier data]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze demand and supplier capacity]
+  N2 --> N3{Agent: Agentic AI - Draft purchase orders}
+  N3 -->|Primary| N4{PB: Remote Functions - Validate PO terms and conditions}
+  N4 --> N5[PB: Process Builder - Issue purchase orders]
+  N5 --> N6[PB: Notification - Notify stakeholders]
+  N6 --> Z1[Outcome: Reduced COGS, improved working capital, accelerated time-to-value for critical materials.]
+  N3 -->|Insufficient supplier capacity| B1[Trigger CWB Lifecycle for manual override]
+  B1 --> O1[Outcome: Manual review and adjustment of POs.]
+  O1 --> End[End]
+  N3 -->|Contract terms violation| B2[Send to Remote Functions for compliance check]
+  B2 --> O2[Outcome: Adjust PO terms to meet contract requirements.]
+  O2 --> End[End]
+  N3 -->|Urgent PO request| B3[Expedite PO issuance through Agentic AI]
+  B3 --> O3[Outcome: Immediate PO issuance for critical materials.]
+  O3 --> End[End]
+  Z1 --> End[End]

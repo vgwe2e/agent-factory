@@ -1,0 +1,58 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Dealer Point-of-Sale / Retail Sales DB
+    type: Database
+    status: tbd
+  - name: Market Intelligence Provider (syndicated/third-party)
+    type: API
+    status: tbd
+  - name: Capacity & Production Planning System
+    status: tbd
+aera_ingestion:
+  - stream_name: global-sales-shipment-records-configuration-level
+    stream_type: batch
+    source: SAP S/4HANA
+  - stream_name: vehicle-configuration-sales-history-hierarchy
+    stream_type: batch
+    source: Subject Areas (ingested via STREAMS/DDM)
+  - stream_name: market-intelligence-signals-pricing-incentives-macro-competitor-activity
+    stream_type: API
+    source: Market Intelligence Provider
+  - stream_name: production-capacity-constraint-profiles-plant-line-variant
+    stream_type: Event Stream
+    source: Capacity & Production Planning System
+  - stream_name: forecast-accuracy-bias-metrics-mape-bias-by-sku-region
+    stream_type: batch
+    source: Subject Areas / Cortex Monitoring
+  - stream_name: new-model-launch-targets-and-ramp-plans
+    stream_type: Event Stream
+    source: Product Launch / Planning inputs (manual or PLM)
+processing:
+  - component: Cortex Auto Forecast + RCA Service
+    type: cortex
+    function: >-
+      Generate time-series forecasts, uncertainty bands, and root-cause drivers
+      for forecast error
+  - component: Process Builder + Remote Functions + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Apply capacity, profitability and supply constraints to produce
+      recommended production/mix plans and route exceptions to planners
+  - component: UI Screens (CWB) + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Surface recommendations, allow overrides, capture rationale and approvals
+      for auditability
+  - component: Remote Functions + Process Builder + Notification
+    type: process_builder
+    function: >-
+      Execute writebacks to SAP S/4HANA and broadcast plan changes to supply
+      chain and commercial teams
+ui_surface:
+  - component: Subject Areas + UI Screens (dashboard)
+    screen: Primary
+    purpose: >-
+      Track forecast accuracy, inventory impact, launch adherence and COGS
+      benefits for continuous improvement

@@ -1,0 +1,20 @@
+flowchart TD
+  A[Trigger: Equipment breakdown or scheduled maintenance window.]
+  A --> N1[Stream: DDM/Crawlers - Monitor equipment status and detect breakdowns.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze equipment status and identify maintenance needs.]
+  N2 --> N3{PB: Process Builder - Schedule preventative maintenance and allocate resources.}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute maintenance tasks and monitor progress.]
+  N4 --> N5{PB: CWB Lifecycle - Manage spare parts inventory and trigger reorders.}
+  N5 --> N6[PB: Remote Functions - Calibrate robotic arms and update programming.]
+  N6 --> N7[PB: Remote Functions - Schedule and execute filter replacements.]
+  N7 --> Z1[Outcome: Reduced paint shop downtime, minimized material costs, improved on-time maintenance, and enhanced production readiness.]
+  N3 -->|Equipment breakdown detected outside ...| B1[Trigger emergency repair workflow.]
+  B1 --> O1[Outcome: Rapidly allocate resources and minimize downtime.]
+  O1 --> End[End]
+  N3 -->|Insufficient spare parts inventory.| B2[Expedite procurement process.]
+  B2 --> O2[Outcome: Ensure timely availability of critical spare parts.]
+  O2 --> End[End]
+  N3 -->|Unexpected increase in filter usage.| B3[Adjust filter replacement schedule.]
+  B3 --> O3[Outcome: Maintain optimal air quality with minimal disruption.]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,74 @@
+objective: >-
+  Combine deterministic optimization and agentic orchestration to prioritize
+  logistics capital planning and investment decisions.
+trigger: Quarterly financial review and logistics performance assessment.
+decision: >-
+  Prioritize logistics facilities and investments, optimize CAPEX and working
+  capital trade-offs, and coordinate capacity investments with supply network
+  constraints.
+expected_action: >-
+  Approve or defer CAPEX projects, conduct ROI analysis for logistics technology
+  investments, and allocate annual logistics budget.
+expected_outcome: >-
+  Reduced COGS, improved OTIF, accelerated payback, and optimized logistics
+  infrastructure investments.
+rationale: >-
+  Leverage Aeterra's deterministic optimization and agentic orchestration to
+  make informed logistics capital planning decisions that balance cost,
+  capacity, and service levels.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Logistics Facility Investment Proposals
+    source: SAP S/4HANA
+    purpose: Identify potential logistics facility investments.
+  - name: CAPEX Project Proposals
+    source: SAP S/4HANA
+    purpose: Evaluate capital expenditure requests for logistics assets.
+  - name: ROI Analysis Scenarios
+    source: SAP S/4HANA
+    purpose: Assess return on investment for logistics technology investments.
+  - name: Annual Logistics Budget
+    source: SAP S/4HANA
+    purpose: Allocate financial resources for logistics operations.
+happy_path:
+  - step: Ingest logistics facility investment proposals from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect and prepare data for analysis.
+  - step: Analyze proposals using deterministic optimization techniques.
+    stage: analyze
+    component: AutoML
+    purpose: >-
+      Prioritize logistics facility investments based on cost, capacity, and
+      service levels.
+  - step: Evaluate CAPEX project proposals for expected COGS impact and payback.
+    stage: analyze
+    component: Remote Functions
+    purpose: Determine which CAPEX projects to approve or defer.
+  - step: Conduct ROI analysis for logistics technology investments.
+    stage: analyze
+    component: AutoML
+    purpose: Assess different scenarios and select the optimal investment strategy.
+  - step: >-
+      Allocate annual logistics budget to maximize EBITDA and working capital
+      impact.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Ensure budget allocation aligns with strategic goals and service levels.
+  - step: Notify stakeholders of approved investments and budget allocations.
+    stage: notify
+    component: Notification
+    purpose: Communicate decisions and next steps.
+branches:
+  - condition: Insufficient budget for all high-priority investments.
+    response: Defer lower-priority investments and reallocate funds.
+    outcome: Adjusted budget allocation to focus on critical investments.
+  - condition: Significant variance in ROI analysis results.
+    response: Conduct additional analysis and consult with experts.
+    outcome: Revised investment strategy based on further insights.
+  - condition: Unexpected changes in supply network constraints.
+    response: Re-evaluate capacity investments and adjust plans accordingly.
+    outcome: Updated investment plan to address new constraints.

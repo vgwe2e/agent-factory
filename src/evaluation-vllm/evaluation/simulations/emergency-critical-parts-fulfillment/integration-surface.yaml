@@ -1,0 +1,28 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: off-road-vehicle-status
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: part-inventory-levels
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: carrier-availability
+    stream_type: Event Stream
+    source: External APIs
+processing:
+  - component: AutoML
+    type: cortex
+    function: Classify and prioritize parts based on urgency and availability.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure stock is allocated efficiently to meet urgent needs.
+  - component: Remote Functions
+    type: process_builder
+    function: Coordinate with carriers for expedited shipping.
+ui_surface:
+  - component: UI Screens
+    screen: Primary
+    purpose: Provide real-time tracking and visibility for critical parts.

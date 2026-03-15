@@ -1,0 +1,57 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS / Advanced Statistical Forecasting (SAS)
+    type: Forecasting Engine
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (FG Safety Stock Modeling / Rebalancing / Order Expediting)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight / 3PL (TMS/Logistics)
+    type: TMS/3PL
+    status: identified
+aera_ingestion:
+  - stream_name: demand-forecast-statistical-sas-adjustments
+    stream_type: fact
+    source: SAS / Advanced Statistical Forecasting
+  - stream_name: multi-echelon-inventory-positions-on-hand-in-transit-reserved
+    stream_type: fact
+    source: S4 / Kinaxis RapidResponse / Blue Yonder WMS
+  - stream_name: supplier-terms-lead-time-profiles
+    stream_type: Event Stream
+    source: S4 (procurement master) / Kinaxis supplier feeds
+  - stream_name: sku-master-portfolio-attributes-abc-xyz-margin-obsolescence-flags
+    stream_type: Event Stream
+    source: S4 / Subject Areas
+  - stream_name: portfolio-financial-metrics-cogs-margin-ebitda-contribution
+    stream_type: Event Stream
+    source: Subject Areas / Finance extracts
+processing:
+  - component: Cortex Auto Forecast + Safety Stock Service
+    type: cortex
+    function: >-
+      Quantify forecast reliability, excess supply, and optimal safety stock per
+      SKU/location
+  - component: Process Builder (Rules, IF, Data View) + CWB Lifecycle
+    type: process_builder
+    function: >-
+      Deterministically decide which SKUs to reprioritize, reallocate, adjust,
+      or escalate
+  - component: Remote Functions + Process Builder (Action Item)
+    type: process_builder
+    function: >-
+      Write changes back to S4/Kinaxis for executed items; surface approval
+      items for human review
+ui_surface:
+  - component: UI Screens + Notification (CWB)
+    screen: Primary
+    purpose: >-
+      Provide dashboards, decision rationale, and auditable history to
+      procurement, supply planners, and finance

@@ -1,0 +1,42 @@
+decision: >-
+  Forecast service parts demand across fleet service network to optimize
+  inventory, avoid stockouts, and minimize obsolescence while balancing carrying
+  costs.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Monthly inventory review cycle or urgent fleet repair request.
+  parameters:
+    objective: >-
+      Optimize multi-echelon service parts inventory and distribution to reduce
+      working capital, cut COGS, and improve OTIF and order capture across
+      dealer networks.
+    key_inputs:
+      - Historical Service Parts Sales Data
+      - Warehouse Inventory Levels
+      - Urgent Repair Requests
+      - Obsolete Parts List
+      - Dealer Service Center Inventory
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Generate accurate demand forecasts using historical data, optimize warehouse
+    and distribution network based on forecasted demand, expedite urgent parts
+    deliveries to minimize fleet downtime, dispose of obsolete parts efficiently
+    to optimize working capital, adjust stocking levels at service centers to
+    balance service levels and working capital.
+  outcome: >-
+    Reduced working capital tied to idle parts, lower COGS, improved OTIF, and
+    enhanced order capture across dealer networks.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Leveraging AI/ML for forecasting and optimization ensures timely availability
+  of parts, reduces costs, and improves overall service efficiency.

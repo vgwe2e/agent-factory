@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Quantify financial implications and model COGS impact.
+    confidence: confirmed
+    capability: Quantify financial implications and model COGS impact.
+  - name: AutoML
+    purpose: Ensure plans meet corporate financial objectives.
+    confidence: inferred
+    capability: Ensure plans meet corporate financial objectives.
+  - name: Safety Stock Service
+    purpose: Balance inventory, payables, and receivables.
+    confidence: inferred
+    capability: Balance inventory, payables, and receivables.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Provide actionable insights for decision-makers.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review link s&op financial impact assessments, cogs optimization,
+      revenue/gross margin alignment, and working capital improvements into a
+      coordinated, semi-autonomous decision engine to achieve material ebitda
+      uplift and improved cash conversion. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

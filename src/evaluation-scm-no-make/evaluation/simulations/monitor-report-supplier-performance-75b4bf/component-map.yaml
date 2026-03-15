@@ -1,0 +1,47 @@
+streams:
+  - name: STREAMS / DDM/Crawlers
+    purpose: >-
+      Create unified subject-area tables for LSP spend, contracts, events and
+      forecasts
+    confidence: confirmed
+    type: STREAMS / DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast + RCA Service
+    purpose: >-
+      Align demand signals to capacity and surface root causes of KPI
+      degradation
+    confidence: confirmed
+    capability: >-
+      Align demand signals to capacity and surface root causes of KPI
+      degradation
+process_builder:
+  - name: Remote Functions + CWB Lifecycle
+    purpose: >-
+      Write changes to S4/TMS when permitted; open CWB for human approvals when
+      thresholds or penalties apply
+    confidence: confirmed
+    node_type: act
+  - name: Notification + UI Screen (dashboard/report)
+    purpose: >-
+      Deliver recommended actions, financial impact, and next steps to
+      procurement/logistics/finance
+    confidence: confirmed
+    node_type: notify
+agent_teams:
+  - name: Process Builder (Rules / IF) + Agent Team
+    purpose: >-
+      Apply business rules, agentic reasoning on unstructured contract text and
+      rank actions (auto-route, alternative LSP, claim)
+    confidence: confirmed
+    role: >-
+      Apply business rules, agentic reasoning on unstructured contract text and
+      rank actions (auto-route, alternative LSP, claim)
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review continuously optimize lsp (logistics service provider) spend and
+      enforce contract compliance by aligning demand signals with supplier
+      performance to reduce cogs, improve working capital, and protect ebitda.
+      and approve the recommended action.
+    confidence: confirmed
+    component_type: display

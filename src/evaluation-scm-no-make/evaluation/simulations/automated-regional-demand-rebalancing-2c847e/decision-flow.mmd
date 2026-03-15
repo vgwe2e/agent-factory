@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Scheduled detection job (e.g., hourly/batch) or incoming forecast update where regional demand imbalance between Region A and Region B exceeds configured threshold.]
+  A --> N1[Stream: STREAMS - Ingest source signals (forecasts, inventory, orders, transport)]
+  N1 --> N2[Cortex: Process Builder (Rules + Data View) - Compute imbalance and candidate transfer set]
+  N2 --> N3{PB: Process Builder (Remote Functions) - Evaluate feasibility and ROI for each candidate}
+  N3 -->|Primary| N4[PB: Remote Functions - Execute transfer transactions and transport booking]
+  N4 --> N5[PB: Process Builder (Notification) + UI Screen / Dashboard - Surface results and notify stakeholders]
+  N5 --> Z1[Outcome: Balanced regional inventories aligned to demand signals, fewer emergency expedites, improved regional service levels, reduced inter-regional transfer cost and COGS, and synchronized planning/fulfillment state across S4, Kinaxis and WMS.]
+  N3 -->|Insufficient transferable inventory a...| B1[Trigger Kinaxis RapidResponse shortage propagation and route to CWB Lifecycle for prioritization / partial fulfillment or expedited production; create action item for planners]
+  B1 --> O1[Outcome: Partial or delayed transfer with planner intervention; constraints recorded for downstream planning]
+  O1 --> End[End]
+  N3 -->|Estimated transport cost or lead time...| B2[Abort automated transfer, log decision, and notify planners with recommended alternatives (local expedite, supplier expedite); surface cost comparison]
+  B2 --> O2[Outcome: Avoids costly transfers; planners receive actionable alternatives and rationale]
+  O2 --> End[End]
+  N3 -->|Transport capacity unavailable for re...| B3[Schedule a prioritized partial transfer (top SKUs) and create a follow-up Process Builder wait + retry; if retry fails, escalate to CWB Lifecycle]
+  B3 --> O3[Outcome: Critical SKUs moved on available capacity; non-critical items queued/escalated for manual handling]
+  O3 --> End[End]
+  Z1 --> End[End]

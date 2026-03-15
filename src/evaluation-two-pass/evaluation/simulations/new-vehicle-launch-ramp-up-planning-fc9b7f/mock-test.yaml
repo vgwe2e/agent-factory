@@ -1,0 +1,58 @@
+decision: >-
+  Select and approve a ramp-up production and capacity plan for the new vehicle
+  launch that balances sequencing, line utilization, supplier constraints, COGS,
+  and launch readiness among alternative scenarios.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    New vehicle program kickoff, engineering change notification, or planned
+    end-of-life/parts transition enters S&OP planning horizon (initial program
+    phase defined).
+  parameters:
+    objective: >-
+      Automate end-to-end S&OP decisions across new vehicle launches and
+      lifecycle transitions to optimize ramp-up sequencing, capacity
+      utilization, supplier constraints, and marketing alignment, reducing COGS,
+      protecting revenue, and improving working capital.
+    key_inputs:
+      - Bill of Materials (BOM) & Routings
+      - Plant capacity & line utilization constraints
+      - Supplier lead times, commitments, and capacity
+      - Marketing campaign schedule and expected uplift
+      - Historical ramp performance & ramp-up learning curves
+      - Engineering change notices (ECOs) and impact matrix
+      - Demand signal (dealer orders, forecast scenarios)
+    source_systems:
+      - SAP S/4HANA
+      - Marketing Automation / Campaign Planning
+      - Supplier Portal / APS
+      - PLM / Engineering Change System
+expected_output:
+  action: >-
+    Agentic Process Builder invokes Cortex forecasts and RCA analyses,
+    synthesizes scenario trade-offs via Agent Team, recommends a preferred ramp
+    plan, executes ERP writeback (SAP S/4HANA) via Remote Functions, and
+    launches CWB Lifecycle for stakeholder approval and monitoring.
+  outcome: >-
+    Coordinated launch plan committed in SAP S/4HANA with minimized incremental
+    COGS, protected launch revenue targets, reduced working capital through
+    staged inventory and supplier commitments, and an auditable approval trail
+    with contingency scenarios.
+  affected_components:
+    - STREAMS
+    - Cortex Auto Forecast
+    - RCA Service
+    - Remote Functions + CWB Lifecycle
+    - Process Builder + Agent Team
+    - UI Screen / dashboard
+rationale: >-
+  Lifecycle events span multiple structured and unstructured inputs (engineering
+  changes, marketing pushes, supplier constraints) and require adaptive
+  reasoning across trade-offs. An agentic AI route (Process Builder + Agent Team
+  + Cortex services) enables multi-source synthesis, scenario generation,
+  human-in-loop decisions, and ERP writeback while preserving auditability and
+  traceability.

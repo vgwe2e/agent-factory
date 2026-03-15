@@ -1,0 +1,28 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Gather necessary data for production scheduling.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Process Builder
+    purpose: >-
+      Create optimal production schedules based on capacity and material
+      availability.
+    confidence: confirmed
+    capability: >-
+      Create optimal production schedules based on capacity and material
+      availability.
+process_builder:
+  - name: Process Builder
+    purpose: Ensure timely delivery of raw materials to support production.
+    confidence: confirmed
+    node_type: decide
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize daily production scheduling, material replenishment, and
+      capacity utilization to reduce cogs, protect revenue, and improve working
+      capital. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

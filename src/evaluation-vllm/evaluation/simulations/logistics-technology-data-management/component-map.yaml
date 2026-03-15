@@ -1,0 +1,37 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect necessary data for logistics optimization.
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Fuse telematics data with logistics operations.
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict optimal TMS configurations.
+    confidence: confirmed
+    capability: Predict optimal TMS configurations.
+  - name: UI Screens
+    purpose: Provide actionable insights into logistics performance.
+    confidence: confirmed
+    capability: Provide actionable insights into logistics performance.
+process_builder:
+  - name: Remote Functions
+    purpose: Implement optimized configurations.
+    confidence: inferred
+    node_type: act
+  - name: Cortex Monitoring
+    purpose: Ensure continuous improvement and accuracy.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review unify l4 logistics processes into a single decision-driven
+      orchestration layer to optimize transportation, carrier management,
+      logistics analytics, and fleet telematics. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

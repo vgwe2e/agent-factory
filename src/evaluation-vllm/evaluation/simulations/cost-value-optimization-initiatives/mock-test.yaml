@@ -1,0 +1,42 @@
+decision: >-
+  Select optimal suppliers and options that balance price, quality, lead time,
+  and lifecycle costs; develop should-cost targets and negotiation strategies;
+  lead VA/VE initiatives; identify and mitigate cost drivers.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic review of supply chain costs and performance metrics.
+  parameters:
+    objective: >-
+      Reduce COGS in Ford's multi-site automotive supply chain through
+      coordinated cost engineering and dynamic supplier negotiations.
+    key_inputs:
+      - Vehicle Line Costs
+      - Component Costs
+      - VA/VE Proposals
+      - Commodity Market Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Implement TCO modeling, should-cost analysis, VA/VE initiatives, and cost
+    driver mitigation strategies.
+  outcome: >-
+    Measurable reductions in material costs, manufacturing costs, and supplier
+    terms while maintaining or improving product quality and delivery
+    performance.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - AutoML
+    - RCA Service
+    - CWB Lifecycle
+    - Remote Functions
+    - Dashboard
+rationale: >-
+  Coordinating end-to-end cost engineering with dynamic supplier negotiations
+  and value-focused design decisions can significantly reduce COGS in a
+  multi-site automotive supply chain.

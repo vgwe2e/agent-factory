@@ -1,0 +1,39 @@
+decision: >-
+  Determine optimal buffer stock levels and trigger reorders for packaging
+  materials.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Daily reconciliation of physical returnable container counts vs system
+    records.
+  parameters:
+    objective: >-
+      Automate end-to-end replenishment and availability decisions for
+      returnable containers and packaging materials, reducing working capital
+      and preventing stockouts.
+    key_inputs:
+      - Physical Container Counts
+      - System Records
+      - Inventory Levels
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Execute daily reconciliation, determine buffer stock levels, monitor
+    inventory levels, and trigger reorders.
+  outcome: >-
+    Improved inventory accuracy, minimized carrying costs, and reduced
+    stockouts.
+  affected_components:
+    - DDM/Crawlers
+    - AutoML
+    - CWB Lifecycle
+    - Process Builder
+    - Dashboard
+rationale: >-
+  Automating these processes will reduce working capital tied to packaging and
+  prevent stockouts across plants and distribution centers.

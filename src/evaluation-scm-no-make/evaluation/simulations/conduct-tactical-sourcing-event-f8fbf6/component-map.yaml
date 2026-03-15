@@ -1,0 +1,37 @@
+streams:
+  - name: STREAMS
+    purpose: >-
+      consolidate and normalize supplier, material, forecast and inventory data
+      for downstream analysis
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Agent Team
+    purpose: >-
+      identify and rank suppliers by capability, cost, lead time, risk, and
+      strategic fit
+    confidence: confirmed
+    node_type: integration
+  - name: Process (Process Builder) - IF
+    purpose: >-
+      select multi-bid vs single-source, set bid timelines and evaluation
+      criteria
+    confidence: confirmed
+    node_type: decide
+agent_teams:
+  - name: Process (Action Item) + Agent Team
+    purpose: >-
+      collect bids, perform multi-round negotiation to meet target EBITDA/cost
+      goals, and capture counteroffers
+    confidence: confirmed
+    role: >-
+      collect bids, perform multi-round negotiation to meet target EBITDA/cost
+      goals, and capture counteroffers
+ui:
+  - name: CWB Lifecycle + Remote Functions
+    purpose: >-
+      present human-reviewable recommendation, obtain approvals, and persist
+      agreed terms in S4
+    confidence: confirmed
+    component_type: display

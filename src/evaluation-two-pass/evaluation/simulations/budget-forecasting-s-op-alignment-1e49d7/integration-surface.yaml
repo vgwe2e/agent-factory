@@ -1,0 +1,60 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Planning spreadsheets / S&OP tools
+    status: tbd
+  - name: Market pricing / competitor pricing feeds
+    status: tbd
+aera_ingestion:
+  - stream_name: product-master-cost-cogs-ledger
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: current-budgets-and-forecast-scenarios
+    stream_type: Event Stream
+    source: Planning spreadsheets / S&OP tools
+  - stream_name: demand-plan-baseline-scenario-variants
+    stream_type: Subject Areas
+    source: S&OP tools / Subject Areas
+  - stream_name: production-capacity-lead-times
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: working-capital-metrics-inventory-days-ar-ap
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: pricing-lists-and-promotional-plans
+    stream_type: Event Stream
+    source: Market pricing / competitor pricing feeds
+  - stream_name: strategic-financial-targets-ebitda-margin-thresholds
+    stream_type: Event Stream
+    source: Finance governance
+processing:
+  - component: Subject Areas
+    type: cortex
+    function: >-
+      Compute per-scenario EBITDA, gross margin, inventory days and cash
+      conversion metrics for comparison
+  - component: 'Process Builder: Rules + Remote Functions'
+    type: process_builder
+    function: >-
+      Apply business rules and optimization logic to score trade-offs and
+      produce recommended option with sensitivity metrics
+  - component: CWB Lifecycle + UI Screens
+    type: process_builder
+    function: >-
+      Present ranked scenarios, explain trade-offs, capture
+      accept/reject/override and rationale
+  - component: Remote Functions + Process Builder Notification
+    type: process_builder
+    function: >-
+      Writeback approved budgets/forecasts to SAP S/4HANA, create audit trail,
+      and notify S&OP and Finance teams
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review provide a semi-autonomous profitability optimization engine that
+      jointly optimizes cogs, revenue/gross margin, and working capital across
+      demand, supply, production, and fulfillment to recommend and commit
+      s&op-aligned budget and forecast options that maximize ebitda and improve
+      cash conversion. and approve the recommended action.

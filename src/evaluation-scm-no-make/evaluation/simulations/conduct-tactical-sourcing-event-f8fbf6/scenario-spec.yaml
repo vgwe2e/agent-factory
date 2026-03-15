@@ -1,0 +1,138 @@
+objective: >-
+  Automate end-to-end tactical sourcing from supplier discovery through
+  autonomous negotiation and contract institutionalization to reduce COGS,
+  protect margins, and accelerate promotional time-to-value across a broad
+  SKU/supplier base.
+trigger: >-
+  RFx readiness signal, demand/shortage alert from Kinaxis or promotional
+  planning window, or market volatility threshold from external market data
+decision: >-
+  Select tactical sourcing event participants and bid structure (multi-bid >=3
+  vs single-source) and approve negotiation strategy balancing immediate EBITDA
+  impact and long-term agreement value
+expected_action: >-
+  Agentic AI discovers and scores capable suppliers, orchestrates multi-round
+  sourcing events and autonomous negotiation agents, surfaces recommended
+  winners and contracts for human approval, and writes finalized agreements back
+  to S4
+expected_outcome: >-
+  Competitive agreements executed faster with lower landed costs, protected
+  margins under input volatility, institutionalized supplier terms in ERP, and
+  measurable reduction in promotional procurement lead time
+rationale: >-
+  Agentic multi-agent discovery + negotiation consolidates fragmented sourcing
+  tasks, leverages enterprise forecasts and inventory signals, automates
+  repetitive negotiation loops, and preserves human oversight for high-risk
+  decisions—aligning tactical sourcing with supply and demand signals to capture
+  cost and service benefits.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (TMS / 3PL)
+    type: TMS
+    status: identified
+  - name: External Market Data (benchmarks, spot rates, commodity indexes)
+    type: market_data
+    status: tbd
+  - name: Procurement/P2P system
+    type: procurement
+    status: tbd
+key_inputs:
+  - name: Material master & BOM
+    source: S4 (SAP S/4HANA)
+    purpose: identify items to source, specs, units of measure, and cost rollups
+    preferred_stream_type: STREAMS
+  - name: Supplier master & past PO history
+    source: S4 (SAP S/4HANA)
+    purpose: supplier capabilities, historical pricing, lead times, performance
+    preferred_stream_type: STREAMS
+  - name: Demand & promotional forecast
+    source: Advanced Statistical Forecasting in SAS / Kinaxis
+    purpose: sizing events, exposure during promotions, and volume commitment modeling
+    preferred_stream_type: STREAMS
+  - name: Inventory, shortage & expediting signals
+    source: Kinaxis RapidResponse
+    purpose: determine urgency, lot sizing, and event prioritization
+    preferred_stream_type: STREAMS
+  - name: Market pricing & commodity indices
+    source: External Market Data
+    purpose: benchmark pricing, detect volatility, trigger sourcing cadence
+    preferred_stream_type: DDM/Crawlers
+  - name: Procurement policy, compliance rules, and target savings
+    source: Procurement/P2P system
+    purpose: constraint enforcement, approval thresholds, and evaluate trade-offs
+happy_path:
+  - step: >-
+      Ingest masters, POs, forecasts, inventory and market signals into the data
+      foundation
+    stage: ingest
+    component: STREAMS
+    purpose: >-
+      consolidate and normalize supplier, material, forecast and inventory data
+      for downstream analysis
+  - step: >-
+      Autonomous supplier discovery and capability scoring using multi-agent
+      analysis
+    stage: analyze
+    component: Agent Team
+    purpose: >-
+      identify and rank suppliers by capability, cost, lead time, risk, and
+      strategic fit
+  - step: >-
+      Determine event type and participant list via rules + Agentic
+      recommendation
+    stage: decide
+    component: Process (Process Builder) - IF
+    purpose: >-
+      select multi-bid vs single-source, set bid timelines and evaluation
+      criteria
+  - step: >-
+      Execute sourcing event and run autonomous negotiation agents with staged
+      approval points
+    stage: act
+    component: Process (Action Item) + Agent Team
+    purpose: >-
+      collect bids, perform multi-round negotiation to meet target EBITDA/cost
+      goals, and capture counteroffers
+  - step: >-
+      Surface recommended award, route for CWB approval, and writeback finalized
+      contract terms to ERP
+    stage: surface
+    component: CWB Lifecycle + Remote Functions
+    purpose: >-
+      present human-reviewable recommendation, obtain approvals, and persist
+      agreed terms in S4
+branches:
+  - condition: Fewer than three qualified suppliers identified for a multi-bid event
+    response: >-
+      Agent Team expands search (broaden geographies/criteria) and/or relax
+      constraints; if still <3, route to single-source approval with risk
+      mitigation via CWB Lifecycle
+    outcome: >-
+      Either additional qualified suppliers are added to the event or
+      single-source award is approved with documented risk controls
+  - condition: Initial bids exceed target cost reduction threshold
+    response: >-
+      Trigger negotiation agent for iterative price/term bargaining; if
+      negotiation fails to meet thresholds, escalate to procurement manager via
+      Process Builder for manual strategy change
+    outcome: >-
+      Achieve improved pricing through negotiation or escalate for manual
+      intervention to preserve service/cost objectives
+  - condition: Proposed contract terms violate compliance or legal standards
+    response: >-
+      Block ERP writeback, notify Legal and Procurement via Process Builder
+      Notification and attach exception CWB for review
+    outcome: >-
+      Contract is held until compliance/legal clearance; prevents non-compliant
+      terms from being institutionalized

@@ -1,0 +1,30 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: historical-sales-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: macroeconomic-indicators
+    stream_type: DDM/Crawlers
+    source: External Data Feeds
+  - stream_name: technology-adoption-rates
+    stream_type: DDM/Crawlers
+    source: Market Research Reports
+processing:
+  - component: Cortex Auto Forecast
+    type: cortex
+    function: Generate multi-year demand projections
+  - component: CWB Lifecycle
+    type: process_builder
+    function: Ensure forecast accuracy and service levels
+  - component: Remote Functions
+    type: process_builder
+    function: Provide critical inputs for capacity planning
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review strategic demand planning & scenario modeling and approve the
+      recommended action.

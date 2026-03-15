@@ -1,0 +1,71 @@
+objective: >-
+  Optimize finished goods handling and dispatch to reduce COGS, improve on-time
+  delivery, and accelerate order fulfillment.
+trigger: Completion of battery/drive unit final inspection.
+decision: >-
+  Approve or reject final inspections, determine storage locations,
+  packaging/labeling strategies, load planning, and shipment documentation.
+expected_action: >-
+  Autonomous decision-making for final inspection approval, optimized storage,
+  efficient packaging, load scheduling, and compliant documentation.
+expected_outcome: >-
+  Reduced handling costs, minimized stockouts, improved on-time delivery, and
+  accelerated order fulfillment.
+rationale: >-
+  Automate and optimize the entire finished goods handling process to enhance
+  efficiency and compliance.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Final Inspection Results
+    source: SAP S/4HANA
+    purpose: To approve or reject units for shipment.
+  - name: Inventory Levels
+    source: SAP S/4HANA
+    purpose: To determine optimal storage locations and rotation.
+  - name: Logistics Specifications
+    source: SAP S/4HANA
+    purpose: To define packaging and labeling strategies.
+  - name: Delivery Windows
+    source: SAP S/4HANA
+    purpose: To plan and schedule outbound loads.
+  - name: Cross-Border Regulations
+    source: SAP S/4HANA
+    purpose: To ensure customs compliance and optimize documentation.
+happy_path:
+  - step: Retrieve final inspection results from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawler
+    purpose: Fetch inspection data for decision-making.
+  - step: Evaluate inspection results and approve/reject units.
+    stage: analyze
+    component: Remote Functions
+    purpose: Apply pass/fail criteria and control write-offs.
+  - step: Determine optimal storage locations and rotation.
+    stage: analyze
+    component: Remote Functions
+    purpose: Minimize holding costs and optimize service levels.
+  - step: Define packaging and labeling strategies.
+    stage: analyze
+    component: Remote Functions
+    purpose: Optimize logistics costs and handling times.
+  - step: Plan and schedule outbound loads.
+    stage: analyze
+    component: Remote Functions
+    purpose: Minimize transportation costs and meet delivery windows.
+  - step: Generate shipment documentation and ensure customs compliance.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure compliance and optimize documentation flow.
+branches:
+  - condition: Final inspection fails.
+    response: Reject units and initiate re-inspection process.
+    outcome: Units are held for re-inspection.
+  - condition: Insufficient storage space available.
+    response: Allocate temporary storage and adjust rotation strategy.
+    outcome: Temporary storage is utilized to manage inventory.
+  - condition: Cross-border regulations change.
+    response: Update documentation templates and compliance checks.
+    outcome: Updated documentation ensures ongoing compliance.

@@ -1,0 +1,46 @@
+streams:
+  - name: DDM/Crawlers -> STREAMS
+    purpose: >-
+      Consolidate SAP S/4HANA inventory, orders, lead times and finance into
+      Subject Areas
+    confidence: confirmed
+    type: DDM/Crawlers -> STREAMS
+cortex:
+  - name: Cortex Auto Forecast + Safety Stock Service
+    purpose: >-
+      Identify misallocations, compute node-level safety stock targets and
+      rebalance candidates
+    confidence: confirmed
+    capability: >-
+      Identify misallocations, compute node-level safety stock targets and
+      rebalance candidates
+process_builder:
+  - name: Process Builder (Rules -> Data View -> IF -> CWB Lifecycle)
+    purpose: >-
+      Automatically accept low-risk rebalances; surface exceptions for human
+      approval when policy or financial thresholds exceeded
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (ERP writeback)
+    purpose: >-
+      Create transfer orders, update safety stock parameters in SAP S/4HANA and
+      record planned changes
+    confidence: inferred
+    node_type: act
+  - name: UI Screens + Process Builder Notification
+    purpose: >-
+      Deliver dashboard showing inventory shifts, working capital impact, and
+      open exceptions to Planning, Inventory and Finance
+    confidence: confirmed
+    node_type: notify
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review continuously align demand signals, inventory positioning, and
+      financial impact to dynamically synchronize safety stock levels and s&op
+      horizons across planning, inventory, and finance, reducing working capital
+      tied to excess inventory while protecting revenue and ebitda in automotive
+      operations. and approve the recommended action.
+    confidence: confirmed
+    component_type: display

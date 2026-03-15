@@ -1,0 +1,37 @@
+streams:
+  - name: STREAMS / DDM/Crawlers
+    purpose: >-
+      Consolidate and cleanse inputs to a single subject area for portfolio
+      analysis
+    confidence: confirmed
+    type: STREAMS / DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast + Safety Stock Service
+    purpose: >-
+      Quantify forecast reliability, excess supply, and optimal safety stock per
+      SKU/location
+    confidence: confirmed
+    capability: >-
+      Quantify forecast reliability, excess supply, and optimal safety stock per
+      SKU/location
+process_builder:
+  - name: Process Builder (Rules, IF, Data View) + CWB Lifecycle
+    purpose: >-
+      Deterministically decide which SKUs to reprioritize, reallocate, adjust,
+      or escalate
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions + Process Builder (Action Item)
+    purpose: >-
+      Write changes back to S4/Kinaxis for executed items; surface approval
+      items for human review
+    confidence: confirmed
+    node_type: act
+agent_teams: []
+ui:
+  - name: UI Screens + Notification (CWB)
+    purpose: >-
+      Provide dashboards, decision rationale, and auditable history to
+      procurement, supply planners, and finance
+    confidence: confirmed
+    component_type: display

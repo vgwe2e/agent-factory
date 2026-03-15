@@ -1,0 +1,43 @@
+decision: >-
+  Forecast recall parts demand, manage inventory levels, coordinate
+  distribution, handle defective part returns, and dispose of obsolete/surplus
+  parts.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Start of recall campaign or periodic inventory review.
+  parameters:
+    objective: >-
+      Optimize recall parts supply chain and logistics coordination to reduce
+      working capital, prevent stockouts, and improve OTIF while lowering COGS
+      and EBITDA.
+    key_inputs:
+      - Recall Campaign Data
+      - Inventory Levels
+      - Logistics Costs
+      - Defective Part Returns
+      - Obsolete/Surplus Parts
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Generate purchase orders, maintain inventory levels, coordinate logistics,
+    capture returns, and decide disposition paths.
+  outcome: >-
+    Reduced working capital, minimized stockouts, improved OTIF, lower COGS, and
+    optimized EBITDA.
+  affected_components:
+    - STREAMS
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - Remote Functions
+    - Process Builder
+    - CWB Lifecycle
+    - Dashboard
+rationale: >-
+  Jointly optimizing forecasting, inventory positioning, and logistics decisions
+  will streamline the recall parts supply chain, ensuring timely delivery and
+  efficient resource utilization.

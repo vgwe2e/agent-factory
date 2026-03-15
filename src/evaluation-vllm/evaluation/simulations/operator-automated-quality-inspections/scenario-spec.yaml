@@ -1,0 +1,66 @@
+objective: >-
+  Reduce scrap, rework, and downtime by autonomously detecting, classifying, and
+  certifying product quality through integrated inspections.
+trigger: Completion of production line activities requiring quality inspection.
+decision: >-
+  Determine the quality status of products based on operator self-inspections,
+  automated vision systems, end-of-line diagnostics, and attribute gaging.
+expected_action: >-
+  Automatically classify and certify product quality, route defective items for
+  rework, and release合格产品。
+expected_outcome: Reduced scrap, rework, and downtime, improved OTIF and COGS efficiency。
+rationale: >-
+  Integrating multiple inspection methods ensures comprehensive quality control,
+  leveraging both human and automated systems for optimal decision-making。
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Operator Inspection Results
+    source: Operator Self-Inspection & Work Confirmation
+    purpose: Confirm quality results and determine pass/fail status
+  - name: Automated Vision System Data
+    source: Automated Vision System & Sensor Checks
+    purpose: Verify component presence and detect defects
+  - name: Diagnostic Test Results
+    source: End-of-Line Diagnostic Testing
+    purpose: Validate finished vehicles and identify faults
+  - name: Attribute Gaging Results
+    source: Attribute Gaging & Go/No-Go Checks
+    purpose: Determine go/no-go decisions based on component characteristics
+happy_path:
+  - step: Collect operator inspection results
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Ingest operator self-inspection data
+  - step: Analyze automated vision system data
+    stage: analyze
+    component: Agentic AI
+    purpose: Detect and classify defects using vision systems
+  - step: Perform end-of-line diagnostics
+    stage: analyze
+    component: Agentic AI
+    purpose: Validate finished vehicles and identify faults
+  - step: Evaluate attribute gaging results
+    stage: analyze
+    component: Agentic AI
+    purpose: Determine go/no-go decisions based on gaging results
+  - step: Make quality certification decision
+    stage: decide
+    component: Agentic AI
+    purpose: Classify and certify product quality
+  - step: Route products for rework or release
+    stage: act
+    component: Remote Functions
+    purpose: Route defective items for rework and release qualified products
+branches:
+  - condition: Operator inspection fails
+    response: Route item for rework
+    outcome: Item is flagged for rework and sent back to the production line
+  - condition: Automated vision system detects defect
+    response: Flag item for further inspection
+    outcome: Item is flagged for additional inspection and potential rework
+  - condition: Diagnostic test identifies fault
+    response: Route item for repair
+    outcome: Item is routed for repair and retesting before release

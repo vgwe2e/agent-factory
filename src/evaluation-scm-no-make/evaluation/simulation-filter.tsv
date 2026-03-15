@@ -1,0 +1,50 @@
+skill_id	skill_name	l4_name	verdict	groundedness_score	integration_confidence_score	ambiguity_risk_score	implementation_readiness_score	reasons	is_cross_functional
+78a1fd-82a38d	DRP Adjustment Orchestration	Drp Adjustment And Str Release	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+75eea5-f8ee76	Drp Results Optimization	Create Drp Planned Volumes	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+8e0064-8c4807	Safety Stock Sensitivity Optimizer	Analyse Impact of Change In Safety Stock	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+a2ea0f-d24887	Risk-Based Inventory Coverage	Identify Potential Risks	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+d98747-dba8a9	Optimize Category Innovation Profit	Analyse & Validate Innovation Initiatives	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+5f0a16-5f2dd9	Automated Spot Buy Negotiation Routing	Manage Negotiations	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+8c7c47-62a922	Collaborative Supplier Agreement orchestrator	form Collaboration Agreement With Suppliers	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+f3e078-248660	Evaluate Data Significance for SD Drivers	Assess Data	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+vf-5100d701	Automated Channel Margin Coordination	Automated Channel Margin Coordination	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	Y
+753011-a1a0d9	Portfolio Slow-Moving SKU Reinvestment	Review Slow Moving SKU	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+285e9d-818c28	Supplier Conflict-Resolution Optimizer	Manage Supply Exceptions	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+a2e25c-cfa20e	Supplier Call-Off Consolidation	Adjust Purchase Orders	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+bf56cc-add07a	Autonomous Planning Data Review	Suggest And Monitor Changes	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+597355-2738c6	Understand Demand & Spend Initiatives	Understand Business Goals & Current Plans	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+872000-2fc5ce	Automated LSP Performance Optimization	Monitor & Report Supplier Performance	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+7b3540-fec1ff	Optimize Demand Segmentation	Assess Data for Segmentation	ADVANCE	100	100	0	100	Scenario is grounded, integration-aware, and implementation-ready.	N
+cf-820d2938	Cross-Domain Demand-Driven Sequencing	Cross-Domain Demand-Driven Sequencing	ADVANCE	100	98	4	99	Scenario is grounded, integration-aware, and implementation-ready.	Y
+cf-e6d602b4	Automated Demand-Supply Scenario Coordination	Automated Demand-Supply Scenario Coordination	ADVANCE	100	97	4	99	Scenario is grounded, integration-aware, and implementation-ready.	Y
+f22996-27b49f	Automated Tactical Sourcing Allocation	Conduct Tactical Sourcing Event	ADVANCE	100	94	9	97	Scenario is grounded, integration-aware, and implementation-ready.	N
+3c579c-f28159	Agile Strategic Sourcing Orchestrator	Conduct Rfx, Rfp Or Auction	ADVANCE	100	92	12	96	Scenario is grounded, integration-aware, and implementation-ready.	N
+7484ce-4ab000	Product Classification Optimization	Classify Products	ADVANCE	100	92	12	96	Scenario is grounded, integration-aware, and implementation-ready.	N
+a98d7b-9986f7	Implement Segmentation Results	Implement Results of Assessment	ADVANCE	100	93	11	96	Scenario is grounded, integration-aware, and implementation-ready.	N
+c1e538-b63a85	Autonomous DRP Capacity Optimization	Perform Feasibility Check	ADVANCE	86	100	7	94	Scenario is grounded, integration-aware, and implementation-ready.	N
+d3da30-07c468	Dynamic Purchase Order Change Orchestration	Manage Purchase Order Changes & Approvals	ADVANCE	86	100	7	94	Scenario is grounded, integration-aware, and implementation-ready.	N
+59d45a-d610a1	Automated Stress Testing & Resilience Optimization	Manage Stress Testing & Digital Twins	ADVANCE	86	97	11	92	Scenario is grounded, integration-aware, and implementation-ready.	N
+821c78-85e467	Multi-Tier Supplier Mapping Orchestrator	Manage N-Tier Supplier Mapping & Visibility	ADVANCE	83	100	8	92	Scenario is grounded, integration-aware, and implementation-ready.	N
+3b24cf-a2ea34	Demand-Driven Capacity Expansion	Analyse Impact of Increase In Demand	ADVANCE	83	100	8	92	Scenario is grounded, integration-aware, and implementation-ready.	N
+a12e86-5d38d8	Autonomous Demand-Plan Review	Review of Production Capacity	ADVANCE	83	100	8	92	Scenario is grounded, integration-aware, and implementation-ready.	N
+cf-24ef36c5	Automated Demand-Constrained Production Scheduling	Automated Demand-Constrained Production Scheduling	ADVANCE	83	100	8	92	Scenario is grounded, integration-aware, and implementation-ready.	Y
+vf-0ba5d586	Automated Cross-Functional OTIF-Driven Fulfillment Tradeoff	Automated Cross-Functional OTIF-Driven Fulfillment Tradeoff	ADVANCE	83	100	8	92	Scenario is grounded, integration-aware, and implementation-ready.	Y
+vf-3654664e	Automated Safety Stock Coordination Across Planning and Fulfillment	Automated Safety Stock Coordination Across Planning and Fulfillment	ADVANCE	83	100	8	92	Scenario is grounded, integration-aware, and implementation-ready.	Y
+6f7498-9c5839	SKU Segmentation-Driven Cost Optimization	Review SKU Segmentation Rules	ADVANCE	83	100	8	92	Scenario is grounded, integration-aware, and implementation-ready.	N
+0199b6-ee3e3d	Best Model & Algorithm Selection	Determine Best Model & Algorithm	ADVANCE	83	100	8	92	Scenario is grounded, integration-aware, and implementation-ready.	N
+vf-072c847e	Automated Regional Demand Rebalancing	Automated Regional Demand Rebalancing	ADVANCE	83	100	8	92	Scenario is grounded, integration-aware, and implementation-ready.	Y
+d8faf5-6edff6	Autonomous Revenue-Protection Optimization	Review Unfulfilled Demand	ADVANCE	80	100	10	91	Scenario is grounded, integration-aware, and implementation-ready.	N
+cf-8723a10a	Integrated Demand-Driven Sourcing	Integrated Demand-Driven Sourcing	ADVANCE	80	100	10	91	Scenario is grounded, integration-aware, and implementation-ready.	Y
+vf-d711e034	Automated Demand-Promising Coordination	Automated Demand-Promising Coordination	ADVANCE	80	100	10	91	Scenario is grounded, integration-aware, and implementation-ready.	Y
+f0d9d8-868ab6	Total Cost Breakdown for Sourcing	Assess Sourcing Opportunity	ADVANCE	83	95	16	90	Scenario is grounded, integration-aware, and implementation-ready.	N
+2a146e-f4db13	Deterministic Supplier Selection for Spot Buy	Select Supplier	ADVANCE	83	94	17	89	Scenario is grounded, integration-aware, and implementation-ready.	N
+7ebb9b-62c651	Ml Forecast Model – Market Inputs	Gather Market Inputs	ADVANCE	83	94	17	89	Scenario is grounded, integration-aware, and implementation-ready.	N
+cf-999807ae	Synchronized ATP/CTP with Supplier Readiness	Synchronized ATP/CTP with Supplier Readiness	ADVANCE	75	100	13	89	Scenario is grounded, integration-aware, and implementation-ready.	Y
+89ff8b-735609	Import/Export Valuation Automation	Manage Product Import/Export Valuation	ADVANCE	80	96	16	89	Scenario is grounded, integration-aware, and implementation-ready.	N
+a0259e-162636	Purchase Order Automation Orchestration	Create Purchase Order	ADVANCE	80	95	18	88	Scenario is grounded, integration-aware, and implementation-ready.	N
+b60144-9520da	Autonomous Goods Receiving Orchestrator	Physically Receive And Inspect Goods Or Services	ADVANCE	71	97	19	85	Scenario is grounded, integration-aware, and implementation-ready.	N
+18d2bf-8b7b29	Automated Supply Scenario Optimization	Determine And Simulate Scenarios	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.	N
+37a91e-b7c2da	Automated Receipt-Validation for Payables	Create Receipt of Goods Or Services	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.	N
+a34ce3-b47247	Automated Critical Material Data Balancing	Maintain Critical Material Data	ADVANCE	67	100	17	85	Scenario is grounded, integration-aware, and implementation-ready.	N
+0f137d-f150b0	Feature Engineering & Process Tuning	Determine New Features and Update Process	ADVANCE	71	95	22	84	Scenario is grounded, integration-aware, and implementation-ready.	N
+08680c-47bda5	Global Trade Master Data Automation	Set Up & Manage Global Trade Master Data	ADVANCE	57	94	30	78	Scenario is grounded, integration-aware, and implementation-ready.	N

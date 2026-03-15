@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Identification of potential disruptions in the supply chain.]
+  A --> N1[Stream: DDM/Crawlers - Ingest supply chain data from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze supply chain data to identify potential disruptions.]
+  N2 --> N3[Cortex: AutoML - Simulate demand and supply scenarios to test plan resilience.]
+  N3 --> N4{Agent: Agentic AI - Develop contingency plans based on simulation results.}
+  N4 -->|Primary| N5[PB: Process Builder - Activate appropriate response protocols for critical components.]
+  N5 --> Z1[Outcome: Reduced working capital volatility, protected revenue, and sustained COGS/EBITDA during disruptions.]
+  N4 -->|High-impact event detected| B1[Develop rapid response protocols and reallocate resources.]
+  B1 --> O1[Outcome: Protect revenue and working capital through proactive measures.]
+  O1 --> End[End]
+  N4 -->|Geopolitical risk identified| B2[Adjust planning decisions to incorporate geopolitical risks.]
+  B2 --> O2[Outcome: Mitigate geopolitical risks affecting working capital and cost structure.]
+  O2 --> End[End]
+  N4 -->|Insufficient data for accurate simula...| B3[Request additional data inputs and re-run simulations.]
+  B3 --> O3[Outcome: Ensure robust contingency plans based on comprehensive data.]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,43 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: bom-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: mps-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: supplier-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: inventory-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+  - stream_name: shortage-data
+    stream_type: STREAMS
+    source: SAP S/4HANA
+processing:
+  - component: RCA Service
+    type: cortex
+    function: Identify and mitigate potential shortages
+  - component: Process Builder
+    type: process_builder
+    function: Ensure timely deliveries
+  - component: Safety Stock Service
+    type: process_builder
+    function: Balance service levels and working capital
+  - component: Remote Functions
+    type: process_builder
+    function: Ensure timely deliveries
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review integrate material requirements planning (mrp) across bom release,
+      material requirements calculation, supplier release, inventory policy, and
+      shortage risk assessment to optimize bom integrity, proactive material
+      planning, supplier coordination, and dynamic safety stock, reducing cogs
+      and improving otif and working capital. and approve the recommended
+      action.

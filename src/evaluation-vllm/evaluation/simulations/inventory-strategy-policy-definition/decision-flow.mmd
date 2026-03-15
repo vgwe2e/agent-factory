@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Periodic review of inventory levels and policies.]
+  A --> N1[Stream: DDM/Crawlers - Retrieve current inventory levels and demand variability from SAP S/4HANA.]
+  N1 --> N2[Cortex: Safety Stock Service - Calculate optimal safety stock levels using Safety Stock Service.]
+  N2 --> N3[Cortex: AutoML - Classify inventory items into ABC/XYZ segments using AutoML.]
+  N3 --> N4{PB: Process Builder - Define VMI policies with strategic suppliers using Process Builder.}
+  N4 -->|Primary| N5{PB: Process Builder - Design consignment programs using Process Builder.}
+  N5 --> N6[PB: CWB Lifecycle - Review and approve changes via CWB Lifecycle.]
+  N6 --> Z1[Outcome: Reduced working capital, lower COGS, improved OTIF, and optimized inventory management.]
+  N4 -->|Safety stock levels exceed budget con...| B1[Adjust service targets and re-run safety stock calculation.]
+  B1 --> O1[Outcome: Optimized safety stock within budget.]
+  O1 --> End[End]
+  N4 -->|Strategic suppliers refuse VMI policy...| B2[Negotiate revised terms or revert to traditional replenishment methods.]
+  B2 --> O2[Outcome: Revised VMI policies or traditional replenishment.]
+  O2 --> End[End]
+  N4 -->|Consignment program design fails to m...| B3[Revise financial terms and re-evaluate consignment program.]
+  B3 --> O3[Outcome: Revised consignment program terms.]
+  O3 --> End[End]
+  Z1 --> End[End]

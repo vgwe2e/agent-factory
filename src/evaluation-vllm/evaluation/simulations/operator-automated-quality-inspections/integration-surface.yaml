@@ -1,0 +1,31 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: operator-inspection-results
+    stream_type: Event Stream
+    source: Operator Self-Inspection & Work Confirmation
+  - stream_name: automated-vision-system-data
+    stream_type: Event Stream
+    source: Automated Vision System & Sensor Checks
+  - stream_name: diagnostic-test-results
+    stream_type: Event Stream
+    source: End-of-Line Diagnostic Testing
+  - stream_name: attribute-gaging-results
+    stream_type: Event Stream
+    source: Attribute Gaging & Go/No-Go Checks
+processing:
+  - component: Remote Functions
+    type: process_builder
+    function: Route defective items for rework and release qualified products
+  - component: Agentic AI
+    type: agent_teams
+    function: Detect and classify defects using vision systems
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review reduce scrap, rework, and downtime by autonomously detecting,
+      classifying, and certifying product quality through integrated
+      inspections. and approve the recommended action.

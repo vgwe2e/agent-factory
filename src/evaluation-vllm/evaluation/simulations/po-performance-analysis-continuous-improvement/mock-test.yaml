@@ -1,0 +1,47 @@
+decision: >-
+  Which supplier delivery performance to trust and prioritize for purchase
+  orders, balancing OTIF risk with cost and supplier capacity; which PO accuracy
+  issues to address and how to adjust procurement rules to reduce errors while
+  maintaining fill rate and cost; what PO process improvements will most
+  effectively reduce lead times, considering supplier reliability, order
+  batching, and approval rules; which opportunities in PO automation and
+  digitalization to implement first, balancing cost, risk, and implementation
+  effort.
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: Periodic (weekly) analysis of supplier PO performance and lead-time data.
+  parameters:
+    objective: >-
+      Analyze supplier PO performance, errors, and lead-time risks, then execute
+      end-to-end improvements across PO creation, approval, and delivery to
+      reduce COGS.
+    key_inputs:
+      - Supplier On-Time Delivery (OTD) Data
+      - Purchase Order Accuracy Data
+      - Lead Time Data
+    source_systems:
+      - SAP S/4HANA
+expected_output:
+  action: >-
+    Automate and optimize PO creation, approval, and delivery processes;
+    implement continuous improvement initiatives based on PO performance
+    analysis.
+  outcome: >-
+    Reduced COGS through improved PO accuracy, faster lead times, and automated
+    process improvements across procurement.
+  affected_components:
+    - DDM/Crawlers
+    - Cortex Auto Forecast
+    - Data Quality & Validation
+    - CWB Lifecycle
+    - Process Builder
+    - Cortex Monitoring
+    - Dashboard
+rationale: >-
+  By leveraging deterministic optimization and agentic orchestration, the system
+  ensures tight control via guardrails while improving PO performance and
+  reducing costs.

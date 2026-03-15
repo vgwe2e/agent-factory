@@ -1,0 +1,18 @@
+flowchart TD
+  A[Trigger: Periodic audit and real-time shipment events.]
+  A --> N1[Stream: DDM/Crawlers - Ingest shipment details and hazardous material information from SAP S/4HANA.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze shipment details and hazardous material information using Cortex Auto Forecast for compliance and risk assessment.]
+  N2 --> N3{Agent: Agentic AI - Decide on optimal customs routes and transport modes based on analysis results.}
+  N3 -->|Primary| N4[PB: Process Builder - Implement security measures and generate regulatory reports.]
+  N4 --> N5[PB: Remote Functions - Audit carrier safety and compliance programs.]
+  N5 --> Z1[Outcome: Minimized delays and penalties, reduced risk and cost, enhanced security, improved regulatory compliance, and optimized carrier choices.]
+  N3 -->|Non-compliant transport mode detected.| B1[Initiate corrective actions and reroute shipment.]
+  B1 --> O1[Outcome: Ensures compliance and minimizes risk.]
+  O1 --> End[End]
+  N3 -->|Security breach identified.| B2[Enhance security measures and notify relevant stakeholders.]
+  B2 --> O2[Outcome: Protects shipment integrity and reduces theft risk.]
+  O2 --> End[End]
+  N3 -->|Carrier fails safety audit.| B3[Replace carrier and update shipment plan.]
+  B3 --> O3[Outcome: Maintains shipment reliability and safety standards.]
+  O3 --> End[End]
+  Z1 --> End[End]

@@ -1,0 +1,143 @@
+objective: >-
+  Autonomously orchestrate inbound material receipt, quality screening, kitting,
+  and timed line-feeding for battery assembly lines to reduce COGS, minimize
+  stockouts, and improve OTIF across multi-echelon suppliers and warehouses.
+trigger: >-
+  New or updated ASN / inbound shipment record for battery components from SAP
+  S/4HANA (or supplier portal) indicating expected receipt within the next 72
+  hours.
+decision: >-
+  Authorize kitting batch release and line-feed schedule that balances feed
+  rates, line constraints, buffer targets, and inspection outcomes.
+expected_action: >-
+  Agentic orchestration assesses arrivals and quality risk, allocates components
+  to kits, schedules inspections and staging, issues pick/putaway and kit
+  delivery instructions to WES/MES via Remote Functions, and surfaces exceptions
+  for human review via CWB Lifecycle.
+expected_outcome: >-
+  Timely delivery of kits to lines with minimized idle time and excess buffer,
+  fewer stockouts, lower handling costs (reduced COGS through optimized
+  staging/kitting), faster quarantine resolution for failed inspections, and
+  improved OTIF for battery production.
+rationale: >-
+  Battery production requires tight sequencing and traceability; agentic
+  orchestration combines data ingestion, predictive arrival/quality risk
+  assessment, and automated execution to optimize staging and kitting cadence
+  across suppliers and warehouses while keeping human-in-the-loop for
+  exceptions.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+  - name: Warehouse Execution System (WES)
+    status: tbd
+  - name: Manufacturing Execution System (MES)
+    status: tbd
+  - name: Supplier Portal / EDI
+    status: tbd
+  - name: Inspection / Quality Devices (OCR, sensors)
+    status: tbd
+key_inputs:
+  - name: Advanced Shipping Notice (ASN) / Inbound Shipment
+    source: SAP S/4HANA
+    purpose: >-
+      Expected arrival times, shipment contents, supplier identification for
+      scheduling and staging
+    preferred_stream_type: DDM/Crawlers
+  - name: On-hand Inventory and Lot/Serial Master
+    source: SAP S/4HANA
+    purpose: >-
+      Available component quantities, lot/serial traceability for kitting and
+      quality holds
+    preferred_stream_type: STREAMS
+  - name: Line production schedule / takt rates
+    source: MES
+    purpose: >-
+      Determine kit consumption rates and feed cadence to avoid starvation or
+      overfeed
+  - name: Warehouse capacity & staging layout
+    source: Warehouse Execution System (WES)
+    purpose: >-
+      Assign staging locations and optimal kitting sequences given space and
+      material flow constraints
+  - name: Inspection results / quality flags
+    source: Inspection / Quality Devices
+    purpose: >-
+      Pass/fail determination, quarantine routing, and rework instructions for
+      failed lots
+  - name: Supplier performance / carrier ETA history
+    source: Supplier Portal / TMS (tbd)
+    purpose: Arrival risk scoring and reschedule logic to preempt stockouts
+happy_path:
+  - step: >-
+      Ingest ASNs, POs, inventory and staging metadata from SAP S/4HANA and
+      supplier feeds.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      Collect inbound shipment, SKU, lot and staging capacity data for upcoming
+      receipts.
+  - step: >-
+      Clean, enrich and transform inbound and on-hand data into planning subject
+      areas and kitting candidates.
+    stage: analyze
+    component: STREAMS
+    purpose: >-
+      Create consolidated dataset of available components, arrival ETAs, lot
+      attributes and staging constraints.
+  - step: >-
+      Agentic assessment combines arrival ETAs, QC risk, and line schedule to
+      generate kitting batches and delivery time windows.
+    stage: decide
+    component: Agent Team
+    purpose: >-
+      Produce prioritized kitting plan and line-feed schedule optimizing feed
+      rates and buffer targets.
+  - step: >-
+      Execute picks/kitting and queue inspections; write pick lists and kit
+      reservations back to WES/SAP.
+    stage: act
+    component: Remote Functions
+    purpose: >-
+      Trigger WES pick/putaway, create kit assemblies, and record reservations
+      in SAP for traceability.
+  - step: >-
+      Surface recommended kitting plan and any exceptions for planner approval;
+      allow override or accept.
+    stage: review
+    component: CWB Lifecycle
+    purpose: Provide human-in-the-loop approval for high-risk changes or exceptions.
+  - step: >-
+      Notify warehouse floor and line feeders; monitor execution and update
+      subject areas with actual kit deliveries.
+    stage: notify
+    component: Process Builder
+    purpose: >-
+      Close the loop with notifications and update planning data for continuous
+      adjustment.
+branches:
+  - condition: Inbound inspection fails or lot flagged as non-conforming during QC
+    response: >-
+      Agent Team routes material to quarantine, triggers CWB Lifecycle exception
+      for supplier disposition and generates return/rework instructions via
+      Remote Functions.
+    outcome: >-
+      Failed lots isolated, rework or supplier claim initiated, kits adjusted to
+      use alternate lots to maintain line feed where possible.
+  - condition: ASN / carrier ETA delayed beyond threshold causing potential kit shortfall
+    response: >-
+      Agent Team recalculates feed schedule, prioritizes critical kits using
+      available inventory, and triggers reschedule notifications to
+      carriers/WES; if shortage persists, open CWB for expedited procurement or
+      line decoupling.
+    outcome: >-
+      Reduced risk of line stoppage via prioritized allocation and expedited
+      actions; planners notified for contingency execution.
+  - condition: Inventory or lot-level discrepancy between SAP and warehouse counts
+    response: >-
+      STREAMS flags data quality exception and Process Builder launches
+      reconciliation Remote Function plus CWB Lifecycle task for warehouse
+      verification.
+    outcome: >-
+      Discrepancy resolved or quarantined; kitting plan adjusted to reflect
+      corrected availability, preserving traceability.

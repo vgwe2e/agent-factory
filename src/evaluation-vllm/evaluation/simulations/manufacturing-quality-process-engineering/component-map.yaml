@@ -1,0 +1,33 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Collect and prepare data for analysis.
+    confidence: inferred
+    type: DDM/Crawlers
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: Predict quality risks and their impacts.
+    confidence: confirmed
+    capability: Predict quality risks and their impacts.
+  - name: Data Quality & Validation
+    purpose: Ensure measurement reliability and trigger corrective actions.
+    confidence: inferred
+    capability: Ensure measurement reliability and trigger corrective actions.
+process_builder:
+  - name: CWB Lifecycle
+    purpose: Implement quality gate checkpoints and enforce them.
+    confidence: confirmed
+    node_type: decide
+  - name: Notification
+    purpose: Communicate findings and actions to stakeholders.
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review reduce scrap, rework, and warranty costs while improving first-pass
+      yields and on-time delivery by automating quality-related cogs driver
+      detection, prediction, and remediation. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

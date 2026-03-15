@@ -1,0 +1,29 @@
+streams:
+  - name: DDM/Crawlers
+    purpose: Fetch necessary data for three-way match
+    confidence: inferred
+    type: DDM/Crawlers
+  - name: STREAMS
+    purpose: Validate PO, GR, and invoice consistency
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder
+    purpose: Determine hold or payment actions
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Ensure accurate goods receipt records
+    confidence: inferred
+    node_type: act
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review execute three-way match, detect invoice discrepancies, streamline
+      goods receipt corrections, and authorize supplier payments to reduce
+      working capital blocks and lower cogs leakage. and approve the recommended
+      action.
+    confidence: confirmed
+    component_type: display

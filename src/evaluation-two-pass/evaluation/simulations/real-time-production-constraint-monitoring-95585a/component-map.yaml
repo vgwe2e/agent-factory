@@ -1,0 +1,40 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: Create unified, validated dataset for constraint analysis and simulation.
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+cortex:
+  - name: RCA Service + Cortex Auto Forecast
+    purpose: Identify highest-impact constraints and quantify demand/lead-time drivers.
+    confidence: confirmed
+    capability: Identify highest-impact constraints and quantify demand/lead-time drivers.
+process_builder:
+  - name: Process Builder (IF, Rules) + Remote Functions (simulation)
+    purpose: >-
+      Compare trade-offs (throughput, OTIF, cost) and pick the plan meeting
+      business goals.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions -> SAP S/4HANA (Transaction)
+    purpose: >-
+      Apply changes atomically to ERP and downstream systems to resolve the
+      constraint.
+    confidence: confirmed
+    node_type: act
+  - name: UI Screens (dashboard & CWB) + Notification
+    purpose: >-
+      Provide audit trail, KPI impact (throughput, OTIF, cost) and human
+      approvals if required.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously detect multi-plant production constraints and supplier
+      shortages, simulate mitigation trade-offs across procurement, production
+      scheduling, and logistics, and execute coordinated actions to minimize
+      cogs and improve on-time delivery with measurable p&l impact. and approve
+      the recommended action.
+    confidence: confirmed
+    component_type: display

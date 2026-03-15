@@ -1,0 +1,37 @@
+streams:
+  - name: DDM/Crawler
+    purpose: Capture replenishment request.
+    confidence: inferred
+    type: DDM/Crawler
+  - name: STREAMS
+    purpose: Validate inventory sufficiency and material needs.
+    confidence: confirmed
+    type: STREAMS
+cortex: []
+process_builder:
+  - name: Process Builder
+    purpose: Optimize kit building and sequencing.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions
+    purpose: Ensure timely and accurate material delivery.
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: Optimize material flow and reduce handling costs.
+    confidence: confirmed
+    node_type: review
+  - name: Notification
+    purpose: Ensure line-side cleanliness and resource availability.
+    confidence: confirmed
+    node_type: communication
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review optimize line-side material delivery to minimize cogs and improve
+      otif by orchestrating just-in-sequence (jis) deliveries, pull-based
+      replenishment, and waste-reducing line practices. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

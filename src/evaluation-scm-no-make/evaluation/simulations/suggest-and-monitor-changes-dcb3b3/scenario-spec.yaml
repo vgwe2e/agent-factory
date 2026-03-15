@@ -1,0 +1,155 @@
+objective: >-
+  Automate end-to-end data orchestration for SKU x location across Hershey to
+  harmonize forecasts, inventory, and supplier requirements so autonomous
+  recommendations and actions reduce waste, improve COGS, and protect revenue
+  during promotional and demand variability.
+trigger: >-
+  Daily scheduled run + event-trigger on promotional change or forecast
+  deviation (>15% vs baseline) detected from Advanced Statistical Forecasting or
+  SAS
+decision: >-
+  Agentic process decides whether to auto-execute requirement/inventory/supply
+  adjustments for SKU-location pairs or route recommendations for human approval
+  based on confidence, business-impact thresholds, and conflict checks.
+expected_action: >-
+  Agentic AI (Process Builder + Agent Team + Cortex) ingests master and
+  operational feeds, harmonizes data, scores recommended changes, auto-executes
+  high-confidence changes via Remote Functions to S4/Kinaxis and schedules
+  follow-up rechecks; medium/low-confidence items create CWB Lifecycle tasks for
+  human review and notify stakeholders.
+expected_outcome: >-
+  Timely SKU/location adjustments (demand alignment, replenishment, rebalancing,
+  supplier alerts, promotional tactics) with measurable reduction in
+  overstocks/waste, improved COGS, maintained service level, and auditable
+  change tracking and stakeholder communication.
+rationale: >-
+  Combining harmonized master/transactional feeds with agentic reasoning and
+  rule-based governance enables scalable, repeatable, and auditable execution
+  across complex SKU/location matrices while preserving human-in-the-loop
+  controls for ambiguous or high-risk changes.
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Statistical tooling
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting Engine
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (General)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: Logistics/TMS
+    status: identified
+key_inputs:
+  - name: SKU Master & BOM
+    source: S4 (SAP S/4HANA)
+    purpose: >-
+      Canonical SKU attributes, pack/packaging, and component relationships for
+      harmonized mapping and MRP
+    preferred_stream_type: STREAMS
+  - name: Location/Network Master
+    source: S4 (SAP S/4HANA)
+    purpose: >-
+      Site hierarchy and lead-time topology for inventory deployment and
+      transportation planning
+    preferred_stream_type: STREAMS
+  - name: Baseline & Promotional Forecasts
+    source: Advanced Statistical Forecasting in SAS
+    purpose: >-
+      Demand signal for planning, uplift modeling for promotions, inputs for
+      rebalancing and safety-stock calculations
+  - name: Inventory On-hand & Commitments
+    source: Blue Yonder WMS / S4
+    purpose: >-
+      Current stock and committed orders to identify surplus/shortage by
+      SKU/location
+    preferred_stream_type: STREAMS
+  - name: Shortage & Constraint Alerts
+    source: Kinaxis RapidResponse
+    purpose: >-
+      APS-identified shortages and propagation impacts to prioritize supplier
+      and rebalancing actions
+  - name: Promotions & Marketing Change Events
+    source: SAS / Marketing feeds
+    purpose: Trigger adjustments and monitor promotional execution and ROI signals
+    preferred_stream_type: DDM/Crawlers
+  - name: Supplier Lead Time / Capacity
+    source: S4 / Kinaxis
+    purpose: Constraint-aware supplier allocation and expedite decisions
+  - name: Transportation ETAs and Cost Signals
+    source: Uber Freight (TMS)
+    purpose: Transport availability and cost for rebalancing and deployment decisions
+happy_path:
+  - step: >-
+      Ingest masters, transactions, forecasts, promotions, and constraints into
+      the Data Foundation
+    stage: ingest
+    component: DDM/Crawlers + STREAMS
+    purpose: >-
+      Harmonize SKU/location masters, inventory, forecast, promotions and
+      constraint feeds into subject areas
+  - step: >-
+      Run agentic analysis to detect anomalies, forecast deviations, promo
+      uplift impacts, and candidate adjustments with scoring
+    stage: analyze
+    component: Cortex Auto Forecast + RCA Service
+    purpose: >-
+      Produce recommended requirement, safety stock, and rebalancing actions
+      with confidence and impact estimates
+  - step: >-
+      Evaluate recommendations against business rules and thresholds and decide
+      route (auto-execute vs human review)
+    stage: decide
+    component: Process Builder (IF, Rules) + Agent Team
+    purpose: >-
+      Apply governance: auto-execute high-confidence, create CWB for approvals
+      for others
+  - step: >-
+      Execute approved changes (writebacks and notifications) and trigger
+      downstream APS/ERP updates and Kinaxis rebalancing
+    stage: act
+    component: Remote Functions + Process Builder (Action Item)
+    purpose: >-
+      Write adjustments to S4/Kinaxis and signal 3PL/TMS for transport or
+      fulfillment changes
+  - step: >-
+      Surface results, track completion, monitor effectiveness and schedule
+      follow-up checks
+    stage: review
+    component: CWB Lifecycle + Notification + UI Screen
+    purpose: >-
+      Ensure audit trail, stakeholder visibility, and measure change impact
+      (waste, COGS, service levels)
+branches:
+  - condition: Recommendation confidence high AND no rule conflicts
+    response: >-
+      Auto-execute adjustments via Remote Functions to S4/Kinaxis; create audit
+      record and notify stakeholders
+    outcome: >-
+      Immediate enactment reduces lead-time to action; rebalancing or
+      replenishment flows triggered
+  - condition: >-
+      Recommendation confidence medium OR cross-system conflicts detected (e.g.,
+      constraint vs promotion impact)
+    response: >-
+      Create CWB Lifecycle task routed to Agent Team (human-in-the-loop) with
+      supporting evidence and recommended action
+    outcome: >-
+      Human approval prevents risky automated changes; approved actions then
+      executed and tracked
+  - condition: Recommendation confidence low OR data quality issues identified
+    response: >-
+      Hold change, surface exceptions to data governance via Process Builder
+      (Data Quality) and notify data owners for remediation
+    outcome: >-
+      Prevents erroneous changes; remediation loop restores data before
+      re-running the orchestration

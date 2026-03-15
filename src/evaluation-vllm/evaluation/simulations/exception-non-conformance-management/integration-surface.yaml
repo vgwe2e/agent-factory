@@ -1,0 +1,51 @@
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+aera_ingestion:
+  - stream_name: critical-issues
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: non-conformances
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: deviation-requests
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: high-priority-issues
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: scrap-parts
+    stream_type: Event Stream
+    source: SAP S/4HANA
+  - stream_name: production-disruptions
+    stream_type: Event Stream
+    source: SAP S/4HANA
+processing:
+  - component: Cortex Monitoring
+    type: cortex
+    function: Evaluate the severity and context of the detected issue.
+  - component: CWB Lifecycle
+    type: process_builder
+    function: >-
+      Decide the best course of action based on predefined rules and business
+      logic.
+  - component: Remote Functions
+    type: process_builder
+    function: >-
+      Implement the selected action, such as halting production or initiating
+      rework.
+  - component: Cortex Monitoring
+    type: process_builder
+    function: Ensure the action taken is effective and monitor for any further issues.
+  - component: Notification
+    type: process_builder
+    function: Inform relevant stakeholders about the action taken and its outcome.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review unify and automate exception handling across production stop &
+      hold, rework/repair, deviation & ecas, critical issue escalation, scrap
+      disposition, and root cause analyses to reduce cogs and improve otif and
+      line efficiency. and approve the recommended action.

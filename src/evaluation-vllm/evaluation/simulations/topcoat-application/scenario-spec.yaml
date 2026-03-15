@@ -1,0 +1,73 @@
+objective: >-
+  Increase revenue by improving paint yield and finish quality, reduce COGS
+  through optimized energy and material usage, and improve OTIF by ensuring
+  correct sequences and precise environmental control.
+trigger: Start of the topcoat application process for a new batch of vehicles.
+decision: >-
+  Choose optimal basecoat and clearcoat application plans, manage paint booth
+  conditions, verify color matches, and adjust curing oven temperatures.
+expected_action: >-
+  Autonomous scheduling, optimization, and execution of basecoat/clearcoat
+  application, color matching, airflow/temperature control, and curing cost
+  controls.
+expected_outcome: >-
+  Improved paint yield and finish quality, reduced rework, optimized energy and
+  material usage, and improved on-time in-full (OTIF) delivery.
+rationale: >-
+  Automating and optimizing the topcoat application process will lead to higher
+  efficiency, better quality, and lower costs, directly impacting revenue and
+  operational excellence.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Vehicle Batch Details
+    source: SAP S/4HANA
+    purpose: >-
+      To determine the specific requirements for basecoat and clearcoat
+      application.
+  - name: Environmental Parameters
+    source: Paint Booth Sensors
+    purpose: To control and maintain optimal conditions for paint application.
+  - name: Color Standards
+    source: Color Matching Database
+    purpose: To verify and adjust color matches during the painting process.
+  - name: Curing Oven Temperatures
+    source: Curing Oven Sensors
+    purpose: To manage and adjust curing oven temperatures for optimal results.
+happy_path:
+  - step: Retrieve vehicle batch details from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: >-
+      To gather necessary information about the batch for the topcoat
+      application process.
+  - step: Determine optimal basecoat and clearcoat application plans.
+    stage: analyze
+    component: AutoML
+    purpose: >-
+      To select the best application plans based on historical data and current
+      requirements.
+  - step: Control paint booth environmental parameters.
+    stage: act
+    component: Remote Functions
+    purpose: To ensure optimal conditions for paint application.
+  - step: Verify and adjust color matches.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: To ensure correct color and minimize rework.
+  - step: Monitor and adjust curing oven temperatures.
+    stage: act
+    component: Remote Functions
+    purpose: To ensure full paint cure and durability while optimizing energy use.
+branches:
+  - condition: Color match verification fails.
+    response: Initiate color adjustment process.
+    outcome: Corrected color match and minimized rework.
+  - condition: Curing oven temperature exceeds optimal range.
+    response: Adjust oven temperature settings.
+    outcome: Optimized curing process and energy usage.
+  - condition: Environmental parameters deviate from optimal range.
+    response: Adjust paint booth conditions.
+    outcome: Maintained optimal conditions for paint application.

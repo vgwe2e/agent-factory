@@ -1,0 +1,72 @@
+objective: >-
+  Link S&OP financial impact assessments, COGS optimization, revenue/gross
+  margin alignment, and working capital improvements into a coordinated,
+  semi-autonomous decision engine to achieve material EBITDA uplift and improved
+  cash conversion.
+trigger: Monthly S&OP planning cycle initiation.
+decision: >-
+  Evaluate and select optimal S&OP plans based on financial impact, COGS,
+  revenue, gross margin, and working capital optimization.
+expected_action: >-
+  Automate the assessment and alignment of S&OP plans with financial targets,
+  providing actionable insights and recommendations.
+expected_outcome: Improved EBITDA and cash conversion through optimized S&OP plans.
+rationale: >-
+  The integration of financial impact assessments, COGS optimization,
+  revenue/gross margin alignment, and working capital improvements will enable
+  more informed and data-driven decision-making, leading to significant
+  financial benefits.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: S&OP Plans
+    source: SAP S/4HANA
+    purpose: To assess financial impacts and align with corporate targets.
+  - name: COGS Data
+    source: SAP S/4HANA
+    purpose: To model and evaluate COGS impact across product lines.
+  - name: Revenue and Gross Margin Targets
+    source: SAP S/4HANA
+    purpose: To align S&OP plans with revenue and gross margin goals.
+  - name: Working Capital Data
+    source: SAP S/4HANA
+    purpose: To develop strategies for optimizing working capital usage.
+happy_path:
+  - step: Ingest S&OP plans and associated financial data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect necessary data for analysis.
+  - step: Analyze financial impact of S&OP plans on revenue and COGS.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Quantify financial implications and model COGS impact.
+  - step: Align S&OP plans with revenue and gross margin targets.
+    stage: analyze
+    component: AutoML
+    purpose: Ensure plans meet corporate financial objectives.
+  - step: Optimize working capital usage across divisions.
+    stage: analyze
+    component: Safety Stock Service
+    purpose: Balance inventory, payables, and receivables.
+  - step: Present recommendations for optimal S&OP plans.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Provide actionable insights for decision-makers.
+  - step: Review and approve selected S&OP plans.
+    stage: review
+    component: CWB Lifecycle
+    purpose: Finalize plans with human oversight.
+branches:
+  - condition: Financial impact of S&OP plans does not meet targets.
+    response: Adjust S&OP plans and re-run analysis.
+    outcome: Revised S&OP plans aligned with financial targets.
+  - condition: >-
+      Working capital optimization strategies fail to balance inventory,
+      payables, and receivables.
+    response: Re-evaluate working capital strategies and adjust plans accordingly.
+    outcome: Optimized working capital usage across divisions.
+  - condition: Revenue and gross margin targets cannot be met with current S&OP plans.
+    response: Explore alternative S&OP scenarios and re-align with financial targets.
+    outcome: Aligned S&OP plans that maximize margin while meeting demand.

@@ -1,0 +1,78 @@
+source_systems:
+  - name: S4 (SAP S/4HANA)
+    type: ERP
+    status: identified
+  - name: SAS
+    type: Forecasting Engine
+    status: identified
+  - name: Kinaxis RapidResponse
+    type: APS
+    status: identified
+  - name: Kinaxis (FG Safety Stock Modeling / Rebalancing / Order Expediting)
+    type: APS
+    status: identified
+  - name: Blue Yonder WMS
+    type: WMS
+    status: identified
+  - name: Uber Freight (3PL / TMS)
+    type: TMS/3PL
+    status: identified
+  - name: Advanced Statistical Forecasting in SAS
+    type: Forecasting Engine
+    status: identified
+aera_ingestion:
+  - stream_name: demand-forecast-time-series
+    stream_type: Event Stream
+    source: SAS / Advanced Statistical Forecasting in SAS
+  - stream_name: inventory-positions-on-hand
+    stream_type: Event Stream
+    source: S4 (SAP S/4HANA) and Blue Yonder WMS
+  - stream_name: safety-stock-models-parameters
+    stream_type: Event Stream
+    source: Kinaxis (FG Safety Stock Modeling)
+  - stream_name: open-orders-allocations
+    stream_type: Event Stream
+    source: S4 (SAP S/4HANA) and Kinaxis RapidResponse
+  - stream_name: transportation-constraints-lead-times
+    stream_type: Event Stream
+    source: Uber Freight TMS / 3PL data / S4
+  - stream_name: drp-parameters-policy-knobs
+    stream_type: Event Stream
+    source: Planner inputs via UI Screen / Process Builder
+  - stream_name: shortage-propagation-signals
+    stream_type: Event Stream
+    source: Kinaxis RapidResponse (shortage propagation)
+processing:
+  - component: Cortex Auto Forecast + Safety Stock Service + Remote Functions
+    type: cortex
+    function: >-
+      Create candidate DRP planned volumes and score scenarios for COGS vs
+      service trade-offs.
+  - component: CWB Lifecycle + UI Screen
+    type: process_builder
+    function: >-
+      Enable human-in-the-loop approvals, accept/override of DRP planned
+      volumes, and record rationale.
+  - component: Remote Functions (ERP/Kinaxis writeback) + Process Builder
+    type: process_builder
+    function: >-
+      Push STR releases to S4/Kinaxis, update planned volumes, and trigger
+      rebalancing/expediting workflows.
+  - component: Notification + Data View
+    type: process_builder
+    function: >-
+      Alert ops/planners of execution status, exceptions, and distribute plan
+      impact metrics for review.
+  - component: Process Builder + Agent Team (agentic_ai)
+    type: agent_teams
+    function: >-
+      Use agentic AI to synthesize scenarios, rank recommendations, and prepare
+      CWB lifecycle recommendations.
+ui_surface:
+  - component: Dashboard
+    screen: Primary
+    purpose: >-
+      Review automate end-to-end drp decisions to generate, validate, and
+      execute multi-echelon planned volumes (drp) with autonomous str release
+      and closed-loop exception handling to reduce cogs, improve working
+      capital, and protect ebitda. and approve the recommended action.

@@ -1,0 +1,76 @@
+objective: >-
+  Analyze supplier PO performance, errors, and lead-time risks, then execute
+  end-to-end improvements across PO creation, approval, and delivery to reduce
+  COGS.
+trigger: Periodic (weekly) analysis of supplier PO performance and lead-time data.
+decision: >-
+  Which supplier delivery performance to trust and prioritize for purchase
+  orders, balancing OTIF risk with cost and supplier capacity; which PO accuracy
+  issues to address and how to adjust procurement rules to reduce errors while
+  maintaining fill rate and cost; what PO process improvements will most
+  effectively reduce lead times, considering supplier reliability, order
+  batching, and approval rules; which opportunities in PO automation and
+  digitalization to implement first, balancing cost, risk, and implementation
+  effort.
+expected_action: >-
+  Automate and optimize PO creation, approval, and delivery processes; implement
+  continuous improvement initiatives based on PO performance analysis.
+expected_outcome: >-
+  Reduced COGS through improved PO accuracy, faster lead times, and automated
+  process improvements across procurement.
+rationale: >-
+  By leveraging deterministic optimization and agentic orchestration, the system
+  ensures tight control via guardrails while improving PO performance and
+  reducing costs.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Supplier On-Time Delivery (OTD) Data
+    source: SAP S/4HANA
+    purpose: Track supplier delivery performance
+    preferred_stream_type: STREAMS
+  - name: Purchase Order Accuracy Data
+    source: SAP S/4HANA
+    purpose: Analyze PO accuracy and error rates
+    preferred_stream_type: STREAMS
+  - name: Lead Time Data
+    source: SAP S/4HANA
+    purpose: Identify lead time reduction opportunities
+    preferred_stream_type: STREAMS
+happy_path:
+  - step: Extract supplier OTD data
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Collect supplier delivery performance data
+  - step: Analyze supplier OTD performance
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Predict supplier reliability and lead times
+  - step: Evaluate PO accuracy and error rates
+    stage: analyze
+    component: Data Quality & Validation
+    purpose: Identify PO accuracy issues
+  - step: Determine optimal PO process improvements
+    stage: decide
+    component: CWB Lifecycle
+    purpose: Recommend process changes
+  - step: Implement PO process improvements
+    stage: act
+    component: Process Builder
+    purpose: Automate and optimize PO processes
+  - step: Monitor and review improvements
+    stage: review
+    component: Cortex Monitoring
+    purpose: Ensure continuous improvement
+branches:
+  - condition: High supplier OTD risk detected
+    response: Prioritize alternative suppliers
+    outcome: Improved supplier reliability
+  - condition: Significant PO accuracy issues identified
+    response: Adjust procurement rules
+    outcome: Reduced PO errors
+  - condition: Limited lead time reduction potential
+    response: Focus on digitalization opportunities
+    outcome: Enhanced PO process efficiency

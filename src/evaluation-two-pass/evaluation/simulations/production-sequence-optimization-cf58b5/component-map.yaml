@@ -1,0 +1,44 @@
+streams:
+  - name: DDM/Crawlers + STREAMS
+    purpose: >-
+      Bring demand, capacity, BOM, inventory and master data into Aera Subject
+      Areas for planning use.
+    confidence: confirmed
+    type: DDM/Crawlers + STREAMS
+  - name: STREAMS + Subject Areas
+    purpose: >-
+      Normalize and validate multi-echelon data, flag data quality issues and
+      generate aggregated planning views.
+    confidence: confirmed
+    type: STREAMS + Subject Areas
+cortex: []
+process_builder:
+  - name: Process (Process Builder) -> Remote Functions (optimization solver)
+    purpose: >-
+      Run solver with multi-echelon constraints and cost objective to generate
+      optimized schedule and sequence.
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions (SAP writeback)
+    purpose: >-
+      Write MPS, production orders, and sequence assignments into SAP S/4HANA
+      and refresh internal views.
+    confidence: inferred
+    node_type: act
+  - name: CWB Lifecycle + UI Screens
+    purpose: >-
+      Present schedules, exception list, and key metrics for human validation,
+      accept/reject or manual override.
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review autonomously produce conflict-free, cost-optimized weekly and
+      long-range production master production schedules (mps) and build
+      sequences across vehicle platforms and components to reduce cogs, improve
+      line efficiency, and increase on-time delivery. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

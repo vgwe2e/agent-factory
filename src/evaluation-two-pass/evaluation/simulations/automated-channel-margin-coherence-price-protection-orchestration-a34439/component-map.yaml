@@ -1,0 +1,42 @@
+streams:
+  - name: STREAMS
+    purpose: Consolidate canonical channel and inventory data for analysis
+    confidence: confirmed
+    type: STREAMS
+cortex:
+  - name: Cortex Auto Forecast
+    purpose: >-
+      Estimate demand uplift, elasticity, and confidence for promotional
+      scenarios
+    confidence: confirmed
+    capability: >-
+      Estimate demand uplift, elasticity, and confidence for promotional
+      scenarios
+process_builder:
+  - name: Process Builder - Rules
+    purpose: >-
+      Translate financial targets and policies into executable
+      pricing/rebate/allocation decisions
+    confidence: confirmed
+    node_type: decide
+  - name: Remote Functions + Process Builder Transaction
+    purpose: Enforce decisions in source ERP and create an auditable change record
+    confidence: confirmed
+    node_type: act
+  - name: CWB Lifecycle
+    purpose: >-
+      Enable human-in-the-loop approval, override, or escalation for flagged
+      cases
+    confidence: confirmed
+    node_type: review
+agent_teams: []
+ui:
+  - name: Dashboard
+    purpose: >-
+      Review automatically coordinate pricing, rebate accruals, and inventory
+      allocation across direct, distributor, and retail channels to minimize
+      channel-driven margin erosion and protect ebitda while maintaining
+      competitive channel pricing in the automotive ecosystem. and approve the
+      recommended action.
+    confidence: confirmed
+    component_type: display

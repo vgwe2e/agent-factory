@@ -1,0 +1,71 @@
+objective: >-
+  Develop and automate end-to-end indirect sourcing decisions to optimize cost
+  of goods sold, working capital, and supplier terms.
+trigger: Annual planning cycle initiation or significant market changes.
+decision: >-
+  Annual indirect spend plan development, indirect category strategy definition,
+  market intelligence & benchmarking, budget allocation & forecasting, make vs.
+  buy analysis for indirect services.
+expected_action: >-
+  Automate the decision-making process for indirect sourcing using cross-domain
+  inputs.
+expected_outcome: >-
+  Reduced indirect COGS, improved cash conversion, and alignment of strategic
+  spend with supplier capabilities and market benchmarks.
+rationale: >-
+  Automating these decisions will streamline the indirect sourcing process,
+  ensuring optimal cost and working capital management.
+source_systems:
+  - name: SAP S/4HANA
+    type: ERP
+    status: identified
+key_inputs:
+  - name: Historical Spend Data
+    source: SAP S/4HANA
+    purpose: Provide baseline for forecasting and budget allocation.
+  - name: Market Intelligence Reports
+    source: External Data Sources
+    purpose: Inform market dynamics and benchmarking.
+  - name: Supplier Performance Metrics
+    source: SAP S/4HANA
+    purpose: Evaluate supplier capabilities and terms.
+  - name: Internal Capability Assessments
+    source: Internal Surveys
+    purpose: Determine internal vs. external sourcing feasibility.
+happy_path:
+  - step: Extract historical spend data from SAP S/4HANA.
+    stage: ingest
+    component: DDM/Crawlers
+    purpose: Gather baseline data for analysis.
+  - step: Analyze historical spend data and market intelligence reports.
+    stage: analyze
+    component: Cortex Auto Forecast
+    purpose: Generate accurate forecasts and identify trends.
+  - step: Evaluate supplier performance metrics and internal capability assessments.
+    stage: analyze
+    component: AutoML
+    purpose: Classify suppliers and assess internal capabilities.
+  - step: Develop annual indirect spend plan and category strategies.
+    stage: decide
+    component: CWB Lifecycle
+    purpose: >-
+      Balance budget constraints, forecast accuracy, and working capital
+      objectives.
+  - step: Finalize and approve the indirect spend plan and strategies.
+    stage: act
+    component: Remote Functions
+    purpose: Ensure alignment with business goals and market conditions.
+  - step: Surface the approved plan and strategies on a dashboard.
+    stage: surface
+    component: UI Screens
+    purpose: Provide visibility and actionable insights.
+branches:
+  - condition: Significant market changes detected.
+    response: Trigger re-evaluation of market intelligence and budget allocation.
+    outcome: Adjust indirect spend plan and strategies accordingly.
+  - condition: Supplier performance metrics indicate underperformance.
+    response: Initiate supplier performance improvement actions.
+    outcome: Enhance supplier capabilities and terms.
+  - condition: Internal capability assessments suggest internal sourcing is feasible.
+    response: Recommend internal sourcing options.
+    outcome: Optimize total cost of ownership and reduce external sourcing risk.

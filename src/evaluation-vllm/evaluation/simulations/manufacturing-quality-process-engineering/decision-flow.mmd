@@ -1,0 +1,19 @@
+flowchart TD
+  A[Trigger: Detection of potential quality issues through PFMEA, Control Plan, MSA, Quality Gates, and Deviation/Non-Conformance processes.]
+  A --> N1[Stream: DDM/Crawlers - Ingest PFMEA outcomes, control plan parameters, MSA results, and quality gate statuses.]
+  N1 --> N2[Cortex: Cortex Auto Forecast - Analyze PFMEA outcomes and control plan parameters to predict potential quality issues.]
+  N2 --> N3[Cortex: Data Quality & Validation - Integrate MSA results and evaluate measurement uncertainty.]
+  N3 --> N4{PB: CWB Lifecycle - Set up and enforce quality gates based on analysis results.}
+  N4 -->|Primary| N5{PB: CWB Lifecycle - Design and implement processes for handling quality deviations and non-conformances.}
+  N5 --> N6[PB: Notification - Notify relevant stakeholders about quality issues and recommended actions.]
+  N6 --> Z1[Outcome: Improved first-pass yields, reduced scrap and rework, lower warranty costs, and enhanced on-time delivery performance.]
+  N4 -->|High measurement uncertainty detected| B1[Trigger corrective actions and re-evaluate MSA results.]
+  B1 --> O1[Outcome: Ensures measurement reliability and reduces false positives.]
+  O1 --> End[End]
+  N4 -->|Quality gate fails| B2[Initiate rework or scrap process.]
+  B2 --> O2[Outcome: Minimizes defects and optimizes throughput.]
+  O2 --> End[End]
+  N4 -->|Significant deviation detected| B3[Escalate to supplier or initiate containment and rework.]
+  B3 --> O3[Outcome: Balances cost and delivery impact while ensuring quality.]
+  O3 --> End[End]
+  Z1 --> End[End]

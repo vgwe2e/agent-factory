@@ -1,0 +1,63 @@
+decision: >-
+  Approve a unified global sales forecast and corresponding vehicle
+  configuration mix that determines production volume allocation and launch ramp
+  plans
+input:
+  financial_context:
+    annual_revenue: 184992000001
+    cogs: 158434000000
+    ebitda: 12786000000
+    inventory_value: 14951000000
+  trigger: >-
+    Weekly global forecast aggregation cycle or an event trigger (new-model
+    launch milestone or significant market intelligence signal)
+  parameters:
+    objective: >-
+      Automate end-to-end demand forecasting, market-intelligent mix planning,
+      and model-launch volume alignment to produce an approved global production
+      volume & mix plan that reduces forecast error, working capital, and COGS
+      exposure.
+    key_inputs:
+      - Regional sales forecasts (by SKU/market/time bucket)
+      - Vehicle configuration mix (trim/options by market)
+      - >-
+        Market intelligence signals (registrations, macro indicators, competitor
+        actions)
+      - >-
+        New model launch plans & constraints (ramp schedules, capacity,
+        incentive spend)
+      - Historical sales & forecast accuracy metrics
+    source_systems:
+      - SAP S/4HANA
+      - >-
+        Market Intelligence Feeds (3rd-party registrations/pricing/competitive
+        data)
+      - Product Launch / Portfolio Planning System
+      - Regional Forecast Portals / Spreadsheets
+expected_output:
+  action: >-
+    Automatically ingest regional forecasts, vehicle configuration mix inputs,
+    market signals and launch plans; generate consolidated forecasts and
+    optimized mix recommendations via Cortex Auto Forecast + rules; surface
+    recommendations via CWB Lifecycle for exception review; write approved
+    volumes and allocation instructions back to SAP S/4HANA using Remote
+    Functions; notify cross-functional teams.
+  outcome: >-
+    Aligned global production volumes and mix per model/market, improved revenue
+    capture from better demand alignment, reduced working capital tied to
+    forecast error, and optimized COGS and launch execution through earlier,
+    coordinated decisions.
+  affected_components:
+    - Process Builder - Stream
+    - Cortex Auto Forecast
+    - CWB Lifecycle
+    - Remote Functions
+    - Cortex Monitoring
+    - Dashboard
+rationale: >-
+  Consolidating regional forecasts, mix constraints, market intelligence and
+  launch plans into a single deterministic orchestration reduces fragmentation
+  and manual reconciliation. Using Process Builder to orchestrate data flows,
+  Cortex Auto Forecast for time-series consolidation, and CWB Lifecycle for
+  controlled human-in-the-loop exceptions creates a repeatable, auditable route
+  for high-impact planning decisions despite implementation complexity.
