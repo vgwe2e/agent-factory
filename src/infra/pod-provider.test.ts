@@ -145,6 +145,48 @@ describe("PodProvider", () => {
     assert.equal(capturedAuthHeader, "Bearer vllm-inline-key");
   });
 
+  it("provision() normalizes the H100 SXM alias to the RunPod API GPU name", async () => {
+    let createBody: Record<string, unknown> | undefined;
+
+    const mockFetch: MockFetchFn = async (url, init) => {
+      const u = String(url);
+      const method = init?.method ?? "GET";
+
+      if (u === `${RUNPOD_REST_BASE}/pods` && method === "POST") {
+        createBody = JSON.parse(String(init?.body ?? "{}")) as Record<string, unknown>;
+        return jsonResponse({ id: POD_ID });
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}` && method === "GET") {
+        return jsonResponse({ id: POD_ID, machineId: "machine-123" });
+      }
+
+      if (u === `${POD_BASE_URL}/models`) {
+        return jsonResponse({ data: [{ id: MODEL }] });
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}/stop` && method === "POST") {
+        return jsonResponse({});
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}` && method === "DELETE") {
+        return jsonResponse({});
+      }
+
+      return new Response("Not found", { status: 404 });
+    };
+
+    globalThis.fetch = mockFetch as typeof globalThis.fetch;
+    const provider = createPodProvider({
+      apiKey: "runpod-test-key",
+      gpuType: "H100 SXM",
+    });
+
+    const pod = await provider.provision();
+    assert.deepStrictEqual(createBody?.gpuTypeIds, ["NVIDIA H100 80GB HBM3"]);
+    await provider.teardown(pod);
+  });
+
   it("provision() tears the pod down when container startup never reaches uptime", async () => {
     const cleanupCalls: string[] = [];
 

@@ -163,6 +163,31 @@ describe("backend-factory", () => {
     );
   });
 
+  it("createBackend('openai-batch') returns batch config with default models", async () => {
+    const config = await createBackend("openai-batch", {
+      openAiApiKey: "sk-test",
+    });
+
+    assert.equal(config.backend, "openai-batch");
+    assert.equal(config.openAiBatchConfig?.apiKey, "sk-test");
+    assert.equal(config.openAiBatchConfig?.scoringModel, "gpt-5-nano");
+    assert.equal(config.openAiBatchConfig?.simulationModel, "gpt-5-mini");
+    assert.equal(config.simulationConfig, undefined);
+
+    const chatResult = await config.chatFn([], {});
+    assert.equal(chatResult.success, false);
+  });
+
+  it("createBackend('openai-batch') throws when OPENAI_API_KEY is missing", async () => {
+    await assert.rejects(
+      () => createBackend("openai-batch"),
+      (err: Error) => {
+        assert.ok(err.message.includes("OPENAI_API_KEY"), `Error mentions OPENAI_API_KEY: ${err.message}`);
+        return true;
+      },
+    );
+  });
+
   it("createBackend throws for invalid backend string", async () => {
     await assert.rejects(
       () => (createBackend as Function)("invalid-backend"),
@@ -247,6 +272,49 @@ describe("backend-factory", () => {
 
     await config.cleanup?.();
     assert.deepStrictEqual(cleanupCalls, ["stop", "delete"]);
+  });
+
+  it("createBackend('vllm') forwards a RunPod GPU override to the pod provider", async () => {
+    let createBody: Record<string, unknown> | undefined;
+
+    const mockFetch: MockFetchFn = async (url, init) => {
+      const u = String(url);
+      const method = init?.method ?? "GET";
+
+      if (u === `${RUNPOD_REST_BASE}/pods` && method === "POST") {
+        createBody = JSON.parse(String(init?.body ?? "{}")) as Record<string, unknown>;
+        return jsonResponse({ id: POD_ID });
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}` && method === "GET") {
+        return jsonResponse({ id: POD_ID, uptimeSeconds: 8 });
+      }
+
+      if (u === `${POD_BASE_URL}/models`) {
+        return jsonResponse({ data: [{ id: DEFAULT_MODEL }] });
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}/stop` && method === "POST") {
+        return jsonResponse({});
+      }
+
+      if (u === `${RUNPOD_REST_BASE}/pods/${POD_ID}` && method === "DELETE") {
+        return jsonResponse({});
+      }
+
+      return new Response("Not found", { status: 404 });
+    };
+
+    globalThis.fetch = mockFetch as typeof globalThis.fetch;
+    const config = await createBackend("vllm", {
+      runpodApiKey: "test-key",
+      runpodGpuType: "NVIDIA H100 SXM",
+    });
+
+    assert.equal(config.backend, "vllm");
+    assert.deepStrictEqual(createBody?.gpuTypeIds, ["NVIDIA H100 80GB HBM3"]);
+
+    await config.cleanup?.();
   });
 
   it("createBackend('vllm') auto-provision path uses the pod URL and pod-scoped vLLM auth for chat", async () => {

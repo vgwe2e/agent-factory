@@ -45,6 +45,10 @@ const DEFAULT_CONTAINER_DISK_GB = 20;
 const DEFAULT_VOLUME_GB = 80;
 const DEFAULT_VOLUME_MOUNT_PATH = "/workspace";
 const DEFAULT_PORT = 8000;
+const GPU_TYPE_ALIASES: Record<string, string> = {
+  "H100 SXM": "NVIDIA H100 80GB HBM3",
+  "NVIDIA H100 SXM": "NVIDIA H100 80GB HBM3",
+};
 
 interface CreatePodResponse {
   id?: string;
@@ -71,6 +75,7 @@ export function createPodProvider(config: PodProviderConfig): PodProvider {
     maxHealthTimeoutMs = DEFAULT_HEALTH_TIMEOUT_MS,
     pollIntervalMs = DEFAULT_POLL_INTERVAL_MS,
   } = config;
+  const normalizedGpuType = normalizeGpuType(gpuType);
 
   async function rest<T>(
     path: string,
@@ -165,7 +170,7 @@ export function createPodProvider(config: PodProviderConfig): PodProvider {
       const body: Record<string, unknown> = {
         name: `aera-vllm-${Date.now()}`,
         computeType: "GPU",
-        gpuTypeIds: [gpuType],
+        gpuTypeIds: [normalizedGpuType],
         gpuCount: 1,
         cloudType: "SECURE",
         ports: [`${DEFAULT_PORT}/http`],
@@ -270,6 +275,10 @@ export function createPodProvider(config: PodProviderConfig): PodProvider {
   }
 
   return { provision, healthCheck, teardown };
+}
+
+function normalizeGpuType(gpuType: string): string {
+  return GPU_TYPE_ALIASES[gpuType] ?? gpuType;
 }
 
 function sleep(ms: number): Promise<void> {

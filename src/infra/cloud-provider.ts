@@ -6,7 +6,7 @@
  *
  * The runpod-sdk only supports interacting with *existing* endpoints
  * (run, status, health). Endpoint creation/deletion requires the
- * RunPod GraphQL API at https://api.runpod.ai/graphql.
+ * RunPod GraphQL API at https://api.runpod.io/graphql.
  */
 
 // ---------------------------------------------------------------------------
@@ -42,7 +42,7 @@ export interface CloudProvider {
 // Constants
 // ---------------------------------------------------------------------------
 
-const RUNPOD_GRAPHQL_URL = "https://api.runpod.ai/graphql";
+const RUNPOD_GRAPHQL_BASE = "https://api.runpod.io/graphql";
 const RUNPOD_SERVERLESS_BASE = "https://api.runpod.ai/v2";
 
 const DEFAULT_GPU_TYPE = "NVIDIA H100 80GB HBM3";
@@ -72,17 +72,18 @@ export function createCloudProvider(config: CloudProviderConfig): CloudProvider 
   // ---- GraphQL helper ---------------------------------------------------
 
   async function graphql(query: string, variables: Record<string, unknown> = {}): Promise<unknown> {
-    const resp = await fetch(RUNPOD_GRAPHQL_URL, {
+    const url = `${RUNPOD_GRAPHQL_BASE}?api_key=${apiKey}`;
+    const resp = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({ query, variables }),
     });
 
     if (!resp.ok) {
-      throw new Error(`RunPod API error: ${resp.status} ${resp.statusText}`);
+      const body = await resp.text().catch(() => "");
+      throw new Error(`RunPod API error: ${resp.status} ${resp.statusText}${body ? ` — ${body}` : ""}`);
     }
 
     return resp.json();

@@ -1,6 +1,6 @@
 /**
  * Backend factory: creates the appropriate ChatFn + config based on
- * the selected scoring backend (ollama or vllm).
+ * the selected scoring backend (ollama, vllm, or openai-batch).
  *
  * For the vLLM path, runs pre-flight schema validation before creating
  * the client to catch incompatibilities early (VLLM-04).
@@ -17,23 +17,31 @@ import { createCostTracker } from "./cost-tracker.js";
 import type { CostTracker } from "./cost-tracker.js";
 import { createPodProvider } from "./pod-provider.js";
 import type { SimulationLlmConfig } from "../simulation/llm-client.js";
+import type { OpenAiBatchConfig } from "./openai-batch-client.js";
 
 // -- Types --
 
-export type Backend = "ollama" | "vllm";
+export type Backend = "ollama" | "vllm" | "openai-batch";
 
 type ChatFn = (
   messages: Array<{ role: string; content: string }>,
   format: Record<string, unknown>,
 ) => Promise<ChatResult>;
 
-export interface VllmBackendOptions {
+export interface BackendOptions {
   vllmUrl?: string;           // If omitted and runpodApiKey set, auto-provision
   vllmModel?: string;
   vllmApiKey?: string;        // Auth for a user-managed vLLM/OpenAI server
   runpodApiKey?: string;      // From RUNPOD_API_KEY env var
+  runpodGpuType?: string;     // Optional RunPod GPU type override
   networkVolumeId?: string;   // RunPod network volume for model weight caching
   hfToken?: string;           // Optional Hugging Face token for gated/private models
+  openAiApiKey?: string;
+  openAiBaseUrl?: string;
+  openAiScoringModel?: string;
+  openAiSimulationModel?: string;
+  openAiPollIntervalMs?: number;
+  openAiTimeoutMs?: number;
 }
 
 export interface BackendConfig {
@@ -42,7 +50,8 @@ export interface BackendConfig {
   cleanup?: () => Promise<void>;  // teardown for cloud resources
   costTracker?: CostTracker;      // GPU cost tracking (cloud only)
   podId?: string;                 // RunPod pod ID (cloud only)
-  simulationConfig: SimulationLlmConfig;
+  simulationConfig?: SimulationLlmConfig;
+  openAiBatchConfig?: OpenAiBatchConfig;
 }
 
 // -- Constants --
@@ -50,6 +59,8 @@ export interface BackendConfig {
 const DEFAULT_VLLM_MODEL = "Qwen/Qwen2.5-32B-Instruct";
 const DEFAULT_OLLAMA_MODEL = "qwen3:30b";
 const DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434";
+const DEFAULT_OPENAI_SCORING_MODEL = "gpt-5-nano";
+const DEFAULT_OPENAI_SIMULATION_MODEL = "gpt-5-mini";
 
 // -- Public API --
 
@@ -63,7 +74,7 @@ const DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434";
  */
 export async function createBackend(
   backend: Backend,
-  options?: VllmBackendOptions,
+  options?: BackendOptions,
 ): Promise<BackendConfig> {
   switch (backend) {
     case "ollama":
@@ -108,6 +119,7 @@ export async function createBackend(
       if (options?.runpodApiKey) {
         const provider = createPodProvider({
           apiKey: options.runpodApiKey,
+          gpuType: options.runpodGpuType,
           model,
           networkVolumeId: options.networkVolumeId,
           hfToken: options.hfToken,
@@ -145,6 +157,30 @@ export async function createBackend(
       throw new Error(
         "Either --vllm-url or RUNPOD_API_KEY is required when backend is 'vllm'",
       );
+    }
+
+    case "openai-batch": {
+      if (!options?.openAiApiKey) {
+        throw new Error(
+          "OPENAI_API_KEY environment variable is required when backend is 'openai-batch'",
+        );
+      }
+
+      return {
+        chatFn: async () => ({
+          success: false,
+          error: "openai-batch does not expose a synchronous chatFn",
+        }),
+        backend: "openai-batch",
+        openAiBatchConfig: {
+          apiKey: options.openAiApiKey,
+          baseUrl: options.openAiBaseUrl,
+          scoringModel: options.openAiScoringModel ?? DEFAULT_OPENAI_SCORING_MODEL,
+          simulationModel: options.openAiSimulationModel ?? DEFAULT_OPENAI_SIMULATION_MODEL,
+          pollIntervalMs: options.openAiPollIntervalMs,
+          timeoutMs: options.openAiTimeoutMs,
+        },
+      };
     }
 
     default:
