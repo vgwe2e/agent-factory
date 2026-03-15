@@ -14,3 +14,18 @@ build-queue.md
 results.tsv
 results-dashboard.html
 .planning/ford_hierarchy_v2_export.json
+/prompts
+/src/evaluation-scm-no-make-prev-2026-03-15T1200Z
+
+# Failed/stale evaluation runs
+/src/evaluation-two-pass-failed-*/
+/src/evaluation-vllm-smoke-sxm-*/
+
+# Batch API artifacts (ephemeral, not reusable)
+**/.pipeline/
+**/batch/
+
+# Binary evaluation outputs
+*.xlsx
+*.docx
+~$*
