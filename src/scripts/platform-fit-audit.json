@@ -1,0 +1,2690 @@
+[
+  {
+    "name": "Demand Forecasting & Analysis",
+    "pf": 3,
+    "reason": "Core: Cortex Auto Forecast + STREAMS + Subject Areas",
+    "composite": "0.88",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Warehouse & Inventory Management",
+    "pf": 2,
+    "reason": "Safety Stock Service + STREAMS",
+    "composite": "0.84",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Material Requirements Planning (MRP) Integration",
+    "pf": 2,
+    "reason": "STREAMS + DDM/Crawlers + Remote Functions",
+    "composite": "0.84",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Multi-Echelon Inventory Optimization",
+    "pf": 3,
+    "reason": "Core: Safety Stock Service + STREAMS + Subject Areas",
+    "composite": "0.84",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Production Planning & Control",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS (batch planning)",
+    "composite": "0.84",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Inventory Positioning & Optimization",
+    "pf": 3,
+    "reason": "Core: Safety Stock Service + STREAMS + Subject Areas",
+    "composite": "0.84",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Inbound Receiving & Putaway",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.74",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Cost & Value Optimization Initiatives",
+    "pf": 2,
+    "reason": "Remote Functions + Subject Areas + AutoML",
+    "composite": "0.82",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Production Schedule Execution & Monitoring",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS (batch planning)",
+    "composite": "0.82",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Quality Control & Performance Testing",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.82",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Launch Logistics & Distribution Planning",
+    "pf": 2,
+    "reason": "Use-case: supply chain network optimization → AutoML + Remote Functions",
+    "composite": "0.82",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Line-side Material Delivery",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.74",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Constraint Identification & Resolution",
+    "pf": 2,
+    "reason": "Exception Management + CWB Lifecycle",
+    "composite": "0.81",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Production Planning & Sequencing Integration",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS (batch planning)",
+    "composite": "0.76",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Tactical Capacity Planning",
+    "pf": 2,
+    "reason": "Use-case: capacity planning → Cortex Auto Forecast",
+    "composite": "0.76",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Strategic Network Design & Optimization",
+    "pf": 2,
+    "reason": "Use-case: supply chain network optimization → AutoML + Remote Functions",
+    "composite": "0.82",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Body-In-White (BIW) Assembly Execution",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.75",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Data & Technology Management for S&OP",
+    "pf": 3,
+    "reason": "Core: Subject Areas + Process Builder + UI Screens + Cortex Auto Forecast",
+    "composite": "0.81",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Capacity Planning & Optimization",
+    "pf": 2,
+    "reason": "Use-case: capacity planning → Cortex Auto Forecast",
+    "composite": "0.78",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Warranty Performance Monitoring & Analytics",
+    "pf": 2,
+    "reason": "Use-case: quality monitoring & defect analysis → RCA Service + STREAMS",
+    "composite": "0.77",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Material Handling & Preparation",
+    "pf": 1,
+    "reason": "Partial: STREAMS for visibility, physical = WMS/MES",
+    "composite": "0.74",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Production Planning & Scheduling (Stamping)",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS (batch planning)",
+    "composite": "0.77",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Inventory Planning & Optimization",
+    "pf": 3,
+    "reason": "Core: Safety Stock Service + STREAMS + Subject Areas",
+    "composite": "0.77",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Logistics Operations",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, physical = WMS/TMS",
+    "composite": "0.69",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Inventory Strategy & Policy Definition",
+    "pf": 2,
+    "reason": "Safety Stock Service + STREAMS",
+    "composite": "0.72",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Master Production Scheduling (MPS)",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS (batch planning)",
+    "composite": "0.76",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Inventory Planning & Replenishment",
+    "pf": 3,
+    "reason": "Core: Safety Stock Service + STREAMS + Subject Areas",
+    "composite": "0.75",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Finished Powertrain Logistics & Outbound Preparation",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Stamping Supplier & Outsource Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "New Product Introduction & Lifecycle Planning",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS",
+    "composite": "0.74",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Material Flow & Inventory Planning for Launch",
+    "pf": 2,
+    "reason": "Safety Stock Service + STREAMS",
+    "composite": "0.74",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Logistics Capital Planning & Investment",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Strategic Demand Planning & Scenario Modeling",
+    "pf": 3,
+    "reason": "Core: Cortex Auto Forecast + STREAMS + Subject Areas",
+    "composite": "0.77",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "New Product Introduction (NPI) Production Planning",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS (batch planning)",
+    "composite": "0.74",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Transportation Planning & Scheduling",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions",
+    "composite": "0.74",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Paint Shop Maintenance & Reliability",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Pricing Management",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + STREAMS",
+    "composite": "0.74",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Drive Unit Component & Sub-Assembly",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Statistical Demand Modeling & Analytics",
+    "pf": 3,
+    "reason": "Core: Cortex Auto Forecast + STREAMS + Subject Areas",
+    "composite": "0.77",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supply Base Risk & Resilience Management",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.73",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Collaboration for Inventory Optimization",
+    "pf": 3,
+    "reason": "Core: Safety Stock Service + STREAMS + Subject Areas",
+    "composite": "0.77",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Manufacturing Anomaly & Issue Resolution",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.66",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Constraint & Exception Management",
+    "pf": 3,
+    "reason": "Core: Exception Management + CWB Lifecycle + Process Builder",
+    "composite": "0.76",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Demand & Supply Data Integration",
+    "pf": 2,
+    "reason": "STREAMS + DDM/Crawlers + Subject Areas",
+    "composite": "0.69",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Inventory & Distribution",
+    "pf": 2,
+    "reason": "Use-case: safety stock optimization → Safety Stock Service",
+    "composite": "0.69",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Vehicle & Part Order Allocation",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle",
+    "composite": "0.69",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Goods Receipt, Invoice Verification & Resolution",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + STREAMS",
+    "composite": "0.69",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Demand Planning & Forecasting",
+    "pf": 3,
+    "reason": "Core: Cortex Auto Forecast + STREAMS + Subject Areas",
+    "composite": "0.72",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Financial Integration & Profitability Analysis",
+    "pf": 2,
+    "reason": "Remote Functions + STREAMS + Subject Areas",
+    "composite": "0.72",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Inventory & Material Flow Strategy",
+    "pf": 2,
+    "reason": "Safety Stock Service + STREAMS",
+    "composite": "0.68",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Inventory & Working Capital Optimization",
+    "pf": 3,
+    "reason": "Core: Safety Stock Service + STREAMS + Subject Areas",
+    "composite": "0.71",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Network Strategy & Optimization",
+    "pf": 2,
+    "reason": "Use-case: safety stock optimization → Safety Stock Service",
+    "composite": "0.70",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Request for Quote (RFQ) & Bid Management",
+    "pf": 2,
+    "reason": "Use-case: bid/quote management → Remote Functions + CWB Lifecycle",
+    "composite": "0.70",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Battery Pack Assembly",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Battery Module Assembly",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Manufacturing Engineering & Process Optimization",
+    "pf": 2,
+    "reason": "Use-case: manufacturing process optimization → AutoML + Remote Functions",
+    "composite": "0.70",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "In-Process Component & Assembly Verification",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Commercial Change Management",
+    "pf": 1,
+    "reason": "Partial: CWB for workflow, disputes = legal/CLM",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Acknowledgment & Communication",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Finished Goods Handling & Dispatch",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Production Quality Control & Assurance",
+    "pf": 2,
+    "reason": "RCA Service + STREAMS + CWB Lifecycle",
+    "composite": "0.70",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Capacity Scenario Modeling & Simulation",
+    "pf": 2,
+    "reason": "Cortex Auto Forecast + Subject Areas",
+    "composite": "0.70",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Warehouse & Distribution Center Network Management",
+    "pf": 2,
+    "reason": "Use-case: supply chain network optimization → AutoML + Remote Functions",
+    "composite": "0.70",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Returnable Packaging Management",
+    "pf": 1,
+    "reason": "Partial: STREAMS for tracking, not a packaging system",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Inbound Logistics Network Design & Optimization",
+    "pf": 2,
+    "reason": "Use-case: supply chain network optimization → AutoML + Remote Functions",
+    "composite": "0.70",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Quality & Development",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.70",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Exception & Non-Conformance Management",
+    "pf": 3,
+    "reason": "Core: Exception Management + CWB Lifecycle + Process Builder",
+    "composite": "0.73",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Inbound Logistics Exception Management",
+    "pf": 3,
+    "reason": "Core: Exception Management + CWB Lifecycle + Process Builder",
+    "composite": "0.72",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Order Fulfillment & Picking",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.62",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "New Product Introduction (NPI) Demand Forecasting",
+    "pf": 3,
+    "reason": "Core: Cortex Auto Forecast + STREAMS + Subject Areas",
+    "composite": "0.69",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Parts Supply Chain & Logistics Coordination",
+    "pf": 2,
+    "reason": "Use-case: supply chain network optimization → AutoML + Remote Functions",
+    "composite": "0.65",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Press Operations & Production Execution",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.64",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Indirect Sourcing Strategy & Planning",
+    "pf": 2,
+    "reason": "Subject Areas + Remote Functions + AutoML",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Network Design & Operations",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Transportation Strategy & Mode Optimization",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions",
+    "composite": "0.70",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Operator & Automated Quality Inspections",
+    "pf": 2,
+    "reason": "Use-case: quality monitoring & defect analysis → RCA Service + STREAMS",
+    "composite": "0.70",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "OTA Software Deployment & Management",
+    "pf": 1,
+    "reason": "Partial: Agentic AI, not a connected car platform",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Sourcing Risk Management",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Internal Production Logistics & Material Handling",
+    "pf": 1,
+    "reason": "Partial: STREAMS for visibility, physical = WMS/MES",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Dealer & Customer Delivery Operations",
+    "pf": 1,
+    "reason": "Partial: Remote Functions for integration, dealer ops = DMS",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Customer Experience & Technical Support for Connected Services",
+    "pf": 1,
+    "reason": "Partial: CWB for workflow, customer service = CRM",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Drive Unit Final Assembly & Testing",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Contract Management & Lifecycle",
+    "pf": 1,
+    "reason": "Partial: Remote Functions + CWB, not a CLM system",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Launch Program Strategy & Governance",
+    "pf": 1,
+    "reason": "Partial: Process Builder for planning, execution is broader",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Continuous Improvement & Data Analytics",
+    "pf": 2,
+    "reason": "STREAMS + DDM/Crawlers + Subject Areas",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Die Engineering & Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.60",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Outbound Shipping & Loading",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.60",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "PO Performance Analysis & Continuous Improvement",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + STREAMS",
+    "composite": "0.66",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Non-Conformance & Rework Management",
+    "pf": 2,
+    "reason": "Exception Management + CWB Lifecycle + Process Builder",
+    "composite": "0.66",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Indirect Spend Analytics & Optimization",
+    "pf": 2,
+    "reason": "Subject Areas + Remote Functions + UI Screens",
+    "composite": "0.66",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Emergency & Critical Parts Fulfillment",
+    "pf": 1,
+    "reason": "Partial: Exception Management for prioritization",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Regulatory & Trade Policy Compliance",
+    "pf": 2,
+    "reason": "Use-case: regulatory compliance tracking → STREAMS + Remote Functions",
+    "composite": "0.66",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Data Analytics & Performance Management",
+    "pf": 2,
+    "reason": "STREAMS + DDM/Crawlers + Subject Areas",
+    "composite": "0.66",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Aggregate Supply Planning & Capacity",
+    "pf": 2,
+    "reason": "Use-case: capacity planning → Cortex Auto Forecast",
+    "composite": "0.65",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "New Product Introduction (NPI) Capacity Assessment",
+    "pf": 2,
+    "reason": "Cortex Auto Forecast + Subject Areas",
+    "composite": "0.65",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Cost & Value Optimization (Sourcing Phase)",
+    "pf": 2,
+    "reason": "Remote Functions + Subject Areas + AutoML",
+    "composite": "0.65",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Launch Readiness & Support",
+    "pf": 1,
+    "reason": "Partial: Process Builder for planning, execution is broader",
+    "composite": "0.62",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Material Flow & In-Plant Logistics",
+    "pf": 2,
+    "reason": "STREAMS + Subject Areas + Process Builder",
+    "composite": "0.65",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Demand Forecasting",
+    "pf": 3,
+    "reason": "Core: Cortex Auto Forecast + STREAMS + Subject Areas",
+    "composite": "0.64",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Inventory Management",
+    "pf": 2,
+    "reason": "Use-case: safety stock optimization → Safety Stock Service",
+    "composite": "0.61",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Demand Sensing & Forecasting",
+    "pf": 3,
+    "reason": "Core: Cortex Auto Forecast + STREAMS + Subject Areas",
+    "composite": "0.64",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Production Planning & Material Flow Management",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS (batch planning)",
+    "composite": "0.60",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Compliance & Risk Management",
+    "pf": 2,
+    "reason": "STREAMS + Remote Functions + Process Builder",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Integrated Financial & Operational Reconciliation",
+    "pf": 2,
+    "reason": "Remote Functions + STREAMS + Subject Areas",
+    "composite": "0.67",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Topcoat Application",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.60",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Mobile Service Delivery & Dispatch",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.60",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Executive S&OP / IBP Review & Decision Making",
+    "pf": 3,
+    "reason": "Core: Subject Areas + Process Builder + UI Screens + Cortex Auto Forecast",
+    "composite": "0.66",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Regulatory Compliance & Quality Assurance",
+    "pf": 2,
+    "reason": "Use-case: quality monitoring & defect analysis → RCA Service + STREAMS",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Defect Management & Recovery",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Manufacturing Process Quality Audits",
+    "pf": 2,
+    "reason": "Use-case: manufacturing process optimization → AutoML + Remote Functions",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Logistics Performance Management & Analytics",
+    "pf": 2,
+    "reason": "Subject Areas + UI Screens + STREAMS",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Battery Cell Production",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.60",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Predictive Maintenance (PdM) & Condition Monitoring",
+    "pf": 1,
+    "reason": "Partial: AutoML for prediction, not IoT/CMMS",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Preventive Maintenance (PM) Program Execution",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.60",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Dealer Claims Submission & Front-End Validation",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + Process Builder",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Asset Lifecycle Management & Tracking",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "New Product Introduction (NPI) Network Readiness",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Inbound Logistics & Material Handling",
+    "pf": 1,
+    "reason": "Partial: DDM/Crawlers for data, execution = TMS",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "New Model Launch Quality Readiness",
+    "pf": 1,
+    "reason": "Partial: Process Builder for planning, execution is broader",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Procurement Technology & Digitalization",
+    "pf": 2,
+    "reason": "STREAMS + Remote Functions + Process Builder",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Continuous Improvement & Digital Transformation",
+    "pf": 2,
+    "reason": "RCA Service + Subject Areas + UI Screens",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Master Data & Bill of Material (BOM) Management",
+    "pf": 2,
+    "reason": "Multi-cap: STREAMS (ETL), Dimensions",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Paint Material Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Packaging Inventory Management",
+    "pf": 2,
+    "reason": "Safety Stock Service + STREAMS",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Carrier Performance & Relationship Management",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, carrier ops = TMS",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Identification & Pre-Qualification",
+    "pf": 1,
+    "reason": "Partial: STREAMS + Process Builder, not a SRM system",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "New Supplier Quality Assessment & Selection",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Indirect Supplier Qualification & Selection",
+    "pf": 1,
+    "reason": "Partial: STREAMS + Process Builder, not a SRM system",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Returnable Container Fleet Management",
+    "pf": 1,
+    "reason": "Partial: STREAMS for tracking, physical = WMS",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Production Planning & Execution Control",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS (batch planning)",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Connected Services & Aftermarket Order Integration",
+    "pf": 1,
+    "reason": "Partial: Agentic AI, not a connected car platform",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Commodity Data Analytics & Reporting",
+    "pf": 2,
+    "reason": "STREAMS + DDM/Crawlers + Subject Areas",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Order Management",
+    "pf": 1,
+    "reason": "Single cap: Safety Stock Service",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Warehouse & Distribution Center Operations",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, physical ops = WMS",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Customer Order Modification & Cancellation",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Warranty Policy & Program Development",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Technical Service Information Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Sales Channel & Marketing Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Inbound Freight Operations (Parts & Components)",
+    "pf": 1,
+    "reason": "Partial: DDM/Crawlers for data, execution = TMS",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Invoice & Payment Processing (P2P part)",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + STREAMS",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Manufacturing Quality Process Engineering",
+    "pf": 2,
+    "reason": "Use-case: manufacturing process optimization → AutoML + Remote Functions",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Inventory Performance Monitoring & Analytics",
+    "pf": 2,
+    "reason": "Use-case: performance monitoring dashboard → UI Screens + Subject Areas",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Quality Management & Control",
+    "pf": 2,
+    "reason": "RCA Service + STREAMS + CWB Lifecycle",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Requisition-to-Order Processing",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + Process Builder",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Carrier Relationship Management & Sourcing",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, carrier ops = TMS",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Upfit Solution Design & Integration",
+    "pf": 1,
+    "reason": "Partial: Process Builder for workflow, physical outside Aera",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Labor & Skills Capacity Planning",
+    "pf": 2,
+    "reason": "Use-case: capacity planning → Cortex Auto Forecast",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Contract & Relationship Governance",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Production Line Maintenance & Uptime Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Paint Quality & Rework Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Tool & Equipment Development",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Raw Material & Component Receipt & Kitting",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Communication & Collaboration",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Launch Readiness Management",
+    "pf": 1,
+    "reason": "Partial: Process Builder for planning, execution is broader",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Customer Request & Incident Management",
+    "pf": 1,
+    "reason": "Partial: CWB for workflow, customer service = CRM",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Emergency & Escalation Management",
+    "pf": 1,
+    "reason": "Partial: Exception Management for prioritization",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Risk Management & Scenario Planning",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.62",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Receiving & Putaway Operations",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Paint Production Planning & Control",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Launch Risk & Issue Management",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.62",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Powertrain Assembly & Sub-Assembly",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Capability Development",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supply Planning & Production Scheduling",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS",
+    "composite": "0.62",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "New Model Launch & Production Readiness",
+    "pf": 1,
+    "reason": "Partial: Process Builder for planning, execution is broader",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Purchase Order Creation & Issuance",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + STREAMS",
+    "composite": "0.62",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Service Parts Supply Planning & Procurement",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS",
+    "composite": "0.62",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Unscheduled Repair & Recall Execution",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Vehicle Distribution Center (VDC) Operations",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Industrial Engineering & Efficiency",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Product Quality & Reliability Feedback Loop",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Capacity Management",
+    "pf": 2,
+    "reason": "STREAMS + RCA Service",
+    "composite": "0.61",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Continuous Process Improvement & Optimization",
+    "pf": 2,
+    "reason": "Use-case: manufacturing process optimization → AutoML + Remote Functions",
+    "composite": "0.61",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supplier Problem Resolution & Corrective Actions",
+    "pf": 1,
+    "reason": "Single cap: RCA Service",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Field Quality & Warranty Performance Management",
+    "pf": 2,
+    "reason": "Use-case: quality monitoring & defect analysis → RCA Service + STREAMS",
+    "composite": "0.61",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Supply Chain Risk Management & Resilience",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.61",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Demand Signal Sensing & Adjustment",
+    "pf": 3,
+    "reason": "Core: Cortex Auto Forecast + STREAMS + Subject Areas",
+    "composite": "0.64",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Commodity Strategy & Roadmap Development",
+    "pf": 2,
+    "reason": "Subject Areas + UI Screens + STREAMS",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Logistics Technology & Digitalization Strategy",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS + Agentic AI",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "Y"
+  },
+  {
+    "name": "Process Validation & Simulation",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Process Builder",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Logistics Technology & Data Management",
+    "pf": 2,
+    "reason": "STREAMS + DDM/Crawlers + Subject Areas",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Quality Control & Metrology",
+    "pf": 2,
+    "reason": "RCA Service + STREAMS + CWB Lifecycle",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Transportation Compliance & Risk Management",
+    "pf": 2,
+    "reason": "STREAMS + Remote Functions + Process Builder",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Digital Manufacturing & Automation Process Design",
+    "pf": 2,
+    "reason": "Use-case: manufacturing process optimization → AutoML + Remote Functions",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Data & Analytics for Production Performance",
+    "pf": 2,
+    "reason": "STREAMS + DDM/Crawlers + Subject Areas",
+    "composite": "0.63",
+    "promoted": "Y",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Contract Negotiation & Execution",
+    "pf": 1,
+    "reason": "Partial: Remote Functions + CWB, not a CLM system",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Network Performance & Quality Management",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Order to Production Scheduling Integration",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS (batch planning)",
+    "composite": "0.62",
+    "promoted": "Y",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Quality Strategy & Governance",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Packaging Compliance & Sustainability",
+    "pf": 1,
+    "reason": "Partial: STREAMS for tracking, not a packaging system",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Global Market & Economic Intelligence",
+    "pf": 1,
+    "reason": "Partial: Subject Areas for storage, not a market data provider",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Returns & Reverse Logistics Management",
+    "pf": 2,
+    "reason": "STREAMS + Remote Functions + Process Builder",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Interface & Performance Management",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Warranty Cost Recovery & Supplier Management",
+    "pf": 2,
+    "reason": "Remote Functions + Subject Areas + AutoML",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Advanced Product Quality Planning (APQP) & PPAP Management",
+    "pf": 2,
+    "reason": "RCA Service + STREAMS + CWB Lifecycle",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Facilities & Equipment Maintenance",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.52",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Preventive Maintenance & Predictive Diagnostics",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.52",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Contract & Agreement Management (Post-Award)",
+    "pf": 1,
+    "reason": "Partial: Remote Functions + CWB, not a CLM system",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Parts Returns & Reverse Logistics",
+    "pf": 2,
+    "reason": "STREAMS + Remote Functions + Process Builder",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Global Trade & Export Order Compliance",
+    "pf": 2,
+    "reason": "Use-case: regulatory compliance tracking → STREAMS + Remote Functions",
+    "composite": "0.59",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Logistics Sustainability & Green Initiatives",
+    "pf": 1,
+    "reason": "Partial: STREAMS for metrics, not a sustainability platform",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Maintenance Workforce Management & Development",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.52",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Relationship & Innovation Management",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Dealer Operations & Service Readiness",
+    "pf": 1,
+    "reason": "Partial: Remote Functions for integration, dealer ops = DMS",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Data & Technology Enablement for IBP",
+    "pf": 3,
+    "reason": "Core: Subject Areas + Process Builder + UI Screens + Cortex Auto Forecast",
+    "composite": "0.62",
+    "promoted": "Y",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Indirect Category Management & Stakeholder Engagement",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.52",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Quality Assurance & Improvement",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Relationship Management (Operational & Strategic)",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Quality Control & Assurance",
+    "pf": 2,
+    "reason": "RCA Service + STREAMS + CWB Lifecycle",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Market & Economic Intelligence Gathering",
+    "pf": 1,
+    "reason": "Partial: Subject Areas for storage, not a market data provider",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Non-Conformance Management & Containment",
+    "pf": 2,
+    "reason": "Exception Management + CWB Lifecycle + Process Builder",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Production Planning Governance & Strategy",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS (batch planning)",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Risk Management",
+    "pf": 2,
+    "reason": "STREAMS + RCA Service",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Third-Party & Supplier Management",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.52",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Customer Issue Resolution & Escalation",
+    "pf": 1,
+    "reason": "Partial: CWB for workflow, customer service = CRM",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Current Production Supplier Quality Monitoring",
+    "pf": 2,
+    "reason": "Use-case: quality monitoring & defect analysis → RCA Service + STREAMS",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Manufacturing Systems & IT Support",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Financial Viability Assessment",
+    "pf": 2,
+    "reason": "STREAMS + RCA Service",
+    "composite": "0.58",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Capacity & Business Continuity Planning",
+    "pf": 2,
+    "reason": "Use-case: capacity planning → Cortex Auto Forecast",
+    "composite": "0.57",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supply Base Strategy & Optimization",
+    "pf": 2,
+    "reason": "Use-case: supply chain network optimization → AutoML + Remote Functions",
+    "composite": "0.57",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "New Program & Lifecycle S&OP Integration",
+    "pf": 3,
+    "reason": "Core: Subject Areas + Process Builder + UI Screens + Cortex Auto Forecast",
+    "composite": "0.61",
+    "promoted": "Y",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Freight Planning & Network Optimization",
+    "pf": 2,
+    "reason": "Use-case: supply chain network optimization → AutoML + Remote Functions",
+    "composite": "0.57",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Customs",
+    "pf": 1,
+    "reason": "Partial: Remote Functions, customs = GTM system",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Inbound Transportation Execution & Monitoring",
+    "pf": 1,
+    "reason": "Partial: DDM/Crawlers for data, execution = TMS",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Vehicle Assembly Operations",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.52",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Manufacturing System Integration & Layout Design",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.52",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Packaging Design & Specification",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.48",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Regulatory & Compliance Inventory Review",
+    "pf": 2,
+    "reason": "Use-case: regulatory compliance tracking → STREAMS + Remote Functions",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Technical Service Support & Diagnostic Tooling",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.48",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Cross-Functional Demand Collaboration",
+    "pf": 2,
+    "reason": "CWB Lifecycle + Subject Areas + UI Screens",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Maintenance Performance Monitoring & Continuous Improvement",
+    "pf": 2,
+    "reason": "Use-case: performance monitoring dashboard → UI Screens + Subject Areas",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Compliance",
+    "pf": 2,
+    "reason": "Use-case: regulatory compliance tracking → STREAMS + Remote Functions",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Global Trade & Customs Compliance (Service Parts)",
+    "pf": 2,
+    "reason": "Use-case: regulatory compliance tracking → STREAMS + Remote Functions",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Connected Vehicle Data Governance & Analytics",
+    "pf": 2,
+    "reason": "STREAMS + DDM/Crawlers + Subject Areas",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Commercial Dispute Resolution",
+    "pf": 1,
+    "reason": "Partial: CWB for workflow, disputes = legal/CLM",
+    "composite": "0.51",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Compliance & Trade Regulations Planning",
+    "pf": 2,
+    "reason": "Use-case: regulatory compliance tracking → STREAMS + Remote Functions",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Development & Capacity Management",
+    "pf": 2,
+    "reason": "STREAMS + RCA Service",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Risk & Resilience Management",
+    "pf": 2,
+    "reason": "STREAMS + RCA Service",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Logistics Network Design & Modeling",
+    "pf": 2,
+    "reason": "Use-case: supply chain network optimization → AutoML + Remote Functions",
+    "composite": "0.55",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Exception & Dispute Management",
+    "pf": 3,
+    "reason": "Core: Exception Management + CWB Lifecycle + Process Builder",
+    "composite": "0.57",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Strategic Sourcing Incident Management",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.48",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Outbound Logistics Network Strategy & Optimization",
+    "pf": 2,
+    "reason": "Use-case: supply chain network optimization → AutoML + Remote Functions",
+    "composite": "0.57",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Parts Inbound Logistics",
+    "pf": 1,
+    "reason": "Partial: DDM/Crawlers for data, execution = TMS",
+    "composite": "0.51",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Returnable Container Logistics & Tracking",
+    "pf": 1,
+    "reason": "Partial: STREAMS for tracking, physical = WMS",
+    "composite": "0.51",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Packaging Supplier & 3PL Management",
+    "pf": 1,
+    "reason": "Partial: STREAMS for tracking, not a packaging system",
+    "composite": "0.51",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Parts Lifecycle Management (NPI to Obsolescence)",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.48",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Parts Supplier Relationship Management",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.51",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Performance Management",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "S&OP Cycle Management & Governance",
+    "pf": 3,
+    "reason": "Core: Subject Areas + Process Builder + UI Screens + Cortex Auto Forecast",
+    "composite": "0.57",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "New Product Introduction (NPI) Inventory Planning",
+    "pf": 2,
+    "reason": "Safety Stock Service + STREAMS",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Inventory Exception Management & Resolution",
+    "pf": 3,
+    "reason": "Core: Exception Management + CWB Lifecycle + Process Builder",
+    "composite": "0.57",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Performance Measurement & Continuous Improvement",
+    "pf": 2,
+    "reason": "UI Screens + Subject Areas + STREAMS",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Equipment Maintenance & Reliability",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.48",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Plant Maintenance & Asset Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.48",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Quality Standards & Compliance Adherence",
+    "pf": 2,
+    "reason": "Use-case: quality monitoring & defect analysis → RCA Service + STREAMS",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Maintenance Strategy & Planning",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.48",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Maintenance Parts & Spares Inventory Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.48",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Manufacturing Engineering & Process Development",
+    "pf": 2,
+    "reason": "Use-case: manufacturing process optimization → AutoML + Remote Functions",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Strategic Supplier Relationship Management (SRM)",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.51",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "New Product Introduction (NPI) Sourcing",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Financial Health Monitoring",
+    "pf": 2,
+    "reason": "STREAMS + RCA Service",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Risk Management in Contracts",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Parts Logistics Performance & Quality Management",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Inventory Management & Accuracy",
+    "pf": 2,
+    "reason": "Safety Stock Service + STREAMS",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Packaging Cost Management & Optimization",
+    "pf": 2,
+    "reason": "Remote Functions + Subject Areas + AutoML",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Claim Adjudication & Processing",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + Process Builder",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Claims Adjudication & Payment Processing",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + Process Builder",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Inventory Risk & Obsolescence Management",
+    "pf": 2,
+    "reason": "Safety Stock Service + STREAMS",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Internal Manufacturing Launch Readiness",
+    "pf": 1,
+    "reason": "Partial: Process Builder for planning, execution is broader",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Qualification & Onboarding",
+    "pf": 1,
+    "reason": "Partial: STREAMS + Process Builder, not a SRM system",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "S&OP Performance Monitoring & Improvement",
+    "pf": 3,
+    "reason": "Core: Subject Areas + Process Builder + UI Screens + Cortex Auto Forecast",
+    "composite": "0.57",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Digital Transformation & Analytics Strategy",
+    "pf": 2,
+    "reason": "Process Builder + STREAMS + Agentic AI",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Pre-treatment & E-Coat Operations",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Strategic Warehouse Network Planning",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Parts Performance Management & Continuous Improvement",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Financial Management & Cost Recovery",
+    "pf": 2,
+    "reason": "Remote Functions + Subject Areas + AutoML",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service & Upfit Quality Assurance",
+    "pf": 2,
+    "reason": "RCA Service + STREAMS + CWB Lifecycle",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Sustainability & Circularity Planning",
+    "pf": 1,
+    "reason": "Partial: STREAMS for metrics, not a sustainability platform",
+    "composite": "0.52",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Transportation Performance & Continuous Improvement",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + STREAMS",
+    "composite": "0.56",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Customer Order Receipt & Validation",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle",
+    "composite": "0.51",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Order Fulfillment Exception & Escalation Management",
+    "pf": 3,
+    "reason": "Core: Exception Management + CWB Lifecycle + Process Builder",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Innovation Management",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Sustainability & Compliance",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Indirect Supplier Performance & Relationship Management",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.51",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Risk & Scenario Planning for S&OP",
+    "pf": 3,
+    "reason": "Core: Subject Areas + Process Builder + UI Screens + Cortex Auto Forecast",
+    "composite": "0.57",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Packaging Exception & Issue Management",
+    "pf": 3,
+    "reason": "Core: Exception Management + CWB Lifecycle + Process Builder",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier In-Plant Quality & Performance Management",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "PO Lifecycle Tracking & Monitoring",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + STREAMS",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Field Service Engineering Support",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.44",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Material Flow & Inventory Management (Internal)",
+    "pf": 2,
+    "reason": "Safety Stock Service + STREAMS",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Workforce Management & Development",
+    "pf": 1,
+    "reason": "Partial: Subject Areas for capacity data, not HCM",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Corrective Maintenance & Breakdown Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.44",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Trade Compliance & International Logistics",
+    "pf": 2,
+    "reason": "Use-case: regulatory compliance tracking → STREAMS + Remote Functions",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Expendable Packaging Management",
+    "pf": 1,
+    "reason": "Partial: STREAMS for tracking, not a packaging system",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Warranty Parts Management",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.44",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Parts Business Continuity & Risk Management",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Performance Analysis & Process Improvement",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.44",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Fleet Service Network & Capacity Management",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.44",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Sourcing Strategy & Category Management",
+    "pf": 2,
+    "reason": "Subject Areas + Remote Functions + AutoML",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Performance & Relationship Management (Strategic)",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Purchase Order (PO) Management",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + STREAMS",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Parts Outbound Logistics & Transportation",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, physical ops = TMS",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Dealer Order Management & Support",
+    "pf": 1,
+    "reason": "Partial: Remote Functions for integration, dealer ops = DMS",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Strategic Capacity Planning",
+    "pf": 2,
+    "reason": "Use-case: capacity planning → Cortex Auto Forecast",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Capacity & Resource Planning",
+    "pf": 2,
+    "reason": "Use-case: capacity planning → Cortex Auto Forecast",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Process Engineering & Continuous Improvement",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Process Builder",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Logistics Performance & Supplier Collaboration",
+    "pf": 2,
+    "reason": "Use-case: supplier performance management → STREAMS + RCA Service",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Outbound Vehicle Logistics Operations",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, physical ops = TMS",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Part Quality & Availability Management",
+    "pf": 2,
+    "reason": "RCA Service + STREAMS + CWB Lifecycle",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Software & Feature Supply Chain Integration",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.43",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Service Process Continuous Improvement",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.43",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Extended Service Product Development & Lifecycle Management",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.43",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Performance Analytics & Program Optimization",
+    "pf": 2,
+    "reason": "UI Screens + Subject Areas + STREAMS",
+    "composite": "0.50",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Capacity Performance Monitoring & Reporting",
+    "pf": 3,
+    "reason": "Use-case+multi-cap: performance monitoring dashboard → UI Screens + Subject Areas",
+    "composite": "0.53",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Environmental Health & Safety (EHS) & Compliance",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.45",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Diagnostic Software & Firmware Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.41",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Primer & Sealer Application",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.41",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Evaluation",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.44",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "In-Transit Visibility & Exception Management",
+    "pf": 3,
+    "reason": "Core: Exception Management + CWB Lifecycle + Process Builder",
+    "composite": "0.54",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Paint Process Engineering & Optimization",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.43",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Warehouse Performance & Continuous Improvement",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, physical ops = WMS",
+    "composite": "0.43",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Performance Monitoring & Continuous Improvement",
+    "pf": 2,
+    "reason": "Use-case: performance monitoring dashboard → UI Screens + Subject Areas",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Warranty & Goodwill Policy Management",
+    "pf": 2,
+    "reason": "Remote Functions + CWB Lifecycle + STREAMS",
+    "composite": "0.47",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Fraud Prevention & Audit",
+    "pf": 0,
+    "reason": "No keyword match",
+    "composite": "0.43",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Maintenance & Asset Management",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.40",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Network Strategy & Development",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.46",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Continuous Improvement & Process Optimization",
+    "pf": 2,
+    "reason": "Use-case: manufacturing process optimization → AutoML + Remote Functions",
+    "composite": "0.46",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Diversity & Sustainability",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.43",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Recall & FSA Determination & Strategy",
+    "pf": 2,
+    "reason": "RCA Service + Process Builder + Remote Functions",
+    "composite": "0.46",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Regulatory & Environmental Compliance Planning",
+    "pf": 2,
+    "reason": "Use-case: regulatory compliance tracking → STREAMS + Remote Functions",
+    "composite": "0.44",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Supplier Compliance & Ethics",
+    "pf": 1,
+    "reason": "Partial: STREAMS for data, relationship mgmt = CRM",
+    "composite": "0.35",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Logistics Risk Management & Resilience Planning",
+    "pf": 2,
+    "reason": "AutoML + Remote Functions + Subject Areas",
+    "composite": "0.40",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Environmental",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.30",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Digital & Connected Service Experience",
+    "pf": 1,
+    "reason": "Partial: Agentic AI, not a connected car platform",
+    "composite": "0.33",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Sustainability & Ethical Sourcing Governance",
+    "pf": 1,
+    "reason": "Partial: STREAMS for metrics, not a sustainability platform",
+    "composite": "0.33",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Emergency Services Integration",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.22",
+    "promoted": "N",
+    "oldPromoted": "N"
+  },
+  {
+    "name": "Technology & Innovation Scouting",
+    "pf": 0,
+    "reason": "Outside Aera: physical/execution",
+    "composite": "0.22",
+    "promoted": "N",
+    "oldPromoted": "N"
+  }
+]
