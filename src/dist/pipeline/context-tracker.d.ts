@@ -19,7 +19,7 @@ export interface EvaluationContext {
 }
 /** Create a fresh evaluation context with empty state. */
 export declare function createContext(): EvaluationContext;
-/** Add a scoring result and mark the opportunity as processed. */
+/** Add a scoring result and mark the skill as processed. */
 export declare function addResult(ctx: EvaluationContext, result: ScoringResult): void;
 /** Record an error for a specific opportunity and stage. */
 export declare function addError(ctx: EvaluationContext, oppId: string, stage: string, error: string): void;

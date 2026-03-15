@@ -1,7 +1,7 @@
 /**
  * Context tracker unit tests.
  *
- * Validates per-opportunity evaluation state tracking,
+ * Validates per-skill evaluation state tracking,
  * archive/reset to disk, and stats reporting.
  */
 import { describe, it, afterEach } from "node:test";
@@ -12,7 +12,7 @@ import os from "node:os";
 import crypto from "node:crypto";
 import { createContext, addResult, addError, setStage, archiveAndReset, getStats, } from "./context-tracker.js";
 /** Minimal ScoringResult factory for tests. */
-function makeScoringResult(l3Name) {
+function makeScoringResult(skillId, l3Name = "L3-Test") {
     const lens = {
         lens: "technical",
         subDimensions: [],
@@ -22,11 +22,13 @@ function makeScoringResult(l3Name) {
         confidence: "MEDIUM",
     };
     return {
+        skillId,
+        skillName: `Skill ${skillId}`,
+        l4Name: "Test L4",
         l3Name,
         l2Name: "L2-Test",
         l1Name: "L1-Test",
         archetype: "DETERMINISTIC",
-        archetypeSource: "export",
         lenses: {
             technical: { ...lens, lens: "technical" },
             adoption: { ...lens, lens: "adoption", maxPossible: 12 },
@@ -61,22 +63,22 @@ describe("createContext", () => {
     });
 });
 describe("addResult", () => {
-    it("adds result to results Map and l3Name to processed Set", () => {
+    it("adds result to results Map keyed by skillId and skillId to processed Set", () => {
         const ctx = createContext();
-        const result = makeScoringResult("Opp-A");
+        const result = makeScoringResult("skill-A");
         addResult(ctx, result);
         assert.equal(ctx.results.size, 1);
-        assert.equal(ctx.results.get("Opp-A"), result);
-        assert.ok(ctx.processed.has("Opp-A"));
+        assert.equal(ctx.results.get("skill-A"), result);
+        assert.ok(ctx.processed.has("skill-A"));
     });
 });
 describe("addError", () => {
     it("appends error to errors array", () => {
         const ctx = createContext();
-        addError(ctx, "Opp-X", "scoring", "Model timeout");
+        addError(ctx, "skill-X", "scoring", "Model timeout");
         assert.equal(ctx.errors.length, 1);
         assert.deepEqual(ctx.errors[0], {
-            oppId: "Opp-X",
+            oppId: "skill-X",
             stage: "scoring",
             error: "Model timeout",
         });
@@ -94,8 +96,8 @@ describe("archiveAndReset", () => {
         const tmpDir = makeTmpDir();
         tmpDirs.push(tmpDir);
         const ctx = createContext();
-        addResult(ctx, makeScoringResult("Opp-1"));
-        addResult(ctx, makeScoringResult("Opp-2"));
+        addResult(ctx, makeScoringResult("skill-1"));
+        addResult(ctx, makeScoringResult("skill-2"));
         const count = await archiveAndReset(ctx, tmpDir);
         assert.equal(count, 2);
         assert.equal(ctx.results.size, 0);
@@ -106,26 +108,26 @@ describe("archiveAndReset", () => {
         assert.equal(files.length, 1);
         assert.ok(files[0].startsWith("checkpoint-"));
         assert.ok(files[0].endsWith(".json"));
-        // Contents are valid JSON with 2 results
+        // Contents are valid JSON with 2 results keyed by skillId
         const data = JSON.parse(fs.readFileSync(path.join(pipelineDir, files[0]), "utf-8"));
         assert.equal(Object.keys(data).length, 2);
-        assert.ok("Opp-1" in data);
-        assert.ok("Opp-2" in data);
+        assert.ok("skill-1" in data);
+        assert.ok("skill-2" in data);
     });
     it("keeps processed Set intact after reset", async () => {
         const tmpDir = makeTmpDir();
         tmpDirs.push(tmpDir);
         const ctx = createContext();
-        addResult(ctx, makeScoringResult("Opp-A"));
+        addResult(ctx, makeScoringResult("skill-A"));
         await archiveAndReset(ctx, tmpDir);
-        assert.ok(ctx.processed.has("Opp-A"));
+        assert.ok(ctx.processed.has("skill-A"));
         assert.equal(ctx.results.size, 0);
     });
     it("creates .pipeline subdirectory if it does not exist", async () => {
         const tmpDir = makeTmpDir();
         tmpDirs.push(tmpDir);
         const ctx = createContext();
-        addResult(ctx, makeScoringResult("Opp-Z"));
+        addResult(ctx, makeScoringResult("skill-Z"));
         const pipelineDir = path.join(tmpDir, ".pipeline");
         assert.ok(!fs.existsSync(pipelineDir));
         await archiveAndReset(ctx, tmpDir);
@@ -144,9 +146,9 @@ describe("archiveAndReset", () => {
 describe("getStats", () => {
     it("returns correct counts", () => {
         const ctx = createContext();
-        addResult(ctx, makeScoringResult("Opp-1"));
-        addResult(ctx, makeScoringResult("Opp-2"));
-        addError(ctx, "Opp-3", "scoring", "fail");
+        addResult(ctx, makeScoringResult("skill-1"));
+        addResult(ctx, makeScoringResult("skill-2"));
+        addError(ctx, "skill-3", "scoring", "fail");
         const stats = getStats(ctx);
         assert.equal(stats.processed, 2);
         assert.equal(stats.pending, 2);
@@ -156,11 +158,11 @@ describe("getStats", () => {
         const tmpDir = makeTmpDir();
         tmpDirs.push(tmpDir);
         const ctx = createContext();
-        addResult(ctx, makeScoringResult("Opp-1"));
+        addResult(ctx, makeScoringResult("skill-1"));
         await archiveAndReset(ctx, tmpDir);
-        addResult(ctx, makeScoringResult("Opp-2"));
+        addResult(ctx, makeScoringResult("skill-2"));
         const stats = getStats(ctx);
         assert.equal(stats.processed, 2);
-        assert.equal(stats.pending, 1); // only Opp-2 in current results
+        assert.equal(stats.pending, 1); // only skill-2 in current results
     });
 });

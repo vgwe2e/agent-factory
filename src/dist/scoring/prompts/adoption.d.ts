@@ -5,8 +5,15 @@
  * No I/O inside -- prompt construction only.
  *
  * Sub-dimensions: decision_density, financial_gravity, impact_proximity, confidence_signal
+ *
+ * @version 3.0 — 2026-03-13
+ * @changelog
+ * - v3.0: Refactored to score at skill level. Uses execution.autonomy_level,
+ *   execution.approval_required, loe, and problem_statement for realistic adoption scoring.
+ * - v2.0: Hardened from audit findings.
+ * - v1.0: Initial implementation with basic rubrics.
  */
-import type { L3Opportunity, L4Activity, LeadArchetype } from "../../types/hierarchy.js";
+import type { SkillWithContext, LeadArchetype } from "../../types/hierarchy.js";
 interface ChatMessage {
     role: string;
     content: string;
@@ -14,9 +21,8 @@ interface ChatMessage {
 /**
  * Build the Adoption Realism lens prompt.
  *
- * @param opp - The L3 opportunity being scored
- * @param l4s - Constituent L4 activities for this opportunity
- * @param archetypeHint - Resolved archetype (may differ from opp.lead_archetype if inferred)
+ * @param skill - The skill being scored (with parent L4 context)
+ * @param archetypeHint - Resolved archetype (from skill's own archetype field)
  */
-export declare function buildAdoptionPrompt(opp: L3Opportunity, l4s: L4Activity[], archetypeHint: LeadArchetype | null): ChatMessage[];
+export declare function buildAdoptionPrompt(skill: SkillWithContext, archetypeHint: LeadArchetype | null): ChatMessage[];
 export {};

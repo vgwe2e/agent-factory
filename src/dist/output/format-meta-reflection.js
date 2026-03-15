@@ -9,6 +9,7 @@
  *
  * No LLM calls -- all analysis is pure computation on structured data.
  */
+import { countAssessmentVerdicts } from "../simulation/assessment.js";
 function computeCatalogStats(triaged, scored, simResults) {
     // Archetype distribution
     const archetypeDistribution = new Map();
@@ -47,6 +48,16 @@ function computeCatalogStats(triaged, scored, simResults) {
     // Simulation success rate
     const totalAttempted = simResults.totalSimulated + simResults.totalFailed;
     const simulationSuccessRate = totalAttempted > 0 ? simResults.totalSimulated / totalAttempted : null;
+    const assessments = simResults.results
+        .map((result) => result.assessment)
+        .filter((assessment) => Boolean(assessment));
+    const assessmentCounts = countAssessmentVerdicts(assessments);
+    const assessmentAverages = {
+        groundednessScore: averageAssessment(assessments.map((assessment) => assessment.groundednessScore)),
+        integrationConfidenceScore: averageAssessment(assessments.map((assessment) => assessment.integrationConfidenceScore)),
+        ambiguityRiskScore: averageAssessment(assessments.map((assessment) => assessment.ambiguityRiskScore)),
+        implementationReadinessScore: averageAssessment(assessments.map((assessment) => assessment.implementationReadinessScore)),
+    };
     return {
         archetypeDistribution,
         tierDistribution,
@@ -54,9 +65,11 @@ function computeCatalogStats(triaged, scored, simResults) {
         domainScores,
         knowledgeCoverage,
         simulationSuccessRate,
+        assessmentCounts,
+        assessmentAverages,
     };
 }
-export function formatMetaReflection(triaged, scored, simResults, date) {
+export function formatMetaReflection(triaged, scored, simResults, date, simSkipped) {
     const dateStr = date ?? new Date().toISOString().slice(0, 10);
     const stats = computeCatalogStats(triaged, scored, simResults);
     const lines = [];
@@ -70,11 +83,35 @@ export function formatMetaReflection(triaged, scored, simResults, date) {
     lines.push("");
     lines.push(`- **Total Opportunities Triaged:** ${triaged.length}`);
     lines.push(`- **Total Scored:** ${scored.length}`);
-    lines.push(`- **Total Simulated:** ${simResults.totalSimulated}`);
-    const rateStr = stats.simulationSuccessRate !== null
-        ? `${(stats.simulationSuccessRate * 100).toFixed(1)}%`
-        : "N/A";
-    lines.push(`- **Simulation Success Rate:** ${rateStr}`);
+    if (simSkipped) {
+        lines.push(`- **Simulation: skipped (--skip-sim)**`);
+        lines.push(`- **Simulation Success Rate:** N/A`);
+    }
+    else {
+        lines.push(`- **Total Simulated:** ${simResults.totalSimulated}`);
+        const rateStr = stats.simulationSuccessRate !== null
+            ? `${(stats.simulationSuccessRate * 100).toFixed(1)}%`
+            : "N/A";
+        lines.push(`- **Simulation Success Rate:** ${rateStr}`);
+    }
+    lines.push("");
+    // Simulation Filter Outcomes
+    lines.push("## Simulation Filter Outcomes");
+    lines.push("");
+    if (simSkipped) {
+        lines.push("Simulation was skipped -- no filter outcomes available.");
+    }
+    else {
+        lines.push(`- **Advance:** ${stats.assessmentCounts.ADVANCE}`);
+        lines.push(`- **Review:** ${stats.assessmentCounts.REVIEW}`);
+        lines.push(`- **Hold:** ${stats.assessmentCounts.HOLD}`);
+        if (stats.assessmentAverages.groundednessScore !== null) {
+            lines.push(`- **Avg Groundedness Score:** ${stats.assessmentAverages.groundednessScore.toFixed(1)}`);
+            lines.push(`- **Avg Integration Confidence Score:** ${stats.assessmentAverages.integrationConfidenceScore.toFixed(1)}`);
+            lines.push(`- **Avg Ambiguity Risk Score:** ${stats.assessmentAverages.ambiguityRiskScore.toFixed(1)}`);
+            lines.push(`- **Avg Implementation Readiness Score:** ${stats.assessmentAverages.implementationReadinessScore.toFixed(1)}`);
+        }
+    }
     lines.push("");
     // Archetype Distribution
     lines.push("## Archetype Distribution");
@@ -148,13 +185,18 @@ export function formatMetaReflection(triaged, scored, simResults, date) {
     // Knowledge Base Coverage
     lines.push("## Knowledge Base Coverage");
     lines.push("");
-    const totalComponents = stats.knowledgeCoverage.confirmed + stats.knowledgeCoverage.inferred;
-    lines.push(`- **Confirmed Components:** ${stats.knowledgeCoverage.confirmed}`);
-    lines.push(`- **Inferred Components:** ${stats.knowledgeCoverage.inferred}`);
-    lines.push(`- **Total Components Referenced:** ${totalComponents}`);
-    if (totalComponents > 0) {
-        const confirmedPct = ((stats.knowledgeCoverage.confirmed / totalComponents) * 100).toFixed(1);
-        lines.push(`- **Knowledge Coverage:** ${confirmedPct}% confirmed`);
+    if (simSkipped) {
+        lines.push("Simulation was skipped -- no knowledge coverage data.");
+    }
+    else {
+        const totalComponents = stats.knowledgeCoverage.confirmed + stats.knowledgeCoverage.inferred;
+        lines.push(`- **Confirmed Components:** ${stats.knowledgeCoverage.confirmed}`);
+        lines.push(`- **Inferred Components:** ${stats.knowledgeCoverage.inferred}`);
+        lines.push(`- **Total Components Referenced:** ${totalComponents}`);
+        if (totalComponents > 0) {
+            const confirmedPct = ((stats.knowledgeCoverage.confirmed / totalComponents) * 100).toFixed(1);
+            lines.push(`- **Knowledge Coverage:** ${confirmedPct}% confirmed`);
+        }
     }
     lines.push("");
     // Key Patterns
@@ -194,4 +236,9 @@ export function formatMetaReflection(triaged, scored, simResults, date) {
         lines.push("");
     }
     return lines.join("\n") + "\n";
+}
+function averageAssessment(values) {
+    if (values.length === 0)
+        return null;
+    return values.reduce((sum, value) => sum + value, 0) / values.length;
 }

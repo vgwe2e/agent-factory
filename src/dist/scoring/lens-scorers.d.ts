@@ -1,8 +1,8 @@
 /**
  * Lens scorer functions.
  *
- * Three async functions that call Ollama (via injected chatFn) to score
- * opportunities on Technical Feasibility, Adoption Realism, and Value & Efficiency.
+ * Three async functions that call the LLM (via injected chatFn) to score
+ * skills on Technical Feasibility, Adoption Realism, and Value & Efficiency.
  *
  * Each scorer:
  * 1. Builds a prompt via the corresponding prompt builder
@@ -12,7 +12,7 @@
  *
  * chatFn parameter enables dependency injection for testing (defaults to ollamaChat).
  */
-import type { L3Opportunity, L4Activity, CompanyContext, LeadArchetype } from "../types/hierarchy.js";
+import type { SkillWithContext, CompanyContext, LeadArchetype } from "../types/hierarchy.js";
 import type { LensScore } from "../types/scoring.js";
 import type { ChatResult } from "./ollama-client.js";
 type ChatFn = (messages: Array<{
@@ -27,15 +27,15 @@ export type LensScorerResult = {
     error: string;
 };
 /**
- * Score an opportunity on Technical Feasibility (3 sub-dimensions, max 9).
+ * Score a skill on Technical Feasibility (3 sub-dimensions, max 9).
  */
-export declare function scoreTechnical(opp: L3Opportunity, l4s: L4Activity[], knowledgeContext: string, archetypeHint: LeadArchetype | null, chatFn?: ChatFn): Promise<LensScorerResult>;
+export declare function scoreTechnical(skill: SkillWithContext, knowledgeContext: string, archetypeHint: LeadArchetype | null, chatFn?: ChatFn): Promise<LensScorerResult>;
 /**
- * Score an opportunity on Adoption Realism (4 sub-dimensions, max 12).
+ * Score a skill on Adoption Realism (4 sub-dimensions, max 12).
  */
-export declare function scoreAdoption(opp: L3Opportunity, l4s: L4Activity[], archetypeHint: LeadArchetype | null, chatFn?: ChatFn): Promise<LensScorerResult>;
+export declare function scoreAdoption(skill: SkillWithContext, archetypeHint: LeadArchetype | null, chatFn?: ChatFn): Promise<LensScorerResult>;
 /**
- * Score an opportunity on Value & Efficiency (2 sub-dimensions, max 6).
+ * Score a skill on Value & Efficiency (2 sub-dimensions, max 6).
  */
-export declare function scoreValue(opp: L3Opportunity, l4s: L4Activity[], company: CompanyContext, archetypeHint: LeadArchetype | null, chatFn?: ChatFn): Promise<LensScorerResult>;
+export declare function scoreValue(skill: SkillWithContext, company: CompanyContext, archetypeHint: LeadArchetype | null, chatFn?: ChatFn): Promise<LensScorerResult>;
 export {};

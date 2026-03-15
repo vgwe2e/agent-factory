@@ -20,3 +20,13 @@ export const MAX_SCORES = {
 };
 /** Minimum composite score required for simulation promotion. */
 export const PROMOTION_THRESHOLD = 0.60;
+// -- Deterministic Pre-Scoring Types (v1.3) --
+/** Locked dimension weights for deterministic pre-scoring. Adoption-heavy. */
+export const DETERMINISTIC_WEIGHTS = {
+    financial_signal: 0.25,
+    ai_suitability: 0.15,
+    decision_density: 0.20,
+    impact_order: 0.10,
+    rating_confidence: 0.10,
+    archetype_completeness: 0.20,
+};

@@ -66,6 +66,34 @@ export function detectRedFlags(opp, l4s) {
     return flags;
 }
 /**
+ * Detects red flags for a single skill.
+ *
+ * Skill-level flags:
+ * - DEAD_ZONE: no actions and no constraints (nothing to automate)
+ * - NO_STAKES: LOW financial rating on parent L4 AND all SECOND order impact
+ * - CONFIDENCE_GAP: LOW rating_confidence on parent L4
+ */
+export function detectSkillRedFlags(skill) {
+    const flags = [];
+    // DEAD_ZONE: no actions and no constraints means nothing to automate
+    if (skill.actions.length === 0 && skill.constraints.length === 0 && !skill.decision_made) {
+        flags.push({ type: "DEAD_ZONE", decisionDensity: 0 });
+    }
+    // NO_STAKES: LOW financial rating + SECOND order impact
+    if (skill.financialRating === "LOW" && skill.impactOrder === "SECOND") {
+        flags.push({
+            type: "NO_STAKES",
+            highFinancialCount: 0,
+            allSecondOrder: true,
+        });
+    }
+    // CONFIDENCE_GAP: LOW rating confidence
+    if (skill.ratingConfidence === "LOW") {
+        flags.push({ type: "CONFIDENCE_GAP", lowConfidencePct: 1.0 });
+    }
+    return flags;
+}
+/**
  * Resolves the worst action from a set of red flags.
  *
  * Priority: skip > demote > flag (flag maps to "process" since flagged items still get processed).

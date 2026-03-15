@@ -15,8 +15,8 @@
  * still produce output. Knowledge index is built once and reused
  * across all opportunities.
  */
-import type { SimulationInput, SimulationResult, ComponentMap, MockTest, IntegrationSurface } from "../types/simulation.js";
-import type { ValidationResult } from "./validators/knowledge-validator.js";
+import type { SimulationInput, SimulationResult, ScenarioSpec } from "../types/simulation.js";
+import type { SimulationLlmTarget } from "./llm-client.js";
 export interface SimulationPipelineResult {
     results: SimulationResult[];
     totalSimulated: number;
@@ -26,41 +26,10 @@ export interface SimulationPipelineResult {
 }
 /** Dependency injection interface for testing. */
 export interface PipelineDeps {
-    generateDecisionFlow: (input: SimulationInput, ollamaUrl?: string) => Promise<{
+    generateScenarioSpec: (input: SimulationInput, llmTarget?: SimulationLlmTarget, signal?: AbortSignal) => Promise<{
         success: true;
         data: {
-            mermaid: string;
-            attempts: number;
-        };
-    } | {
-        success: false;
-        error: string;
-    }>;
-    generateComponentMap: (input: SimulationInput, knowledgeIndex: Map<string, string>, ollamaUrl?: string) => Promise<{
-        success: true;
-        data: {
-            componentMap: ComponentMap;
-            validation: ValidationResult[];
-            attempts: number;
-        };
-    } | {
-        success: false;
-        error: string;
-    }>;
-    generateMockTest: (input: SimulationInput, ollamaUrl?: string) => Promise<{
-        success: true;
-        data: {
-            mockTest: MockTest;
-            attempts: number;
-        };
-    } | {
-        success: false;
-        error: string;
-    }>;
-    generateIntegrationSurface: (input: SimulationInput, ollamaUrl?: string) => Promise<{
-        success: true;
-        data: {
-            integrationSurface: IntegrationSurface;
+            scenarioSpec: ScenarioSpec;
             attempts: number;
         };
     } | {
@@ -69,12 +38,20 @@ export interface PipelineDeps {
     }>;
     buildKnowledgeIndex: () => Map<string, string>;
 }
+/** Options for simulation pipeline behavior. */
+export interface SimulationPipelineOptions {
+    /** Per-opportunity timeout in milliseconds. When set, each opportunity's
+     *  4-generator sequence is wrapped in withTimeout. When omitted,
+     *  simulations run unbounded (current behavior preserved). */
+    timeoutMs?: number;
+}
 /**
  * Run the simulation pipeline for a set of promoted opportunities.
  *
  * @param inputs - Pre-filtered SimulationInput array (composite >= 0.60)
  * @param outputDir - Root directory for output files (e.g., evaluation/simulations)
- * @param ollamaUrl - Optional Ollama API URL override
+ * @param llmTarget - Optional simulation backend config or legacy Ollama URL override
  * @param deps - Optional dependency injection for testing
+ * @param options - Optional pipeline options (e.g., timeoutMs)
  */
-export declare function runSimulationPipeline(inputs: SimulationInput[], outputDir: string, ollamaUrl?: string, deps?: PipelineDeps): Promise<SimulationPipelineResult>;
+export declare function runSimulationPipeline(inputs: SimulationInput[], outputDir: string, llmTarget?: SimulationLlmTarget, deps?: PipelineDeps, options?: SimulationPipelineOptions): Promise<SimulationPipelineResult>;

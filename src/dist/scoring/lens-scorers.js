@@ -1,8 +1,8 @@
 /**
  * Lens scorer functions.
  *
- * Three async functions that call Ollama (via injected chatFn) to score
- * opportunities on Technical Feasibility, Adoption Realism, and Value & Efficiency.
+ * Three async functions that call the LLM (via injected chatFn) to score
+ * skills on Technical Feasibility, Adoption Realism, and Value & Efficiency.
  *
  * Each scorer:
  * 1. Builds a prompt via the corresponding prompt builder
@@ -18,7 +18,7 @@ import { TechnicalLensSchema, AdoptionLensSchema, ValueLensSchema, technicalJson
 import { buildTechnicalPrompt } from "./prompts/technical.js";
 import { buildAdoptionPrompt } from "./prompts/adoption.js";
 import { buildValuePrompt } from "./prompts/value.js";
-import { computeTechnicalConfidence, computeAdoptionConfidence, computeValueConfidence } from "./confidence.js";
+import { computeSkillTechnicalConfidence, computeSkillAdoptionConfidence, computeSkillValueConfidence } from "./confidence.js";
 // -- Helpers --
 /**
  * Map Zod-validated schema output fields to SubDimensionScore array.
@@ -32,16 +32,16 @@ function mapToSubDimensions(output, fieldNames) {
 }
 // -- Public API --
 /**
- * Score an opportunity on Technical Feasibility (3 sub-dimensions, max 9).
+ * Score a skill on Technical Feasibility (3 sub-dimensions, max 9).
  */
-export async function scoreTechnical(opp, l4s, knowledgeContext, archetypeHint, chatFn = ollamaChat) {
-    const messages = buildTechnicalPrompt(opp, l4s, knowledgeContext, archetypeHint);
+export async function scoreTechnical(skill, knowledgeContext, archetypeHint, chatFn = ollamaChat) {
+    const messages = buildTechnicalPrompt(skill, knowledgeContext, archetypeHint);
     const result = await scoreWithRetry(TechnicalLensSchema, async () => {
         const chatResult = await chatFn(messages, technicalJsonSchema);
         if (!chatResult.success)
             throw new Error(chatResult.error);
         return chatResult.content;
-    });
+    }, 2);
     if (!result.success) {
         return { success: false, error: result.error };
     }
@@ -49,7 +49,7 @@ export async function scoreTechnical(opp, l4s, knowledgeContext, archetypeHint, 
     const fieldNames = ["data_readiness", "aera_platform_fit", "archetype_confidence"];
     const subDimensions = mapToSubDimensions(data, fieldNames);
     const total = subDimensions.reduce((sum, sd) => sum + sd.score, 0);
-    const confidence = computeTechnicalConfidence(opp, l4s);
+    const confidence = computeSkillTechnicalConfidence(skill);
     return {
         success: true,
         score: {
@@ -63,16 +63,16 @@ export async function scoreTechnical(opp, l4s, knowledgeContext, archetypeHint, 
     };
 }
 /**
- * Score an opportunity on Adoption Realism (4 sub-dimensions, max 12).
+ * Score a skill on Adoption Realism (4 sub-dimensions, max 12).
  */
-export async function scoreAdoption(opp, l4s, archetypeHint, chatFn = ollamaChat) {
-    const messages = buildAdoptionPrompt(opp, l4s, archetypeHint);
+export async function scoreAdoption(skill, archetypeHint, chatFn = ollamaChat) {
+    const messages = buildAdoptionPrompt(skill, archetypeHint);
     const result = await scoreWithRetry(AdoptionLensSchema, async () => {
         const chatResult = await chatFn(messages, adoptionJsonSchema);
         if (!chatResult.success)
             throw new Error(chatResult.error);
         return chatResult.content;
-    });
+    }, 2);
     if (!result.success) {
         return { success: false, error: result.error };
     }
@@ -80,7 +80,7 @@ export async function scoreAdoption(opp, l4s, archetypeHint, chatFn = ollamaChat
     const fieldNames = ["decision_density", "financial_gravity", "impact_proximity", "confidence_signal"];
     const subDimensions = mapToSubDimensions(data, fieldNames);
     const total = subDimensions.reduce((sum, sd) => sum + sd.score, 0);
-    const confidence = computeAdoptionConfidence(l4s);
+    const confidence = computeSkillAdoptionConfidence(skill);
     return {
         success: true,
         score: {
@@ -94,16 +94,16 @@ export async function scoreAdoption(opp, l4s, archetypeHint, chatFn = ollamaChat
     };
 }
 /**
- * Score an opportunity on Value & Efficiency (2 sub-dimensions, max 6).
+ * Score a skill on Value & Efficiency (2 sub-dimensions, max 6).
  */
-export async function scoreValue(opp, l4s, company, archetypeHint, chatFn = ollamaChat) {
-    const messages = buildValuePrompt(opp, l4s, company, archetypeHint);
+export async function scoreValue(skill, company, archetypeHint, chatFn = ollamaChat) {
+    const messages = buildValuePrompt(skill, company, archetypeHint);
     const result = await scoreWithRetry(ValueLensSchema, async () => {
         const chatResult = await chatFn(messages, valueJsonSchema);
         if (!chatResult.success)
             throw new Error(chatResult.error);
         return chatResult.content;
-    });
+    }, 2);
     if (!result.success) {
         return { success: false, error: result.error };
     }
@@ -111,7 +111,7 @@ export async function scoreValue(opp, l4s, company, archetypeHint, chatFn = olla
     const fieldNames = ["value_density", "simulation_viability"];
     const subDimensions = mapToSubDimensions(data, fieldNames);
     const total = subDimensions.reduce((sum, sd) => sum + sd.score, 0);
-    const confidence = computeValueConfidence(opp, company);
+    const confidence = computeSkillValueConfidence(skill, company);
     return {
         success: true,
         score: {

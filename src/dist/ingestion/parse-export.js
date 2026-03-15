@@ -38,7 +38,7 @@ export async function parseExport(filePath) {
             error: `Invalid JSON in ${filePath}: ${err instanceof Error ? err.message : String(err)}`,
         };
     }
-    // 3. Validate with Zod schema
+    // 3. Validate with Zod schema (v3 envelope)
     const result = hierarchyExportSchema.safeParse(parsed);
     if (!result.success) {
         const issues = result.error.issues.slice(0, 3).map((issue) => {
@@ -50,5 +50,6 @@ export async function parseExport(filePath) {
             error: `Validation failed:\n${issues.join("\n")}`,
         };
     }
-    return { success: true, data: result.data };
+    // Unwrap the project data from the v3 envelope
+    return { success: true, data: result.data.project };
 }

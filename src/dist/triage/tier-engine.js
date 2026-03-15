@@ -35,3 +35,26 @@ export function assignTier(opp, l4s) {
     // Tier 3: default
     return 3;
 }
+/**
+ * Assigns a tier to a skill based on its properties.
+ *
+ * Check order: Tier 1 first, then Tier 2, then default to Tier 3.
+ *
+ * - Tier 1: max_value > $5M AND HIGH financial_rating AND FIRST impact_order
+ * - Tier 2: ai_suitability = HIGH on parent L4
+ * - Tier 3: default
+ */
+export function assignSkillTier(skill) {
+    // Tier 1: high value + financial urgency + first-order impact
+    if (skill.max_value > TIER1_VALUE_THRESHOLD &&
+        skill.financialRating === "HIGH" &&
+        skill.impactOrder === "FIRST") {
+        return 1;
+    }
+    // Tier 2: HIGH AI suitability on parent L4
+    if (skill.aiSuitability === "HIGH") {
+        return 2;
+    }
+    // Tier 3: default
+    return 3;
+}

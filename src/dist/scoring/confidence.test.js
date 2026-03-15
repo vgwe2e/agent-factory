@@ -1,45 +1,72 @@
+/**
+ * Tests for per-lens algorithmic confidence computation (skill-level).
+ *
+ * Verifies that confidence is derived from skill data signals, not LLM output.
+ */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { computeTechnicalConfidence, computeAdoptionConfidence, computeValueConfidence, computeOverallConfidence, } from "./confidence.js";
-// -- Minimal test factories --
-function makeL3(overrides = {}) {
+import { computeSkillTechnicalConfidence, computeSkillAdoptionConfidence, computeSkillValueConfidence, computeOverallConfidence, } from "./confidence.js";
+// -- Minimal test factory --
+function makeSkill(overrides = {}) {
     return {
-        l3_name: "Test Opportunity",
-        l2_name: "Test L2",
-        l1_name: "Test L1",
-        opportunity_exists: true,
-        opportunity_name: null,
-        opportunity_summary: null,
-        lead_archetype: "DETERMINISTIC",
-        supporting_archetypes: [],
-        combined_max_value: 5_000_000,
-        implementation_complexity: "MEDIUM",
-        quick_win: false,
-        competitive_positioning: null,
-        aera_differentiators: [],
-        l4_count: 3,
-        high_value_l4_count: 1,
-        rationale: "test",
-        ...overrides,
-    };
-}
-function makeL4(overrides = {}) {
-    return {
-        id: "L4-001",
-        name: "Test Activity",
-        description: "test",
-        l1: "L1",
-        l2: "L2",
-        l3: "L3",
-        financial_rating: "MEDIUM",
+        id: "skill-001",
+        name: "Test Skill",
+        description: "Test description",
+        archetype: "DETERMINISTIC",
+        max_value: 1_000_000,
+        slider_percent: null,
+        overlap_group: null,
         value_metric: "cost_reduction",
-        impact_order: "FIRST",
-        rating_confidence: "MEDIUM",
-        ai_suitability: "HIGH",
-        decision_exists: true,
-        decision_articulation: null,
-        escalation_flag: null,
-        skills: [],
+        decision_made: "Reduce lead times",
+        aera_skill_pattern: "AutoPilot",
+        is_actual: false,
+        source: null,
+        loe: null,
+        savings_type: null,
+        actions: [
+            { action_type: "alert", action_name: "Notify", description: "Notify team" },
+        ],
+        constraints: [
+            { constraint_type: "threshold", constraint_name: "Min value", description: "Must exceed $100K" },
+        ],
+        execution: {
+            target_systems: ["SAP", "Salesforce"],
+            write_back_actions: [],
+            execution_trigger: "daily",
+            execution_frequency: "daily",
+            autonomy_level: "supervised",
+            approval_required: true,
+            approval_threshold: "$50K",
+            rollback_strategy: null,
+        },
+        problem_statement: {
+            current_state: "Manual process",
+            quantified_pain: "Costs $2M annually",
+            root_cause: "No automation",
+            falsifiability_check: "If automated, savings realized",
+            outcome: "Reduce cost by 50%",
+        },
+        differentiation: null,
+        generated_at: null,
+        prompt_version: null,
+        is_cross_functional: null,
+        cross_functional_scope: null,
+        operational_flow: [],
+        walkthrough_decision: null,
+        walkthrough_actions: [],
+        walkthrough_narrative: null,
+        // Parent L4 context
+        l4Name: "Test Activity",
+        l4Id: "L4-001",
+        l3Name: "Test L3",
+        l2Name: "Test L2",
+        l1Name: "Test L1",
+        financialRating: "MEDIUM",
+        aiSuitability: "HIGH",
+        impactOrder: "FIRST",
+        ratingConfidence: "MEDIUM",
+        decisionExists: true,
+        decisionArticulation: null,
         ...overrides,
     };
 }
@@ -72,127 +99,165 @@ function makeCompany(overrides = {}) {
     };
 }
 // -- Technical Confidence --
-describe("computeTechnicalConfidence", () => {
-    it("returns HIGH when lead_archetype present and >75% L4s have non-null/non-NOT_APPLICABLE ai_suitability", () => {
-        const opp = makeL3({ lead_archetype: "DETERMINISTIC" });
-        const l4s = [
-            makeL4({ ai_suitability: "HIGH" }),
-            makeL4({ ai_suitability: "MEDIUM" }),
-            makeL4({ ai_suitability: "HIGH" }),
-            makeL4({ ai_suitability: "LOW" }),
-        ];
-        assert.equal(computeTechnicalConfidence(opp, l4s), "HIGH");
+describe("computeSkillTechnicalConfidence", () => {
+    it("returns HIGH when target_systems present, pattern present, and ai_suitability usable", () => {
+        const skill = makeSkill({
+            execution: {
+                target_systems: ["SAP"],
+                write_back_actions: [],
+                execution_trigger: null,
+                execution_frequency: null,
+                autonomy_level: null,
+                approval_required: null,
+                approval_threshold: null,
+                rollback_strategy: null,
+            },
+            aera_skill_pattern: "AutoPilot",
+            aiSuitability: "HIGH",
+        });
+        assert.equal(computeSkillTechnicalConfidence(skill), "HIGH");
     });
-    it("returns LOW when lead_archetype is null", () => {
-        const opp = makeL3({ lead_archetype: null });
-        const l4s = [
-            makeL4({ ai_suitability: "HIGH" }),
-            makeL4({ ai_suitability: "HIGH" }),
-        ];
-        assert.equal(computeTechnicalConfidence(opp, l4s), "LOW");
+    it("returns LOW when aiSuitability is null and no target_systems", () => {
+        const skill = makeSkill({
+            execution: {
+                target_systems: [],
+                write_back_actions: [],
+                execution_trigger: null,
+                execution_frequency: null,
+                autonomy_level: null,
+                approval_required: null,
+                approval_threshold: null,
+                rollback_strategy: null,
+            },
+            aiSuitability: null,
+        });
+        assert.equal(computeSkillTechnicalConfidence(skill), "LOW");
     });
-    it("returns LOW when >50% L4s have null ai_suitability", () => {
-        const opp = makeL3({ lead_archetype: "AGENTIC" });
-        const l4s = [
-            makeL4({ ai_suitability: null }),
-            makeL4({ ai_suitability: null }),
-            makeL4({ ai_suitability: "HIGH" }),
-        ];
-        // 2/3 = 66% null > 50%
-        assert.equal(computeTechnicalConfidence(opp, l4s), "LOW");
-    });
-    it("returns LOW for empty L4 array", () => {
-        const opp = makeL3({ lead_archetype: "DETERMINISTIC" });
-        assert.equal(computeTechnicalConfidence(opp, []), "LOW");
+    it("returns LOW when aiSuitability is NOT_APPLICABLE and no target_systems", () => {
+        const skill = makeSkill({
+            execution: {
+                target_systems: [],
+                write_back_actions: [],
+                execution_trigger: null,
+                execution_frequency: null,
+                autonomy_level: null,
+                approval_required: null,
+                approval_threshold: null,
+                rollback_strategy: null,
+            },
+            aiSuitability: "NOT_APPLICABLE",
+        });
+        assert.equal(computeSkillTechnicalConfidence(skill), "LOW");
     });
     it("returns MEDIUM for intermediate cases", () => {
-        const opp = makeL3({ lead_archetype: "DETERMINISTIC" });
-        // 2/4 = 50% non-null-non-NA (not > 75%)
-        const l4s = [
-            makeL4({ ai_suitability: "HIGH" }),
-            makeL4({ ai_suitability: "HIGH" }),
-            makeL4({ ai_suitability: null }),
-            makeL4({ ai_suitability: "NOT_APPLICABLE" }),
-        ];
-        assert.equal(computeTechnicalConfidence(opp, l4s), "MEDIUM");
+        // Has target_systems but no pattern and null aiSuitability
+        const skill = makeSkill({
+            execution: {
+                target_systems: ["SAP"],
+                write_back_actions: [],
+                execution_trigger: null,
+                execution_frequency: null,
+                autonomy_level: null,
+                approval_required: null,
+                approval_threshold: null,
+                rollback_strategy: null,
+            },
+            aera_skill_pattern: null,
+            aiSuitability: null,
+        });
+        assert.equal(computeSkillTechnicalConfidence(skill), "MEDIUM");
     });
 });
 // -- Adoption Confidence --
-describe("computeAdoptionConfidence", () => {
-    it("returns HIGH when >60% have decision_exists and >50% have financial_rating !== LOW", () => {
-        const l4s = [
-            makeL4({ decision_exists: true, financial_rating: "HIGH" }),
-            makeL4({ decision_exists: true, financial_rating: "MEDIUM" }),
-            makeL4({ decision_exists: true, financial_rating: "HIGH" }),
-            makeL4({ decision_exists: false, financial_rating: "MEDIUM" }),
-        ];
-        // 3/4 = 75% decision_exists > 60%, 4/4 = 100% non-LOW > 50%
-        assert.equal(computeAdoptionConfidence(l4s), "HIGH");
+describe("computeSkillAdoptionConfidence", () => {
+    it("returns HIGH when autonomy, approval, quantified_pain, and decision all present", () => {
+        const skill = makeSkill({
+            execution: {
+                target_systems: [],
+                write_back_actions: [],
+                execution_trigger: null,
+                execution_frequency: null,
+                autonomy_level: "supervised",
+                approval_required: true,
+                approval_threshold: null,
+                rollback_strategy: null,
+            },
+            problem_statement: {
+                current_state: "Manual",
+                quantified_pain: "$2M loss",
+                root_cause: "No automation",
+                falsifiability_check: "Check",
+                outcome: "Save",
+            },
+            decisionExists: true,
+        });
+        assert.equal(computeSkillAdoptionConfidence(skill), "HIGH");
     });
-    it("returns LOW when <25% have decision_exists", () => {
-        const l4s = [
-            makeL4({ decision_exists: false }),
-            makeL4({ decision_exists: false }),
-            makeL4({ decision_exists: false }),
-            makeL4({ decision_exists: false }),
-            makeL4({ decision_exists: true }),
-        ];
-        // 1/5 = 20% < 25%
-        assert.equal(computeAdoptionConfidence(l4s), "LOW");
-    });
-    it("returns LOW when >75% have rating_confidence = LOW", () => {
-        const l4s = [
-            makeL4({ decision_exists: true, rating_confidence: "LOW" }),
-            makeL4({ decision_exists: true, rating_confidence: "LOW" }),
-            makeL4({ decision_exists: true, rating_confidence: "LOW" }),
-            makeL4({ decision_exists: true, rating_confidence: "MEDIUM" }),
-        ];
-        // 3/4 = 75% LOW -- need >75%, so 4 LOW out of 5:
-        const l4s2 = [
-            makeL4({ decision_exists: true, rating_confidence: "LOW" }),
-            makeL4({ decision_exists: true, rating_confidence: "LOW" }),
-            makeL4({ decision_exists: true, rating_confidence: "LOW" }),
-            makeL4({ decision_exists: true, rating_confidence: "LOW" }),
-            makeL4({ decision_exists: true, rating_confidence: "MEDIUM" }),
-        ];
-        // 4/5 = 80% > 75%
-        assert.equal(computeAdoptionConfidence(l4s2), "LOW");
-    });
-    it("returns LOW for empty L4 array", () => {
-        assert.equal(computeAdoptionConfidence([]), "LOW");
+    it("returns LOW when no decision_made, no actions, and no constraints", () => {
+        const skill = makeSkill({
+            decision_made: null,
+            actions: [],
+            constraints: [],
+            execution: {
+                target_systems: [],
+                write_back_actions: [],
+                execution_trigger: null,
+                execution_frequency: null,
+                autonomy_level: null,
+                approval_required: null,
+                approval_threshold: null,
+                rollback_strategy: null,
+            },
+            problem_statement: {
+                current_state: "",
+                quantified_pain: "",
+                root_cause: "",
+                falsifiability_check: "",
+                outcome: "",
+            },
+            decisionExists: false,
+        });
+        assert.equal(computeSkillAdoptionConfidence(skill), "LOW");
     });
     it("returns MEDIUM for intermediate cases", () => {
-        const l4s = [
-            makeL4({ decision_exists: true, financial_rating: "LOW", rating_confidence: "MEDIUM" }),
-            makeL4({ decision_exists: true, financial_rating: "LOW", rating_confidence: "MEDIUM" }),
-            makeL4({ decision_exists: false, financial_rating: "HIGH", rating_confidence: "MEDIUM" }),
-        ];
-        // 2/3 = 66% decision_exists > 60%, but 2/3 = 66% LOW financial_rating -- not > 50% non-LOW
-        // So not HIGH. Not LOW either (>25% decision_exists, not >75% rating_confidence LOW)
-        assert.equal(computeAdoptionConfidence(l4s), "MEDIUM");
+        const skill = makeSkill({
+            execution: {
+                target_systems: [],
+                write_back_actions: [],
+                execution_trigger: null,
+                execution_frequency: null,
+                autonomy_level: null,
+                approval_required: null,
+                approval_threshold: null,
+                rollback_strategy: null,
+            },
+            decision_made: "Some decision",
+            actions: [{ action_type: "alert", action_name: "Test", description: "test" }],
+        });
+        assert.equal(computeSkillAdoptionConfidence(skill), "MEDIUM");
     });
 });
 // -- Value Confidence --
-describe("computeValueConfidence", () => {
-    it("returns HIGH when combined_max_value not null and annual_revenue present", () => {
-        const opp = makeL3({ combined_max_value: 5_000_000 });
+describe("computeSkillValueConfidence", () => {
+    it("returns HIGH when max_value > 0, annual_revenue present, and value_metric present", () => {
+        const skill = makeSkill({ max_value: 5_000_000, value_metric: "cost_reduction" });
         const company = makeCompany({ annual_revenue: 100_000_000 });
-        assert.equal(computeValueConfidence(opp, company), "HIGH");
+        assert.equal(computeSkillValueConfidence(skill, company), "HIGH");
     });
-    it("returns LOW when combined_max_value is null", () => {
-        const opp = makeL3({ combined_max_value: null });
+    it("returns LOW when max_value is 0", () => {
+        const skill = makeSkill({ max_value: 0 });
         const company = makeCompany({ annual_revenue: 100_000_000 });
-        assert.equal(computeValueConfidence(opp, company), "LOW");
+        assert.equal(computeSkillValueConfidence(skill, company), "LOW");
     });
     it("returns LOW when annual_revenue and cogs are both null", () => {
-        const opp = makeL3({ combined_max_value: 5_000_000 });
+        const skill = makeSkill({ max_value: 5_000_000 });
         const company = makeCompany({ annual_revenue: null, cogs: null });
-        assert.equal(computeValueConfidence(opp, company), "LOW");
+        assert.equal(computeSkillValueConfidence(skill, company), "LOW");
     });
-    it("returns MEDIUM when combined_max_value present but only cogs available", () => {
-        const opp = makeL3({ combined_max_value: 5_000_000 });
-        const company = makeCompany({ annual_revenue: null, cogs: 50_000_000 });
-        assert.equal(computeValueConfidence(opp, company), "MEDIUM");
+    it("returns MEDIUM when max_value present but value_metric null", () => {
+        const skill = makeSkill({ max_value: 5_000_000, value_metric: null });
+        const company = makeCompany({ annual_revenue: 100_000_000 });
+        assert.equal(computeSkillValueConfidence(skill, company), "MEDIUM");
     });
 });
 // -- Overall Confidence --

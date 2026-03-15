@@ -22,8 +22,10 @@ function makeScoring(overrides = {}) {
         l3Name: "Test Opportunity",
         l2Name: "L2 Domain",
         l1Name: "L1 Area",
+        skillId: "skill-test",
+        skillName: "Test Skill",
+        l4Name: "Test L4",
         archetype: "DETERMINISTIC",
-        archetypeSource: "export",
         lenses: {
             technical: makeLens("technical", [
                 makeSub("data_readiness", 2),
@@ -164,6 +166,58 @@ describe("formatMetaReflection", () => {
         assert.ok(md.includes("15"), "confirmed count");
         assert.ok(md.includes("5"), "inferred count");
     });
+    it("shows simulation filter outcomes and score averages", () => {
+        const simResults = makeSimResults({
+            results: [
+                {
+                    l3Name: "Advance Opp",
+                    slug: "advance-opp",
+                    artifacts: {},
+                    assessment: {
+                        groundednessScore: 80,
+                        integrationConfidenceScore: 70,
+                        ambiguityRiskScore: 20,
+                        implementationReadinessScore: 75,
+                        verdict: "ADVANCE",
+                        reasons: ["Ready"],
+                    },
+                    validationSummary: {
+                        confirmedCount: 4,
+                        inferredCount: 1,
+                        mermaidValid: true,
+                    },
+                },
+                {
+                    l3Name: "Review Opp",
+                    slug: "review-opp",
+                    artifacts: {},
+                    assessment: {
+                        groundednessScore: 50,
+                        integrationConfidenceScore: 45,
+                        ambiguityRiskScore: 55,
+                        implementationReadinessScore: 58,
+                        verdict: "REVIEW",
+                        reasons: ["Needs review"],
+                    },
+                    validationSummary: {
+                        confirmedCount: 2,
+                        inferredCount: 2,
+                        mermaidValid: true,
+                    },
+                },
+            ],
+            totalSimulated: 2,
+            totalConfirmed: 6,
+            totalInferred: 3,
+        });
+        const md = formatMetaReflection([], [], simResults, FIXED_DATE);
+        assert.ok(md.includes("Simulation Filter Outcomes"));
+        assert.ok(md.includes("**Advance:** 1"));
+        assert.ok(md.includes("**Review:** 1"));
+        assert.ok(md.includes("**Hold:** 0"));
+        assert.ok(md.includes("Avg Groundedness Score"));
+        assert.ok(md.includes("Avg Implementation Readiness Score"));
+    });
     it("shows key patterns section with top/bottom domains", () => {
         const scored = [
             makeScoring({ l3Name: "A", l1Name: "Strong Domain", composite: 0.90 }),
@@ -202,5 +256,39 @@ describe("formatMetaReflection", () => {
     it("ends with newline", () => {
         const md = formatMetaReflection([], [], makeSimResults(), FIXED_DATE);
         assert.ok(md.endsWith("\n"));
+    });
+    // -- skipSim awareness tests --
+    it("shows skip note when simSkipped=true", () => {
+        const triaged = [makeTriage()];
+        const scored = [makeScoring()];
+        const md = formatMetaReflection(triaged, scored, makeSimResults(), FIXED_DATE, true);
+        assert.ok(md.includes("**Simulation: skipped (--skip-sim)**"), "should show skip note in overview");
+        assert.ok(!md.includes("**Total Simulated:**"), "should NOT show total simulated line");
+    });
+    it("shows N/A for simulation success rate when simSkipped=true", () => {
+        const triaged = [makeTriage()];
+        const scored = [makeScoring()];
+        const simResults = makeSimResults({ totalSimulated: 5, totalFailed: 1 });
+        const md = formatMetaReflection(triaged, scored, simResults, FIXED_DATE, true);
+        assert.ok(md.includes("N/A"), "success rate should be N/A when skipped");
+    });
+    it("shows knowledge skip message when simSkipped=true", () => {
+        const md = formatMetaReflection([], [], makeSimResults(), FIXED_DATE, true);
+        assert.ok(md.includes("Simulation was skipped"), "should show knowledge skip message");
+    });
+    it("shows simulation stats as before when simSkipped=false", () => {
+        const triaged = [makeTriage()];
+        const scored = [makeScoring()];
+        const simResults = makeSimResults({ totalSimulated: 3 });
+        const md = formatMetaReflection(triaged, scored, simResults, FIXED_DATE, false);
+        assert.ok(md.includes("**Total Simulated:** 3"), "should show total simulated");
+        assert.ok(!md.includes("skipped (--skip-sim)"), "should NOT show skip note");
+    });
+    it("backward compat when simSkipped not provided", () => {
+        const triaged = [makeTriage()];
+        const scored = [makeScoring()];
+        const simResults = makeSimResults({ totalSimulated: 2 });
+        const md = formatMetaReflection(triaged, scored, simResults, FIXED_DATE);
+        assert.ok(md.includes("**Total Simulated:** 2"), "backward compat");
     });
 });

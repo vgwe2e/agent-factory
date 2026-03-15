@@ -4,6 +4,9 @@
  * Confidence is derived from data signals (field presence, distributions),
  * NOT from LLM self-assessment. This keeps confidence reproducible and
  * independent of model behavior.
+ *
+ * Skill-level confidence functions use the rich skill data (problem_statement,
+ * execution, actions, constraints) for more accurate confidence assessment.
  */
 // -- Confidence level ordering for min computation --
 const LEVEL_ORDER = {
@@ -13,66 +16,56 @@ const LEVEL_ORDER = {
 };
 const ORDER_TO_LEVEL = ["LOW", "MEDIUM", "HIGH"];
 /**
- * Technical Feasibility confidence.
+ * Technical Feasibility confidence for a skill.
  *
- * HIGH: lead_archetype present AND >75% of L4s have ai_suitability not null and not NOT_APPLICABLE
- * LOW: lead_archetype null OR >50% of L4s have null ai_suitability OR empty L4 array
+ * HIGH: archetype is declared AND execution.target_systems has entries AND
+ *       aera_skill_pattern is present AND ai_suitability is not null/NOT_APPLICABLE
+ * LOW: aiSuitability is null or NOT_APPLICABLE AND no execution target_systems
  * MEDIUM: everything else
  */
-export function computeTechnicalConfidence(opp, l4s) {
-    if (l4s.length === 0)
-        return "LOW";
-    if (opp.lead_archetype === null)
-        return "LOW";
-    const nullCount = l4s.filter((l4) => l4.ai_suitability === null).length;
-    const nullPct = nullCount / l4s.length;
-    if (nullPct > 0.50)
-        return "LOW";
-    const usableCount = l4s.filter((l4) => l4.ai_suitability !== null && l4.ai_suitability !== "NOT_APPLICABLE").length;
-    const usablePct = usableCount / l4s.length;
-    if (usablePct > 0.75)
+export function computeSkillTechnicalConfidence(skill) {
+    const hasTargetSystems = skill.execution.target_systems.length > 0;
+    const hasPattern = skill.aera_skill_pattern !== null;
+    const aiUsable = skill.aiSuitability !== null && skill.aiSuitability !== "NOT_APPLICABLE";
+    if (hasTargetSystems && hasPattern && aiUsable)
         return "HIGH";
+    if (!aiUsable && !hasTargetSystems)
+        return "LOW";
     return "MEDIUM";
 }
 /**
- * Adoption Realism confidence.
+ * Adoption Realism confidence for a skill.
  *
- * HIGH: >60% L4s have decision_exists AND >50% have financial_rating !== "LOW"
- * LOW: <25% L4s have decision_exists OR >75% have rating_confidence = "LOW" OR empty L4 array
+ * HIGH: execution.autonomy_level is defined AND execution.approval_required is defined
+ *       AND problem_statement has quantified_pain AND decisionExists on parent L4
+ * LOW: no decision_made AND no actions AND no constraints
  * MEDIUM: everything else
  */
-export function computeAdoptionConfidence(l4s) {
-    if (l4s.length === 0)
-        return "LOW";
-    const decisionCount = l4s.filter((l4) => l4.decision_exists).length;
-    const decisionPct = decisionCount / l4s.length;
-    const lowConfCount = l4s.filter((l4) => l4.rating_confidence === "LOW").length;
-    const lowConfPct = lowConfCount / l4s.length;
-    // Check LOW conditions first
-    if (decisionPct < 0.25)
-        return "LOW";
-    if (lowConfPct > 0.75)
-        return "LOW";
-    // Check HIGH conditions
-    const nonLowFinancialCount = l4s.filter((l4) => l4.financial_rating !== "LOW").length;
-    const nonLowFinancialPct = nonLowFinancialCount / l4s.length;
-    if (decisionPct > 0.60 && nonLowFinancialPct > 0.50)
+export function computeSkillAdoptionConfidence(skill) {
+    const hasAutonomy = skill.execution.autonomy_level !== null;
+    const hasApproval = skill.execution.approval_required !== null;
+    const hasPain = skill.problem_statement.quantified_pain.length > 0;
+    const hasDecision = skill.decisionExists;
+    if (hasAutonomy && hasApproval && hasPain && hasDecision)
         return "HIGH";
+    const noDecision = !skill.decision_made && skill.actions.length === 0 && skill.constraints.length === 0;
+    if (noDecision)
+        return "LOW";
     return "MEDIUM";
 }
 /**
- * Value & Efficiency confidence.
+ * Value & Efficiency confidence for a skill.
  *
- * HIGH: combined_max_value not null AND annual_revenue not null
- * LOW: combined_max_value null OR (annual_revenue null AND cogs null)
+ * HIGH: max_value > 0 AND annual_revenue not null AND value_metric is present
+ * LOW: max_value === 0 OR (annual_revenue null AND cogs null)
  * MEDIUM: everything else
  */
-export function computeValueConfidence(opp, company) {
-    if (opp.combined_max_value === null)
+export function computeSkillValueConfidence(skill, company) {
+    if (skill.max_value === 0)
         return "LOW";
     if (company.annual_revenue === null && company.cogs === null)
         return "LOW";
-    if (company.annual_revenue !== null)
+    if (skill.max_value > 0 && company.annual_revenue !== null && skill.value_metric !== null)
         return "HIGH";
     return "MEDIUM";
 }

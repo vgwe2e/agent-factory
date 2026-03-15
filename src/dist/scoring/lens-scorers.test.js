@@ -8,44 +8,66 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { scoreTechnical, scoreAdoption, scoreValue } from "./lens-scorers.js";
 // -- Test fixtures --
-function makeL3(overrides = {}) {
+function makeSkill(overrides = {}) {
     return {
-        l3_name: "Test Opportunity",
-        l2_name: "Test L2",
-        l1_name: "Test L1",
-        opportunity_exists: true,
-        opportunity_name: "Test Opp Name",
-        opportunity_summary: "Test summary",
-        lead_archetype: "DETERMINISTIC",
-        supporting_archetypes: [],
-        combined_max_value: 5_000_000,
-        implementation_complexity: "MEDIUM",
-        quick_win: false,
-        competitive_positioning: null,
-        aera_differentiators: [],
-        l4_count: 3,
-        high_value_l4_count: 2,
-        rationale: "Test rationale",
-        ...overrides,
-    };
-}
-function makeL4(overrides = {}) {
-    return {
-        id: "l4-001",
-        name: "Test Activity",
+        id: "skill-001",
+        name: "Test Skill",
         description: "Test description",
-        l1: "Test L1",
-        l2: "Test L2",
-        l3: "Test Opportunity",
-        financial_rating: "HIGH",
-        value_metric: "revenue",
-        impact_order: "FIRST",
-        rating_confidence: "HIGH",
-        ai_suitability: "HIGH",
-        decision_exists: true,
-        decision_articulation: "Test decision",
-        escalation_flag: null,
-        skills: [],
+        archetype: "DETERMINISTIC",
+        max_value: 5_000_000,
+        slider_percent: null,
+        overlap_group: null,
+        value_metric: "cost_reduction",
+        decision_made: "Reduce lead times",
+        aera_skill_pattern: "AutoPilot",
+        is_actual: false,
+        source: null,
+        loe: null,
+        savings_type: null,
+        actions: [
+            { action_type: "alert", action_name: "Notify", description: "Notify team" },
+        ],
+        constraints: [
+            { constraint_type: "threshold", constraint_name: "Min value", description: "Must exceed $100K" },
+        ],
+        execution: {
+            target_systems: ["SAP", "Salesforce"],
+            write_back_actions: [],
+            execution_trigger: "daily",
+            execution_frequency: "daily",
+            autonomy_level: "supervised",
+            approval_required: true,
+            approval_threshold: "$50K",
+            rollback_strategy: null,
+        },
+        problem_statement: {
+            current_state: "Manual process",
+            quantified_pain: "Costs $2M annually",
+            root_cause: "No automation",
+            falsifiability_check: "If automated, savings realized",
+            outcome: "Reduce cost by 50%",
+        },
+        differentiation: null,
+        generated_at: null,
+        prompt_version: null,
+        is_cross_functional: null,
+        cross_functional_scope: null,
+        operational_flow: [],
+        walkthrough_decision: null,
+        walkthrough_actions: [],
+        walkthrough_narrative: null,
+        // Parent L4 context
+        l4Name: "Test Activity",
+        l4Id: "L4-001",
+        l3Name: "Test Opportunity",
+        l2Name: "Test L2",
+        l1Name: "Test L1",
+        financialRating: "HIGH",
+        aiSuitability: "HIGH",
+        impactOrder: "FIRST",
+        ratingConfidence: "HIGH",
+        decisionExists: true,
+        decisionArticulation: "Test decision",
         ...overrides,
     };
 }
@@ -109,11 +131,10 @@ const VALID_VALUE_RESPONSE = {
 };
 // -- Tests --
 describe("scoreTechnical", () => {
-    const opp = makeL3();
-    const l4s = [makeL4(), makeL4({ id: "l4-002", name: "Activity 2" })];
+    const skill = makeSkill();
     const knowledgeContext = "UI components: Label, DataGrid. PB nodes: If, Transaction.";
     it("returns correct LensScore from valid LLM response", async () => {
-        const result = await scoreTechnical(opp, l4s, knowledgeContext, "DETERMINISTIC", makeChatFn(VALID_TECHNICAL_RESPONSE));
+        const result = await scoreTechnical(skill, knowledgeContext, "DETERMINISTIC", makeChatFn(VALID_TECHNICAL_RESPONSE));
         assert.equal(result.success, true);
         if (!result.success)
             return;
@@ -123,10 +144,10 @@ describe("scoreTechnical", () => {
         assert.equal(score.maxPossible, 9);
         assert.equal(score.normalized, 6 / 9);
         assert.equal(score.subDimensions.length, 3);
-        assert.equal(score.confidence, "HIGH"); // lead_archetype present + all HIGH ai_suitability
+        assert.equal(score.confidence, "HIGH"); // has target_systems + pattern + usable aiSuitability
     });
     it("has correct sub-dimension names", async () => {
-        const result = await scoreTechnical(opp, l4s, knowledgeContext, "DETERMINISTIC", makeChatFn(VALID_TECHNICAL_RESPONSE));
+        const result = await scoreTechnical(skill, knowledgeContext, "DETERMINISTIC", makeChatFn(VALID_TECHNICAL_RESPONSE));
         assert.equal(result.success, true);
         if (!result.success)
             return;
@@ -134,7 +155,7 @@ describe("scoreTechnical", () => {
         assert.deepEqual(names, ["data_readiness", "aera_platform_fit", "archetype_confidence"]);
     });
     it("returns error result on persistent LLM failure", async () => {
-        const result = await scoreTechnical(opp, l4s, knowledgeContext, "DETERMINISTIC", makeFailingChatFn());
+        const result = await scoreTechnical(skill, knowledgeContext, "DETERMINISTIC", makeFailingChatFn());
         assert.equal(result.success, false);
         if (result.success)
             return;
@@ -142,10 +163,9 @@ describe("scoreTechnical", () => {
     });
 });
 describe("scoreAdoption", () => {
-    const opp = makeL3();
-    const l4s = [makeL4(), makeL4({ id: "l4-002", name: "Activity 2" })];
+    const skill = makeSkill();
     it("returns correct LensScore from valid LLM response", async () => {
-        const result = await scoreAdoption(opp, l4s, "DETERMINISTIC", makeChatFn(VALID_ADOPTION_RESPONSE));
+        const result = await scoreAdoption(skill, "DETERMINISTIC", makeChatFn(VALID_ADOPTION_RESPONSE));
         assert.equal(result.success, true);
         if (!result.success)
             return;
@@ -157,7 +177,7 @@ describe("scoreAdoption", () => {
         assert.equal(score.subDimensions.length, 4);
     });
     it("has correct sub-dimension names", async () => {
-        const result = await scoreAdoption(opp, l4s, "DETERMINISTIC", makeChatFn(VALID_ADOPTION_RESPONSE));
+        const result = await scoreAdoption(skill, "DETERMINISTIC", makeChatFn(VALID_ADOPTION_RESPONSE));
         assert.equal(result.success, true);
         if (!result.success)
             return;
@@ -165,16 +185,15 @@ describe("scoreAdoption", () => {
         assert.deepEqual(names, ["decision_density", "financial_gravity", "impact_proximity", "confidence_signal"]);
     });
     it("returns error result on persistent LLM failure", async () => {
-        const result = await scoreAdoption(opp, l4s, "DETERMINISTIC", makeFailingChatFn());
+        const result = await scoreAdoption(skill, "DETERMINISTIC", makeFailingChatFn());
         assert.equal(result.success, false);
     });
 });
 describe("scoreValue", () => {
-    const opp = makeL3();
-    const l4s = [makeL4()];
+    const skill = makeSkill();
     const company = makeCompany();
     it("returns correct LensScore from valid LLM response", async () => {
-        const result = await scoreValue(opp, l4s, company, "DETERMINISTIC", makeChatFn(VALID_VALUE_RESPONSE));
+        const result = await scoreValue(skill, company, "DETERMINISTIC", makeChatFn(VALID_VALUE_RESPONSE));
         assert.equal(result.success, true);
         if (!result.success)
             return;
@@ -186,7 +205,7 @@ describe("scoreValue", () => {
         assert.equal(score.subDimensions.length, 2);
     });
     it("has correct sub-dimension names", async () => {
-        const result = await scoreValue(opp, l4s, company, "DETERMINISTIC", makeChatFn(VALID_VALUE_RESPONSE));
+        const result = await scoreValue(skill, company, "DETERMINISTIC", makeChatFn(VALID_VALUE_RESPONSE));
         assert.equal(result.success, true);
         if (!result.success)
             return;
@@ -194,7 +213,7 @@ describe("scoreValue", () => {
         assert.deepEqual(names, ["value_density", "simulation_viability"]);
     });
     it("returns error result on persistent LLM failure", async () => {
-        const result = await scoreValue(opp, l4s, company, "DETERMINISTIC", makeFailingChatFn());
+        const result = await scoreValue(skill, company, "DETERMINISTIC", makeFailingChatFn());
         assert.equal(result.success, false);
     });
 });

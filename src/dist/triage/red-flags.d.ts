@@ -10,7 +10,7 @@
  *
  * All functions are pure (no I/O, no side effects).
  */
-import type { L3Opportunity, L4Activity } from "../types/hierarchy.js";
+import type { L3Opportunity, L4Activity, SkillWithContext } from "../types/hierarchy.js";
 import type { RedFlag } from "../types/triage.js";
 /**
  * Groups L4 activities by their l3 field into a Map.
@@ -23,6 +23,15 @@ export declare function groupL4sByL3(hierarchy: L4Activity[]): Map<string, L4Act
  * Returns early from L4-dependent checks if l4s array is empty.
  */
 export declare function detectRedFlags(opp: L3Opportunity, l4s: L4Activity[]): RedFlag[];
+/**
+ * Detects red flags for a single skill.
+ *
+ * Skill-level flags:
+ * - DEAD_ZONE: no actions and no constraints (nothing to automate)
+ * - NO_STAKES: LOW financial rating on parent L4 AND all SECOND order impact
+ * - CONFIDENCE_GAP: LOW rating_confidence on parent L4
+ */
+export declare function detectSkillRedFlags(skill: SkillWithContext): RedFlag[];
 /**
  * Resolves the worst action from a set of red flags.
  *

@@ -9,7 +9,7 @@
  * Tier 1 is checked first (takes priority over Tier 2).
  * All functions are pure (no I/O, no side effects).
  */
-import type { L3Opportunity, L4Activity } from "../types/hierarchy.js";
+import type { L3Opportunity, L4Activity, SkillWithContext } from "../types/hierarchy.js";
 import type { Tier } from "../types/triage.js";
 /** Minimum combined_max_value for Tier 1 qualification (exclusive). */
 export declare const TIER1_VALUE_THRESHOLD = 5000000;
@@ -21,3 +21,13 @@ export declare const TIER2_AI_SUITABILITY_THRESHOLD = 0.5;
  * Check order: Tier 1 first, then Tier 2, then default to Tier 3.
  */
 export declare function assignTier(opp: L3Opportunity, l4s: L4Activity[]): Tier;
+/**
+ * Assigns a tier to a skill based on its properties.
+ *
+ * Check order: Tier 1 first, then Tier 2, then default to Tier 3.
+ *
+ * - Tier 1: max_value > $5M AND HIGH financial_rating AND FIRST impact_order
+ * - Tier 2: ai_suitability = HIGH on parent L4
+ * - Tier 3: default
+ */
+export declare function assignSkillTier(skill: SkillWithContext): Tier;

@@ -30,9 +30,9 @@ export declare class ModelManager {
      * then loads target (keep_alive="30m").
      */
     switchTo(model: string): Promise<void>;
-    /** Load the triage model (e.g., qwen2.5:7b). */
+    /** Load the triage model (e.g., qwen3:8b). */
     ensureTriageModel(): Promise<void>;
-    /** Load the scoring model (e.g., qwen2.5:32b). */
+    /** Load the scoring model (e.g., qwen3:30b). */
     ensureScoringModel(): Promise<void>;
     /** Unload the current model and reset state. */
     unloadAll(): Promise<void>;

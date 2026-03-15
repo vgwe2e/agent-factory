@@ -34,3 +34,7 @@ export declare function validateComponentRef(name: string, knowledgeIndex: Map<s
  * Returns per-entry validation results with section context.
  */
 export declare function validateComponentMap(map: ComponentMap, knowledgeIndex: Map<string, string>): ValidationResult[];
+/**
+ * Override component confidence flags in-place based on knowledge validation.
+ */
+export declare function enforceKnowledgeConfidence(map: ComponentMap, knowledgeIndex: Map<string, string>): void;

@@ -107,6 +107,23 @@ export function validateComponentMap(map, knowledgeIndex) {
     }
     return results;
 }
+/**
+ * Override component confidence flags in-place based on knowledge validation.
+ */
+export function enforceKnowledgeConfidence(map, knowledgeIndex) {
+    const sections = [
+        map.streams,
+        map.cortex,
+        map.process_builder,
+        map.agent_teams,
+        map.ui,
+    ];
+    for (const entries of sections) {
+        for (const entry of entries) {
+            entry.confidence = validateComponentRef(entry.name, knowledgeIndex);
+        }
+    }
+}
 /** Find the first substring match in the knowledge index. */
 function findSubstringMatch(lower, knowledgeIndex) {
     for (const [known, value] of knowledgeIndex) {

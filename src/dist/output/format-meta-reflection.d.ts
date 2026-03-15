@@ -12,4 +12,4 @@
 import type { ScoringResult } from "../types/scoring.js";
 import type { TriageResult } from "../types/triage.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
-export declare function formatMetaReflection(triaged: TriageResult[], scored: ScoringResult[], simResults: SimulationPipelineResult, date?: string): string;
+export declare function formatMetaReflection(triaged: TriageResult[], scored: ScoringResult[], simResults: SimulationPipelineResult, date?: string, simSkipped?: boolean): string;

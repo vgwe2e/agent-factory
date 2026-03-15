@@ -38,8 +38,8 @@ describe("ollamaChat", () => {
     it("uses explicit model parameter when provided", async () => {
         mockFetch();
         const { ollamaChat } = await import("./ollama-client.js");
-        await ollamaChat([{ role: "user", content: "test" }], { type: "object" }, "qwen2.5:7b");
-        assert.equal(fetchCalls[0].body.model, "qwen2.5:7b");
+        await ollamaChat([{ role: "user", content: "test" }], { type: "object" }, "qwen3:8b");
+        assert.equal(fetchCalls[0].body.model, "qwen3:8b");
     });
 });
 describe("scoreWithRetry", () => {
@@ -75,5 +75,33 @@ describe("scoreWithRetry", () => {
         // This should not throw even without a logger
         const result = await scoreWithRetry(schema, async () => "bad json", 1);
         assert.equal(result.success, false);
+    });
+    it("does not retry on timeout errors", async () => {
+        const { scoreWithRetry } = await import("./ollama-client.js");
+        const { z } = await import("zod");
+        const schema = z.object({ value: z.number() });
+        let callCount = 0;
+        const callFn = async () => {
+            callCount++;
+            throw new Error("Ollama chat failed: The operation was aborted due to timeout");
+        };
+        const result = await scoreWithRetry(schema, callFn, 3);
+        assert.equal(result.success, false);
+        assert.equal(callCount, 1, "Should bail after first timeout, not retry");
+        assert.ok(result.error.includes("timeout"));
+    });
+    it("does not retry on connection refused errors", async () => {
+        const { scoreWithRetry } = await import("./ollama-client.js");
+        const { z } = await import("zod");
+        const schema = z.object({ value: z.number() });
+        let callCount = 0;
+        const callFn = async () => {
+            callCount++;
+            throw new Error("Ollama connection failed (is it running?): ECONNREFUSED");
+        };
+        const result = await scoreWithRetry(schema, callFn, 3);
+        assert.equal(result.success, false);
+        assert.equal(callCount, 1, "Should bail after first connection error, not retry");
+        assert.ok(result.error.includes("ECONNREFUSED"));
     });
 });

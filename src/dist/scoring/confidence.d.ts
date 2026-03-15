@@ -4,33 +4,38 @@
  * Confidence is derived from data signals (field presence, distributions),
  * NOT from LLM self-assessment. This keeps confidence reproducible and
  * independent of model behavior.
+ *
+ * Skill-level confidence functions use the rich skill data (problem_statement,
+ * execution, actions, constraints) for more accurate confidence assessment.
  */
-import type { L3Opportunity, L4Activity, CompanyContext } from "../types/hierarchy.js";
+import type { SkillWithContext, CompanyContext } from "../types/hierarchy.js";
 import type { ConfidenceLevel } from "../types/scoring.js";
 /**
- * Technical Feasibility confidence.
+ * Technical Feasibility confidence for a skill.
  *
- * HIGH: lead_archetype present AND >75% of L4s have ai_suitability not null and not NOT_APPLICABLE
- * LOW: lead_archetype null OR >50% of L4s have null ai_suitability OR empty L4 array
+ * HIGH: archetype is declared AND execution.target_systems has entries AND
+ *       aera_skill_pattern is present AND ai_suitability is not null/NOT_APPLICABLE
+ * LOW: aiSuitability is null or NOT_APPLICABLE AND no execution target_systems
  * MEDIUM: everything else
  */
-export declare function computeTechnicalConfidence(opp: L3Opportunity, l4s: L4Activity[]): ConfidenceLevel;
+export declare function computeSkillTechnicalConfidence(skill: SkillWithContext): ConfidenceLevel;
 /**
- * Adoption Realism confidence.
+ * Adoption Realism confidence for a skill.
  *
- * HIGH: >60% L4s have decision_exists AND >50% have financial_rating !== "LOW"
- * LOW: <25% L4s have decision_exists OR >75% have rating_confidence = "LOW" OR empty L4 array
+ * HIGH: execution.autonomy_level is defined AND execution.approval_required is defined
+ *       AND problem_statement has quantified_pain AND decisionExists on parent L4
+ * LOW: no decision_made AND no actions AND no constraints
  * MEDIUM: everything else
  */
-export declare function computeAdoptionConfidence(l4s: L4Activity[]): ConfidenceLevel;
+export declare function computeSkillAdoptionConfidence(skill: SkillWithContext): ConfidenceLevel;
 /**
- * Value & Efficiency confidence.
+ * Value & Efficiency confidence for a skill.
  *
- * HIGH: combined_max_value not null AND annual_revenue not null
- * LOW: combined_max_value null OR (annual_revenue null AND cogs null)
+ * HIGH: max_value > 0 AND annual_revenue not null AND value_metric is present
+ * LOW: max_value === 0 OR (annual_revenue null AND cogs null)
  * MEDIUM: everything else
  */
-export declare function computeValueConfidence(opp: L3Opportunity, company: CompanyContext): ConfidenceLevel;
+export declare function computeSkillValueConfidence(skill: SkillWithContext, company: CompanyContext): ConfidenceLevel;
 /**
  * Overall confidence = lowest of the three lens confidences.
  */

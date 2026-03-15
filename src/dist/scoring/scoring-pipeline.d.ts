@@ -1,14 +1,13 @@
 /**
  * Scoring pipeline orchestrator.
  *
- * Wires together: triage filtering, archetype classification, lens scoring,
+ * Wires together: archetype classification, lens scoring,
  * composite computation, confidence aggregation, and threshold gating.
  *
- * Processes opportunities as an async generator for incremental consumption.
+ * Scores individual SKILLS (not L3 rollups) for accurate assessment.
  * Uses dependency injection (chatFn) for testability.
  */
-import type { HierarchyExport, L3Opportunity, L4Activity, CompanyContext } from "../types/hierarchy.js";
-import type { TriageResult } from "../types/triage.js";
+import type { SkillWithContext, CompanyContext } from "../types/hierarchy.js";
 import type { ScoringResult } from "../types/scoring.js";
 import type { ChatResult } from "./ollama-client.js";
 type ChatFn = (messages: Array<{
@@ -16,31 +15,34 @@ type ChatFn = (messages: Array<{
     content: string;
 }>, format: Record<string, unknown>) => Promise<ChatResult>;
 export interface ScoringPipelineInput {
-    hierarchyExport: HierarchyExport;
-    triageResults: TriageResult[];
+    skills: SkillWithContext[];
+    company: CompanyContext;
     knowledgeContext: {
         components: string;
         processBuilder: string;
+        capabilities?: string;
     };
     chatFn?: ChatFn;
 }
 export type ScoringPipelineResult = ScoringResult | {
     error: string;
-    l3Name: string;
+    skillId: string;
+    skillName: string;
 };
 /**
- * Score a single opportunity across all three lenses.
+ * Score a single skill across all three lenses.
  *
- * @returns Complete ScoringResult or error with l3Name for logging
+ * @returns Complete ScoringResult or error with skillId/skillName for logging
  */
-export declare function scoreOneOpportunity(opp: L3Opportunity, l4s: L4Activity[], company: CompanyContext, knowledgeContext: {
+export declare function scoreOneSkill(skill: SkillWithContext, company: CompanyContext, knowledgeContext: {
     components: string;
     processBuilder: string;
+    capabilities?: string;
 }, chatFn?: ChatFn): Promise<ScoringPipelineResult>;
 /**
- * Score all triaged opportunities (async generator for incremental consumption).
+ * Score all skills (async generator for incremental consumption).
  *
- * Filters to action === "process", sorts by tier priority, and yields results.
+ * Sorts by parent L3 name for progress tracking continuity.
  */
-export declare function scoreOpportunities(input: ScoringPipelineInput): AsyncGenerator<ScoringPipelineResult>;
+export declare function scoreSkills(input: ScoringPipelineInput): AsyncGenerator<ScoringPipelineResult>;
 export {};

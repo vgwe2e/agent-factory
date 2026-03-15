@@ -6,6 +6,7 @@
  * Consumed by scoring modules and downstream Phase 5 reports.
  */
 import type { LeadArchetype } from "./hierarchy.js";
+import type { RedFlag } from "./triage.js";
 /** Lens weights for composite score computation. */
 export declare const WEIGHTS: {
     readonly technical: 0.3;
@@ -21,6 +22,8 @@ export declare const MAX_SCORES: {
 /** Minimum composite score required for simulation promotion. */
 export declare const PROMOTION_THRESHOLD = 0.6;
 export type ConfidenceLevel = "HIGH" | "MEDIUM" | "LOW";
+/** v1.3: Sanity check verdict from consolidated LLM scorer. */
+export type SanityVerdict = "AGREE" | "DISAGREE" | "PARTIAL";
 export type LensName = "technical" | "adoption" | "value";
 export interface SubDimensionScore {
     name: string;
@@ -52,11 +55,18 @@ export interface CompositeResult {
     promotedToSimulation: boolean;
 }
 export interface ScoringResult {
+    /** Skill ID from the JSON export */
+    skillId: string;
+    /** Skill name -- the exact name users see in the Aera app */
+    skillName: string;
+    /** Parent L4 activity name */
+    l4Name: string;
+    /** L3 category (kept for grouping/reporting) */
     l3Name: string;
     l2Name: string;
     l1Name: string;
+    /** Archetype from the skill's own archetype field (authoritative) */
     archetype: LeadArchetype;
-    archetypeSource: "export" | "inferred";
     lenses: {
         technical: LensScore;
         adoption: LensScore;
@@ -66,4 +76,65 @@ export interface ScoringResult {
     overallConfidence: ConfidenceLevel;
     promotedToSimulation: boolean;
     scoringDurationMs: number;
+    /** v1.3: Sanity check verdict from consolidated LLM scorer. Absent in v1.2 results. */
+    sanityVerdict?: SanityVerdict;
+    /** v1.3: Sanity check justification text. Absent in v1.2 results. */
+    sanityJustification?: string;
+    /** v1.3: Deterministic pre-score composite (0-1). Absent in v1.2 results. */
+    preScore?: number;
+}
+/** Locked dimension weights for deterministic pre-scoring. Adoption-heavy. */
+export declare const DETERMINISTIC_WEIGHTS: {
+    readonly financial_signal: 0.25;
+    readonly ai_suitability: 0.15;
+    readonly decision_density: 0.2;
+    readonly impact_order: 0.1;
+    readonly rating_confidence: 0.1;
+    readonly archetype_completeness: 0.2;
+};
+/** One of the 6 deterministic scoring dimensions. */
+export type DeterministicDimension = keyof typeof DETERMINISTIC_WEIGHTS;
+/** Raw 0-1 scores for each deterministic dimension. */
+export interface DimensionScores {
+    financial_signal: number;
+    ai_suitability: number;
+    decision_density: number;
+    impact_order: number;
+    rating_confidence: number;
+    archetype_completeness: number;
+}
+/** Result of deterministic pre-scoring for a single L4 activity. */
+export interface PreScoreResult {
+    l4Id: string;
+    l4Name: string;
+    l3Name: string;
+    l2Name: string;
+    l1Name: string;
+    dimensions: DimensionScores;
+    /** 0-1 normalized weighted composite, rounded to 4 decimal places. */
+    composite: number;
+    /** Whether this L4 survived filtering (not eliminated by red flags). */
+    survived: boolean;
+    /** Reason for elimination, e.g. "DEAD_ZONE", "NO_STAKES". Null if survived. */
+    eliminationReason: string | null;
+    redFlags: RedFlag[];
+    /** Number of skills under this L4. */
+    skillCount: number;
+    /** Sum of skill max_values, used for tiebreaking. */
+    aggregatedMaxValue: number;
+}
+/** Statistics from the top-N filtering pass. */
+export interface FilterStats {
+    totalCandidates: number;
+    requestedTopN: number;
+    actualSurvivors: number;
+    eliminated: number;
+    cutoffScore: number;
+    tiesAtBoundary: number;
+}
+/** Result of the deterministic filter pass. */
+export interface FilterResult {
+    survivors: PreScoreResult[];
+    eliminated: PreScoreResult[];
+    stats: FilterStats;
 }
