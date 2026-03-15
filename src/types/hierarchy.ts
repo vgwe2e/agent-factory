@@ -21,6 +21,13 @@ export type LeadArchetype = "DETERMINISTIC" | "AGENTIC" | "GENERATIVE";
 
 export type ImplementationComplexity = "LOW" | "MEDIUM" | "HIGH";
 
+export interface CrossFunctionalScope {
+  l1_domains?: string[];
+  primary_l4_ids?: string[];
+  coordination_points?: string[];
+  [key: string]: unknown;
+}
+
 // -- Skill sub-types --
 
 export interface SkillAction {
@@ -84,7 +91,7 @@ export interface Skill {
   generated_at: string | null;
   prompt_version: string | null;
   is_cross_functional: boolean | null;
-  cross_functional_scope: string | null;
+  cross_functional_scope: string | CrossFunctionalScope | null;
   operational_flow: unknown[];
   walkthrough_decision: string | null;
   walkthrough_actions: unknown[];
@@ -205,6 +212,7 @@ export interface HierarchyExport {
   company_context: CompanyContext;
   hierarchy: L4Activity[];
   l3_opportunities: L3Opportunity[];
+  cross_functional_skills?: Skill[];
   /** Extra top-level keys (industry_analysis, domain_references, etc.) are preserved via passthrough */
   [key: string]: unknown;
 }

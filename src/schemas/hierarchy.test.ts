@@ -210,6 +210,12 @@ describe("l4ActivitySchema", () => {
     assert.equal(result.ai_suitability, null);
   });
 
+  it("normalizes null rating_confidence to LOW", () => {
+    const withNull = { ...validL4, rating_confidence: null };
+    const result = l4ActivitySchema.parse(withNull);
+    assert.equal(result.rating_confidence, "LOW");
+  });
+
   it("accepts NOT_APPLICABLE ai_suitability", () => {
     const withNA = { ...validL4, ai_suitability: "NOT_APPLICABLE" };
     const result = l4ActivitySchema.parse(withNA);

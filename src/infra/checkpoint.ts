@@ -194,7 +194,7 @@ export function getCompletedL4Ids(checkpoint: CheckpointV2 | null): Set<string> 
 export function createCheckpointV2Writer(
   outputDir: string,
   checkpoint: CheckpointV2,
-): CheckpointWriter {
+): CheckpointWriter<CheckpointV2Entry, CheckpointV2> {
   const resolvedDir = resolve(outputDir);
 
   function atomicWrite(): void {
@@ -271,12 +271,10 @@ export function createCheckpointV2Writer(
     };
   }
 
-  // Cast enqueue to accept CheckpointEntry for interface compat -- callers
-  // use CheckpointV2Entry in practice, but the interface type is shared.
   return {
-    enqueue: enqueue as unknown as (entry: CheckpointEntry) => void,
+    enqueue,
     flush,
-    checkpoint: checkpoint as unknown as Checkpoint,
+    checkpoint,
     installSignalHandlers,
   };
 }
@@ -285,13 +283,13 @@ export function createCheckpointV2Writer(
 // Durable checkpoint writer
 // ---------------------------------------------------------------------------
 
-export interface CheckpointWriter {
+export interface CheckpointWriter<TEntry = CheckpointEntry, TCheckpoint = Checkpoint> {
   /** Add an entry and immediately persist to disk. */
-  enqueue: (entry: CheckpointEntry) => void;
+  enqueue: (entry: TEntry) => void;
   /** Force an immediate write (call at pipeline end or signal handler). */
   flush: () => void;
   /** Live checkpoint reference — mutations from enqueue are visible here. */
-  checkpoint: Checkpoint;
+  checkpoint: TCheckpoint;
   /** Install SIGINT/SIGTERM handlers that flush before exit. Returns cleanup fn. */
   installSignalHandlers: () => () => void;
 }
@@ -313,7 +311,7 @@ export interface CheckpointWriter {
 export function createCheckpointWriter(
   outputDir: string,
   checkpoint: Checkpoint,
-): CheckpointWriter {
+): CheckpointWriter<CheckpointEntry, Checkpoint> {
   // Resolve to absolute path once at construction to prevent ENOENT from
   // relative path resolution issues during long-running pipelines.
   const resolvedDir = resolve(outputDir);

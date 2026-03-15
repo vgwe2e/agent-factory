@@ -17,42 +17,59 @@ async function writeTempFile(content) {
     await fs.writeFile(filePath, content, "utf-8");
     return filePath;
 }
-// Minimal valid hierarchy export for unit tests
+// Minimal valid v3 envelope for unit tests
 const MINIMAL_VALID_EXPORT = {
-    meta: {
-        project_name: "test_project",
-        version_date: "2026-01-01T00:00:00",
-        created_date: "2026-01-01T00:00:00",
+    export_meta: {
+        exported_at: "2026-01-01T00:00:00",
         exported_by: null,
-        description: "Test export",
+        export_version: "1.0",
+        schema_version: "aera-di-portfolio-v1",
+        analysis_type: "discovery",
+        requires_validation: true,
     },
-    company_context: {
-        industry: "Technology",
-        company_name: "Test Corp",
-        annual_revenue: 1000000,
-        cogs: null,
-        sga: null,
-        ebitda: null,
-        working_capital: null,
-        inventory_value: null,
-        annual_hires: null,
-        employee_count: 500,
-        geographic_scope: "Global",
-        notes: "",
-        business_exclusions: "",
+    disclaimer: {
+        type: "Discovery Analysis",
+        message: "Test disclaimer",
         enterprise_applications: ["SAP S/4HANA"],
-        detected_applications: [],
-        pptx_template: null,
-        industry_specifics: null,
-        raw_context: "",
-        enriched_context: {},
-        enrichment_applied_at: "",
-        existing_systems: [],
-        hard_exclusions: [],
-        filtered_skills: [],
+        overlap_notice: "Test overlap notice",
     },
-    hierarchy: [],
-    l3_opportunities: [],
+    project: {
+        meta: {
+            project_name: "test_project",
+            version_date: "2026-01-01T00:00:00",
+            created_date: "2026-01-01T00:00:00",
+            exported_by: null,
+            description: "Test export",
+        },
+        company_context: {
+            industry: "Technology",
+            company_name: "Test Corp",
+            annual_revenue: 1000000,
+            cogs: null,
+            sga: null,
+            ebitda: null,
+            working_capital: null,
+            inventory_value: null,
+            annual_hires: null,
+            employee_count: 500,
+            geographic_scope: "Global",
+            notes: "",
+            business_exclusions: "",
+            enterprise_applications: ["SAP S/4HANA"],
+            detected_applications: [],
+            pptx_template: null,
+            industry_specifics: null,
+            raw_context: "",
+            enriched_context: {},
+            enrichment_applied_at: "",
+            existing_systems: [],
+            hard_exclusions: [],
+            filtered_skills: [],
+        },
+        hierarchy: [],
+        l3_opportunities: [],
+    },
+    summary: {},
 };
 describe("parseExport", () => {
     it("returns success with typed HierarchyExport for valid minimal JSON", async () => {
@@ -64,6 +81,7 @@ describe("parseExport", () => {
             assert.equal(result.data.company_context.company_name, "Test Corp");
             assert.deepEqual(result.data.hierarchy, []);
             assert.deepEqual(result.data.l3_opportunities, []);
+            assert.deepEqual(result.data.cross_functional_skills, []);
         }
     });
     it("returns error with 'file not found' for non-existent file path", async () => {
@@ -91,17 +109,18 @@ describe("parseExport", () => {
             assert.match(result.error, /meta/i);
         }
     });
-    it("parses ford_hierarchy_v2_export.json with 362 L3 opportunities and 2016 L4 activities", async () => {
-        const fordPath = path.resolve(import.meta.dirname, "../../ford_hierarchy_v2_export.json");
+    it("parses ford_hierarchy_v3_export.json with 362 L3 opportunities, 2016 L4 activities, and 29 cross-functional skills", async () => {
+        const fordPath = path.resolve(import.meta.dirname, "../../.planning/ford_hierarchy_v3_export.json");
         const result = await parseExport(fordPath);
         assert.equal(result.success, true);
         if (result.success) {
             assert.equal(result.data.l3_opportunities.length, 362);
             assert.equal(result.data.hierarchy.length, 2016);
+            assert.equal(result.data.cross_functional_skills?.length, 29);
         }
     });
-    it("extracts correct company context from Ford export", async () => {
-        const fordPath = path.resolve(import.meta.dirname, "../../ford_hierarchy_v2_export.json");
+    it("extracts correct company context from Ford v3 export", async () => {
+        const fordPath = path.resolve(import.meta.dirname, "../../.planning/ford_hierarchy_v3_export.json");
         const result = await parseExport(fordPath);
         assert.equal(result.success, true);
         if (result.success) {

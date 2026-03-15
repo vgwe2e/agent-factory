@@ -98,6 +98,7 @@ const VALID_LLM_RESPONSE: ConsolidatedLensOutput = {
   platform_fit: { score: 2, reason: "Maps to Cortex Auto Forecast and STREAMS" },
   sanity_verdict: "AGREE",
   sanity_justification: "All dimension scores are reasonable given the skill data",
+  flagged_dimensions: [],
   confidence: "HIGH",
 };
 
@@ -247,6 +248,7 @@ describe("buildTechnicalLensFromLLM", () => {
       platform_fit: { score: 2, reason: "Maps to Cortex Auto Forecast" },
       sanity_verdict: "AGREE",
       sanity_justification: "Scores look reasonable",
+      flagged_dimensions: [],
       confidence: "HIGH",
     };
     const lens = buildTechnicalLensFromLLM(llmOutput);

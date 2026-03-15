@@ -31,8 +31,17 @@ export const ValueLensSchema = z.object({
     value_density: SubDimensionShape,
     simulation_viability: SubDimensionShape,
 });
+/** Consolidated LLM Scorer: platform fit + sanity check (v1.3) */
+export const ConsolidatedLensSchema = z.object({
+    platform_fit: SubDimensionShape,
+    sanity_verdict: z.enum(["AGREE", "DISAGREE", "PARTIAL"]),
+    sanity_justification: z.string(),
+    flagged_dimensions: z.array(z.string()),
+    confidence: z.enum(["HIGH", "MEDIUM", "LOW"]),
+});
 // -- JSON Schema conversions for Ollama format parameter --
 // Note: type assertions needed due to Zod 3.25.x / zod-to-json-schema type mismatch
 export const technicalJsonSchema = zodToJsonSchema(TechnicalLensSchema);
 export const adoptionJsonSchema = zodToJsonSchema(AdoptionLensSchema);
 export const valueJsonSchema = zodToJsonSchema(ValueLensSchema);
+export const consolidatedJsonSchema = zodToJsonSchema(ConsolidatedLensSchema);

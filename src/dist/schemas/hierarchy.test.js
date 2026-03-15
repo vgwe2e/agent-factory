@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { ZodError } from "zod";
-import { hierarchyExportSchema, companyContextSchema, l4ActivitySchema, l3OpportunitySchema, } from "./hierarchy.js";
+import { hierarchyExportSchema, projectDataSchema, companyContextSchema, l4ActivitySchema, l3OpportunitySchema, } from "./hierarchy.js";
 // Minimal valid fixtures
 const validMeta = {
     project_name: "test_project",
@@ -70,32 +70,78 @@ const validL3 = {
     high_value_l4_count: 2,
     rationale: "Test rationale",
 };
-const validExport = {
+const validProjectData = {
     meta: validMeta,
     company_context: validCompanyContext,
     hierarchy: [validL4],
     l3_opportunities: [validL3],
 };
-describe("hierarchyExportSchema", () => {
-    it("parses valid hierarchy export successfully", () => {
-        const result = hierarchyExportSchema.parse(validExport);
+const validExportMeta = {
+    exported_at: "2026-03-13T01:30:22.179581",
+    exported_by: null,
+    export_version: "1.0",
+    schema_version: "aera-di-portfolio-v1",
+    analysis_type: "discovery",
+    requires_validation: true,
+};
+const validDisclaimer = {
+    type: "Art of the Possible - Discovery Analysis",
+    message: "This analysis identifies potential opportunities.",
+    enterprise_applications: ["SAP S/4HANA"],
+    overlap_notice: "Integration analysis is recommended.",
+};
+const validEnvelope = {
+    export_meta: validExportMeta,
+    disclaimer: validDisclaimer,
+    project: validProjectData,
+    summary: { l4_nodes: 1 },
+};
+describe("projectDataSchema", () => {
+    it("parses valid project data successfully", () => {
+        const result = projectDataSchema.parse(validProjectData);
         assert.equal(result.meta.project_name, "test_project");
         assert.equal(result.hierarchy.length, 1);
         assert.equal(result.l3_opportunities.length, 1);
     });
-    it("accepts empty hierarchy array", () => {
-        const result = hierarchyExportSchema.parse({
-            ...validExport,
-            hierarchy: [],
-            l3_opportunities: [],
+    it("passes through extra top-level keys in project data", () => {
+        const withExtra = {
+            ...validProjectData,
+            industry_analysis: { some: "data" },
+            domain_references: [1, 2, 3],
+        };
+        const result = projectDataSchema.parse(withExtra);
+        assert.deepEqual(result.industry_analysis, {
+            some: "data",
         });
-        assert.equal(result.hierarchy.length, 0);
-        assert.equal(result.l3_opportunities.length, 0);
+    });
+});
+describe("hierarchyExportSchema (v3 envelope)", () => {
+    it("parses valid v3 envelope successfully", () => {
+        const result = hierarchyExportSchema.parse(validEnvelope);
+        assert.equal(result.project.meta.project_name, "test_project");
+        assert.equal(result.project.hierarchy.length, 1);
+        assert.equal(result.project.l3_opportunities.length, 1);
+        assert.equal(result.export_meta.schema_version, "aera-di-portfolio-v1");
+    });
+    it("accepts empty hierarchy array in project", () => {
+        const result = hierarchyExportSchema.parse({
+            ...validEnvelope,
+            project: {
+                ...validProjectData,
+                hierarchy: [],
+                l3_opportunities: [],
+            },
+        });
+        assert.equal(result.project.hierarchy.length, 0);
+        assert.equal(result.project.l3_opportunities.length, 0);
     });
     it("rejects missing required field with clear path", () => {
         const invalid = {
-            ...validExport,
-            meta: { ...validMeta, project_name: undefined },
+            ...validEnvelope,
+            project: {
+                ...validProjectData,
+                meta: { ...validMeta, project_name: undefined },
+            },
         };
         try {
             hierarchyExportSchema.parse(invalid);
@@ -104,20 +150,18 @@ describe("hierarchyExportSchema", () => {
         catch (err) {
             assert.ok(err instanceof ZodError);
             const issue = err.issues[0];
-            assert.ok(issue.path.includes("project_name") || issue.path.includes("meta"), `Expected path to contain 'project_name' or 'meta', got: ${JSON.stringify(issue.path)}`);
+            assert.ok(issue.path.includes("project_name") || issue.path.includes("meta") || issue.path.includes("project"), `Expected path to contain 'project', 'meta', or 'project_name', got: ${JSON.stringify(issue.path)}`);
         }
     });
-    it("passes through extra top-level keys", () => {
-        const withExtra = {
-            ...validExport,
-            industry_analysis: { some: "data" },
-            domain_references: [1, 2, 3],
-        };
-        const result = hierarchyExportSchema.parse(withExtra);
-        // passthrough should keep extra keys
-        assert.deepEqual(result.industry_analysis, {
-            some: "data",
-        });
+    it("rejects missing export_meta", () => {
+        const { export_meta, ...invalid } = validEnvelope;
+        try {
+            hierarchyExportSchema.parse(invalid);
+            assert.fail("Should have thrown ZodError");
+        }
+        catch (err) {
+            assert.ok(err instanceof ZodError);
+        }
     });
 });
 describe("l4ActivitySchema", () => {
@@ -137,6 +181,11 @@ describe("l4ActivitySchema", () => {
         const withNull = { ...validL4, ai_suitability: null };
         const result = l4ActivitySchema.parse(withNull);
         assert.equal(result.ai_suitability, null);
+    });
+    it("normalizes null rating_confidence to LOW", () => {
+        const withNull = { ...validL4, rating_confidence: null };
+        const result = l4ActivitySchema.parse(withNull);
+        assert.equal(result.rating_confidence, "LOW");
     });
     it("accepts NOT_APPLICABLE ai_suitability", () => {
         const withNA = { ...validL4, ai_suitability: "NOT_APPLICABLE" };

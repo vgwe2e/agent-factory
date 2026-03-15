@@ -38,6 +38,8 @@ export interface TriageResult {
   l3Name: string;
   l2Name: string;
   l1Name: string;
+  /** Parent L4 activity name (present for skill-level triage). */
+  l4Name?: string;
   /** Skill ID (present for skill-level triage). */
   skillId?: string;
   /** Skill name (present for skill-level triage). */

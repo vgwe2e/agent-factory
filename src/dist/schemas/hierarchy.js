@@ -8,6 +8,7 @@
  */
 import { z } from "zod";
 // -- Enum schemas --
+export const skillArchetypeSchema = z.enum(["DETERMINISTIC", "AGENTIC", "GENERATIVE"]);
 export const financialRatingSchema = z.enum(["HIGH", "MEDIUM", "LOW"]);
 export const aiSuitabilitySchema = z.enum([
     "HIGH",
@@ -17,6 +18,9 @@ export const aiSuitabilitySchema = z.enum([
 ]);
 export const impactOrderSchema = z.enum(["FIRST", "SECOND"]);
 export const ratingConfidenceSchema = z.enum(["HIGH", "MEDIUM", "LOW"]);
+// Some exports leave rating_confidence null. Treat that as conservative LOW
+// so downstream deterministic scoring stays typed and explicit.
+export const normalizedRatingConfidenceSchema = z.preprocess((value) => value ?? "LOW", ratingConfidenceSchema);
 export const leadArchetypeSchema = z.enum([
     "DETERMINISTIC",
     "AGENTIC",
@@ -60,6 +64,77 @@ export const companyContextSchema = z.object({
     hard_exclusions: z.array(z.unknown()),
     filtered_skills: z.array(z.unknown()),
 });
+// -- Skill sub-object schemas --
+export const skillActionSchema = z.object({
+    action_type: z.string().nullable(),
+    action_name: z.string().nullable(),
+    description: z.string().nullable(),
+    typical_triggers: z.array(z.string()).optional(),
+    target_system: z.string().nullable().optional(),
+}).passthrough();
+export const skillConstraintSchema = z.object({
+    constraint_type: z.string().nullable(),
+    constraint_name: z.string().nullable(),
+    description: z.string().nullable(),
+    data_source: z.string().nullable().optional(),
+}).passthrough();
+export const skillExecutionSchema = z.object({
+    target_systems: z.array(z.string()),
+    write_back_actions: z.array(z.string()),
+    execution_trigger: z.string().nullable(),
+    execution_frequency: z.string().nullable(),
+    autonomy_level: z.string().nullable(),
+    approval_required: z.boolean().nullable(),
+    approval_threshold: z.string().nullable(),
+    rollback_strategy: z.string().nullable(),
+}).passthrough();
+export const skillProblemStatementSchema = z.object({
+    current_state: z.string(),
+    quantified_pain: z.string(),
+    root_cause: z.string(),
+    falsifiability_check: z.string(),
+    outcome: z.string(),
+}).passthrough();
+export const crossFunctionalScopeSchema = z.union([
+    z.string(),
+    z.object({
+        l1_domains: z.array(z.string()).optional(),
+        primary_l4_ids: z.array(z.string()).optional(),
+        coordination_points: z.array(z.string()).optional(),
+    }).passthrough(),
+]).nullable();
+// -- Skill schema --
+export const skillSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string().nullable(),
+    archetype: skillArchetypeSchema,
+    max_value: z.number(),
+    slider_percent: z.number().nullable(),
+    overlap_group: z.string().nullable(),
+    value_metric: z.string().nullable(),
+    decision_made: z.string().nullable(),
+    aera_skill_pattern: z.string().nullable(),
+    is_actual: z.boolean(),
+    source: z.string().nullable(),
+    loe: z.string().nullable(),
+    savings_type: z.string().nullable(),
+    actions: z.array(skillActionSchema),
+    constraints: z.array(skillConstraintSchema),
+    execution: skillExecutionSchema.nullable(),
+    problem_statement: skillProblemStatementSchema.nullable(),
+    differentiation: z.string().nullable(),
+    generated_at: z.string().nullable(),
+    prompt_version: z.string().nullable(),
+    is_cross_functional: z.boolean().nullable(),
+    cross_functional_scope: crossFunctionalScopeSchema,
+    operational_flow: z.array(z.unknown()),
+    walkthrough_decision: z.string().nullable(),
+    walkthrough_actions: z.array(z.unknown()),
+    walkthrough_narrative: z.string().nullable(),
+    program_focus_ids: z.array(z.string()).optional(),
+}).passthrough();
+// -- L4 / L3 schemas --
 export const l4ActivitySchema = z.object({
     id: z.string(),
     name: z.string(),
@@ -70,12 +145,12 @@ export const l4ActivitySchema = z.object({
     financial_rating: financialRatingSchema,
     value_metric: z.string(),
     impact_order: impactOrderSchema,
-    rating_confidence: ratingConfidenceSchema,
+    rating_confidence: normalizedRatingConfidenceSchema,
     ai_suitability: aiSuitabilitySchema.nullable(),
     decision_exists: z.boolean(),
     decision_articulation: z.string().nullable(),
     escalation_flag: z.string().nullable(),
-    skills: z.array(z.unknown()),
+    skills: z.array(skillSchema),
 });
 export const l3OpportunitySchema = z.object({
     l3_name: z.string(),
@@ -95,11 +170,34 @@ export const l3OpportunitySchema = z.object({
     high_value_l4_count: z.number(),
     rationale: z.string(),
 });
-export const hierarchyExportSchema = z
+/** Inner project data (what downstream consumers use). */
+export const projectDataSchema = z
     .object({
     meta: metaSchema,
     company_context: companyContextSchema,
     hierarchy: z.array(l4ActivitySchema),
     l3_opportunities: z.array(l3OpportunitySchema),
+    cross_functional_skills: z.array(skillSchema).optional().default([]),
 })
     .passthrough();
+export const exportMetaSchema = z.object({
+    exported_at: z.string(),
+    exported_by: z.string().nullable(),
+    export_version: z.string(),
+    schema_version: z.string(),
+    analysis_type: z.string(),
+    requires_validation: z.boolean(),
+});
+export const disclaimerSchema = z.object({
+    type: z.string(),
+    message: z.string(),
+    enterprise_applications: z.array(z.string()),
+    overlap_notice: z.string(),
+});
+/** Top-level v3 export envelope. */
+export const hierarchyExportSchema = z.object({
+    export_meta: exportMetaSchema,
+    disclaimer: disclaimerSchema,
+    project: projectDataSchema,
+    summary: z.record(z.unknown()),
+});

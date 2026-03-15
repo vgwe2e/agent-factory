@@ -26,6 +26,13 @@ export const impactOrderSchema = z.enum(["FIRST", "SECOND"]);
 
 export const ratingConfidenceSchema = z.enum(["HIGH", "MEDIUM", "LOW"]);
 
+// Some exports leave rating_confidence null. Treat that as conservative LOW
+// so downstream deterministic scoring stays typed and explicit.
+export const normalizedRatingConfidenceSchema = z.preprocess(
+  (value) => value ?? "LOW",
+  ratingConfidenceSchema,
+);
+
 export const leadArchetypeSchema = z.enum([
   "DETERMINISTIC",
   "AGENTIC",
@@ -110,6 +117,15 @@ export const skillProblemStatementSchema = z.object({
   outcome: z.string(),
 }).passthrough();
 
+export const crossFunctionalScopeSchema = z.union([
+  z.string(),
+  z.object({
+    l1_domains: z.array(z.string()).optional(),
+    primary_l4_ids: z.array(z.string()).optional(),
+    coordination_points: z.array(z.string()).optional(),
+  }).passthrough(),
+]).nullable();
+
 // -- Skill schema --
 
 export const skillSchema = z.object({
@@ -135,7 +151,7 @@ export const skillSchema = z.object({
   generated_at: z.string().nullable(),
   prompt_version: z.string().nullable(),
   is_cross_functional: z.boolean().nullable(),
-  cross_functional_scope: z.string().nullable(),
+  cross_functional_scope: crossFunctionalScopeSchema,
   operational_flow: z.array(z.unknown()),
   walkthrough_decision: z.string().nullable(),
   walkthrough_actions: z.array(z.unknown()),
@@ -155,7 +171,7 @@ export const l4ActivitySchema = z.object({
   financial_rating: financialRatingSchema,
   value_metric: z.string(),
   impact_order: impactOrderSchema,
-  rating_confidence: ratingConfidenceSchema,
+  rating_confidence: normalizedRatingConfidenceSchema,
   ai_suitability: aiSuitabilitySchema.nullable(),
   decision_exists: z.boolean(),
   decision_articulation: z.string().nullable(),
@@ -189,6 +205,7 @@ export const projectDataSchema = z
     company_context: companyContextSchema,
     hierarchy: z.array(l4ActivitySchema),
     l3_opportunities: z.array(l3OpportunitySchema),
+    cross_functional_skills: z.array(skillSchema).optional().default([]),
   })
   .passthrough();
 

@@ -13,19 +13,7 @@
  *   Layer 3: Negative Constraints
  *   Layer 4: Confidence Calibration
  */
-
-import type { SkillWithContext } from "../../types/hierarchy.js";
-import type { PreScoreResult, DimensionScores } from "../../types/scoring.js";
-
-// -- Types --
-
-interface ChatMessage {
-  role: string;
-  content: string;
-}
-
 // -- Worked examples --
-
 const WORKED_EXAMPLES = `
 ### Worked Examples
 
@@ -61,20 +49,16 @@ const WORKED_EXAMPLES = `
   "confidence": "HIGH"
 }
 \`\`\``;
-
 // -- Dimension descriptions for sanity check --
-
-const DIMENSION_DESCRIPTIONS: Record<keyof DimensionScores, string> = {
-  financial_signal: "Derived from financial_rating and aggregated max_value. Measures economic significance.",
-  ai_suitability: "Derived from L4 ai_suitability field. Measures AI applicability.",
-  decision_density: "Derived from decision_exists, action count, and constraint count. Measures automation potential.",
-  impact_order: "Derived from impact_order field. FIRST order = direct impact (1.0), SECOND order = indirect (0.25).",
-  rating_confidence: "Derived from rating_confidence field. HIGH=1.0, MEDIUM=0.6, LOW=0.2.",
-  archetype_completeness: "Derived from archetype field richness (7 execution fields per skill). Measures data quality.",
+const DIMENSION_DESCRIPTIONS = {
+    financial_signal: "Derived from financial_rating and aggregated max_value. Measures economic significance.",
+    ai_suitability: "Derived from L4 ai_suitability field. Measures AI applicability.",
+    decision_density: "Derived from decision_exists, action count, and constraint count. Measures automation potential.",
+    impact_order: "Derived from impact_order field. FIRST order = direct impact (1.0), SECOND order = indirect (0.25).",
+    rating_confidence: "Derived from rating_confidence field. HIGH=1.0, MEDIUM=0.6, LOW=0.2.",
+    archetype_completeness: "Derived from archetype field richness (7 execution fields per skill). Measures data quality.",
 };
-
 // -- Public API --
-
 /**
  * Build the consolidated LLM scorer prompt.
  *
@@ -82,20 +66,15 @@ const DIMENSION_DESCRIPTIONS: Record<keyof DimensionScores, string> = {
  * @param knowledgeContext - Pre-formatted string of Aera component summaries and PB node summaries
  * @param preScore - Deterministic pre-score result from Phase 21
  */
-export function buildConsolidatedPrompt(
-  skill: SkillWithContext,
-  knowledgeContext: string,
-  preScore: PreScoreResult,
-): ChatMessage[] {
-  // -- Layer 1: Context / Role --
-  const layer1 = `You are an Aera platform implementation assessor. You evaluate whether L4 activities can be implemented using Aera's component library and sanity-check deterministic pre-scores.
+export function buildConsolidatedPrompt(skill, knowledgeContext, preScore) {
+    // -- Layer 1: Context / Role --
+    const layer1 = `You are an Aera platform implementation assessor. You evaluate whether L4 activities can be implemented using Aera's component library and sanity-check deterministic pre-scores.
 
 Your assessment combines two tasks:
 1. **Platform Fit Assessment:** Score how well this skill maps to specific Aera platform capabilities and components.
 2. **Sanity Check:** Evaluate whether the deterministic pre-scores (computed from structured data fields) are reasonable given the full context of the skill.`;
-
-  // -- Layer 2: Rubric + Worked Examples --
-  const layer2 = `## Platform Fit Rubric
+    // -- Layer 2: Rubric + Worked Examples --
+    const layer2 = `## Platform Fit Rubric
 
 Score platform_fit as an integer from 0 to 3:
 
@@ -118,9 +97,8 @@ Set sanity_verdict:
 Available Aera platform knowledge:
 ${knowledgeContext}
 ${WORKED_EXAMPLES}`;
-
-  // -- Layer 3: Negative Constraints --
-  const layer3 = `## Constraints
+    // -- Layer 3: Negative Constraints --
+    const layer3 = `## Constraints
 
 - Do NOT score platform_fit >= 2 based on generic keyword overlap alone. Cite specific Aera capabilities.
 - Do NOT let sanity check override more than 2 dimensions. If more than 2 seem wrong, set verdict to DISAGREE and explain in justification.
@@ -128,9 +106,8 @@ ${WORKED_EXAMPLES}`;
 - If you DISAGREE with the pre-score, you MUST cite specific dimension(s) in flagged_dimensions.
 - Do NOT give platform_fit = 0 solely because the skill is outside supply chain. Evaluate against ALL Aera capabilities (finance, HR, procurement, etc.).
 - When uncertain between two score levels, choose the lower score.`;
-
-  // -- Layer 4: Confidence Calibration --
-  const layer4 = `## Confidence Calibration
+    // -- Layer 4: Confidence Calibration --
+    const layer4 = `## Confidence Calibration
 
 Your confidence should reflect data quality:
 - HIGH: Skill has rich archetype with execution details (trigger, autonomy, target systems, actions, constraints). You have clear evidence for your platform_fit score AND your sanity verdict.
@@ -147,33 +124,23 @@ Return your assessment as a JSON object with this exact structure:
 }
 
 Always include flagged_dimensions. Use an empty array when sanity_verdict is AGREE.`;
-
-  const systemMessage = `${layer1}\n\n${layer2}\n\n${layer3}\n\n${layer4}`;
-
-  // -- User message --
-  const targetSystemsStr = skill.execution.target_systems.length > 0
-    ? skill.execution.target_systems.join(", ")
-    : "N/A";
-
-  const actionsStr = skill.actions.length > 0
-    ? skill.actions.map(a =>
-      `  - ${a.action_name ?? "?"} (${a.action_type ?? "?"}): ${(a.description ?? "").slice(0, 100)}${(a.description ?? "").length > 100 ? "..." : ""}${a.target_system ? ` [${a.target_system}]` : ""}`
-    ).join("\n")
-    : "  None specified";
-
-  const constraintsStr = skill.constraints.length > 0
-    ? skill.constraints.map(c =>
-      `  - ${c.constraint_name ?? "?"} (${c.constraint_type ?? "?"}): ${(c.description ?? "").slice(0, 100)}${(c.description ?? "").length > 100 ? "..." : ""}${c.data_source ? ` [${c.data_source}]` : ""}`
-    ).join("\n")
-    : "  None specified";
-
-  // Build dimension breakdown with descriptions
-  const dims = preScore.dimensions;
-  const dimensionLines = (Object.keys(DIMENSION_DESCRIPTIONS) as (keyof DimensionScores)[])
-    .map(key => `  ${key}: ${dims[key]} — ${DIMENSION_DESCRIPTIONS[key]}`)
-    .join("\n");
-
-  const userMessage = `Assess this skill for platform fit and sanity-check its deterministic pre-scores:
+    const systemMessage = `${layer1}\n\n${layer2}\n\n${layer3}\n\n${layer4}`;
+    // -- User message --
+    const targetSystemsStr = skill.execution.target_systems.length > 0
+        ? skill.execution.target_systems.join(", ")
+        : "N/A";
+    const actionsStr = skill.actions.length > 0
+        ? skill.actions.map(a => `  - ${a.action_name ?? "?"} (${a.action_type ?? "?"}): ${(a.description ?? "").slice(0, 100)}${(a.description ?? "").length > 100 ? "..." : ""}${a.target_system ? ` [${a.target_system}]` : ""}`).join("\n")
+        : "  None specified";
+    const constraintsStr = skill.constraints.length > 0
+        ? skill.constraints.map(c => `  - ${c.constraint_name ?? "?"} (${c.constraint_type ?? "?"}): ${(c.description ?? "").slice(0, 100)}${(c.description ?? "").length > 100 ? "..." : ""}${c.data_source ? ` [${c.data_source}]` : ""}`).join("\n")
+        : "  None specified";
+    // Build dimension breakdown with descriptions
+    const dims = preScore.dimensions;
+    const dimensionLines = Object.keys(DIMENSION_DESCRIPTIONS)
+        .map(key => `  ${key}: ${dims[key]} — ${DIMENSION_DESCRIPTIONS[key]}`)
+        .join("\n");
+    const userMessage = `Assess this skill for platform fit and sanity-check its deterministic pre-scores:
 
 ## Skill Data
 
@@ -221,9 +188,8 @@ Skill Count under L4: ${preScore.skillCount}
 ## Aera Knowledge Context
 
 ${knowledgeContext}`;
-
-  return [
-    { role: "system", content: systemMessage },
-    { role: "user", content: userMessage },
-  ];
+    return [
+        { role: "system", content: systemMessage },
+        { role: "user", content: userMessage },
+    ];
 }

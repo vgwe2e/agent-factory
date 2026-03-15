@@ -183,9 +183,46 @@ export declare const ValueLensSchema: z.ZodObject<{
         reason: string;
     };
 }>;
+/** Consolidated LLM Scorer: platform fit + sanity check (v1.3) */
+export declare const ConsolidatedLensSchema: z.ZodObject<{
+    platform_fit: z.ZodObject<{
+        score: z.ZodNumber;
+        reason: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        score: number;
+        reason: string;
+    }, {
+        score: number;
+        reason: string;
+    }>;
+    sanity_verdict: z.ZodEnum<["AGREE", "DISAGREE", "PARTIAL"]>;
+    sanity_justification: z.ZodString;
+    flagged_dimensions: z.ZodArray<z.ZodString, "many">;
+    confidence: z.ZodEnum<["HIGH", "MEDIUM", "LOW"]>;
+}, "strip", z.ZodTypeAny, {
+    platform_fit: {
+        score: number;
+        reason: string;
+    };
+    sanity_verdict: "AGREE" | "DISAGREE" | "PARTIAL";
+    sanity_justification: string;
+    flagged_dimensions: string[];
+    confidence: "HIGH" | "MEDIUM" | "LOW";
+}, {
+    platform_fit: {
+        score: number;
+        reason: string;
+    };
+    sanity_verdict: "AGREE" | "DISAGREE" | "PARTIAL";
+    sanity_justification: string;
+    flagged_dimensions: string[];
+    confidence: "HIGH" | "MEDIUM" | "LOW";
+}>;
 export type TechnicalLensOutput = z.infer<typeof TechnicalLensSchema>;
 export type AdoptionLensOutput = z.infer<typeof AdoptionLensSchema>;
 export type ValueLensOutput = z.infer<typeof ValueLensSchema>;
+export type ConsolidatedLensOutput = z.infer<typeof ConsolidatedLensSchema>;
 export declare const technicalJsonSchema: Record<string, unknown>;
 export declare const adoptionJsonSchema: Record<string, unknown>;
 export declare const valueJsonSchema: Record<string, unknown>;
+export declare const consolidatedJsonSchema: Record<string, unknown>;

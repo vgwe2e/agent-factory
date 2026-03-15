@@ -85,6 +85,7 @@ describe("parseExport", () => {
       assert.equal(result.data.company_context.company_name, "Test Corp");
       assert.deepEqual(result.data.hierarchy, []);
       assert.deepEqual(result.data.l3_opportunities, []);
+      assert.deepEqual(result.data.cross_functional_skills, []);
     }
   });
 
@@ -116,7 +117,7 @@ describe("parseExport", () => {
     }
   });
 
-  it("parses ford_hierarchy_v3_export.json with 362 L3 opportunities and 2016 L4 activities", async () => {
+  it("parses ford_hierarchy_v3_export.json with 362 L3 opportunities, 2016 L4 activities, and 29 cross-functional skills", async () => {
     const fordPath = path.resolve(
       import.meta.dirname,
       "../../.planning/ford_hierarchy_v3_export.json",
@@ -126,6 +127,7 @@ describe("parseExport", () => {
     if (result.success) {
       assert.equal(result.data.l3_opportunities.length, 362);
       assert.equal(result.data.hierarchy.length, 2016);
+      assert.equal(result.data.cross_functional_skills?.length, 29);
     }
   });
 

@@ -44,7 +44,7 @@ export const ConsolidatedLensSchema = z.object({
   platform_fit: SubDimensionShape,
   sanity_verdict: z.enum(["AGREE", "DISAGREE", "PARTIAL"]),
   sanity_justification: z.string(),
-  flagged_dimensions: z.array(z.string()).optional(),
+  flagged_dimensions: z.array(z.string()),
   confidence: z.enum(["HIGH", "MEDIUM", "LOW"]),
 });
 

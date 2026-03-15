@@ -220,6 +220,7 @@ const validConsolidated = {
   platform_fit: { score: 2, reason: "Maps to Cortex Auto Forecast + STREAMS." },
   sanity_verdict: "AGREE" as const,
   sanity_justification: "Pre-scores align with observed data quality.",
+  flagged_dimensions: [],
   confidence: "MEDIUM" as const,
 };
 
@@ -230,10 +231,10 @@ describe("ConsolidatedLensSchema", () => {
     assert.equal(result.sanity_verdict, "AGREE");
     assert.equal(typeof result.sanity_justification, "string");
     assert.equal(result.confidence, "MEDIUM");
-    assert.equal(result.flagged_dimensions, undefined);
+    assert.deepEqual(result.flagged_dimensions, []);
   });
 
-  it("should parse with optional flagged_dimensions", () => {
+  it("should parse with flagged_dimensions entries", () => {
     const withFlags = {
       ...validConsolidated,
       flagged_dimensions: ["financial_signal", "ai_suitability"],
@@ -266,6 +267,11 @@ describe("ConsolidatedLensSchema", () => {
   it("should reject missing sanity_justification", () => {
     const { sanity_justification: _, ...noJustification } = validConsolidated;
     assert.throws(() => ConsolidatedLensSchema.parse(noJustification));
+  });
+
+  it("should reject missing flagged_dimensions", () => {
+    const { flagged_dimensions: _, ...noFlags } = validConsolidated;
+    assert.throws(() => ConsolidatedLensSchema.parse(noFlags));
   });
 
   it("should reject platform_fit score out of range", () => {
@@ -310,8 +316,7 @@ describe("Consolidated JSON Schema conversion", () => {
     assert.ok(required.includes("platform_fit"));
     assert.ok(required.includes("sanity_verdict"));
     assert.ok(required.includes("sanity_justification"));
+    assert.ok(required.includes("flagged_dimensions"));
     assert.ok(required.includes("confidence"));
-    // flagged_dimensions is optional, should NOT be in required
-    assert.ok(!required.includes("flagged_dimensions"));
   });
 });
