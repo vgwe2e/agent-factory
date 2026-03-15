@@ -5,6 +5,7 @@
  * a Mermaid flowchart showing the decision flow for an Aera opportunity.
  * Includes PB node names, orchestration route, and L4 decision articulations.
  */
+import { getSimulationPromptContext } from "../prompt-context.js";
 /**
  * Build a chat message array for generating a Mermaid decision flow diagram.
  *
@@ -14,6 +15,7 @@
  * @returns Array of {role, content} messages for Ollama chat API
  */
 export function buildDecisionFlowPrompt(input, pbNodeNames, workflowPatterns) {
+    const { subjectName, subjectSummary, implementationComplexity } = getSimulationPromptContext(input);
     const systemPrompt = `You are an Aera platform solutions engineer generating decision flow diagrams.
 
 Generate a Mermaid flowchart following these rules:
@@ -29,9 +31,6 @@ Available Process Builder nodes: ${pbNodeNames.join(", ")}
 ${workflowPatterns.length > 0 ? `Available workflow patterns: ${workflowPatterns.join(", ")}` : ""}
 
 The diagram should represent how Aera would orchestrate the decision flow for the given opportunity using the "${input.archetypeRoute}" orchestration route.`;
-    const summary = input.opportunity.opportunity_summary
-        ?? input.opportunity.rationale
-        ?? "No summary available";
     const decisionArticulations = input.l4s
         .filter((l4) => l4.decision_articulation !== null && l4.decision_articulation !== undefined)
         .map((l4) => `- ${l4.name}: ${l4.decision_articulation}`);
@@ -40,11 +39,11 @@ The diagram should represent how Aera would orchestrate the decision flow for th
         : "No L4 decision articulations available -- infer decision points from the opportunity summary above.";
     const userPrompt = `Generate a Mermaid decision flow diagram for:
 
-Opportunity: ${input.opportunity.l3_name}
-Summary: ${summary}
+Opportunity: ${subjectName}
+Summary: ${subjectSummary}
 Archetype: ${input.archetype}
 Orchestration Route: ${input.archetypeRoute}
-Complexity: ${input.opportunity.implementation_complexity ?? "MEDIUM"}
+Complexity: ${implementationComplexity}
 Composite Score: ${input.composite}
 
 ${l4Section}

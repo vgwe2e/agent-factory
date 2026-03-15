@@ -14,6 +14,7 @@
  */
 
 import type { SimulationInput } from "../../types/simulation.js";
+import { getSimulationPromptContext } from "../prompt-context.js";
 
 /**
  * Build a chat message array for generating a YAML component map.
@@ -32,6 +33,7 @@ export function buildComponentMapPrompt(
   integrationPatternNames: string[],
   capabilitiesContext?: string,
 ): Array<{ role: string; content: string }> {
+  const { subjectName, subjectSummary } = getSimulationPromptContext(input);
   const capabilitiesSection = capabilitiesContext
     ? `\nPlatform Capabilities & Use Cases:\n${capabilitiesContext}\n`
     : "";
@@ -68,8 +70,8 @@ Use these exact names when referencing known components. If a component is neede
 
   const userPrompt = `Map the following opportunity to Aera platform components:
 
-Opportunity: ${input.opportunity.l3_name}
-Summary: ${input.opportunity.opportunity_summary ?? input.opportunity.rationale ?? "No summary"}
+Opportunity: ${subjectName}
+Summary: ${subjectSummary}
 Archetype: ${input.archetype}
 Orchestration Route: ${input.archetypeRoute}
 Composite Score: ${input.composite}

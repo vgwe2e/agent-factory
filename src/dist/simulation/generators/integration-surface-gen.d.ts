@@ -7,6 +7,7 @@
  */
 import type { SimulationInput } from "../../types/simulation.js";
 import type { IntegrationSurface } from "../../types/simulation.js";
+import { type SimulationLlmTarget } from "../llm-client.js";
 type IntegrationSurfaceResult = {
     success: true;
     data: {
@@ -23,5 +24,5 @@ type IntegrationSurfaceResult = {
  * Retries up to 3 times on YAML parse or Zod validation failure,
  * including the validation error in the retry prompt for self-correction.
  */
-export declare function generateIntegrationSurface(input: SimulationInput, ollamaUrl?: string): Promise<IntegrationSurfaceResult>;
+export declare function generateIntegrationSurface(input: SimulationInput, llmTarget?: SimulationLlmTarget, signal?: AbortSignal): Promise<IntegrationSurfaceResult>;
 export {};

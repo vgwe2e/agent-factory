@@ -6,6 +6,7 @@
  * and retries with error context on failure.
  */
 import type { SimulationInput } from "../../types/simulation.js";
+import { type SimulationLlmTarget } from "../llm-client.js";
 type DecisionFlowResult = {
     success: true;
     data: {
@@ -22,8 +23,8 @@ type DecisionFlowResult = {
  * Flow: build prompt -> call Ollama -> extract Mermaid -> validate -> retry on failure.
  *
  * @param input - Simulation context
- * @param ollamaUrl - Override Ollama API URL (for testing)
+ * @param llmTarget - Override simulation backend target (legacy string or backend config)
  * @returns Result with Mermaid string and attempt count, or error
  */
-export declare function generateDecisionFlow(input: SimulationInput, ollamaUrl?: string): Promise<DecisionFlowResult>;
+export declare function generateDecisionFlow(input: SimulationInput, llmTarget?: SimulationLlmTarget, signal?: AbortSignal): Promise<DecisionFlowResult>;
 export {};

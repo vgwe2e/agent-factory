@@ -6,6 +6,7 @@
  */
 
 import type { SimulationInput } from "../../types/simulation.js";
+import { getSimulationPromptContext } from "../prompt-context.js";
 
 /**
  * Build prompt messages for generating a mock decision test YAML.
@@ -17,13 +18,14 @@ import type { SimulationInput } from "../../types/simulation.js";
 export function buildMockTestPrompt(
   input: SimulationInput,
 ): Array<{ role: string; content: string }> {
-  const { opportunity, l4s, companyContext } = input;
+  const { l4s, companyContext } = input;
+  const { subjectName, subjectSummary } = getSimulationPromptContext(input);
 
   // Find first L4 with decision_articulation
   const decisionL4 = l4s.find((l4) => l4.decision_articulation != null);
   const decisionInstruction = decisionL4
     ? `Use this decision_articulation as the decision being tested: "${decisionL4.decision_articulation}"`
-    : `Generate decision from opportunity summary: "${opportunity.opportunity_summary ?? opportunity.l3_name}"`;
+    : `Generate decision from opportunity summary: "${subjectSummary}"`;
 
   // Format L4 details
   const l4Details = l4s
@@ -50,8 +52,8 @@ Rules:
 
   const userPrompt = `Generate a mock decision test for the following opportunity:
 
-Opportunity: ${opportunity.opportunity_name ?? opportunity.l3_name}
-Summary: ${opportunity.opportunity_summary ?? "N/A"}
+Opportunity: ${subjectName}
+Summary: ${subjectSummary}
 Archetype: ${input.archetype}
 
 Company Financial Context:

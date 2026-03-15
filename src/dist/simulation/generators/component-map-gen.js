@@ -8,13 +8,13 @@
  */
 import { buildComponentMapPrompt } from "../prompts/component-map.js";
 import { parseAndValidateYaml, ComponentMapSchema } from "../schemas.js";
-import { validateComponentMap, validateComponentRef } from "../validators/knowledge-validator.js";
+import { enforceKnowledgeConfidence, validateComponentMap, } from "../validators/knowledge-validator.js";
 import { getAllPBNodes } from "../../knowledge/process-builder.js";
 import { getAllComponents } from "../../knowledge/components.js";
 import { getIntegrationPatterns } from "../../knowledge/orchestration.js";
+import { buildKnowledgeContext } from "../../scoring/knowledge-context.js";
+import { generateSimulationText, } from "../llm-client.js";
 // -- Constants --
-const OLLAMA_CHAT_API = "http://localhost:11434/api/chat";
-const MODEL = "qwen2.5:32b";
 const TEMPERATURE = 0.3;
 const MAX_ATTEMPTS = 3;
 const TIMEOUT_MS = 180_000;
@@ -30,35 +30,31 @@ const TIMEOUT_MS = 180_000;
  *
  * @param input - Simulation context
  * @param knowledgeIndex - Pre-built knowledge base index from buildKnowledgeIndex()
- * @param ollamaUrl - Override Ollama API URL (for testing)
+ * @param llmTarget - Override simulation backend target (legacy string or backend config)
  * @returns Result with ComponentMap, validation results, and attempt count
  */
-export async function generateComponentMap(input, knowledgeIndex, ollamaUrl = OLLAMA_CHAT_API) {
+export async function generateComponentMap(input, knowledgeIndex, llmTarget, signal) {
     const pbNodeNames = getAllPBNodes().map((n) => n.name);
     const uiComponentNames = getAllComponents().map((c) => c.name);
     const integrationPatternNames = getIntegrationPatterns().map((p) => p.name);
-    const messages = buildComponentMapPrompt(input, pbNodeNames, uiComponentNames, integrationPatternNames);
+    const knowledgeCtx = buildKnowledgeContext();
+    const messages = buildComponentMapPrompt(input, pbNodeNames, uiComponentNames, integrationPatternNames, knowledgeCtx.capabilities);
     const conversationMessages = [...messages];
     const errors = [];
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        throwIfAborted(signal);
         try {
-            const response = await fetch(ollamaUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    model: MODEL,
-                    messages: conversationMessages,
-                    stream: false,
-                    options: { temperature: TEMPERATURE },
-                }),
-                signal: AbortSignal.timeout(TIMEOUT_MS),
+            const response = await generateSimulationText(conversationMessages, llmTarget, {
+                temperature: TEMPERATURE,
+                timeoutMs: TIMEOUT_MS,
+                signal,
             });
-            if (!response.ok) {
-                errors.push(`Attempt ${attempt}: Ollama HTTP ${response.status}`);
+            if (!response.success) {
+                throwIfAborted(signal);
+                errors.push(`Attempt ${attempt}: ${response.error}`);
                 continue;
             }
-            const data = (await response.json());
-            const rawContent = data.message.content;
+            const rawContent = response.content;
             // Parse YAML and validate with Zod schema
             const parseResult = await parseAndValidateYaml(rawContent, ComponentMapSchema);
             if (!parseResult.success) {
@@ -79,6 +75,9 @@ export async function generateComponentMap(input, knowledgeIndex, ollamaUrl = OL
             };
         }
         catch (err) {
+            if (signal?.aborted) {
+                throw abortError(signal);
+            }
             const message = err instanceof Error ? err.message : String(err);
             errors.push(`Attempt ${attempt}: ${message}`);
         }
@@ -88,21 +87,13 @@ export async function generateComponentMap(input, knowledgeIndex, ollamaUrl = OL
         error: `Failed after ${MAX_ATTEMPTS} attempts. Errors: ${errors.join("; ")}`,
     };
 }
-/**
- * Override confidence flags in a ComponentMap based on knowledge base validation.
- * Mutates the map in place -- sets confirmed for known components, inferred for unknown.
- */
-function enforceKnowledgeConfidence(map, knowledgeIndex) {
-    const sections = [
-        map.streams,
-        map.cortex,
-        map.process_builder,
-        map.agent_teams,
-        map.ui,
-    ];
-    for (const entries of sections) {
-        for (const entry of entries) {
-            entry.confidence = validateComponentRef(entry.name, knowledgeIndex);
-        }
+function throwIfAborted(signal) {
+    if (signal?.aborted) {
+        throw abortError(signal);
     }
+}
+function abortError(signal) {
+    return signal.reason instanceof Error
+        ? signal.reason
+        : new Error(String(signal.reason ?? "Operation aborted"));
 }

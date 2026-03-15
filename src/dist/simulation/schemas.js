@@ -8,6 +8,7 @@
  */
 import { z } from "zod";
 import yaml from "js-yaml";
+import { zodToJsonSchema } from "zod-to-json-schema";
 import { extractYamlBlock } from "./utils.js";
 // -- Component Map Schema --
 const ComponentRefSchema = z.object({
@@ -71,6 +72,42 @@ export const IntegrationSurfaceSchema = z.object({
         purpose: z.string(),
     })),
 });
+// -- Scenario Spec Schema --
+const ScenarioSourceSystemSchema = z.object({
+    name: z.string(),
+    type: z.string().optional(),
+    status: z.enum(["identified", "tbd"]).default("identified"),
+});
+const ScenarioKeyInputSchema = z.object({
+    name: z.string(),
+    source: z.string(),
+    purpose: z.string(),
+    preferred_stream_type: z.string().optional(),
+});
+const ScenarioFlowStepSchema = z.object({
+    step: z.string(),
+    stage: z.enum(["ingest", "analyze", "decide", "act", "review", "notify", "surface"]),
+    component: z.string(),
+    purpose: z.string(),
+});
+const ScenarioBranchSchema = z.object({
+    condition: z.string(),
+    response: z.string(),
+    outcome: z.string(),
+});
+export const ScenarioSpecSchema = z.object({
+    objective: z.string(),
+    trigger: z.string(),
+    decision: z.string(),
+    expected_action: z.string(),
+    expected_outcome: z.string(),
+    rationale: z.string(),
+    source_systems: z.array(ScenarioSourceSystemSchema).min(1),
+    key_inputs: z.array(ScenarioKeyInputSchema).min(1),
+    happy_path: z.array(ScenarioFlowStepSchema).min(3),
+    branches: z.array(ScenarioBranchSchema).max(3).default([]),
+});
+export const scenarioSpecJsonSchema = zodToJsonSchema(ScenarioSpecSchema);
 // -- Generic YAML parse + validate helper --
 /**
  * Strips code fences from raw LLM output, parses YAML, and validates

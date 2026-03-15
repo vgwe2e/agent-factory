@@ -9,6 +9,7 @@
 
 import { z } from "zod";
 import yaml from "js-yaml";
+import { zodToJsonSchema } from "zod-to-json-schema";
 import { extractYamlBlock } from "./utils.js";
 
 // -- Component Map Schema --
@@ -120,6 +121,8 @@ export const ScenarioSpecSchema = z.object({
   happy_path: z.array(ScenarioFlowStepSchema).min(3),
   branches: z.array(ScenarioBranchSchema).max(3).default([]),
 });
+
+export const scenarioSpecJsonSchema = zodToJsonSchema(ScenarioSpecSchema as never) as Record<string, unknown>;
 
 // -- Generic YAML parse + validate helper --
 

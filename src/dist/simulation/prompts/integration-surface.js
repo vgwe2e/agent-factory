@@ -5,6 +5,7 @@
  * mapping source systems from enterprise_applications, Aera ingestion
  * streams, processing components, and UI surfaces.
  */
+import { getSimulationPromptContext } from "../prompt-context.js";
 /**
  * Build prompt messages for generating an integration surface YAML.
  *
@@ -13,7 +14,8 @@
  * Structural connections only -- no timing or freshness estimates.
  */
 export function buildIntegrationSurfacePrompt(input, integrationPatternNames = []) {
-    const { opportunity, l4s, companyContext } = input;
+    const { l4s, companyContext } = input;
+    const { subjectName, subjectSummary } = getSimulationPromptContext(input);
     const enterpriseApps = companyContext.enterprise_applications.length > 0
         ? companyContext.enterprise_applications.map((app) => `- ${app}`).join("\n")
         : "- No enterprise applications listed";
@@ -37,8 +39,8 @@ Rules:
 - Do not wrap output in code fences. Output YAML only.`;
     const userPrompt = `Generate an integration surface for the following opportunity:
 
-Opportunity: ${opportunity.opportunity_name ?? opportunity.l3_name}
-Summary: ${opportunity.opportunity_summary ?? "N/A"}
+Opportunity: ${subjectName}
+Summary: ${subjectSummary}
 Archetype: ${input.archetype}
 Route: ${input.archetypeRoute}
 

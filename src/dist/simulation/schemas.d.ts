@@ -16,12 +16,12 @@ export declare const ComponentMapSchema: z.ZodObject<{
         type: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         type?: string | undefined;
         purpose?: string | undefined;
     }, {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         type?: string | undefined;
         purpose?: string | undefined;
     }>, "many">>;
@@ -33,12 +33,12 @@ export declare const ComponentMapSchema: z.ZodObject<{
         capability: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         capability?: string | undefined;
     }, {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         capability?: string | undefined;
     }>, "many">>;
@@ -50,12 +50,12 @@ export declare const ComponentMapSchema: z.ZodObject<{
         node_type: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         node_type?: string | undefined;
     }, {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         node_type?: string | undefined;
     }>, "many">>;
@@ -67,12 +67,12 @@ export declare const ComponentMapSchema: z.ZodObject<{
         role: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         role?: string | undefined;
     }, {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         role?: string | undefined;
     }>, "many">>;
@@ -85,13 +85,13 @@ export declare const ComponentMapSchema: z.ZodObject<{
         properties: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         component_type?: string | undefined;
         properties?: string[] | undefined;
     }, {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         component_type?: string | undefined;
         properties?: string[] | undefined;
@@ -99,31 +99,31 @@ export declare const ComponentMapSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     cortex: {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         capability?: string | undefined;
     }[];
     streams: {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         type?: string | undefined;
         purpose?: string | undefined;
     }[];
     process_builder: {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         node_type?: string | undefined;
     }[];
     agent_teams: {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         role?: string | undefined;
     }[];
     ui: {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         component_type?: string | undefined;
         properties?: string[] | undefined;
@@ -131,31 +131,31 @@ export declare const ComponentMapSchema: z.ZodObject<{
 }, {
     cortex?: {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         capability?: string | undefined;
     }[] | undefined;
     streams?: {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         type?: string | undefined;
         purpose?: string | undefined;
     }[] | undefined;
     process_builder?: {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         node_type?: string | undefined;
     }[] | undefined;
     agent_teams?: {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         role?: string | undefined;
     }[] | undefined;
     ui?: {
         name: string;
-        confidence: "inferred" | "confirmed";
+        confidence: "confirmed" | "inferred";
         purpose?: string | undefined;
         component_type?: string | undefined;
         properties?: string[] | undefined;
@@ -181,12 +181,12 @@ export declare const MockTestSchema: z.ZodObject<{
         outcome: z.ZodString;
         affected_components: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
     }, "strip", z.ZodTypeAny, {
-        action: string;
         outcome: string;
+        action: string;
         affected_components?: string[] | undefined;
     }, {
-        action: string;
         outcome: string;
+        action: string;
         affected_components?: string[] | undefined;
     }>;
     rationale: z.ZodString;
@@ -199,8 +199,8 @@ export declare const MockTestSchema: z.ZodObject<{
     };
     decision: string;
     expected_output: {
-        action: string;
         outcome: string;
+        action: string;
         affected_components?: string[] | undefined;
     };
 }, {
@@ -212,8 +212,8 @@ export declare const MockTestSchema: z.ZodObject<{
     };
     decision: string;
     expected_output: {
-        action: string;
         outcome: string;
+        action: string;
         affected_components?: string[] | undefined;
     };
 }>;
@@ -236,12 +236,12 @@ export declare const IntegrationSurfaceSchema: z.ZodObject<{
         stream_type: z.ZodOptional<z.ZodString>;
         source: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        stream_name: string;
         source: string;
+        stream_name: string;
         stream_type?: string | undefined;
     }, {
-        stream_name: string;
         source: string;
+        stream_name: string;
         stream_type?: string | undefined;
     }>, "many">;
     processing: z.ZodArray<z.ZodObject<{
@@ -277,8 +277,8 @@ export declare const IntegrationSurfaceSchema: z.ZodObject<{
         type?: string | undefined;
     }[];
     aera_ingestion: {
-        stream_name: string;
         source: string;
+        stream_name: string;
         stream_type?: string | undefined;
     }[];
     processing: {
@@ -298,8 +298,8 @@ export declare const IntegrationSurfaceSchema: z.ZodObject<{
         status?: "identified" | "tbd" | undefined;
     }[];
     aera_ingestion: {
-        stream_name: string;
         source: string;
+        stream_name: string;
         stream_type?: string | undefined;
     }[];
     processing: {
@@ -313,6 +313,131 @@ export declare const IntegrationSurfaceSchema: z.ZodObject<{
         screen?: string | undefined;
     }[];
 }>;
+export declare const ScenarioSpecSchema: z.ZodObject<{
+    objective: z.ZodString;
+    trigger: z.ZodString;
+    decision: z.ZodString;
+    expected_action: z.ZodString;
+    expected_outcome: z.ZodString;
+    rationale: z.ZodString;
+    source_systems: z.ZodArray<z.ZodObject<{
+        name: z.ZodString;
+        type: z.ZodOptional<z.ZodString>;
+        status: z.ZodDefault<z.ZodEnum<["identified", "tbd"]>>;
+    }, "strip", z.ZodTypeAny, {
+        status: "identified" | "tbd";
+        name: string;
+        type?: string | undefined;
+    }, {
+        name: string;
+        type?: string | undefined;
+        status?: "identified" | "tbd" | undefined;
+    }>, "many">;
+    key_inputs: z.ZodArray<z.ZodObject<{
+        name: z.ZodString;
+        source: z.ZodString;
+        purpose: z.ZodString;
+        preferred_stream_type: z.ZodOptional<z.ZodString>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        source: string;
+        purpose: string;
+        preferred_stream_type?: string | undefined;
+    }, {
+        name: string;
+        source: string;
+        purpose: string;
+        preferred_stream_type?: string | undefined;
+    }>, "many">;
+    happy_path: z.ZodArray<z.ZodObject<{
+        step: z.ZodString;
+        stage: z.ZodEnum<["ingest", "analyze", "decide", "act", "review", "notify", "surface"]>;
+        component: z.ZodString;
+        purpose: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        purpose: string;
+        component: string;
+        step: string;
+        stage: "ingest" | "analyze" | "decide" | "act" | "review" | "notify" | "surface";
+    }, {
+        purpose: string;
+        component: string;
+        step: string;
+        stage: "ingest" | "analyze" | "decide" | "act" | "review" | "notify" | "surface";
+    }>, "many">;
+    branches: z.ZodDefault<z.ZodArray<z.ZodObject<{
+        condition: z.ZodString;
+        response: z.ZodString;
+        outcome: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        outcome: string;
+        condition: string;
+        response: string;
+    }, {
+        outcome: string;
+        condition: string;
+        response: string;
+    }>, "many">>;
+}, "strip", z.ZodTypeAny, {
+    rationale: string;
+    decision: string;
+    trigger: string;
+    source_systems: {
+        status: "identified" | "tbd";
+        name: string;
+        type?: string | undefined;
+    }[];
+    objective: string;
+    expected_action: string;
+    expected_outcome: string;
+    key_inputs: {
+        name: string;
+        source: string;
+        purpose: string;
+        preferred_stream_type?: string | undefined;
+    }[];
+    happy_path: {
+        purpose: string;
+        component: string;
+        step: string;
+        stage: "ingest" | "analyze" | "decide" | "act" | "review" | "notify" | "surface";
+    }[];
+    branches: {
+        outcome: string;
+        condition: string;
+        response: string;
+    }[];
+}, {
+    rationale: string;
+    decision: string;
+    trigger: string;
+    source_systems: {
+        name: string;
+        type?: string | undefined;
+        status?: "identified" | "tbd" | undefined;
+    }[];
+    objective: string;
+    expected_action: string;
+    expected_outcome: string;
+    key_inputs: {
+        name: string;
+        source: string;
+        purpose: string;
+        preferred_stream_type?: string | undefined;
+    }[];
+    happy_path: {
+        purpose: string;
+        component: string;
+        step: string;
+        stage: "ingest" | "analyze" | "decide" | "act" | "review" | "notify" | "surface";
+    }[];
+    branches?: {
+        outcome: string;
+        condition: string;
+        response: string;
+    }[] | undefined;
+}>;
+export declare const scenarioSpecJsonSchema: Record<string, unknown>;
 /**
  * Strips code fences from raw LLM output, parses YAML, and validates
  * the parsed object against the provided Zod schema.

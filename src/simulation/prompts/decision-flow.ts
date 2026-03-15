@@ -7,6 +7,7 @@
  */
 
 import type { SimulationInput } from "../../types/simulation.js";
+import { getSimulationPromptContext } from "../prompt-context.js";
 
 /**
  * Build a chat message array for generating a Mermaid decision flow diagram.
@@ -21,6 +22,7 @@ export function buildDecisionFlowPrompt(
   pbNodeNames: string[],
   workflowPatterns: string[],
 ): Array<{ role: string; content: string }> {
+  const { subjectName, subjectSummary, implementationComplexity } = getSimulationPromptContext(input);
   const systemPrompt = `You are an Aera platform solutions engineer generating decision flow diagrams.
 
 Generate a Mermaid flowchart following these rules:
@@ -37,10 +39,6 @@ ${workflowPatterns.length > 0 ? `Available workflow patterns: ${workflowPatterns
 
 The diagram should represent how Aera would orchestrate the decision flow for the given opportunity using the "${input.archetypeRoute}" orchestration route.`;
 
-  const summary = input.opportunity.opportunity_summary
-    ?? input.opportunity.rationale
-    ?? "No summary available";
-
   const decisionArticulations = input.l4s
     .filter((l4) => l4.decision_articulation !== null && l4.decision_articulation !== undefined)
     .map((l4) => `- ${l4.name}: ${l4.decision_articulation}`);
@@ -51,11 +49,11 @@ The diagram should represent how Aera would orchestrate the decision flow for th
 
   const userPrompt = `Generate a Mermaid decision flow diagram for:
 
-Opportunity: ${input.opportunity.l3_name}
-Summary: ${summary}
+Opportunity: ${subjectName}
+Summary: ${subjectSummary}
 Archetype: ${input.archetype}
 Orchestration Route: ${input.archetypeRoute}
-Complexity: ${input.opportunity.implementation_complexity ?? "MEDIUM"}
+Complexity: ${implementationComplexity}
 Composite Score: ${input.composite}
 
 ${l4Section}

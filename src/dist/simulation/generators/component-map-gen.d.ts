@@ -9,6 +9,7 @@
 import type { SimulationInput } from "../../types/simulation.js";
 import type { ComponentMap } from "../../types/simulation.js";
 import type { ValidationResult } from "../validators/knowledge-validator.js";
+import { type SimulationLlmTarget } from "../llm-client.js";
 type ComponentMapResult = {
     success: true;
     data: {
@@ -31,8 +32,8 @@ type ComponentMapResult = {
  *
  * @param input - Simulation context
  * @param knowledgeIndex - Pre-built knowledge base index from buildKnowledgeIndex()
- * @param ollamaUrl - Override Ollama API URL (for testing)
+ * @param llmTarget - Override simulation backend target (legacy string or backend config)
  * @returns Result with ComponentMap, validation results, and attempt count
  */
-export declare function generateComponentMap(input: SimulationInput, knowledgeIndex: Map<string, string>, ollamaUrl?: string): Promise<ComponentMapResult>;
+export declare function generateComponentMap(input: SimulationInput, knowledgeIndex: Map<string, string>, llmTarget?: SimulationLlmTarget, signal?: AbortSignal): Promise<ComponentMapResult>;
 export {};

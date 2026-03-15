@@ -4,6 +4,7 @@
  * Constructs LLM messages that produce a single happy-path mock test
  * grounded in actual client financials and decision_articulation text.
  */
+import { getSimulationPromptContext } from "../prompt-context.js";
 /**
  * Build prompt messages for generating a mock decision test YAML.
  *
@@ -12,12 +13,13 @@
  * Includes company financials for realistic test input grounding.
  */
 export function buildMockTestPrompt(input) {
-    const { opportunity, l4s, companyContext } = input;
+    const { l4s, companyContext } = input;
+    const { subjectName, subjectSummary } = getSimulationPromptContext(input);
     // Find first L4 with decision_articulation
     const decisionL4 = l4s.find((l4) => l4.decision_articulation != null);
     const decisionInstruction = decisionL4
         ? `Use this decision_articulation as the decision being tested: "${decisionL4.decision_articulation}"`
-        : `Generate decision from opportunity summary: "${opportunity.opportunity_summary ?? opportunity.l3_name}"`;
+        : `Generate decision from opportunity summary: "${subjectSummary}"`;
     // Format L4 details
     const l4Details = l4s
         .map((l4) => {
@@ -41,8 +43,8 @@ Rules:
 - Do not wrap output in code fences. Output YAML only.`;
     const userPrompt = `Generate a mock decision test for the following opportunity:
 
-Opportunity: ${opportunity.opportunity_name ?? opportunity.l3_name}
-Summary: ${opportunity.opportunity_summary ?? "N/A"}
+Opportunity: ${subjectName}
+Summary: ${subjectSummary}
 Archetype: ${input.archetype}
 
 Company Financial Context:

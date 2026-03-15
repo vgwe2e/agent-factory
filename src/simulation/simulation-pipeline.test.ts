@@ -145,7 +145,7 @@ describe("runSimulationPipeline", () => {
   it("processes inputs sorted by composite descending", async () => {
     const callOrder: string[] = [];
     const specFn = mock.fn(async (input: SimulationInput, _llmTarget?: SimulationLlmTarget) => {
-      callOrder.push(input.opportunity.l3_name);
+      callOrder.push(input.opportunity?.l3_name ?? input.l4Activity?.name ?? "unknown");
       return {
         success: true as const,
         data: { scenarioSpec: makeScenarioSpec(), attempts: 1 },
