@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../area"
+		},
+		{
+			"path": "../../Movies/claude-acnpptx-skills_en"
+		},
+		{
+			"path": "../AeraPerioic"
+		}
+	],
+	"settings": {}
+}
