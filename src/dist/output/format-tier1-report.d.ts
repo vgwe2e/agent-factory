@@ -7,4 +7,4 @@
  * Produces evaluation/tier1-report.md content.
  */
 import type { ScoringResult } from "../types/scoring.js";
-export declare function formatTier1Report(scored: ScoringResult[], tier1Names: Set<string>, companyName: string, date?: string): string;
+export declare function formatTier1Report(scored: ScoringResult[], tier1Names: Set<string>, companyName: string, date?: string, scoringMode?: "two-pass" | "three-lens"): string;

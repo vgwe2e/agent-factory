@@ -100,6 +100,7 @@ describe("formatSimulationFilterTsv", () => {
     const lines = tsv.trim().split("\n");
     assert.equal(lines.length, 3);
     assert.ok(lines[0].includes("implementation_readiness_score"));
+    assert.ok(lines[0].includes("is_cross_functional"));
   });
 
   it("sorts ADVANCE before HOLD", () => {
@@ -111,12 +112,13 @@ describe("formatSimulationFilterTsv", () => {
 
   it("uses skill_name and l4_name headers in two-pass mode", () => {
     const tsv = formatSimulationFilterTsv(
-      [makeScoring({ l4Name: "Advance Opp", skillName: "Forward Opportunity Name" })],
+      [makeScoring({ l4Name: "Advance Opp", skillName: "Forward Opportunity Name", skillId: "cf-advance", l1Name: "Cross-Functional" })],
       makeSimResults(),
       "two-pass",
     );
-    const [header] = tsv.trim().split("\n");
+    const [header, row] = tsv.trim().split("\n");
     assert.deepEqual(header.split("\t").slice(0, 3), ["skill_id", "skill_name", "l4_name"]);
     assert.ok(tsv.includes("Forward Opportunity Name\tAdvance Opp"));
+    assert.equal(row.split("\t").at(-1), "Y");
   });
 });

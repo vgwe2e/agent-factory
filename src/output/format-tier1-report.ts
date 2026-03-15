@@ -22,9 +22,21 @@ const SUB_DIMENSION_LABELS: Record<string, string> = {
   simulation_viability: "Simulation Viability",
 };
 
+const SUB_DIMENSION_ALIASES: Record<string, string[]> = {
+  aera_platform_fit: ["aera_platform_fit", "platform_fit"],
+  financial_gravity: ["financial_gravity", "financial_signal"],
+  impact_proximity: ["impact_proximity", "impact_order"],
+  confidence_signal: ["confidence_signal", "rating_confidence"],
+};
+
 /** Look up a sub-dimension by name within a lens. */
 function findSub(lens: LensScore, name: string): SubDimensionScore | undefined {
-  return lens.subDimensions.find(s => s.name === name);
+  const aliases = SUB_DIMENSION_ALIASES[name] ?? [name];
+  for (const alias of aliases) {
+    const match = lens.subDimensions.find((subDimension) => subDimension.name === alias);
+    if (match) return match;
+  }
+  return undefined;
 }
 
 /** Format a sub-dimension line: "- **Label (score/3):** reason" */
@@ -80,7 +92,11 @@ function formatAssessment(r: ScoringResult): string {
 }
 
 /** Format a single skill section. */
-function formatOpportunitySection(r: ScoringResult, rank: number): string {
+function formatOpportunitySection(
+  r: ScoringResult,
+  rank: number,
+  scoringMode?: "two-pass" | "three-lens",
+): string {
   const tech = r.lenses.technical;
   const adopt = r.lenses.adoption;
   const val = r.lenses.value;
@@ -96,9 +112,13 @@ function formatOpportunitySection(r: ScoringResult, rank: number): string {
 
   // Technical Feasibility
   lines.push(`### Technical Feasibility (${tech.total}/${tech.maxPossible})`);
-  lines.push(formatSubLine(tech, "data_readiness"));
+  if (scoringMode !== "two-pass") {
+    lines.push(formatSubLine(tech, "data_readiness"));
+  }
   lines.push(formatSubLine(tech, "aera_platform_fit"));
-  lines.push(formatSubLine(tech, "archetype_confidence"));
+  if (scoringMode !== "two-pass") {
+    lines.push(formatSubLine(tech, "archetype_confidence"));
+  }
   lines.push("");
 
   // Adoption Realism
@@ -127,6 +147,7 @@ export function formatTier1Report(
   tier1Names: Set<string>,
   companyName: string,
   date?: string,
+  scoringMode?: "two-pass" | "three-lens",
 ): string {
   const dateStr = date ?? new Date().toISOString().slice(0, 10);
 
@@ -152,7 +173,7 @@ export function formatTier1Report(
   }
 
   // Opportunity sections separated by horizontal rules
-  const sections = tier1.map((r, i) => formatOpportunitySection(r, i + 1));
+  const sections = tier1.map((r, i) => formatOpportunitySection(r, i + 1, scoringMode));
   lines.push(sections.join("\n\n---\n\n"));
   lines.push("");
 

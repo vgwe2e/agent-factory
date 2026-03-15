@@ -1,0 +1,208 @@
+#!/usr/bin/env npx tsx
+/**
+ * Regenerate evaluation reports from archived checkpoint data.
+ *
+ * Reads .pipeline/checkpoint-*.json files to reconstruct ScoringResult[],
+ * re-runs triage for TriageResult[], then calls writeEvaluation + writeFinalReports.
+ */
+import "dotenv/config";
+import fs from "node:fs/promises";
+import path from "node:path";
+import yaml from "js-yaml";
+import { parseExport } from "./ingestion/parse-export.js";
+import { triageOpportunities } from "./triage/triage-pipeline.js";
+import { buildScoringHierarchy } from "./pipeline/extract-skills.js";
+import { writeEvaluation } from "./output/write-evaluation.js";
+import { writeFinalReports } from "./output/write-final-reports.js";
+import { assessSimulation } from "./simulation/assessment.js";
+import { slugify } from "./simulation/utils.js";
+import { buildKnowledgeIndex, enforceKnowledgeConfidence, validateComponentMap } from "./simulation/validators/knowledge-validator.js";
+import { validateMermaidFlowchart } from "./simulation/validators/mermaid-validator.js";
+const INPUT = process.argv[2] || "../.planning/ford_hierarchy_v3_export.json";
+const OUTPUT_DIR = process.argv[3] || "./evaluation";
+async function detectScoringMode(outputDir, scoredResults) {
+    try {
+        await fs.stat(path.join(outputDir, "evaluation", "pre-scores.tsv"));
+        return "two-pass";
+    }
+    catch {
+        return scoredResults.some((result) => typeof result.preScore === "number")
+            ? "two-pass"
+            : "three-lens";
+    }
+}
+async function loadScoringOverrides(outputDir) {
+    const scoresPath = path.join(outputDir, "evaluation", "feasibility-scores.tsv");
+    try {
+        const raw = await fs.readFile(scoresPath, "utf-8");
+        const lines = raw.trim().split(/\r?\n/);
+        if (lines.length < 2)
+            return new Map();
+        const headers = lines[0].split("\t");
+        const overrides = new Map();
+        for (const line of lines.slice(1)) {
+            const cols = line.split("\t");
+            const row = Object.fromEntries(headers.map((header, index) => [header, cols[index] ?? ""]));
+            const key = row.skill_id || row.l3_name;
+            overrides.set(key, {
+                l1Name: row.l1_name,
+                l2Name: row.l2_name,
+                archetype: row.archetype,
+                composite: Number.parseFloat(row.composite),
+                overallConfidence: row.confidence,
+                promotedToSimulation: row.promotes_to_sim?.trim().toUpperCase() === "Y",
+            });
+        }
+        return overrides;
+    }
+    catch {
+        return new Map();
+    }
+}
+async function main() {
+    // 1. Load scored results from archived checkpoints
+    const pipelineDir = path.join(OUTPUT_DIR, ".pipeline");
+    const files = (await fs.readdir(pipelineDir)).filter(f => f.startsWith("checkpoint-")).sort();
+    const allScored = new Map();
+    for (const file of files) {
+        const raw = JSON.parse(await fs.readFile(path.join(pipelineDir, file), "utf-8"));
+        for (const [key, value] of Object.entries(raw)) {
+            allScored.set(key, value);
+        }
+    }
+    const scoredResults = [...allScored.values()];
+    console.log(`Loaded ${scoredResults.length} scored results from ${files.length} checkpoint files`);
+    const scoringMode = await detectScoringMode(OUTPUT_DIR, scoredResults);
+    const scoringOverrides = await loadScoringOverrides(OUTPUT_DIR);
+    if (scoringOverrides.size > 0) {
+        for (const sr of scoredResults) {
+            const override = scoringOverrides.get(sr.skillId ?? sr.l3Name);
+            if (!override)
+                continue;
+            sr.l1Name = override.l1Name || sr.l1Name;
+            sr.l2Name = override.l2Name || sr.l2Name;
+            sr.archetype = override.archetype || sr.archetype;
+            sr.composite = Number.isFinite(override.composite) ? override.composite : sr.composite;
+            sr.overallConfidence = override.overallConfidence || sr.overallConfidence;
+            sr.promotedToSimulation = override.promotedToSimulation;
+        }
+        console.log(`Applied scoring overrides from feasibility-scores.tsv for ${scoringOverrides.size} opportunities`);
+    }
+    // 2. Re-run triage to get TriageResult[]
+    const parseResult = await parseExport(INPUT);
+    if (!parseResult.success) {
+        console.error("Failed to parse export:", parseResult.error);
+        process.exit(1);
+    }
+    const { company_context, l3_opportunities } = parseResult.data;
+    const triageResults = triageOpportunities(parseResult.data);
+    console.log(`Triaged ${triageResults.length} opportunities`);
+    // Backfill skillId/skillName for checkpoints written before skill-level scoring
+    // (legacy checkpoints may lack these fields)
+    for (const sr of scoredResults) {
+        if (!sr.skillId) {
+            sr.skillId = sr.l3Name;
+        }
+        if (!sr.skillName) {
+            sr.skillName = sr.l3Name;
+        }
+        if (!sr.l4Name) {
+            sr.l4Name = "";
+        }
+    }
+    // 3. Load existing simulation results from disk
+    // Support both three-lens slugs (L3) and two-pass slugs (L4 name + id suffix).
+    const slugToSubject = new Map();
+    for (const opportunity of l3_opportunities) {
+        slugToSubject.set(slugify(opportunity.l3_name), opportunity.l3_name);
+    }
+    for (const l4 of buildScoringHierarchy(parseResult.data)) {
+        slugToSubject.set(`${slugify(l4.name)}-${l4.id.slice(-6)}`, l4.name);
+    }
+    const simDir = path.join(OUTPUT_DIR, "evaluation", "simulations");
+    let simResults = {
+        results: [],
+        totalSimulated: 0,
+        totalFailed: 0,
+        totalConfirmed: 0,
+        totalInferred: 0,
+    };
+    try {
+        const knowledgeIndex = buildKnowledgeIndex();
+        const simDirs = await fs.readdir(simDir);
+        const simResultEntries = [];
+        for (const dir of simDirs) {
+            const dirPath = path.join(simDir, dir);
+            const stat = await fs.stat(dirPath);
+            if (stat.isDirectory()) {
+                const l3Name = slugToSubject.get(dir) ?? dir;
+                // Load artifacts from disk so writeFinalReports can round-trip them
+                const readFile = async (name) => {
+                    try {
+                        return await fs.readFile(path.join(dirPath, name), "utf-8");
+                    }
+                    catch {
+                        return "";
+                    }
+                };
+                const decisionFlow = await readFile("decision-flow.mmd");
+                const componentMap = yaml.load(await readFile("component-map.yaml")) ?? { streams: [], cortex: [], process_builder: [], agent_teams: [], ui: [] };
+                const mockTest = yaml.load(await readFile("mock-test.yaml")) ?? { decision: "", input: { financial_context: {}, trigger: "" }, expected_output: { action: "", outcome: "" }, rationale: "" };
+                const integrationSurface = yaml.load(await readFile("integration-surface.yaml")) ?? { source_systems: [], aera_ingestion: [], processing: [], ui_surface: [] };
+                const scenarioSpec = yaml.load(await readFile("scenario-spec.yaml")) ?? undefined;
+                const assessmentFile = yaml.load(await readFile("simulation-assessment.yaml")) ?? undefined;
+                enforceKnowledgeConfidence(componentMap, knowledgeIndex);
+                const validation = validateComponentMap(componentMap, knowledgeIndex);
+                const confirmedCount = validation.filter((item) => item.status === "confirmed").length;
+                const inferredCount = validation.filter((item) => item.status === "inferred").length;
+                const mermaidValid = validateMermaidFlowchart(decisionFlow).ok;
+                const assessment = assessmentFile ?? assessSimulation({
+                    scenarioSpec,
+                    mockTest,
+                    integrationSurface,
+                    confirmedCount,
+                    inferredCount,
+                    mermaidValid,
+                });
+                simResultEntries.push({
+                    l3Name,
+                    slug: dir,
+                    scenarioSpec,
+                    assessment,
+                    artifacts: { decisionFlow, componentMap, mockTest, integrationSurface },
+                    validationSummary: {
+                        confirmedCount,
+                        inferredCount,
+                        mermaidValid,
+                    },
+                });
+            }
+        }
+        simResults.results = simResultEntries;
+        simResults.totalSimulated = simResultEntries.length;
+        simResults.totalConfirmed = simResultEntries.reduce((sum, result) => sum + result.validationSummary.confirmedCount, 0);
+        simResults.totalInferred = simResultEntries.reduce((sum, result) => sum + result.validationSummary.inferredCount, 0);
+        console.log(`Found ${simResultEntries.length} existing simulations`);
+    }
+    catch {
+        console.log("No existing simulations found");
+    }
+    // 4. Write evaluation reports
+    const evalResult = await writeEvaluation(OUTPUT_DIR, scoredResults, triageResults, company_context.company_name, undefined, scoringMode);
+    if (evalResult.success) {
+        console.log(`Wrote ${evalResult.files.length} evaluation files`);
+    }
+    else {
+        console.error("writeEvaluation failed:", evalResult.error);
+    }
+    // 5. Write final reports
+    const finalResult = await writeFinalReports(OUTPUT_DIR, scoredResults, triageResults, simResults, company_context.company_name, undefined, undefined, scoringMode);
+    if (finalResult.success) {
+        console.log(`Wrote ${finalResult.files.length} final report files`);
+    }
+    else {
+        console.error("writeFinalReports failed:", finalResult.error);
+    }
+    console.log("\nDone! Reports regenerated in", path.join(OUTPUT_DIR, "evaluation"));
+}
+main().catch(console.error);

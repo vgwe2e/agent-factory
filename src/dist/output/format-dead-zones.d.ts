@@ -7,4 +7,4 @@
  */
 import type { TriageResult } from "../types/triage.js";
 import type { ScoringResult } from "../types/scoring.js";
-export declare function formatDeadZones(triaged: TriageResult[], _scored: ScoringResult[], date?: string): string;
+export declare function formatDeadZones(triaged: TriageResult[], scored: ScoringResult[], date?: string): string;

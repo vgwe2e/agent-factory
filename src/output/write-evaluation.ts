@@ -40,14 +40,17 @@ export async function writeEvaluation(
     const tier1Names = new Set(
       triagedOpportunities
         .filter(o => o.tier === 1)
-        .map(o => o.l3Name),
+        .map(o => o.skillId ?? o.l3Name),
     );
 
     // Generate content from formatters
     const triageTsv = formatTriageTsv(triagedOpportunities);
-    const scoresTsv = formatScoresTsv(scoredOpportunities);
-    const adoptionRisk = modeHeader + formatAdoptionRisk(triagedOpportunities, date);
-    const tier1Report = modeHeader + formatTier1Report(scoredOpportunities, tier1Names, companyName, date);
+    const scoresTsv = formatScoresTsv(scoredOpportunities, scoringMode);
+    const adoptionRisk = modeHeader + formatAdoptionRisk(triagedOpportunities, {
+      date,
+      scored: scoredOpportunities,
+    });
+    const tier1Report = modeHeader + formatTier1Report(scoredOpportunities, tier1Names, companyName, date, scoringMode);
 
     // Define output files
     const files: { name: string; content: string }[] = [

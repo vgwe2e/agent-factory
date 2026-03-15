@@ -11,9 +11,58 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { runPipeline } from "./pipeline-runner.js";
+import * as pipelineRunnerModule from "./pipeline-runner.js";
+import { formatScoresTsv } from "../output/format-scores-tsv.js";
 import { createLogger } from "../infra/logger.js";
 import { loadCheckpoint, saveCheckpoint } from "../infra/checkpoint.js";
 // -- Fixtures --
+function makeTestSkill(l3, l4Name, overrides = {}) {
+    return {
+        id: `skill-${l3}-${l4Name}`,
+        name: `Skill for ${l4Name} in ${l3}`,
+        description: `Description of skill in ${l4Name}`,
+        archetype: "DETERMINISTIC",
+        max_value: 1_000_000,
+        slider_percent: null,
+        overlap_group: null,
+        value_metric: "cost_reduction",
+        decision_made: "Automate process",
+        aera_skill_pattern: "AutoPilot",
+        is_actual: false,
+        source: null,
+        loe: null,
+        savings_type: null,
+        actions: [{ action_type: "alert", action_name: "Notify", description: "Notify team" }],
+        constraints: [{ constraint_type: "threshold", constraint_name: "Min", description: "Min value" }],
+        execution: {
+            target_systems: ["SAP"],
+            write_back_actions: [],
+            execution_trigger: null,
+            execution_frequency: null,
+            autonomy_level: "supervised",
+            approval_required: true,
+            approval_threshold: null,
+            rollback_strategy: null,
+        },
+        problem_statement: {
+            current_state: "Manual",
+            quantified_pain: "$1M annually",
+            root_cause: "No automation",
+            falsifiability_check: "Check",
+            outcome: "Reduce cost",
+        },
+        differentiation: null,
+        generated_at: null,
+        prompt_version: null,
+        is_cross_functional: null,
+        cross_functional_scope: null,
+        operational_flow: [],
+        walkthrough_decision: null,
+        walkthrough_actions: [],
+        walkthrough_narrative: null,
+        ...overrides,
+    };
+}
 function makeL4(l3, l2, l1, name, overrides = {}) {
     return {
         id: `${l3}-${name}`,
@@ -91,19 +140,28 @@ function makeFixtureExport() {
             filtered_skills: [],
         },
         hierarchy: [
-            // L4s for Opp-A (Tier 1 candidate: quick_win + high value)
-            makeL4("Opp-A", "L2-A", "L1-A", "Act-A1"),
+            // L4s for Opp-A -- one L4 has a skill
+            makeL4("Opp-A", "L2-A", "L1-A", "Act-A1", {
+                skills: [makeTestSkill("Opp-A", "Act-A1")],
+            }),
             makeL4("Opp-A", "L2-A", "L1-A", "Act-A2"),
             makeL4("Opp-A", "L2-A", "L1-A", "Act-A3"),
-            // L4s for Opp-B (Tier 2 candidate: high AI suitability L4s)
-            makeL4("Opp-B", "L2-B", "L1-B", "Act-B1", { ai_suitability: "HIGH" }),
+            // L4s for Opp-B -- one L4 has a skill
+            makeL4("Opp-B", "L2-B", "L1-B", "Act-B1", {
+                ai_suitability: "HIGH",
+                skills: [makeTestSkill("Opp-B", "Act-B1")],
+            }),
             makeL4("Opp-B", "L2-B", "L1-B", "Act-B2", { ai_suitability: "HIGH" }),
             makeL4("Opp-B", "L2-B", "L1-B", "Act-B3", { ai_suitability: "HIGH" }),
-            // L4s for Opp-C (Tier 3: default -- low ai suitability, low value)
-            makeL4("Opp-C", "L2-C", "L1-C", "Act-C1", { ai_suitability: "LOW", financial_rating: "LOW" }),
+            // L4s for Opp-C -- one L4 has a skill
+            makeL4("Opp-C", "L2-C", "L1-C", "Act-C1", {
+                ai_suitability: "LOW",
+                financial_rating: "LOW",
+                skills: [makeTestSkill("Opp-C", "Act-C1")],
+            }),
             makeL4("Opp-C", "L2-C", "L1-C", "Act-C2", { ai_suitability: "LOW", financial_rating: "LOW" }),
             makeL4("Opp-C", "L2-C", "L1-C", "Act-C3", { ai_suitability: "LOW", financial_rating: "LOW" }),
-            // Opp-D will be phantom (opportunity_exists=false) -> skip
+            // Opp-D has no L4s with skills -> phantom effectively skipped
         ],
         l3_opportunities: [
             makeL3("Opp-A", "L2-A", "L1-A", {
@@ -167,6 +225,48 @@ function makeFetchFn() {
     };
     return { fn: fn, calls };
 }
+/**
+ * Mock runSimulationPipeline that creates stub artifact directories
+ * and returns a valid SimulationPipelineResult with non-zero counts.
+ */
+function makeMockSimulationPipeline(options) {
+    const calls = [];
+    const fn = async (inputs, outputDir) => {
+        calls.push(inputs);
+        if (options?.shouldThrow) {
+            throw new Error("Simulation pipeline exploded");
+        }
+        // Create artifact directories with stub files for each input
+        for (const input of inputs) {
+            const subjectName = input.opportunity?.l3_name ?? input.l4Activity?.name ?? "unknown";
+            const slug = subjectName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+            const oppDir = path.join(outputDir, slug);
+            fs.mkdirSync(oppDir, { recursive: true });
+            fs.writeFileSync(path.join(oppDir, "decision-flow.mmd"), "graph TD\n  A-->B", "utf-8");
+            fs.writeFileSync(path.join(oppDir, "component-map.yaml"), "streams: []\n", "utf-8");
+            fs.writeFileSync(path.join(oppDir, "mock-test.yaml"), "decision: test\n", "utf-8");
+            fs.writeFileSync(path.join(oppDir, "integration-surface.yaml"), "source_systems: []\n", "utf-8");
+        }
+        return {
+            results: inputs.map((input) => ({
+                l3Name: input.opportunity?.l3_name ?? input.l4Activity?.name ?? "unknown",
+                slug: (input.opportunity?.l3_name ?? input.l4Activity?.name ?? "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+                artifacts: {
+                    decisionFlow: "graph TD\n  A-->B",
+                    componentMap: { streams: [], cortex: [], process_builder: [], agent_teams: [], ui: [] },
+                    mockTest: { decision: "test", input: { financial_context: {}, trigger: "test" }, expected_output: { action: "test", outcome: "test" }, rationale: "test" },
+                    integrationSurface: { source_systems: [], aera_ingestion: [], processing: [], ui_surface: [] },
+                },
+                validationSummary: { confirmedCount: 2, inferredCount: 1, mermaidValid: true },
+            })),
+            totalSimulated: inputs.length,
+            totalFailed: 0,
+            totalConfirmed: inputs.length * 2,
+            totalInferred: inputs.length,
+        };
+    };
+    return { fn, calls };
+}
 // -- Test setup --
 const logger = createLogger("silent");
 describe("pipeline-runner", () => {
@@ -181,16 +281,18 @@ describe("pipeline-runner", () => {
         const fixture = makeFixtureExport();
         const chatFn = makeChatFn();
         const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
         const result = await runPipeline("__fixture__", {
             outputDir: tmpDir,
             archiveThreshold: 100,
             chatFn,
             fetchFn,
+            runSimulationPipelineFn: simFn,
             parseExportFn: async () => ({ success: true, data: fixture }),
         }, logger);
-        // Opp-D is phantom (skip), so 3 processable
-        assert.equal(result.triageCount, 4, "all 4 triaged");
-        assert.equal(result.skippedCount, 1, "1 skipped (phantom)");
+        // 3 skills extracted (one per L3 with skills), all processable
+        assert.equal(result.triageCount, 3, "all 3 skills triaged");
+        assert.equal(result.skippedCount, 0, "0 skipped");
         assert.equal(result.scoredCount, 3, "3 scored");
         assert.equal(result.errorCount, 0, "no errors");
         assert.ok(result.totalDurationMs >= 0, "has duration");
@@ -199,27 +301,31 @@ describe("pipeline-runner", () => {
         const fixture = makeFixtureExport();
         const chatFn = makeChatFn({ failFor: ["Opp-B"] });
         const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
         const result = await runPipeline("__fixture__", {
             outputDir: tmpDir,
             archiveThreshold: 100,
             chatFn,
             fetchFn,
+            runSimulationPipelineFn: simFn,
             parseExportFn: async () => ({ success: true, data: fixture }),
         }, logger);
         assert.equal(result.scoredCount, 2, "2 scored successfully");
         assert.equal(result.errorCount, 1, "1 error");
         assert.equal(result.errors.length, 1);
-        assert.ok(result.errors[0].includes("Opp-B"), "error mentions Opp-B");
+        assert.ok(result.errors[0].includes("Opp-B") || result.errors[0].includes("skill-Opp-B"), "error mentions Opp-B skill");
     });
     it("calls archiveAndReset after threshold opportunities", async () => {
         const fixture = makeFixtureExport();
         const chatFn = makeChatFn();
         const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
         const result = await runPipeline("__fixture__", {
             outputDir: tmpDir,
             archiveThreshold: 2, // archive after every 2
             chatFn,
             fetchFn,
+            runSimulationPipelineFn: simFn,
             parseExportFn: async () => ({ success: true, data: fixture }),
         }, logger);
         assert.equal(result.scoredCount, 3);
@@ -234,11 +340,13 @@ describe("pipeline-runner", () => {
         const fixture = makeFixtureExport();
         const chatFn = makeChatFn();
         const { fn: fetchFn, calls } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
         await runPipeline("__fixture__", {
             outputDir: tmpDir,
             archiveThreshold: 100,
             chatFn,
             fetchFn,
+            runSimulationPipelineFn: simFn,
             parseExportFn: async () => ({ success: true, data: fixture }),
         }, logger);
         // Last fetch call should be unloadAll with keep_alive=0
@@ -250,13 +358,14 @@ describe("pipeline-runner", () => {
         const fixture = makeFixtureExport();
         const chatFn = makeChatFn();
         const { fn: fetchFn } = makeFetchFn();
-        // Pre-write a checkpoint marking Opp-A as already completed
+        const { fn: simFn } = makeMockSimulationPipeline();
+        // Pre-write a checkpoint marking Opp-A's skill as already completed
         const existingCheckpoint = {
             version: 1,
             inputFile: "__fixture__",
             startedAt: new Date().toISOString(),
             entries: [
-                { l3Name: "Opp-A", completedAt: new Date().toISOString(), status: "scored" },
+                { skillId: "skill-Opp-A-Act-A1", completedAt: new Date().toISOString(), status: "scored" },
             ],
         };
         saveCheckpoint(tmpDir, existingCheckpoint);
@@ -265,24 +374,26 @@ describe("pipeline-runner", () => {
             archiveThreshold: 100,
             chatFn,
             fetchFn,
+            runSimulationPipelineFn: simFn,
             gitCommit: false,
             parseExportFn: async () => ({ success: true, data: fixture }),
         }, logger);
-        // Opp-A skipped via resume, Opp-B and Opp-C scored, Opp-D phantom skip
-        assert.equal(result.scoredCount, 2, "2 scored (Opp-A resumed)");
+        // Opp-A's skill skipped via resume, Opp-B and Opp-C scored
+        assert.equal(result.scoredCount, 2, "2 scored (Opp-A skill resumed)");
         assert.equal(result.resumedCount, 1, "1 resumed from checkpoint");
     });
     it("stale checkpoint is ignored when inputPath differs", async () => {
         const fixture = makeFixtureExport();
         const chatFn = makeChatFn();
         const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
         // Pre-write a checkpoint for a different input file
         const staleCheckpoint = {
             version: 1,
             inputFile: "old-file.json",
             startedAt: new Date().toISOString(),
             entries: [
-                { l3Name: "Opp-A", completedAt: new Date().toISOString(), status: "scored" },
+                { skillId: "skill-Opp-A-Act-A1", completedAt: new Date().toISOString(), status: "scored" },
             ],
         };
         saveCheckpoint(tmpDir, staleCheckpoint);
@@ -291,6 +402,7 @@ describe("pipeline-runner", () => {
             archiveThreshold: 100,
             chatFn,
             fetchFn,
+            runSimulationPipelineFn: simFn,
             gitCommit: false,
             parseExportFn: async () => ({ success: true, data: fixture }),
         }, logger);
@@ -302,30 +414,97 @@ describe("pipeline-runner", () => {
         const fixture = makeFixtureExport();
         const chatFn = makeChatFn();
         const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
         await runPipeline("__fixture__", {
             outputDir: tmpDir,
             archiveThreshold: 100,
             chatFn,
             fetchFn,
+            runSimulationPipelineFn: simFn,
             gitCommit: false,
             parseExportFn: async () => ({ success: true, data: fixture }),
         }, logger);
         const cp = loadCheckpoint(tmpDir);
         assert.ok(cp !== null, "checkpoint file exists");
         assert.equal(cp.entries.length, 3, "3 entries (one per scored opp)");
-        assert.equal(cp.inputFile, "__fixture__", "inputFile matches");
+        assert.equal(cp.inputFile, path.resolve("__fixture__"), "inputFile matches (resolved to absolute)");
         assert.ok(cp.entries.every((e) => e.status === "scored"), "all entries scored");
+    });
+    it("writes evaluation output files after scoring completes", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        const evalDir = path.join(tmpDir, "evaluation");
+        assert.ok(fs.existsSync(path.join(evalDir, "triage.tsv")), "triage.tsv exists");
+        assert.ok(fs.existsSync(path.join(evalDir, "feasibility-scores.tsv")), "feasibility-scores.tsv exists");
+        assert.ok(fs.existsSync(path.join(evalDir, "adoption-risk.md")), "adoption-risk.md exists");
+        assert.ok(fs.existsSync(path.join(evalDir, "tier1-report.md")), "tier1-report.md exists");
+    });
+    it("writes final report files after scoring completes", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        const evalDir = path.join(tmpDir, "evaluation");
+        assert.ok(fs.existsSync(path.join(evalDir, "summary.md")), "summary.md exists");
+        assert.ok(fs.existsSync(path.join(evalDir, "dead-zones.md")), "dead-zones.md exists");
+        assert.ok(fs.existsSync(path.join(evalDir, "meta-reflection.md")), "meta-reflection.md exists");
+        assert.ok(fs.existsSync(path.join(evalDir, "simulations")), "simulations/ dir exists");
+    });
+    it("pipeline succeeds even if writeFinalReports fails", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline({ shouldThrow: true });
+        // Use a read-only directory to force writeFinalReports to fail
+        const readOnlyDir = path.join(tmpDir, "readonly");
+        fs.mkdirSync(readOnlyDir);
+        // Create the evaluation dir as a FILE to block mkdir inside writeFinalReports
+        fs.writeFileSync(path.join(readOnlyDir, "evaluation"), "block");
+        const result = await runPipeline("__fixture__", {
+            outputDir: readOnlyDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Pipeline should still return a valid result (non-fatal)
+        assert.equal(result.scoredCount, 3, "3 scored despite report failure");
+        assert.equal(result.errorCount, 0, "writeFinalReports failure is not counted as pipeline error");
     });
     it("git auto-commit disabled via option", async () => {
         const fixture = makeFixtureExport();
         const chatFn = makeChatFn();
         const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
         // gitCommit: false should prevent any git operations
         const result = await runPipeline("__fixture__", {
             outputDir: tmpDir,
             archiveThreshold: 100,
             chatFn,
             fetchFn,
+            runSimulationPipelineFn: simFn,
             gitCommit: false,
             parseExportFn: async () => ({ success: true, data: fixture }),
         }, logger);
@@ -336,21 +515,947 @@ describe("pipeline-runner", () => {
         const fixture = makeFixtureExport();
         const chatFn = makeChatFn({ failFor: ["Opp-B"] });
         const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
         const result = await runPipeline("__fixture__", {
             outputDir: tmpDir,
             archiveThreshold: 100,
             chatFn,
             fetchFn,
+            runSimulationPipelineFn: simFn,
             gitCommit: false,
             parseExportFn: async () => ({ success: true, data: fixture }),
         }, logger);
         assert.equal(result.scoredCount, 2, "2 scored");
         assert.equal(result.errorCount, 1, "1 error");
-        // Verify checkpoint records error status for Opp-B
+        // Verify checkpoint records error status for Opp-B's skill
         const cp = loadCheckpoint(tmpDir);
         assert.ok(cp !== null, "checkpoint exists");
-        const oppBEntry = cp.entries.find((e) => e.l3Name === "Opp-B");
-        assert.ok(oppBEntry, "Opp-B entry in checkpoint");
-        assert.equal(oppBEntry.status, "error", "Opp-B status is error");
+        const oppBEntry = cp.entries.find((e) => e.skillId === "skill-Opp-B-Act-B1" || e.l3Name === "Opp-B");
+        assert.ok(oppBEntry, "Opp-B skill entry in checkpoint");
+        assert.equal(oppBEntry.status, "error", "Opp-B skill status is error");
+    });
+    // -- Simulation wiring integration tests --
+    it("runs simulation pipeline for promoted opportunities and creates artifact directories", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn, calls } = makeMockSimulationPipeline();
+        await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Mock simulation was called with promoted inputs
+        assert.equal(calls.length, 1, "simulation pipeline called once");
+        assert.ok(calls[0].length > 0, "at least one promoted input");
+        // Check artifact directories exist
+        const simDir = path.join(tmpDir, "evaluation", "simulations");
+        assert.ok(fs.existsSync(simDir), "simulations/ dir exists");
+        // Check each promoted opportunity has artifact files
+        for (const input of calls[0]) {
+            const subjectName = input.opportunity?.l3_name ?? input.l4Activity?.name ?? "unknown";
+            const slug = subjectName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+            const oppDir = path.join(simDir, slug);
+            assert.ok(fs.existsSync(path.join(oppDir, "decision-flow.mmd")), `${slug}/decision-flow.mmd exists`);
+            assert.ok(fs.existsSync(path.join(oppDir, "component-map.yaml")), `${slug}/component-map.yaml exists`);
+            assert.ok(fs.existsSync(path.join(oppDir, "mock-test.yaml")), `${slug}/mock-test.yaml exists`);
+            assert.ok(fs.existsSync(path.join(oppDir, "integration-surface.yaml")), `${slug}/integration-surface.yaml exists`);
+        }
+    });
+    it("passes real simulation results to writeFinalReports (summary.md has non-zero simulation counts)", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        const summaryPath = path.join(tmpDir, "evaluation", "summary.md");
+        assert.ok(fs.existsSync(summaryPath), "summary.md exists");
+        const content = fs.readFileSync(summaryPath, "utf-8");
+        // The summary should contain non-zero simulation metrics
+        // formatSummary includes totalSimulated from the sim result
+        assert.ok(!content.includes("Simulated: 0"), "summary does not show 0 simulated");
+    });
+    it("simulation pipeline failure is non-fatal -- pipeline still completes", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline({ shouldThrow: true });
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Pipeline should still complete successfully
+        assert.equal(result.scoredCount, 3, "3 scored despite simulation failure");
+        assert.equal(result.errorCount, 0, "simulation failure is not a pipeline error");
+        assert.equal(result.simulatedCount, 0, "simulatedCount is 0 due to failure");
+    });
+    it("PipelineResult includes simulatedCount reflecting number of simulated opportunities", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // All 3 scored opportunities get composite ~0.67 >= 0.60 threshold -> all promoted
+        assert.equal(result.simulatedCount, 3, "all promoted opportunities were simulated");
+        assert.equal(result.promotedCount, result.simulatedCount, "simulatedCount matches promotedCount");
+    });
+    // -- Concurrency integration tests --
+    it("concurrency > 1 scores all opportunities in parallel", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            concurrency: 3,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Same counts as sequential -- concurrency doesn't change correctness
+        assert.equal(result.scoredCount, 3, "3 scored with concurrency=3");
+        assert.equal(result.errorCount, 0, "no errors");
+        assert.equal(result.concurrency, 3, "concurrency recorded in result");
+        assert.ok(result.avgPerOppMs >= 0, "avgPerOppMs is non-negative");
+    });
+    it("timed-out opportunity produces error entry, not a hang", async () => {
+        const fixture = makeFixtureExport();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        // chatFn that hangs forever for Opp-A
+        const chatFn = async (messages, _format) => {
+            const prompt = messages.map((m) => m.content).join(" ");
+            if (prompt.includes("Opp-A")) {
+                // Hang forever (will be timed out)
+                return new Promise(() => { });
+            }
+            return {
+                success: true,
+                content: JSON.stringify({
+                    data_readiness: { score: 2, reason: "Good" },
+                    aera_platform_fit: { score: 2, reason: "Good" },
+                    archetype_confidence: { score: 2, reason: "Good" },
+                    decision_density: { score: 2, reason: "Good" },
+                    financial_gravity: { score: 2, reason: "Good" },
+                    impact_proximity: { score: 2, reason: "Good" },
+                    confidence_signal: { score: 2, reason: "Good" },
+                    value_density: { score: 2, reason: "Good" },
+                    simulation_viability: { score: 2, reason: "Good" },
+                }),
+                durationMs: 100,
+            };
+        };
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            concurrency: 3,
+            requestTimeoutMs: 200, // 200ms timeout
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Opp-A should timeout, Opp-B and Opp-C should score
+        assert.equal(result.scoredCount, 2, "2 scored (Opp-A timed out)");
+        assert.equal(result.errorCount, 1, "1 error (timeout)");
+        assert.ok(result.errors.some((e) => e.includes("timed out")), "error message mentions timeout");
+    });
+    // -- Cost tracker integration tests --
+    it("PipelineResult includes costSummary when costTracker is provided", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        // Mock cost tracker
+        let started = false;
+        let stopped = false;
+        const mockCostTracker = {
+            start: () => { started = true; },
+            stop: () => { stopped = true; },
+            summary: () => ({
+                gpuSeconds: 120,
+                gpuHours: "0h 2m 0s",
+                estimatedCost: "$0.19",
+                ratePerHour: 5.58,
+            }),
+        };
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            costTracker: mockCostTracker,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        assert.ok(result.costSummary, "costSummary is present");
+        assert.equal(result.costSummary.gpuSeconds, 120, "gpuSeconds from mock");
+        assert.equal(result.costSummary.estimatedCost, "$0.19", "estimatedCost from mock");
+        assert.equal(result.costSummary.ratePerHour, 5.58, "ratePerHour from mock");
+    });
+    it("PipelineResult has no costSummary when costTracker is not provided (Ollama path)", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        assert.equal(result.costSummary, undefined, "costSummary is undefined for Ollama path");
+    });
+    // -- Cloud cost artifact tests --
+    it("writes cloud-cost.json when costTracker is provided", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        const expectedCost = {
+            gpuSeconds: 240,
+            gpuHours: "0h 4m 0s",
+            estimatedCost: "$0.37",
+            ratePerHour: 5.58,
+        };
+        const mockCostTracker = {
+            start: () => { },
+            stop: () => { },
+            summary: () => expectedCost,
+        };
+        await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            costTracker: mockCostTracker,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        const costPath = path.join(tmpDir, "evaluation", "cloud-cost.json");
+        assert.ok(fs.existsSync(costPath), "cloud-cost.json exists");
+        const written = JSON.parse(fs.readFileSync(costPath, "utf-8"));
+        assert.deepStrictEqual(written, expectedCost, "cloud-cost.json matches CostSummary");
+    });
+    it("does not write cloud-cost.json when no costTracker", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        const costPath = path.join(tmpDir, "evaluation", "cloud-cost.json");
+        assert.ok(!fs.existsSync(costPath), "cloud-cost.json does NOT exist for Ollama path");
+    });
+    it("checkpoint writer is flushed after pipeline completes with concurrency", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            concurrency: 2,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        const cp = loadCheckpoint(tmpDir);
+        assert.ok(cp !== null, "checkpoint file exists after concurrent run");
+        assert.equal(cp.entries.length, 3, "3 entries (one per scored opp)");
+        assert.ok(cp.entries.every((e) => e.status === "scored"), "all entries scored");
+    });
+    // -- Archived score loading on resume integration tests --
+    /**
+     * Helper: create a ScoringResult fixture matching what archiveAndReset writes.
+     */
+    function makeScoringResult(l3Name, l2Name, l1Name, composite = 0.67, skillIdOverride) {
+        return {
+            skillId: skillIdOverride ?? `skill-${l3Name}`,
+            skillName: `Skill for ${l3Name}`,
+            l4Name: `L4-${l3Name}`,
+            l3Name,
+            l2Name,
+            l1Name,
+            archetype: "DETERMINISTIC",
+            lenses: {
+                technical: {
+                    lens: "technical",
+                    subDimensions: [
+                        { name: "data_readiness", score: 2, reason: "Good" },
+                        { name: "aera_platform_fit", score: 2, reason: "Good" },
+                        { name: "archetype_confidence", score: 2, reason: "Good" },
+                    ],
+                    total: 6, maxPossible: 9, normalized: 0.67, confidence: "MEDIUM",
+                },
+                adoption: {
+                    lens: "adoption",
+                    subDimensions: [
+                        { name: "decision_density", score: 2, reason: "Good" },
+                        { name: "financial_gravity", score: 2, reason: "Good" },
+                        { name: "impact_proximity", score: 2, reason: "Good" },
+                        { name: "confidence_signal", score: 2, reason: "Good" },
+                    ],
+                    total: 8, maxPossible: 12, normalized: 0.67, confidence: "MEDIUM",
+                },
+                value: {
+                    lens: "value",
+                    subDimensions: [
+                        { name: "value_density", score: 2, reason: "Good" },
+                        { name: "simulation_viability", score: 2, reason: "Good" },
+                    ],
+                    total: 4, maxPossible: 6, normalized: 0.67, confidence: "MEDIUM",
+                },
+            },
+            composite,
+            overallConfidence: "MEDIUM",
+            promotedToSimulation: composite >= 0.60,
+            scoringDurationMs: 5000,
+        };
+    }
+    it("resumed run with archives produces reports with ALL scored opportunities", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        // Pre-write checkpoint marking Opp-A skill as completed
+        const existingCheckpoint = {
+            version: 1,
+            inputFile: "__fixture__",
+            startedAt: new Date().toISOString(),
+            entries: [
+                { skillId: "skill-Opp-A-Act-A1", completedAt: new Date().toISOString(), status: "scored" },
+            ],
+        };
+        saveCheckpoint(tmpDir, existingCheckpoint);
+        // Pre-write archive file with Opp-A skill's full ScoringResult
+        const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.75, "skill-Opp-A-Act-A1");
+        const pipelineDir = path.join(tmpDir, ".pipeline");
+        fs.mkdirSync(pipelineDir, { recursive: true });
+        fs.writeFileSync(path.join(pipelineDir, "checkpoint-1000.json"), JSON.stringify({ "skill-Opp-A-Act-A1": archivedOppA }, null, 2), "utf-8");
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Opp-A resumed, Opp-B + Opp-C scored in current session
+        assert.equal(result.scoredCount, 2, "2 scored in current session");
+        assert.equal(result.resumedCount, 1, "1 resumed from checkpoint");
+        // Verify summary.md reports ALL 3 scored opportunities
+        const summaryPath = path.join(tmpDir, "evaluation", "summary.md");
+        assert.ok(fs.existsSync(summaryPath), "summary.md exists");
+        const summaryContent = fs.readFileSync(summaryPath, "utf-8");
+        assert.ok(summaryContent.includes("**Total Evaluated:** 3"), `summary.md should show Total Evaluated: 3, got: ${summaryContent.match(/\*\*Total Evaluated:\*\* \d+/)?.[0]}`);
+        // Verify feasibility-scores.tsv has all 3 opportunities
+        const tsvPath = path.join(tmpDir, "evaluation", "feasibility-scores.tsv");
+        assert.ok(fs.existsSync(tsvPath), "feasibility-scores.tsv exists");
+        const tsvContent = fs.readFileSync(tsvPath, "utf-8");
+        assert.ok(tsvContent.includes("Opp-A"), "TSV contains Opp-A");
+        assert.ok(tsvContent.includes("Opp-B"), "TSV contains Opp-B");
+        assert.ok(tsvContent.includes("Opp-C"), "TSV contains Opp-C");
+    });
+    it("fresh run (no checkpoint) does not load archived scores", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Fresh run: all 3 processable scored, no resume
+        assert.equal(result.scoredCount, 3, "3 scored");
+        assert.equal(result.resumedCount, 0, "0 resumed");
+        // Summary should show 3 evaluated
+        const summaryPath = path.join(tmpDir, "evaluation", "summary.md");
+        const summaryContent = fs.readFileSync(summaryPath, "utf-8");
+        assert.ok(summaryContent.includes("**Total Evaluated:** 3"), "fresh run also shows 3 evaluated");
+    });
+    // -- skipSim and simTimeout integration tests --
+    it("skipSim=true causes simulation to be skipped entirely", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn, calls } = makeMockSimulationPipeline();
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            skipSim: true,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Simulation should never be called
+        assert.equal(calls.length, 0, "simulation pipeline was not called");
+        assert.equal(result.simulatedCount, 0, "simulatedCount is 0");
+        assert.equal(result.simErrorCount, 0, "simErrorCount is 0");
+        // Scoring and promotion still work
+        assert.equal(result.scoredCount, 3, "3 scored");
+        assert.ok(result.promotedCount > 0, "promotedCount is still computed");
+    });
+    it("skipSim=true preserves promotedCount (promotion is a scoring outcome)", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        // Run without skipSim to get baseline
+        const baseResult = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Run with skipSim in a fresh dir
+        const tmpDir2 = fs.mkdtempSync(path.join(os.tmpdir(), "pipeline-skip-"));
+        try {
+            const { fn: simFn2 } = makeMockSimulationPipeline();
+            const skipResult = await runPipeline("__fixture__", {
+                outputDir: tmpDir2,
+                archiveThreshold: 100,
+                chatFn,
+                fetchFn,
+                runSimulationPipelineFn: simFn2,
+                gitCommit: false,
+                skipSim: true,
+                parseExportFn: async () => ({ success: true, data: fixture }),
+            }, logger);
+            assert.equal(skipResult.promotedCount, baseResult.promotedCount, "promotedCount same with or without skipSim");
+        }
+        finally {
+            fs.rmSync(tmpDir2, { recursive: true, force: true });
+        }
+    });
+    it("simTimeoutMs is passed through to runSimulationPipeline when skipSim is false", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        // Custom mock that captures the options argument
+        const capturedOptions = [];
+        const simFn = async (inputs, outputDir, _llmTarget, _deps, options) => {
+            capturedOptions.push(options);
+            return { results: [], totalSimulated: 0, totalFailed: 0, totalConfirmed: 0, totalInferred: 0 };
+        };
+        await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            simTimeoutMs: 60000,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        assert.equal(capturedOptions.length, 1, "simulation was called once");
+        assert.deepStrictEqual(capturedOptions[0], { timeoutMs: 60000 }, "timeoutMs threaded through");
+    });
+    it("simulationLlmTarget is passed through to runSimulationPipeline", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const capturedTargets = [];
+        const simFn = async (_inputs, _outputDir, llmTarget) => {
+            capturedTargets.push(llmTarget);
+            return { results: [], totalSimulated: 0, totalFailed: 0, totalConfirmed: 0, totalInferred: 0 };
+        };
+        const simulationLlmTarget = {
+            backend: "vllm",
+            baseUrl: "https://pod.proxy.runpod.net/v1",
+            model: "Qwen/Qwen2.5-32B-Instruct",
+            apiKey: "vllm-test-key",
+        };
+        await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            simulationLlmTarget,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        assert.equal(capturedTargets.length, 1, "simulation target was passed once");
+        assert.deepStrictEqual(capturedTargets[0], simulationLlmTarget);
+    });
+    it("simErrorCount on PipelineResult reflects simulation failures", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        // Mock that returns some failures
+        const simFn = async (inputs, _outputDir) => {
+            return {
+                results: [],
+                totalSimulated: inputs.length - 1,
+                totalFailed: 1,
+                totalConfirmed: 0,
+                totalInferred: 0,
+            };
+        };
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        assert.equal(result.simErrorCount, 1, "simErrorCount from totalFailed");
+    });
+    it("default behavior unchanged when skipSim and simTimeoutMs are not set", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn, calls } = makeMockSimulationPipeline();
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Simulation should be called normally
+        assert.equal(calls.length, 1, "simulation pipeline called once");
+        assert.ok(result.simulatedCount > 0, "simulatedCount > 0");
+        assert.equal(typeof result.simErrorCount, "number", "simErrorCount exists on result");
+    });
+    it("resumed run with overlapping archived scores uses current session score (freshest wins)", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        // Archive has Opp-A skill scored, but do NOT mark it in the checkpoint resume
+        // file -- so Opp-A will be scored again in the current session.
+        // The report should use the current session's score (not the archived one).
+        const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.30, "skill-Opp-A-Act-A1"); // low composite
+        const pipelineDir = path.join(tmpDir, ".pipeline");
+        fs.mkdirSync(pipelineDir, { recursive: true });
+        fs.writeFileSync(path.join(pipelineDir, "checkpoint-1000.json"), JSON.stringify({ "skill-Opp-A-Act-A1": archivedOppA }, null, 2), "utf-8");
+        // No checkpoint resume file -- fresh run, but archive exists on disk
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Fresh run: completed.size === 0, so no archived scores loaded
+        // All 3 scored in current session
+        assert.equal(result.scoredCount, 3, "3 scored in current session");
+        assert.equal(result.resumedCount, 0, "0 resumed (no checkpoint)");
+        // Verify feasibility-scores.tsv contains all 3
+        const tsvPath = path.join(tmpDir, "evaluation", "feasibility-scores.tsv");
+        const tsvContent = fs.readFileSync(tsvPath, "utf-8");
+        assert.ok(tsvContent.includes("Opp-A"), "Opp-A in TSV");
+        assert.ok(tsvContent.includes("Opp-B"), "Opp-B in TSV");
+        assert.ok(tsvContent.includes("Opp-C"), "Opp-C in TSV");
+    });
+    it("checkpoint error entries are retried and do not resume stale archived scores", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        const existingCheckpoint = {
+            version: 1,
+            inputFile: "__fixture__",
+            startedAt: new Date().toISOString(),
+            entries: [
+                { skillId: "skill-Opp-A-Act-A1", completedAt: new Date().toISOString(), status: "error" },
+            ],
+        };
+        saveCheckpoint(tmpDir, existingCheckpoint);
+        const archivedOppA = makeScoringResult("Opp-A", "L2-A", "L1-A", 0.30, "skill-Opp-A-Act-A1");
+        const pipelineDir = path.join(tmpDir, ".pipeline");
+        fs.mkdirSync(pipelineDir, { recursive: true });
+        fs.writeFileSync(path.join(pipelineDir, "checkpoint-1000.json"), JSON.stringify({ "skill-Opp-A-Act-A1": archivedOppA }, null, 2), "utf-8");
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        assert.equal(result.resumedCount, 0, "error entries should not count as resumed");
+        assert.equal(result.scoredCount, 3, "Opp-A should be retried in the current session");
+    });
+    // -- Task 1: Refactor verification --
+    it("runThreeLensScoring is not exported (internal helper only)", () => {
+        const exports = Object.keys(pipelineRunnerModule);
+        assert.ok(!exports.includes("runThreeLensScoring"), "runThreeLensScoring should not be exported");
+    });
+    // -- Task 2: Two-pass scoring path tests --
+    it("two-pass pipeline executes full funnel: pre-score -> filter -> LLM score -> reports", async () => {
+        const fixture = makeFixtureExport();
+        // chatFn that returns valid consolidated scorer JSON
+        const consolidatedChatFn = async (_messages, _format) => ({
+            success: true,
+            content: JSON.stringify({
+                platform_fit: { score: 2, reason: "Good platform fit" },
+                sanity_verdict: "AGREE",
+                sanity_justification: "Deterministic scores align with platform assessment",
+                flagged_dimensions: [],
+                confidence: "MEDIUM",
+            }),
+            durationMs: 50,
+        });
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn: consolidatedChatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            scoringMode: "two-pass",
+            topN: 50,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        // Verify two-pass specific fields populated
+        assert.equal(result.scoringMode, "two-pass", "scoringMode is two-pass");
+        assert.ok(typeof result.preScoredCount === "number", "preScoredCount populated");
+        assert.ok(result.preScoredCount > 0, "preScoredCount > 0");
+        assert.ok(typeof result.survivorCount === "number", "survivorCount populated");
+        assert.ok(typeof result.cutoffScore === "number", "cutoffScore populated");
+        assert.ok(result.scoredCount > 0, "at least one LLM-scored result");
+        assert.equal(result.errorCount, 0, "no errors");
+        // Verify pre-score TSV was written
+        const preScoreTsvPath = path.join(tmpDir, "evaluation", "pre-scores.tsv");
+        assert.ok(fs.existsSync(preScoreTsvPath), "pre-scores.tsv written in two-pass mode");
+    });
+    it("openai-batch backend routes two-pass scoring and simulation through batch adapters", async () => {
+        const fixture = makeFixtureExport();
+        const batchScoringCalls = [];
+        const batchSimulationCalls = [];
+        const runTwoPassScoringOpenAiBatchFn = async () => {
+            batchScoringCalls.push(true);
+            const scored = {
+                skillId: "skill-Opp-A-Act-A1",
+                skillName: "Skill for Act-A1 in Opp-A",
+                l4Name: "Act-A1",
+                l3Name: "Opp-A",
+                l2Name: "L2-A",
+                l1Name: "L1-A",
+                archetype: "DETERMINISTIC",
+                lenses: {
+                    technical: {
+                        lens: "technical",
+                        subDimensions: [{ name: "platform_fit", score: 2, reason: "Good fit" }],
+                        total: 2,
+                        maxPossible: 3,
+                        normalized: 2 / 3,
+                        confidence: "HIGH",
+                    },
+                    adoption: {
+                        lens: "adoption",
+                        subDimensions: [{ name: "financial_signal", score: 3, reason: "Strong" }],
+                        total: 3,
+                        maxPossible: 12,
+                        normalized: 0.25,
+                        confidence: "HIGH",
+                    },
+                    value: {
+                        lens: "value",
+                        subDimensions: [{ name: "value_density", score: 2, reason: "Good" }],
+                        total: 2,
+                        maxPossible: 6,
+                        normalized: 2 / 6,
+                        confidence: "HIGH",
+                    },
+                },
+                composite: 0.74,
+                overallConfidence: "HIGH",
+                promotedToSimulation: true,
+                scoringDurationMs: 0,
+                sanityVerdict: "AGREE",
+                sanityJustification: "Aligned",
+                preScore: 0.7,
+            };
+            return {
+                scored: [scored],
+                errors: [],
+                scoredCount: 1,
+                promotedCount: 1,
+                filterResult: {
+                    survivors: [],
+                    eliminated: [],
+                    stats: {
+                        totalCandidates: 9,
+                        requestedTopN: 50,
+                        actualSurvivors: 1,
+                        eliminated: 8,
+                        cutoffScore: 0.7,
+                        tiesAtBoundary: 0,
+                    },
+                },
+            };
+        };
+        const runOpenAiBatchSimulationFn = async (inputs) => {
+            batchSimulationCalls.push(inputs);
+            return {
+                results: inputs.map((input) => ({
+                    l3Name: input.l4Activity?.name ?? input.opportunity?.l3_name ?? "unknown",
+                    slug: "act-a1-test",
+                    artifacts: {
+                        decisionFlow: "flowchart TD\n  A-->B",
+                        componentMap: { streams: [], cortex: [], process_builder: [], agent_teams: [], ui: [] },
+                        mockTest: {
+                            decision: "Test decision",
+                            input: { financial_context: {}, trigger: "Trigger" },
+                            expected_output: { action: "Action", outcome: "Outcome" },
+                            rationale: "Rationale",
+                        },
+                        integrationSurface: {
+                            source_systems: [],
+                            aera_ingestion: [],
+                            processing: [],
+                            ui_surface: [],
+                        },
+                    },
+                    validationSummary: {
+                        confirmedCount: 1,
+                        inferredCount: 0,
+                        mermaidValid: true,
+                    },
+                })),
+                totalSimulated: inputs.length,
+                totalFailed: 0,
+                totalConfirmed: inputs.length,
+                totalInferred: 0,
+            };
+        };
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            backend: "openai-batch",
+            openAiBatchConfig: {
+                apiKey: "sk-test",
+                scoringModel: "gpt-5-nano",
+                simulationModel: "gpt-5-mini",
+            },
+            runTwoPassScoringOpenAiBatchFn,
+            runOpenAiBatchSimulationFn,
+            gitCommit: false,
+            scoringMode: "two-pass",
+            topN: 50,
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        assert.equal(batchScoringCalls.length, 1, "batch scoring adapter called once");
+        assert.equal(batchSimulationCalls.length, 1, "batch simulation adapter called once");
+        assert.equal(batchSimulationCalls[0]?.length, 1, "one promoted item simulated");
+        assert.equal(result.scoringMode, "two-pass");
+        assert.equal(result.scoredCount, 1);
+        assert.equal(result.promotedCount, 1);
+        assert.equal(result.simulatedCount, 1);
+        assert.equal(result.errorCount, 0);
+        assert.equal(result.resumedCount, 0, "batch backend should not use checkpoint resume");
+    });
+    it("includes cross-functional skills in the two-pass candidate hierarchy", async () => {
+        const fixture = makeFixtureExport();
+        fixture.cross_functional_skills = [
+            makeTestSkill("Cross-Functional", "Cross-Functional", {
+                id: "cf-1",
+                name: "Cross-Plant Production Load Balancing",
+                is_cross_functional: true,
+                source: "value_flow",
+                max_value: 25_000_000,
+                decision_made: "Balance production across plants",
+                cross_functional_scope: {
+                    l1_domains: ["Make", "Plan", "Move & Fulfill"],
+                },
+            }),
+        ];
+        let receivedHierarchyCount = 0;
+        let receivedSkillCount = 0;
+        const runTwoPassScoringOpenAiBatchFn = async (args) => {
+            receivedHierarchyCount = args.hierarchy.length;
+            receivedSkillCount = args.allSkills.length;
+            return {
+                scored: [],
+                errors: [],
+                scoredCount: 0,
+                promotedCount: 0,
+                filterResult: {
+                    survivors: [],
+                    eliminated: [],
+                    stats: {
+                        totalCandidates: args.hierarchy.length,
+                        requestedTopN: 50,
+                        actualSurvivors: 0,
+                        eliminated: args.hierarchy.length,
+                        cutoffScore: 0,
+                        tiesAtBoundary: 0,
+                    },
+                },
+            };
+        };
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            backend: "openai-batch",
+            openAiBatchConfig: {
+                apiKey: "sk-test",
+                scoringModel: "gpt-5-nano",
+                simulationModel: "gpt-5-mini",
+            },
+            runTwoPassScoringOpenAiBatchFn,
+            gitCommit: false,
+            scoringMode: "two-pass",
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        assert.equal(receivedHierarchyCount, fixture.hierarchy.length + 1);
+        assert.equal(receivedSkillCount, 4);
+        assert.equal(result.preScoredCount, fixture.hierarchy.length + 1);
+    });
+    it("PIPE-03: synthesized LensScore from two-pass produces valid TSV with non-zero values", () => {
+        // Simulate what the two-pass path builds: a ScoringResult with LensScore objects
+        // generated from ConsolidatedScorerResult (technical from LLM, adoption+value from deterministic)
+        const mockScoringResult = {
+            skillId: "test-skill-1",
+            skillName: "Test Skill",
+            l4Name: "Test Activity",
+            l3Name: "Test Opportunity",
+            l2Name: "L2",
+            l1Name: "L1",
+            archetype: "DETERMINISTIC",
+            lenses: {
+                technical: {
+                    lens: "technical",
+                    subDimensions: [
+                        { name: "platform_fit", score: 2, reason: "Good fit" },
+                    ],
+                    total: 2,
+                    maxPossible: 3,
+                    normalized: 2 / 3,
+                    confidence: "MEDIUM",
+                },
+                adoption: {
+                    lens: "adoption",
+                    subDimensions: [
+                        { name: "financial_signal", score: 2, reason: "Deterministic: 0.75" },
+                        { name: "decision_density", score: 1, reason: "Deterministic: 0.40" },
+                        { name: "impact_order", score: 2, reason: "Deterministic: 0.60" },
+                        { name: "rating_confidence", score: 2, reason: "Deterministic: 0.80" },
+                    ],
+                    total: 7,
+                    maxPossible: 12,
+                    normalized: 7 / 12,
+                    confidence: "HIGH",
+                },
+                value: {
+                    lens: "value",
+                    subDimensions: [
+                        { name: "value_density", score: 2, reason: "Deterministic: 0.75" },
+                        { name: "simulation_viability", score: 1, reason: "Deterministic: 0.40" },
+                    ],
+                    total: 3,
+                    maxPossible: 6,
+                    normalized: 3 / 6,
+                    confidence: "HIGH",
+                },
+            },
+            composite: 0.65,
+            overallConfidence: "MEDIUM",
+            promotedToSimulation: true,
+            scoringDurationMs: 100,
+            sanityVerdict: "AGREE",
+            sanityJustification: "Scores align",
+            preScore: 0.72,
+        };
+        const tsv = formatScoresTsv([mockScoringResult]);
+        // Verify TSV has non-zero composite
+        const lines = tsv.split("\n");
+        assert.ok(lines.length >= 2, "TSV has header + data rows");
+        const dataLine = lines[1];
+        const cols = dataLine.split("\t");
+        // composite is the 20th column (0-indexed: 19)
+        const compositeStr = cols[19];
+        assert.ok(parseFloat(compositeStr) > 0, `Composite ${compositeStr} should be > 0`);
+        // Verify at least one lens total is > 0
+        // tech_total is col index 10, adoption_total is 15, value_total is 18
+        const techTotal = parseInt(cols[10], 10);
+        const adoptTotal = parseInt(cols[15], 10);
+        const valTotal = parseInt(cols[18], 10);
+        assert.ok(techTotal > 0 || adoptTotal > 0 || valTotal > 0, "At least one lens total > 0");
+    });
+    it("three-lens scoring path works identically after refactor (behavior-preserving)", async () => {
+        const fixture = makeFixtureExport();
+        const chatFn = makeChatFn();
+        const { fn: fetchFn } = makeFetchFn();
+        const { fn: simFn } = makeMockSimulationPipeline();
+        const result = await runPipeline("__fixture__", {
+            outputDir: tmpDir,
+            archiveThreshold: 100,
+            chatFn,
+            fetchFn,
+            runSimulationPipelineFn: simFn,
+            gitCommit: false,
+            scoringMode: "three-lens",
+            parseExportFn: async () => ({ success: true, data: fixture }),
+        }, logger);
+        assert.equal(result.scoredCount, 3, "3 scored in three-lens mode");
+        assert.equal(result.errorCount, 0, "no errors");
+        assert.equal(result.scoringMode, "three-lens", "scoringMode reported correctly");
     });
 });

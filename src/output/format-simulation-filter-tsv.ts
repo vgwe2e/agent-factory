@@ -1,5 +1,6 @@
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
 import type { ScoringResult } from "../types/scoring.js";
+import { isCrossFunctionalScoringResult } from "./cross-functional.js";
 
 function buildScoredByName(scored: ScoringResult[]): Map<string, ScoringResult> {
   const scoredByName = new Map<string, ScoringResult>();
@@ -27,6 +28,7 @@ export function formatSimulationFilterTsv(
       "ambiguity_risk_score",
       "implementation_readiness_score",
       "reasons",
+      "is_cross_functional",
     ].join("\t")
     : [
       "l3_name",
@@ -36,6 +38,7 @@ export function formatSimulationFilterTsv(
       "ambiguity_risk_score",
       "implementation_readiness_score",
       "reasons",
+      "is_cross_functional",
     ].join("\t");
   const scoredByName = buildScoredByName(scored);
 
@@ -60,6 +63,7 @@ export function formatSimulationFilterTsv(
           assessment.ambiguityRiskScore,
           assessment.implementationReadinessScore,
           assessment.reasons.join(" | "),
+          scoredRow ? (isCrossFunctionalScoringResult(scoredRow) ? "Y" : "N") : "N",
         ].join("\t");
       }
 
@@ -71,6 +75,7 @@ export function formatSimulationFilterTsv(
         assessment.ambiguityRiskScore,
         assessment.implementationReadinessScore,
         assessment.reasons.join(" | "),
+        scoredRow ? (isCrossFunctionalScoringResult(scoredRow) ? "Y" : "N") : "N",
       ].join("\t");
     });
 

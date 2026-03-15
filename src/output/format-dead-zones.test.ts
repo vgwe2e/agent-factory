@@ -130,6 +130,30 @@ describe("formatDeadZones", () => {
     assert.ok(md.includes("Finance"));
   });
 
+  it("shows opportunity and L4 context when skill metadata exists", () => {
+    const triaged = [
+      makeTriage({
+        l3Name: "Parent L3",
+        l4Name: "Parent L4",
+        skillId: "skill-1",
+        skillName: "Forward Opportunity",
+        action: "skip",
+        redFlags: [{ type: "DEAD_ZONE", decisionDensity: 0 }],
+      }),
+    ];
+    const scored = [makeScoring({
+      l3Name: "Parent L3",
+      l4Name: "Parent L4",
+      skillId: "skill-1",
+      skillName: "Forward Opportunity",
+    })];
+
+    const md = formatDeadZones(triaged, scored, FIXED_DATE);
+    assert.ok(md.includes("Forward Opportunity"));
+    assert.ok(md.includes("L4: Parent L4"));
+    assert.ok(md.includes("L3: Parent L3"));
+  });
+
   it("groups by L1 domain within sections", () => {
     const triaged = [
       makeTriage({

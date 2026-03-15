@@ -8,4 +8,4 @@
 import type { ScoringResult } from "../types/scoring.js";
 import type { TriageResult } from "../types/triage.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
-export declare function formatSummary(scored: ScoringResult[], triaged: TriageResult[], simResults: SimulationPipelineResult, companyName: string, date?: string): string;
+export declare function formatSummary(scored: ScoringResult[], triaged: TriageResult[], simResults: SimulationPipelineResult, companyName: string, date?: string, simSkipped?: boolean, scoringMode?: "two-pass" | "three-lens"): string;

@@ -22,8 +22,10 @@ function makeScoring(overrides = {}) {
         l3Name: "Test Opportunity",
         l2Name: "L2 Domain",
         l1Name: "L1 Area",
+        skillId: "skill-test",
+        skillName: "Test Skill",
+        l4Name: "Test L4",
         archetype: "DETERMINISTIC",
-        archetypeSource: "export",
         lenses: {
             technical: makeLens("technical", [
                 makeSub("data_readiness", 2),
@@ -111,6 +113,28 @@ describe("formatDeadZones", () => {
         assert.ok(md.includes("Low Priority"));
         assert.ok(md.includes("Low Stakes One"));
         assert.ok(md.includes("Finance"));
+    });
+    it("shows opportunity and L4 context when skill metadata exists", () => {
+        const triaged = [
+            makeTriage({
+                l3Name: "Parent L3",
+                l4Name: "Parent L4",
+                skillId: "skill-1",
+                skillName: "Forward Opportunity",
+                action: "skip",
+                redFlags: [{ type: "DEAD_ZONE", decisionDensity: 0 }],
+            }),
+        ];
+        const scored = [makeScoring({
+                l3Name: "Parent L3",
+                l4Name: "Parent L4",
+                skillId: "skill-1",
+                skillName: "Forward Opportunity",
+            })];
+        const md = formatDeadZones(triaged, scored, FIXED_DATE);
+        assert.ok(md.includes("Forward Opportunity"));
+        assert.ok(md.includes("L4: Parent L4"));
+        assert.ok(md.includes("L3: Parent L3"));
     });
     it("groups by L1 domain within sections", () => {
         const triaged = [

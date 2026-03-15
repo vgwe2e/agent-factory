@@ -49,10 +49,29 @@ function flagReason(flag) {
             return `Only ${flag.l4Count} L4 activit${flag.l4Count === 1 ? "y" : "ies"} -- insufficient for reliable scoring`;
     }
 }
-export function formatAdoptionRisk(opportunities, date) {
+function normalizeOptions(optionsOrDate) {
+    if (typeof optionsOrDate === "string") {
+        return { date: optionsOrDate };
+    }
+    return optionsOrDate ?? {};
+}
+function getL4Name(opportunity, scoredBySkillId) {
+    if (opportunity.l4Name) {
+        return opportunity.l4Name;
+    }
+    if (opportunity.skillId) {
+        return scoredBySkillId.get(opportunity.skillId)?.l4Name ?? "-";
+    }
+    return "-";
+}
+export function formatAdoptionRisk(opportunities, optionsOrDate) {
+    const { date, scored = [] } = normalizeOptions(optionsOrDate);
     const dateStr = date ?? new Date().toISOString().slice(0, 10);
     const totalCount = opportunities.length;
     const flaggedCount = opportunities.filter(o => o.redFlags.length > 0).length;
+    const scoredBySkillId = new Map(scored
+        .filter((result) => typeof result.skillId === "string" && result.skillId.length > 0)
+        .map((result) => [result.skillId, result]));
     // Group flag entries by type
     const grouped = new Map();
     for (const section of FLAG_SECTIONS) {
@@ -62,6 +81,8 @@ export function formatAdoptionRisk(opportunities, date) {
         for (const flag of opp.redFlags) {
             const entries = grouped.get(flag.type);
             entries.push({
+                opportunityName: opp.skillName ?? opp.l3Name,
+                l4Name: getL4Name(opp, scoredBySkillId),
                 l3Name: opp.l3Name,
                 domain: `${opp.l1Name} > ${opp.l2Name}`,
                 reason: flagReason(flag),
@@ -86,13 +107,13 @@ export function formatAdoptionRisk(opportunities, date) {
             lines.push("None identified.");
         }
         else {
-            lines.push("| Opportunity | Domain | Reason |");
-            lines.push("|-------------|--------|--------|");
+            lines.push("| Opportunity | L4 | L3 | Domain | Reason |");
+            lines.push("|-------------|----|----|--------|--------|");
             for (const entry of entries) {
-                const name = entry.action === "SKIP"
-                    ? `~~${entry.l3Name}~~ (${entry.action})`
-                    : entry.l3Name;
-                lines.push(`| ${name} | ${entry.domain} | ${entry.reason} |`);
+                const opportunityName = entry.action === "SKIP"
+                    ? `~~${entry.opportunityName}~~ (${entry.action})`
+                    : entry.opportunityName;
+                lines.push(`| ${opportunityName} | ${entry.l4Name} | ${entry.l3Name} | ${entry.domain} | ${entry.reason} |`);
             }
         }
         lines.push("");

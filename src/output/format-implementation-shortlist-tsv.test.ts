@@ -169,13 +169,14 @@ describe("formatImplementationShortlistTsv", () => {
 
   it("uses skill_name and l4_name headers in two-pass mode", () => {
     const tsv = formatImplementationShortlistTsv(
-      [makeScoring()],
+      [makeScoring({ skillId: "cf-test", l1Name: "Cross-Functional", l4Name: "Advance Opp", l3Name: "Parent Opp" })],
       makeSimResults(),
       ["ADVANCE"],
       "two-pass",
     );
 
-    const [header] = tsv.trim().split("\n");
+    const [header, row] = tsv.trim().split("\n");
     assert.deepEqual(header.split("\t").slice(0, 3), ["skill_id", "skill_name", "l4_name"]);
+    assert.equal(row.split("\t").at(-1), "Y");
   });
 });

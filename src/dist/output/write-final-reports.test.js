@@ -47,8 +47,10 @@ function makeScoring(overrides = {}) {
         l3Name: "Test Opp",
         l2Name: "L2 Domain",
         l1Name: "L1 Area",
+        skillId: "skill-test",
+        skillName: "Test Skill",
+        l4Name: "Test L4",
         archetype: "DETERMINISTIC",
-        archetypeSource: "export",
         lenses: {
             technical: makeLens("technical", [
                 makeSub("data_readiness", 2),
@@ -99,6 +101,14 @@ function makeSimResult(overrides = {}) {
                 ui_surface: [],
             },
         },
+        assessment: {
+            groundednessScore: 80,
+            integrationConfidenceScore: 75,
+            ambiguityRiskScore: 20,
+            implementationReadinessScore: 78,
+            verdict: "ADVANCE",
+            reasons: ["Scenario is grounded, integration-aware, and implementation-ready."],
+        },
         validationSummary: {
             confirmedCount: 1,
             inferredCount: 0,
@@ -144,6 +154,9 @@ describe("writeFinalReports", () => {
         assert.ok(entries.includes("summary.md"));
         assert.ok(entries.includes("dead-zones.md"));
         assert.ok(entries.includes("meta-reflection.md"));
+        assert.ok(entries.includes("simulation-filter.tsv"));
+        assert.ok(entries.includes("implementation-shortlist.tsv"));
+        assert.ok(entries.includes("manual-review-queue.tsv"));
     });
     it("writes summary.md with formatSummary content", async () => {
         const dir = await makeTmpDir();
@@ -176,6 +189,29 @@ describe("writeFinalReports", () => {
         assert.ok(content.includes("Meta-Reflection"));
         assert.ok(content.length > 0);
     });
+    it("writes skill_name and l4_name headers for two-pass TSV reports", async () => {
+        const dir = await makeTmpDir();
+        const triaged = [makeTriage()];
+        const scored = [makeScoring({ l3Name: "Parent L3", skillId: "skill-two-pass", skillName: "Two-Pass Opportunity", l4Name: "Two-Pass Subject", preScore: 0.66 })];
+        const simResults = makeSimPipelineResult([makeSimResult({ l3Name: "Two-Pass Subject" })]);
+        await writeFinalReports(dir, scored, triaged, simResults, "TestCorp", DATE, false, "two-pass");
+        const simulationFilter = await fs.readFile(path.join(dir, "evaluation", "simulation-filter.tsv"), "utf-8");
+        const shortlist = await fs.readFile(path.join(dir, "evaluation", "implementation-shortlist.tsv"), "utf-8");
+        const reviewQueue = await fs.readFile(path.join(dir, "evaluation", "manual-review-queue.tsv"), "utf-8");
+        assert.deepEqual(simulationFilter.split("\n")[0].split("\t").slice(0, 3), ["skill_id", "skill_name", "l4_name"]);
+        assert.deepEqual(shortlist.split("\n")[0].split("\t").slice(0, 3), ["skill_id", "skill_name", "l4_name"]);
+        assert.deepEqual(reviewQueue.split("\n")[0].split("\t").slice(0, 3), ["skill_id", "skill_name", "l4_name"]);
+    });
+    it("writes two-pass summary with opportunity, L4, and L3 columns", async () => {
+        const dir = await makeTmpDir();
+        const triaged = [makeTriage({ l3Name: "Parent L3", skillId: "skill-two-pass", skillName: "Two-Pass Opportunity", l4Name: "Two-Pass Subject" })];
+        const scored = [makeScoring({ l3Name: "Parent L3", skillId: "skill-two-pass", skillName: "Two-Pass Opportunity", l4Name: "Two-Pass Subject", preScore: 0.66 })];
+        const simResults = makeSimPipelineResult([makeSimResult({ l3Name: "Two-Pass Subject" })]);
+        await writeFinalReports(dir, scored, triaged, simResults, "TestCorp", DATE, false, "two-pass");
+        const summary = await fs.readFile(path.join(dir, "evaluation", "summary.md"), "utf-8");
+        assert.ok(summary.includes("| Rank | Opportunity | L4 | L3 | Composite | Archetype | Confidence | Simulated | Verdict |"));
+        assert.ok(summary.includes("| 1 | Two-Pass Opportunity | Two-Pass Subject | Parent L3 |"));
+    });
     it("creates simulations/ directory with per-slug subdirectories", async () => {
         const dir = await makeTmpDir();
         const simResult1 = makeSimResult({ l3Name: "Opp Alpha", slug: "opp-alpha" });
@@ -201,6 +237,7 @@ describe("writeFinalReports", () => {
         assert.ok(entries.includes("component-map.yaml"));
         assert.ok(entries.includes("mock-test.yaml"));
         assert.ok(entries.includes("integration-surface.yaml"));
+        assert.ok(entries.includes("simulation-assessment.yaml"));
         // Verify content is non-empty
         const mmd = await fs.readFile(path.join(slugDir, "decision-flow.mmd"), "utf-8");
         assert.ok(mmd.includes("graph TD"));
@@ -210,6 +247,8 @@ describe("writeFinalReports", () => {
         assert.ok(mtYaml.includes("Approve budget"));
         const isYaml = await fs.readFile(path.join(slugDir, "integration-surface.yaml"), "utf-8");
         assert.ok(isYaml.includes("SAP"));
+        const assessmentYaml = await fs.readFile(path.join(slugDir, "simulation-assessment.yaml"), "utf-8");
+        assert.ok(assessmentYaml.includes("ADVANCE"));
     });
     it("returns success with all written file paths", async () => {
         const dir = await makeTmpDir();
@@ -220,8 +259,8 @@ describe("writeFinalReports", () => {
         assert.equal(result.success, true);
         if (!result.success)
             return;
-        // 3 markdown files + 4 simulation artifact files = 7
-        assert.equal(result.files.length, 7);
+        // 3 markdown files + 3 TSVs + 5 simulation artifact files = 11
+        assert.equal(result.files.length, 11);
         for (const filePath of result.files) {
             assert.ok(path.isAbsolute(filePath), `Expected absolute path: ${filePath}`);
             await fs.access(filePath);
@@ -236,8 +275,8 @@ describe("writeFinalReports", () => {
         assert.equal(result.success, true);
         if (!result.success)
             return;
-        // Only 3 markdown files
-        assert.equal(result.files.length, 3);
+        // 3 markdown files + 3 TSVs
+        assert.equal(result.files.length, 6);
         const simDir = path.join(dir, "evaluation", "simulations");
         const entries = await fs.readdir(simDir);
         assert.equal(entries.length, 0);

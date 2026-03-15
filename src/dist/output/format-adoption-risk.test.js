@@ -55,7 +55,7 @@ describe("formatAdoptionRisk", () => {
                 l1Name: "Supply Chain",
                 l2Name: "Logistics",
                 redFlags: [{ type: "ORPHAN", l4Count: 1 }],
-                action: "flag",
+                action: "demote",
                 l4Count: 1,
             }),
         ];
@@ -123,9 +123,44 @@ describe("formatAdoptionRisk", () => {
             }),
         ];
         const result = formatAdoptionRisk(opps, FIXED_DATE);
-        assert.ok(result.includes("| Opportunity | Domain | Reason |"));
+        assert.ok(result.includes("| Opportunity | L4 | L3 | Domain | Reason |"));
         assert.ok(result.includes("Flagged Opp"));
         assert.ok(result.includes("Finance > AP"));
+    });
+    it("uses skill and L4 names when available", () => {
+        const opps = [
+            makeTriage({
+                l3Name: "Parent L3",
+                l4Name: "Parent L4",
+                skillId: "skill-1",
+                skillName: "Forward Opportunity",
+                redFlags: [{ type: "DEAD_ZONE", decisionDensity: 0 }],
+            }),
+        ];
+        const result = formatAdoptionRisk(opps, {
+            date: FIXED_DATE,
+            scored: [{
+                    l1Name: "L1 Area",
+                    l2Name: "L2 Domain",
+                    l3Name: "Parent L3",
+                    l4Name: "Parent L4",
+                    skillId: "skill-1",
+                    skillName: "Forward Opportunity",
+                    archetype: "DETERMINISTIC",
+                    lenses: {
+                        technical: { lens: "technical", subDimensions: [], total: 0, maxPossible: 9, normalized: 0, confidence: "LOW" },
+                        adoption: { lens: "adoption", subDimensions: [], total: 0, maxPossible: 12, normalized: 0, confidence: "LOW" },
+                        value: { lens: "value", subDimensions: [], total: 0, maxPossible: 6, normalized: 0, confidence: "LOW" },
+                    },
+                    composite: 0,
+                    overallConfidence: "LOW",
+                    promotedToSimulation: false,
+                    scoringDurationMs: 0,
+                }],
+        });
+        assert.ok(result.includes("Forward Opportunity"));
+        assert.ok(result.includes("Parent L4"));
+        assert.ok(result.includes("Parent L3"));
     });
     it("marks skipped opportunities", () => {
         const opps = [

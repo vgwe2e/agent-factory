@@ -8,6 +8,7 @@
  */
 
 import type { TriageResult, RedFlag } from "../types/triage.js";
+import type { ScoringResult } from "../types/scoring.js";
 
 /** Ordered flag type sections matching FLAG-01 through FLAG-05. */
 const FLAG_SECTIONS: {
@@ -59,19 +60,54 @@ function flagReason(flag: RedFlag): string {
 }
 
 interface FlagEntry {
+  opportunityName: string;
+  l4Name: string;
   l3Name: string;
   domain: string;
   reason: string;
   action: string;
 }
 
+interface FormatAdoptionRiskOptions {
+  date?: string;
+  scored?: ScoringResult[];
+}
+
+function normalizeOptions(
+  optionsOrDate?: string | FormatAdoptionRiskOptions,
+): FormatAdoptionRiskOptions {
+  if (typeof optionsOrDate === "string") {
+    return { date: optionsOrDate };
+  }
+  return optionsOrDate ?? {};
+}
+
+function getL4Name(
+  opportunity: TriageResult,
+  scoredBySkillId: Map<string, ScoringResult>,
+): string {
+  if (opportunity.l4Name) {
+    return opportunity.l4Name;
+  }
+  if (opportunity.skillId) {
+    return scoredBySkillId.get(opportunity.skillId)?.l4Name ?? "-";
+  }
+  return "-";
+}
+
 export function formatAdoptionRisk(
   opportunities: TriageResult[],
-  date?: string,
+  optionsOrDate?: string | FormatAdoptionRiskOptions,
 ): string {
+  const { date, scored = [] } = normalizeOptions(optionsOrDate);
   const dateStr = date ?? new Date().toISOString().slice(0, 10);
   const totalCount = opportunities.length;
   const flaggedCount = opportunities.filter(o => o.redFlags.length > 0).length;
+  const scoredBySkillId = new Map(
+    scored
+      .filter((result) => typeof result.skillId === "string" && result.skillId.length > 0)
+      .map((result) => [result.skillId, result] as const),
+  );
 
   // Group flag entries by type
   const grouped = new Map<RedFlag["type"], FlagEntry[]>();
@@ -83,6 +119,8 @@ export function formatAdoptionRisk(
     for (const flag of opp.redFlags) {
       const entries = grouped.get(flag.type)!;
       entries.push({
+        opportunityName: opp.skillName ?? opp.l3Name,
+        l4Name: getL4Name(opp, scoredBySkillId),
         l3Name: opp.l3Name,
         domain: `${opp.l1Name} > ${opp.l2Name}`,
         reason: flagReason(flag),
@@ -110,13 +148,13 @@ export function formatAdoptionRisk(
     if (entries.length === 0) {
       lines.push("None identified.");
     } else {
-      lines.push("| Opportunity | Domain | Reason |");
-      lines.push("|-------------|--------|--------|");
+      lines.push("| Opportunity | L4 | L3 | Domain | Reason |");
+      lines.push("|-------------|----|----|--------|--------|");
       for (const entry of entries) {
-        const name = entry.action === "SKIP"
-          ? `~~${entry.l3Name}~~ (${entry.action})`
-          : entry.l3Name;
-        lines.push(`| ${name} | ${entry.domain} | ${entry.reason} |`);
+        const opportunityName = entry.action === "SKIP"
+          ? `~~${entry.opportunityName}~~ (${entry.action})`
+          : entry.opportunityName;
+        lines.push(`| ${opportunityName} | ${entry.l4Name} | ${entry.l3Name} | ${entry.domain} | ${entry.reason} |`);
       }
     }
     lines.push("");

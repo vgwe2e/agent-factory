@@ -18,6 +18,7 @@ export function formatSummary(
   companyName: string,
   date?: string,
   simSkipped?: boolean,
+  scoringMode?: "two-pass" | "three-lens",
 ): string {
   const dateStr = date ?? new Date().toISOString().slice(0, 10);
   const lines: string[] = [];
@@ -56,8 +57,13 @@ export function formatSummary(
 
   lines.push("## Top Opportunities");
   lines.push("");
-  lines.push("| Rank | Name | Composite | Archetype | Confidence | Simulated | Verdict |");
-  lines.push("|------|------|-----------|-----------|------------|-----------|---------|");
+  if (scoringMode === "two-pass") {
+    lines.push("| Rank | Opportunity | L4 | L3 | Composite | Archetype | Confidence | Simulated | Verdict |");
+    lines.push("|------|-------------|----|----|-----------|-----------|------------|-----------|---------|");
+  } else {
+    lines.push("| Rank | Name | Composite | Archetype | Confidence | Simulated | Verdict |");
+    lines.push("|------|------|-----------|-----------|------------|-----------|---------|");
+  }
 
   const simulatedIds = new Set(simResults.results.map(r => r.l3Name));
   const verdicts = new Map(
@@ -69,11 +75,22 @@ export function formatSummary(
   for (let i = 0; i < top.length; i++) {
     const s = top[i];
     const displayName = s.skillName ?? s.l3Name;
-    const simulated = simulatedIds.has(s.skillId ?? s.l3Name) ? "Yes" : "No";
-    const verdict = verdicts.get(s.skillId ?? s.l3Name) ?? "-";
-    lines.push(
-      `| ${i + 1} | ${displayName} | ${s.composite.toFixed(2)} | ${s.archetype} | ${s.overallConfidence} | ${simulated} | ${verdict} |`,
+    const simulationKeys = [s.l4Name, s.l3Name, s.skillId].filter(
+      (key): key is string => typeof key === "string" && key.length > 0,
     );
+    const simulated = simulationKeys.some((key) => simulatedIds.has(key)) ? "Yes" : "No";
+    const verdict = simulationKeys
+      .map((key) => verdicts.get(key))
+      .find((value): value is NonNullable<typeof value> => value !== undefined) ?? "-";
+    if (scoringMode === "two-pass") {
+      lines.push(
+        `| ${i + 1} | ${displayName} | ${s.l4Name} | ${s.l3Name} | ${s.composite.toFixed(2)} | ${s.archetype} | ${s.overallConfidence} | ${simulated} | ${verdict} |`,
+      );
+    } else {
+      lines.push(
+        `| ${i + 1} | ${displayName} | ${s.composite.toFixed(2)} | ${s.archetype} | ${s.overallConfidence} | ${simulated} | ${verdict} |`,
+      );
+    }
   }
 
   lines.push("");

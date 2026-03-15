@@ -31,8 +31,9 @@ import {
 } from "./context-tracker.js";
 import { ollamaChat } from "../scoring/ollama-client.js";
 import { buildKnowledgeContext } from "../scoring/knowledge-context.js";
+import type { KnowledgeContext } from "../scoring/knowledge-context.js";
 import { groupL4sByL3 } from "../triage/red-flags.js";
-import { extractScoringSkills } from "./extract-skills.js";
+import { buildScoringHierarchy, extractScoringSkills } from "./extract-skills.js";
 import { loadCheckpoint, getCompletedNames, createCheckpointWriter, loadCheckpointForMode, getCompletedL4Ids, createCheckpointV2Writer } from "../infra/checkpoint.js";
 import { checkOllama, warmUpModel, isOllamaHealthy } from "../infra/ollama.js";
 import type { Checkpoint, CheckpointV2 } from "../infra/checkpoint.js";
@@ -55,6 +56,9 @@ import { formatPreScoreTsv } from "../output/format-pre-score-tsv.js";
 import type { L4Activity } from "../types/hierarchy.js";
 import fs from "node:fs/promises";
 import path from "node:path";
+import type { OpenAiBatchConfig } from "../infra/openai-batch-client.js";
+import { runTwoPassScoringOpenAiBatch as defaultRunTwoPassScoringOpenAiBatch } from "../scoring/two-pass-openai-batch.js";
+import { runOpenAiBatchSimulation as defaultRunOpenAiBatchSimulation } from "../simulation/openai-batch-pipeline.js";
 
 // -- Types --
 
@@ -76,8 +80,12 @@ export interface PipelineOptions {
   gitCommit?: boolean;
   /** Inject runSimulationPipeline for testing (avoids LLM calls in tests). */
   runSimulationPipelineFn?: typeof defaultRunSimulationPipeline;
-  /** Scoring backend -- when "vllm", skips Ollama model management. Default: "ollama". */
-  backend?: "ollama" | "vllm";
+  /** Inject OpenAI Batch scoring for testing. */
+  runTwoPassScoringOpenAiBatchFn?: typeof defaultRunTwoPassScoringOpenAiBatch;
+  /** Inject OpenAI Batch simulation for testing. */
+  runOpenAiBatchSimulationFn?: typeof defaultRunOpenAiBatchSimulation;
+  /** Scoring backend -- when not "ollama", skips local model management. Default: "ollama". */
+  backend?: "ollama" | "vllm" | "openai-batch";
   /** Number of opportunities to score in parallel (default: 1 = sequential). */
   concurrency?: number;
   /**
@@ -103,6 +111,8 @@ export interface PipelineOptions {
   scoringMode?: "two-pass" | "three-lens";
   /** Number of top-scoring L4 candidates for two-pass LLM scoring. Default: 50. */
   topN?: number;
+  /** OpenAI Batch configuration when backend is openai-batch. */
+  openAiBatchConfig?: OpenAiBatchConfig;
 }
 
 export interface PipelineResult {
@@ -152,7 +162,7 @@ async function runThreeLensScoring(
   completed: Set<string>,
   checkpoint: Checkpoint,
   data: HierarchyExport,
-  knowledgeContext: string,
+  knowledgeContext: KnowledgeContext,
   options: PipelineOptions,
   logger: Logger,
   ctx: EvaluationContext,
@@ -300,7 +310,7 @@ async function runTwoPassScoring(
   completed: Set<string>,
   checkpoint: CheckpointV2,
   data: HierarchyExport,
-  knowledgeContext: string,
+  knowledgeContext: KnowledgeContext,
   options: PipelineOptions,
   logger: Logger,
   ctx: EvaluationContext,
@@ -309,6 +319,10 @@ async function runTwoPassScoring(
   const errors: string[] = [];
   let scoredCount = 0;
   let promotedCount = 0;
+  const consolidatedKnowledgeContext =
+    `Platform Capabilities:\n${knowledgeContext.capabilities}\n\n` +
+    `UI Components:\n${knowledgeContext.components}\n\n` +
+    `Process Builder Nodes:\n${knowledgeContext.processBuilder}`;
 
   // Step 1: Deterministic pre-score all L4s
   const topN = options.topN ?? 50;
@@ -380,7 +394,7 @@ async function runTwoPassScoring(
       let skill = skillByL4.get(l4Name);
       if (!skill) {
         // Try to create a minimal SkillWithContext from the L4 activity data
-        const l4 = data.hierarchy.find(h => h.id === l4Id);
+        const l4 = hierarchy.find(h => h.id === l4Id);
         if (!l4 || l4.skills.length === 0) {
           // L4 has no skills -- cannot be LLM-scored. Skip silently.
           childLog.info("Skipping (no skills under this L4)");
@@ -420,7 +434,7 @@ async function runTwoPassScoring(
         // scoreConsolidated handles retry internally via scoreWithRetry.
         // We wrap in withTimeout for stuck-request protection.
         const result = await withTimeout(
-          (_signal) => scoreConsolidated(skill!, knowledgeContext, preScore, chatFn),
+          (_signal) => scoreConsolidated(skill!, consolidatedKnowledgeContext, preScore, chatFn),
           requestTimeoutMs,
         );
 
@@ -459,7 +473,7 @@ async function runTwoPassScoring(
             l4Id,
             completedAt: new Date().toISOString(),
             status: "scored",
-          } as never);
+          });
         } else {
           addError(ctx, l4Id, "scoring", result.error);
           errors.push(result.error);
@@ -470,7 +484,7 @@ async function runTwoPassScoring(
             l4Id,
             completedAt: new Date().toISOString(),
             status: "error",
-          } as never);
+          });
         }
       } catch (err) {
         if (err instanceof TimeoutError) {
@@ -486,11 +500,11 @@ async function runTwoPassScoring(
         }
         progress.error(l4Name);
 
-        writer.enqueue({
-          l4Id,
-          completedAt: new Date().toISOString(),
-          status: "error",
-        } as never);
+          writer.enqueue({
+            l4Id,
+            completedAt: new Date().toISOString(),
+            status: "error",
+          });
       }
     }));
 
@@ -522,6 +536,7 @@ export async function runPipeline(
   logger: Logger,
 ): Promise<PipelineResult> {
   const startMs = Date.now();
+  const backend = options.backend ?? "ollama";
   const archiveThreshold =
     options.archiveThreshold ?? DEFAULT_ARCHIVE_THRESHOLD;
   const triageModel = options.models?.triage ?? DEFAULT_TRIAGE_MODEL;
@@ -542,54 +557,64 @@ export async function runPipeline(
     throw new Error(`Failed to parse export: ${parseResult.error}`);
   }
   const data: HierarchyExport = parseResult.data;
-  // Extract skills from hierarchy
-  const allSkills = extractScoringSkills(data.hierarchy);
+  const scoringHierarchy = buildScoringHierarchy(data);
+  const crossFunctionalCount = data.cross_functional_skills?.length ?? 0;
+  const allSkills = extractScoringSkills(scoringHierarchy);
 
   logger.info(
     {
       l3Count: data.l3_opportunities.length,
       l4Count: data.hierarchy.length,
+      crossFunctionalSkillCount: crossFunctionalCount,
+      scoringCandidateCount: scoringHierarchy.length,
       skillCount: allSkills.length,
     },
     "Export parsed",
   );
 
-  // 1b. Load checkpoint for resume support
   const resolvedInput = path.resolve(inputPath);
-  const existingCheckpoint = loadCheckpoint(options.outputDir);
-  const isStale = !existingCheckpoint || path.resolve(existingCheckpoint.inputFile) !== resolvedInput;
-  const checkpoint: Checkpoint = isStale
-    ? { version: 1, inputFile: resolvedInput, startedAt: new Date().toISOString(), entries: [] }
-    : existingCheckpoint;
-  const completed = isStale ? new Set<string>() : getCompletedNames(existingCheckpoint);
+  const enableResume = backend !== "openai-batch";
+  let checkpoint: Checkpoint = {
+    version: 1,
+    inputFile: resolvedInput,
+    startedAt: new Date().toISOString(),
+    entries: [],
+  };
+  let completed = new Set<string>();
 
-  if (completed.size > 0) {
-    const scoredFromCheckpoint = checkpoint.entries.filter((e) => e.status === 'scored').length;
-    const errorsFromCheckpoint = checkpoint.entries.filter((e) => e.status === 'error').length;
-    logger.info(
-      { resuming: completed.size, scored: scoredFromCheckpoint, errors: errorsFromCheckpoint },
-      `Resuming from checkpoint: ${scoredFromCheckpoint} scored, ${errorsFromCheckpoint} errors, ${completed.size} total completed`,
-    );
-  }
+  if (enableResume) {
+    const existingCheckpoint = loadCheckpoint(options.outputDir);
+    const isStale = !existingCheckpoint || path.resolve(existingCheckpoint.inputFile) !== resolvedInput;
+    checkpoint = isStale
+      ? { version: 1, inputFile: resolvedInput, startedAt: new Date().toISOString(), entries: [] }
+      : existingCheckpoint;
+    completed = isStale ? new Set<string>() : getCompletedNames(existingCheckpoint);
 
-  const resumedCount = completed.size;
-
-  // 1c. Load previously-scored results from archive so reports include ALL scores
-  if (completed.size > 0) {
-    const archived = await loadArchivedScores(options.outputDir);
-    for (const sr of archived) {
-      // Only include scores for skills we're skipping (already completed)
-      // Current-session scores will be added during scoring below
-      const key = sr.skillId ?? sr.l3Name;
-      if (completed.has(key)) {
-        allScoredResults.push(sr);
-      }
+    if (completed.size > 0) {
+      const scoredFromCheckpoint = checkpoint.entries.filter((e) => e.status === "scored").length;
+      const errorsFromCheckpoint = checkpoint.entries.filter((e) => e.status === "error").length;
+      logger.info(
+        { resuming: completed.size, scored: scoredFromCheckpoint, errors: errorsFromCheckpoint },
+        `Resuming from checkpoint: ${scoredFromCheckpoint} scored, ${errorsFromCheckpoint} errors, ${completed.size} total completed`,
+      );
     }
-    logger.info(
-      { archivedScoresLoaded: allScoredResults.length },
-      `Loaded ${allScoredResults.length} archived scoring results for report generation`,
-    );
+
+    if (completed.size > 0) {
+      const archived = await loadArchivedScores(options.outputDir);
+      for (const sr of archived) {
+        const key = sr.skillId ?? sr.l3Name;
+        if (completed.has(key)) {
+          allScoredResults.push(sr);
+        }
+      }
+      logger.info(
+        { archivedScoresLoaded: allScoredResults.length },
+        `Loaded ${allScoredResults.length} archived scoring results for report generation`,
+      );
+    }
   }
+
+  const resumedCount = enableResume ? completed.size : 0;
 
   // 2. Triage (pure function, no model needed)
   logger.info("Running triage");
@@ -620,7 +645,7 @@ export async function runPipeline(
   );
 
   // 3. Create ModelManager and switch to scoring model (only for local Ollama backend)
-  const useLocalModels = options.backend !== "vllm"; // explicit vllm backend skips local model management
+  const useLocalModels = backend === "ollama";
 
   // Health check and warm-up only for real Ollama runs (no chatFn/fetchFn injection)
   const isRealOllama = useLocalModels && !options.chatFn && !options.fetchFn;
@@ -674,7 +699,7 @@ export async function runPipeline(
   const knowledgeContext = buildKnowledgeContext();
 
   // 6. Group L4s by L3 for lookup (needed for simulation)
-  const l4Map = groupL4sByL3(data.hierarchy);
+  const l4Map = groupL4sByL3(scoringHierarchy);
 
   // 7. Build L3 lookup (needed for simulation)
   const l3Map = new Map(
@@ -695,32 +720,68 @@ export async function runPipeline(
   const concurrency = options.concurrency ?? 1;
   let filterStats: FilterStats | undefined;
 
-  if (scoringMode === "two-pass") {
-    // Two-pass: pre-score -> filter -> consolidated LLM scoring
-    const { checkpoint: ckpt, backedUp } = loadCheckpointForMode(options.outputDir, "two-pass");
-    if (backedUp) logger.info("Backed up v1.2 checkpoint as .checkpoint.v12.bak");
-    const twoPassCheckpoint: CheckpointV2 = (ckpt as CheckpointV2) ?? {
-      version: 2 as const,
-      scoringMode: "two-pass" as const,
-      inputFile: resolvedInput,
-      startedAt: new Date().toISOString(),
-      entries: [],
-    };
-    const completedL4s = getCompletedL4Ids((ckpt as CheckpointV2) ?? null);
+  if (backend === "openai-batch" && scoringMode !== "two-pass") {
+    throw new Error("openai-batch currently supports only two-pass scoring");
+  }
 
-    const twoPassResult = await runTwoPassScoring(
-      data.hierarchy,
-      allSkills,
-      completedL4s,
-      twoPassCheckpoint,
-      data,
-      knowledgeContext,
-      options,
-      logger,
-      ctx,
-    );
+  if (scoringMode === "two-pass") {
+    let twoPassResult: {
+      scored: ScoringResult[];
+      errors: string[];
+      scoredCount: number;
+      promotedCount: number;
+      filterResult: FilterResult;
+    };
+
+    if (backend === "openai-batch") {
+      if (!options.openAiBatchConfig) {
+        throw new Error("Missing openAiBatchConfig for openai-batch backend");
+      }
+
+      const runOpenAiBatchScoring = options.runTwoPassScoringOpenAiBatchFn ?? defaultRunTwoPassScoringOpenAiBatch;
+      twoPassResult = await runOpenAiBatchScoring({
+        hierarchy: scoringHierarchy,
+        allSkills,
+        knowledgeContext,
+        outputDir: options.outputDir,
+        batchConfig: options.openAiBatchConfig,
+        topN: options.topN,
+      });
+
+      for (const sr of twoPassResult.scored) {
+        addResult(ctx, sr);
+      }
+      for (const error of twoPassResult.errors) {
+        errors.push(error);
+      }
+    } else {
+      // Two-pass: pre-score -> filter -> consolidated LLM scoring
+      const { checkpoint: ckpt, backedUp } = loadCheckpointForMode(options.outputDir, "two-pass");
+      if (backedUp) logger.info("Backed up v1.2 checkpoint as .checkpoint.v12.bak");
+      const twoPassCheckpoint: CheckpointV2 = (ckpt as CheckpointV2) ?? {
+        version: 2 as const,
+        scoringMode: "two-pass" as const,
+        inputFile: resolvedInput,
+        startedAt: new Date().toISOString(),
+        entries: [],
+      };
+      const completedL4s = getCompletedL4Ids((ckpt as CheckpointV2) ?? null);
+
+      twoPassResult = await runTwoPassScoring(
+        scoringHierarchy,
+        allSkills,
+        completedL4s,
+        twoPassCheckpoint,
+        data,
+        knowledgeContext,
+        options,
+        logger,
+        ctx,
+      );
+      errors.push(...twoPassResult.errors);
+    }
+
     allScoredResults.push(...twoPassResult.scored);
-    errors.push(...twoPassResult.errors);
     scoredCount += twoPassResult.scoredCount;
     promotedCount += twoPassResult.promotedCount;
     filterStats = twoPassResult.filterResult.stats;
@@ -785,7 +846,7 @@ export async function runPipeline(
   if (scoringMode === "two-pass") {
     // Build per-L4 name lookup for toL4SimulationInputs
     const l4ByName = new Map<string, L4Activity>();
-    for (const l4 of data.hierarchy) {
+    for (const l4 of scoringHierarchy) {
       l4ByName.set(l4.name, l4);
     }
     simInputs = toL4SimulationInputs(promoted, l4ByName, l3Map, data.company_context);
@@ -797,14 +858,26 @@ export async function runPipeline(
   let simResult: SimulationPipelineResult;
   if (!options.skipSim) {
     try {
-      const runSim = options.runSimulationPipelineFn ?? defaultRunSimulationPipeline;
-      simResult = await runSim(
-        simInputs,
-        simDir,
-        options.simulationLlmTarget,
-        undefined,
-        options.simTimeoutMs ? { timeoutMs: options.simTimeoutMs } : undefined,
-      );
+      if (backend === "openai-batch") {
+        if (!options.openAiBatchConfig) {
+          throw new Error("Missing openAiBatchConfig for openai-batch backend");
+        }
+        const runBatchSim = options.runOpenAiBatchSimulationFn ?? defaultRunOpenAiBatchSimulation;
+        simResult = await runBatchSim(
+          simInputs,
+          simDir,
+          options.openAiBatchConfig,
+        );
+      } else {
+        const runSim = options.runSimulationPipelineFn ?? defaultRunSimulationPipeline;
+        simResult = await runSim(
+          simInputs,
+          simDir,
+          options.simulationLlmTarget,
+          undefined,
+          options.simTimeoutMs ? { timeoutMs: options.simTimeoutMs } : undefined,
+        );
+      }
       logger.info(
         { simulated: simResult.totalSimulated, failed: simResult.totalFailed },
         "Simulation pipeline complete",

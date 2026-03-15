@@ -9,7 +9,7 @@
 /** Human-readable names for sub-dimensions. */
 const SUB_DIMENSION_LABELS = {
     data_readiness: "Data Readiness",
-    platform_fit: "Platform Fit",
+    aera_platform_fit: "Platform Fit",
     archetype_confidence: "Archetype Confidence",
     decision_density: "Decision Density",
     financial_gravity: "Financial Gravity",
@@ -18,9 +18,21 @@ const SUB_DIMENSION_LABELS = {
     value_density: "Value Density",
     simulation_viability: "Simulation Viability",
 };
+const SUB_DIMENSION_ALIASES = {
+    aera_platform_fit: ["aera_platform_fit", "platform_fit"],
+    financial_gravity: ["financial_gravity", "financial_signal"],
+    impact_proximity: ["impact_proximity", "impact_order"],
+    confidence_signal: ["confidence_signal", "rating_confidence"],
+};
 /** Look up a sub-dimension by name within a lens. */
 function findSub(lens, name) {
-    return lens.subDimensions.find(s => s.name === name);
+    const aliases = SUB_DIMENSION_ALIASES[name] ?? [name];
+    for (const alias of aliases) {
+        const match = lens.subDimensions.find((subDimension) => subDimension.name === alias);
+        if (match)
+            return match;
+    }
+    return undefined;
 }
 /** Format a sub-dimension line: "- **Label (score/3):** reason" */
 function formatSubLine(lens, name) {
@@ -69,22 +81,27 @@ function formatAssessment(r) {
     }
     return lines.join(" ");
 }
-/** Format a single opportunity section. */
-function formatOpportunitySection(r, rank) {
+/** Format a single skill section. */
+function formatOpportunitySection(r, rank, scoringMode) {
     const tech = r.lenses.technical;
     const adopt = r.lenses.adoption;
     const val = r.lenses.value;
     const lines = [];
-    lines.push(`## ${rank}. ${r.l3Name}`);
+    const displayName = r.skillName ?? r.l3Name;
+    lines.push(`## ${rank}. ${displayName}`);
     lines.push("");
-    lines.push(`**${r.l1Name} > ${r.l2Name} > ${r.l3Name}**`);
+    lines.push(`**${r.l1Name} > ${r.l2Name} > ${r.l3Name} > ${r.l4Name ?? ""}**`);
     lines.push(`**Archetype:** ${r.archetype} | **Composite:** ${r.composite.toFixed(2)} | **Confidence:** ${r.overallConfidence}`);
     lines.push("");
     // Technical Feasibility
     lines.push(`### Technical Feasibility (${tech.total}/${tech.maxPossible})`);
-    lines.push(formatSubLine(tech, "data_readiness"));
-    lines.push(formatSubLine(tech, "platform_fit"));
-    lines.push(formatSubLine(tech, "archetype_confidence"));
+    if (scoringMode !== "two-pass") {
+        lines.push(formatSubLine(tech, "data_readiness"));
+    }
+    lines.push(formatSubLine(tech, "aera_platform_fit"));
+    if (scoringMode !== "two-pass") {
+        lines.push(formatSubLine(tech, "archetype_confidence"));
+    }
     lines.push("");
     // Adoption Realism
     lines.push(`### Adoption Realism (${adopt.total}/${adopt.maxPossible})`);
@@ -103,11 +120,11 @@ function formatOpportunitySection(r, rank) {
     lines.push(formatAssessment(r));
     return lines.join("\n");
 }
-export function formatTier1Report(scored, tier1Names, companyName, date) {
+export function formatTier1Report(scored, tier1Names, companyName, date, scoringMode) {
     const dateStr = date ?? new Date().toISOString().slice(0, 10);
-    // Filter to tier 1 only, sort by composite DESC
+    // Filter to tier 1 only (match on skillId or l3Name for backward compat), sort by composite DESC
     const tier1 = scored
-        .filter(r => tier1Names.has(r.l3Name))
+        .filter(r => tier1Names.has(r.skillId ?? r.l3Name) || tier1Names.has(r.l3Name))
         .sort((a, b) => b.composite - a.composite);
     const lines = [];
     // Header
@@ -123,7 +140,7 @@ export function formatTier1Report(scored, tier1Names, companyName, date) {
         return lines.join("\n") + "\n";
     }
     // Opportunity sections separated by horizontal rules
-    const sections = tier1.map((r, i) => formatOpportunitySection(r, i + 1));
+    const sections = tier1.map((r, i) => formatOpportunitySection(r, i + 1, scoringMode));
     lines.push(sections.join("\n\n---\n\n"));
     lines.push("");
     return lines.join("\n") + "\n";

@@ -12,6 +12,7 @@ import path from "node:path";
 import yaml from "js-yaml";
 import { parseExport } from "./ingestion/parse-export.js";
 import { triageOpportunities } from "./triage/triage-pipeline.js";
+import { buildScoringHierarchy } from "./pipeline/extract-skills.js";
 import { writeEvaluation } from "./output/write-evaluation.js";
 import { writeFinalReports } from "./output/write-final-reports.js";
 import { assessSimulation } from "./simulation/assessment.js";
@@ -67,7 +68,8 @@ async function loadScoringOverrides(
     for (const line of lines.slice(1)) {
       const cols = line.split("\t");
       const row = Object.fromEntries(headers.map((header, index) => [header, cols[index] ?? ""]));
-      overrides.set(row.l3_name, {
+      const key = row.skill_id || row.l3_name;
+      overrides.set(key, {
         l1Name: row.l1_name,
         l2Name: row.l2_name,
         archetype: row.archetype as ScoringResult["archetype"],
@@ -104,7 +106,7 @@ async function main() {
   const scoringOverrides = await loadScoringOverrides(OUTPUT_DIR);
   if (scoringOverrides.size > 0) {
     for (const sr of scoredResults) {
-      const override = scoringOverrides.get(sr.l3Name);
+      const override = scoringOverrides.get(sr.skillId ?? sr.l3Name);
       if (!override) continue;
       sr.l1Name = override.l1Name || sr.l1Name;
       sr.l2Name = override.l2Name || sr.l2Name;
@@ -147,7 +149,7 @@ async function main() {
   for (const opportunity of l3_opportunities) {
     slugToSubject.set(slugify(opportunity.l3_name), opportunity.l3_name);
   }
-  for (const l4 of parseResult.data.hierarchy) {
+  for (const l4 of buildScoringHierarchy(parseResult.data)) {
     slugToSubject.set(`${slugify(l4.name)}-${l4.id.slice(-6)}`, l4.name);
   }
 

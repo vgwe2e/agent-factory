@@ -62,7 +62,7 @@ const EXPECTED_HEADER = [
   "data_readiness", "platform_fit", "archetype_conf", "tech_total",
   "decision_density", "financial_gravity", "impact_proximity", "confidence_signal", "adoption_total",
   "value_density", "simulation_viability", "value_total",
-  "composite", "confidence", "promotes_to_sim",
+  "composite", "confidence", "promotes_to_sim", "is_cross_functional",
 ].join("\t");
 
 describe("formatScoresTsv", () => {
@@ -74,10 +74,10 @@ describe("formatScoresTsv", () => {
     assert.equal(lines.length, 2, "header + trailing empty");
   });
 
-  it("contains all 22 columns", () => {
+  it("contains all 23 columns", () => {
     const result = formatScoresTsv([makeScoring()]);
     const headerCols = result.split("\n")[0].split("\t");
-    assert.equal(headerCols.length, 22);
+    assert.equal(headerCols.length, 23);
   });
 
   it("sorts by composite DESC", () => {
@@ -111,6 +111,15 @@ describe("formatScoresTsv", () => {
     assert.equal(cells[21], "Y");
   });
 
+  it("renders is_cross_functional as Y/N", () => {
+    const result = formatScoresTsv([
+      makeScoring({ skillId: "cf-123", l1Name: "Cross-Functional" }),
+    ]);
+    const dataRow = result.trim().split("\n")[1];
+    const cells = dataRow.split("\t");
+    assert.equal(cells[22], "Y");
+  });
+
   it("renders sub-dimension scores as numbers only", () => {
     const opp = makeScoring();
     const result = formatScoresTsv([opp]);
@@ -122,6 +131,66 @@ describe("formatScoresTsv", () => {
     assert.equal(cells[8], "3", "platform_fit score");
     // archetype_conf is column index 9
     assert.equal(cells[9], "1", "archetype_confidence score");
+  });
+
+  it("renders two-pass naming variants into legacy TSV columns", () => {
+    const opp = makeScoring({
+      lenses: {
+        technical: makeLens("technical", [
+          makeSub("platform_fit", 2),
+        ]),
+        adoption: makeLens("adoption", [
+          makeSub("decision_density", 3),
+          makeSub("financial_signal", 2),
+          makeSub("impact_order", 1),
+          makeSub("rating_confidence", 2),
+        ]),
+        value: makeLens("value", [
+          makeSub("value_density", 2),
+          makeSub("simulation_viability", 3),
+        ]),
+      },
+    });
+
+    const result = formatScoresTsv([opp]);
+    const dataRow = result.trim().split("\n")[1];
+    const cells = dataRow.split("\t");
+
+    assert.equal(cells[8], "2", "platform_fit should map from two-pass technical lens");
+    assert.equal(cells[12], "2", "financial_gravity column should map from financial_signal");
+    assert.equal(cells[13], "1", "impact_proximity column should map from impact_order");
+    assert.equal(cells[14], "2", "confidence_signal column should map from rating_confidence");
+  });
+
+  it("omits placeholder technical columns in two-pass mode", () => {
+    const opp = makeScoring({
+      lenses: {
+        technical: makeLens("technical", [
+          makeSub("platform_fit", 2),
+        ]),
+        adoption: makeLens("adoption", [
+          makeSub("decision_density", 3),
+          makeSub("financial_signal", 2),
+          makeSub("impact_order", 1),
+          makeSub("rating_confidence", 2),
+        ]),
+        value: makeLens("value", [
+          makeSub("value_density", 2),
+          makeSub("simulation_viability", 3),
+        ]),
+      },
+    });
+
+    const result = formatScoresTsv([opp], "two-pass");
+    const [header, row] = result.trim().split("\n");
+    const headerCols = header.split("\t");
+    const cells = row.split("\t");
+
+    assert.ok(!headerCols.includes("data_readiness"));
+    assert.ok(!headerCols.includes("archetype_conf"));
+    assert.equal(headerCols[7], "platform_fit");
+    assert.equal(cells[7], "2");
+    assert.equal(headerCols.at(-1), "is_cross_functional");
   });
 
   it("renders archetype correctly", () => {

@@ -1,6 +1,7 @@
 import type { ScoringResult } from "../types/scoring.js";
 import type { SimulationPipelineResult } from "../simulation/simulation-pipeline.js";
 import type { SimulationFilterVerdict } from "../types/simulation.js";
+import { isCrossFunctionalScoringResult } from "./cross-functional.js";
 
 function header(scoringMode?: "two-pass" | "three-lens"): string {
   return scoringMode === "two-pass"
@@ -19,6 +20,7 @@ function header(scoringMode?: "two-pass" | "three-lens"): string {
       "integration_confidence_score",
       "ambiguity_risk_score",
       "reasons",
+      "is_cross_functional",
     ].join("\t")
     : [
       "l3_name",
@@ -33,6 +35,7 @@ function header(scoringMode?: "two-pass" | "three-lens"): string {
       "integration_confidence_score",
       "ambiguity_risk_score",
       "reasons",
+      "is_cross_functional",
     ].join("\t");
 }
 
@@ -80,6 +83,7 @@ export function formatImplementationShortlistTsv(
           assessment.integrationConfidenceScore,
           assessment.ambiguityRiskScore,
           assessment.reasons.join(" | "),
+          scoredRow ? (isCrossFunctionalScoringResult(scoredRow) ? "Y" : "N") : "N",
         ].join("\t");
       }
 
@@ -96,6 +100,7 @@ export function formatImplementationShortlistTsv(
         assessment.integrationConfidenceScore,
         assessment.ambiguityRiskScore,
         assessment.reasons.join(" | "),
+        scoredRow ? (isCrossFunctionalScoringResult(scoredRow) ? "Y" : "N") : "N",
       ].join("\t");
     });
 

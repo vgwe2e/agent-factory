@@ -157,12 +157,47 @@ describe("writeEvaluation", () => {
 
     // Verify adoption-risk.md matches formatter
     const riskMd = await fs.readFile(path.join(evalDir, "adoption-risk.md"), "utf-8");
-    assert.equal(riskMd, formatAdoptionRisk(triaged, DATE));
+    assert.equal(riskMd, formatAdoptionRisk(triaged, { date: DATE, scored }));
 
     // Verify tier1-report.md matches formatter
     const tier1Names = new Set(triaged.filter(o => o.tier === 1).map(o => o.l3Name));
     const reportMd = await fs.readFile(path.join(evalDir, "tier1-report.md"), "utf-8");
     assert.equal(reportMd, formatTier1Report(scored, tier1Names, "TestCorp", DATE));
+  });
+
+  it("writes slimmer feasibility outputs in two-pass mode", async () => {
+    const dir = await makeTmpDir();
+    const triaged = [makeTriage({ l3Name: "Opp A", tier: 1, quickWin: true, combinedMaxValue: 10_000_000 })];
+    const scored = [
+      makeScoring({
+        l3Name: "Opp A",
+        lenses: {
+          technical: makeLens("technical", [makeSub("platform_fit", 3)]),
+          adoption: makeLens("adoption", [
+            makeSub("decision_density", 3),
+            makeSub("financial_signal", 2),
+            makeSub("impact_order", 1),
+            makeSub("rating_confidence", 2),
+          ]),
+          value: makeLens("value", [
+            makeSub("value_density", 2),
+            makeSub("simulation_viability", 3),
+          ]),
+        },
+      }),
+    ];
+
+    const result = await writeEvaluation(dir, scored, triaged, "TestCorp", DATE, "two-pass");
+    assert.equal(result.success, true);
+    if (!result.success) return;
+
+    const scoresTsv = await fs.readFile(path.join(dir, "evaluation", "feasibility-scores.tsv"), "utf-8");
+    const reportMd = await fs.readFile(path.join(dir, "evaluation", "tier1-report.md"), "utf-8");
+
+    assert.ok(!scoresTsv.split("\n")[0].includes("data_readiness"));
+    assert.ok(!scoresTsv.split("\n")[0].includes("archetype_conf"));
+    assert.ok(!reportMd.includes("Data Readiness"));
+    assert.ok(!reportMd.includes("Archetype Confidence"));
   });
 
   it("returns absolute file paths on success", async () => {
@@ -226,6 +261,54 @@ describe("writeEvaluation", () => {
     assert.ok(reportMd.includes("Tier1Item"), "tier1 report should include Tier1Item");
     assert.ok(!reportMd.includes("## ") || !reportMd.includes("Tier2Item"),
       "tier1 report should not have Tier2Item as a section");
+  });
+
+  it("derives tier1Names from skillId before l3Name", async () => {
+    const dir = await makeTmpDir();
+    const triaged = [
+      makeTriage({
+        l3Name: "Shared L3",
+        skillId: "skill-tier-1",
+        skillName: "Tier 1 Skill",
+        tier: 1,
+        quickWin: true,
+        combinedMaxValue: 10_000_000,
+      }),
+      makeTriage({
+        l3Name: "Shared L3",
+        skillId: "skill-tier-2",
+        skillName: "Tier 2 Skill",
+        tier: 2,
+      }),
+    ];
+    const scored = [
+      makeScoring({
+        l3Name: "Shared L3",
+        skillId: "skill-tier-1",
+        skillName: "Tier 1 Skill",
+        l4Name: "Tier 1 L4",
+        composite: 0.85,
+      }),
+      makeScoring({
+        l3Name: "Shared L3",
+        skillId: "skill-tier-2",
+        skillName: "Tier 2 Skill",
+        l4Name: "Tier 2 L4",
+        composite: 0.70,
+      }),
+    ];
+
+    const result = await writeEvaluation(dir, scored, triaged, "TestCorp", DATE);
+    assert.equal(result.success, true);
+    if (!result.success) return;
+
+    const reportMd = await fs.readFile(
+      path.join(dir, "evaluation", "tier1-report.md"),
+      "utf-8",
+    );
+
+    assert.ok(reportMd.includes("Tier 1 Skill"));
+    assert.ok(!reportMd.includes("Tier 2 Skill"));
   });
 
   it("returns error result if directory creation fails", async () => {

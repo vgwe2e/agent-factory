@@ -44,7 +44,7 @@ export async function writeFinalReports(
     const modeHeader = scoringMode ? `Scoring Mode: ${scoringMode}\n\n` : "";
 
     // Generate content from formatters
-    const summaryMd = modeHeader + formatSummary(scored, triaged, simResults, companyName, date, simSkipped);
+    const summaryMd = modeHeader + formatSummary(scored, triaged, simResults, companyName, date, simSkipped, scoringMode);
     const deadZonesMd = modeHeader + formatDeadZones(triaged, scored, date);
     const metaReflectionMd = modeHeader + formatMetaReflection(triaged, scored, simResults, date, simSkipped);
     const simulationFilterTsv = formatSimulationFilterTsv(scored, simResults, scoringMode);

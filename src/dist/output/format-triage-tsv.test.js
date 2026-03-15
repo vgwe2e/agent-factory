@@ -21,7 +21,7 @@ describe("formatTriageTsv", () => {
         const result = formatTriageTsv([]);
         const lines = result.split("\n");
         // Header line + empty trailing line after final newline
-        assert.equal(lines[0], "tier\tl3_name\tl1_name\tl2_name\tlead_archetype\tquick_win\tcombined_max_value\tflag_count\tflags");
+        assert.equal(lines[0], "tier\tl3_name\tl1_name\tl2_name\tlead_archetype\tquick_win\tcombined_max_value\tflag_count\tflags\tis_cross_functional");
         assert.ok(result.endsWith("\n"), "should end with trailing newline");
         assert.equal(lines.length, 2, "header + trailing empty");
     });
@@ -58,9 +58,8 @@ describe("formatTriageTsv", () => {
         const result = formatTriageTsv([opp]);
         const dataRow = result.trim().split("\n")[1];
         const cells = dataRow.split("\t");
-        // flag_count is second to last, flags is last
-        assert.equal(cells[cells.length - 2], "2", "flag_count should be 2");
-        assert.equal(cells[cells.length - 1], "DEAD_ZONE; ORPHAN");
+        assert.equal(cells[7], "2", "flag_count should be 2");
+        assert.equal(cells[8], "DEAD_ZONE; ORPHAN");
     });
     it("renders quick_win as Y/N", () => {
         const opp = makeTriage({ quickWin: true });
@@ -77,5 +76,12 @@ describe("formatTriageTsv", () => {
         const cells = dataRow.split("\t");
         // combined_max_value is column index 6
         assert.equal(cells[6], "");
+    });
+    it("renders is_cross_functional as Y for cf-prefixed skills", () => {
+        const opp = makeTriage({ skillId: "cf-1", l1Name: "Cross-Functional" });
+        const result = formatTriageTsv([opp]);
+        const dataRow = result.trim().split("\n")[1];
+        const cells = dataRow.split("\t");
+        assert.equal(cells.at(-1), "Y");
     });
 });

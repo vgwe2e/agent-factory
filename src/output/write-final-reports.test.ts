@@ -241,6 +241,19 @@ describe("writeFinalReports", () => {
     assert.deepEqual(reviewQueue.split("\n")[0].split("\t").slice(0, 3), ["skill_id", "skill_name", "l4_name"]);
   });
 
+  it("writes two-pass summary with opportunity, L4, and L3 columns", async () => {
+    const dir = await makeTmpDir();
+    const triaged = [makeTriage({ l3Name: "Parent L3", skillId: "skill-two-pass", skillName: "Two-Pass Opportunity", l4Name: "Two-Pass Subject" })];
+    const scored = [makeScoring({ l3Name: "Parent L3", skillId: "skill-two-pass", skillName: "Two-Pass Opportunity", l4Name: "Two-Pass Subject", preScore: 0.66 })];
+    const simResults = makeSimPipelineResult([makeSimResult({ l3Name: "Two-Pass Subject" })]);
+
+    await writeFinalReports(dir, scored, triaged, simResults, "TestCorp", DATE, false, "two-pass");
+
+    const summary = await fs.readFile(path.join(dir, "evaluation", "summary.md"), "utf-8");
+    assert.ok(summary.includes("| Rank | Opportunity | L4 | L3 | Composite | Archetype | Confidence | Simulated | Verdict |"));
+    assert.ok(summary.includes("| 1 | Two-Pass Opportunity | Two-Pass Subject | Parent L3 |"));
+  });
+
   it("creates simulations/ directory with per-slug subdirectories", async () => {
     const dir = await makeTmpDir();
     const simResult1 = makeSimResult({ l3Name: "Opp Alpha", slug: "opp-alpha" });

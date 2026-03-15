@@ -13,19 +13,24 @@ import { formatTriageTsv } from "./format-triage-tsv.js";
 import { formatScoresTsv } from "./format-scores-tsv.js";
 import { formatAdoptionRisk } from "./format-adoption-risk.js";
 import { formatTier1Report } from "./format-tier1-report.js";
-export async function writeEvaluation(outputDir, scoredOpportunities, triagedOpportunities, companyName, date) {
+export async function writeEvaluation(outputDir, scoredOpportunities, triagedOpportunities, companyName, date, scoringMode) {
     try {
         const evalDir = path.join(outputDir, "evaluation");
         await fs.mkdir(evalDir, { recursive: true });
+        // Scoring mode header annotation
+        const modeHeader = scoringMode ? `Scoring Mode: ${scoringMode}\n\n` : "";
         // Derive tier 1 names from triage data
         const tier1Names = new Set(triagedOpportunities
             .filter(o => o.tier === 1)
-            .map(o => o.l3Name));
+            .map(o => o.skillId ?? o.l3Name));
         // Generate content from formatters
         const triageTsv = formatTriageTsv(triagedOpportunities);
-        const scoresTsv = formatScoresTsv(scoredOpportunities);
-        const adoptionRisk = formatAdoptionRisk(triagedOpportunities, date);
-        const tier1Report = formatTier1Report(scoredOpportunities, tier1Names, companyName, date);
+        const scoresTsv = formatScoresTsv(scoredOpportunities, scoringMode);
+        const adoptionRisk = modeHeader + formatAdoptionRisk(triagedOpportunities, {
+            date,
+            scored: scoredOpportunities,
+        });
+        const tier1Report = modeHeader + formatTier1Report(scoredOpportunities, tier1Names, companyName, date, scoringMode);
         // Define output files
         const files = [
             { name: "triage.tsv", content: triageTsv },

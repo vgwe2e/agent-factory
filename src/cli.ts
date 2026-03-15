@@ -116,14 +116,16 @@ program
     "Output directory for evaluation results",
   )
   .addOption(
-    new Option("--backend <backend>", "Scoring backend (ollama or vllm)")
-      .choices(["ollama", "vllm"])
+    new Option("--backend <backend>", "Scoring backend (ollama, vllm, or openai-batch)")
+      .choices(["ollama", "vllm", "openai-batch"])
       .default("ollama"),
   )
   .option(
     "--vllm-url <url>",
     "vLLM server URL (required when --backend vllm without RUNPOD_API_KEY)",
   )
+  .option("--openai-scoring-model <model>", "OpenAI model for two-pass scoring when --backend openai-batch")
+  .option("--openai-simulation-model <model>", "OpenAI model for scenario generation when --backend openai-batch")
   .option(
     "--concurrency <n>",
     "Number of opportunities to score in parallel (default: 1)",
@@ -150,7 +152,7 @@ program
   .option("--teardown", "Tear down cloud resources after pipeline completes")
   .option("--runpod-gpu <type>", "RunPod GPU type override for auto-provisioned pods")
   .option("--network-volume <id>", "RunPod network volume ID for model weight caching")
-  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; topN: string; scoringMode: string; retry: string; teardown?: boolean; runpodGpu?: string; networkVolume?: string }) => {
+  .action(async (opts: { input: string; logLevel: string; outputDir?: string; backend: string; vllmUrl?: string; openaiScoringModel?: string; openaiSimulationModel?: string; concurrency: string; maxTier: string; skipSim?: boolean; simTimeout?: string; topN: string; scoringMode: string; retry: string; teardown?: boolean; runpodGpu?: string; networkVolume?: string }) => {
     console.log(`${BOLD}Aera Skill Feasibility Engine v1.1.0${RESET}`);
     console.log(`Loading export: ${opts.input}...`);
     console.log();
@@ -163,7 +165,7 @@ program
       process.exit(1);
     }
 
-    const { meta, company_context, hierarchy, l3_opportunities } = result.data;
+    const { meta, company_context, hierarchy, l3_opportunities, cross_functional_skills = [] } = result.data;
 
     // Resolve output directory: backend-aware default when not explicitly set
     opts.outputDir = resolveOutputDir(opts.outputDir, opts.backend);
@@ -196,10 +198,11 @@ program
     console.log();
     // Count total skills
     const totalSkills = hierarchy.reduce((sum, h) => sum + (h.skills?.length ?? 0), 0);
+    const crossFunctionalSkills = cross_functional_skills.length;
 
     console.log("=== Hierarchy ===");
     console.log(`L4 Activities: ${hierarchy.length}`);
-    console.log(`Skills:        ${totalSkills} (unit of scoring)`);
+    console.log(`Skills:        ${totalSkills} embedded + ${crossFunctionalSkills} cross-functional`);
     console.log(`L3 Categories: ${l3_opportunities.length}`);
     console.log(`Domains:       ${domains.join(", ")}`);
     console.log();
@@ -253,6 +256,14 @@ program
       console.error(`${RED}Error: Either --vllm-url or RUNPOD_API_KEY environment variable is required when --backend is vllm${RESET}`);
       process.exit(1);
     }
+    if (backend === "openai-batch" && !process.env.OPENAI_API_KEY) {
+      console.error(`${RED}Error: OPENAI_API_KEY environment variable is required when --backend is openai-batch${RESET}`);
+      process.exit(1);
+    }
+    if (backend === "openai-batch" && opts.scoringMode !== "two-pass") {
+      console.error(`${RED}Error: openai-batch currently supports only --scoring-mode two-pass${RESET}`);
+      process.exit(1);
+    }
 
     // Ollama connectivity check (only for ollama backend)
     if (backend === "ollama") {
@@ -273,6 +284,10 @@ program
         runpodGpuType: opts.runpodGpu ?? process.env.RUNPOD_GPU_TYPE,
         networkVolumeId: opts.networkVolume,
         hfToken: process.env.HF_TOKEN,
+        openAiApiKey: process.env.OPENAI_API_KEY,
+        openAiBaseUrl: process.env.OPENAI_BASE_URL,
+        openAiScoringModel: opts.openaiScoringModel,
+        openAiSimulationModel: opts.openaiSimulationModel,
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -307,6 +322,10 @@ program
     } else if (backend === "vllm") {
       console.log(`Backend:     vllm (user-managed)`);
       console.log(`vLLM URL:    ${opts.vllmUrl}`);
+    } else if (backend === "openai-batch") {
+      console.log(`Backend:     openai-batch`);
+      console.log(`Score model: ${backendConfig.openAiBatchConfig?.scoringModel ?? opts.openaiScoringModel ?? "gpt-5-nano"}`);
+      console.log(`Sim model:   ${backendConfig.openAiBatchConfig?.simulationModel ?? opts.openaiSimulationModel ?? "gpt-5-mini"}`);
     } else {
       console.log(`Backend:     ollama (local)`);
     }
@@ -324,6 +343,8 @@ program
     if (opts.teardown) {
       if (backendConfig.cleanup) {
         console.log(`Teardown:    enabled`);
+      } else if (backend === "openai-batch") {
+        console.log(`Teardown:    requested, but not applicable to openai-batch`);
       } else {
         console.log(`Teardown:    requested, but user-managed vLLM URLs are not auto-terminated`);
       }
@@ -342,6 +363,7 @@ program
       chatFn: backendConfig.chatFn,
       backend,
       simulationLlmTarget: backendConfig.simulationConfig,
+      openAiBatchConfig: backendConfig.openAiBatchConfig,
       concurrency,
       maxTier,
       skipSim: opts.skipSim ?? false,

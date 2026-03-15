@@ -147,6 +147,64 @@ describe("formatTier1Report", () => {
     assert.ok(result.includes("High financial impact with direct cost savings"));
   });
 
+  it("renders two-pass sub-dimension aliases in the narrative report", () => {
+    const scored: ScoringResult[] = [
+      makeScoring({
+        l3Name: "Opp A",
+        lenses: {
+          technical: makeLens("technical", [
+            makeSub("platform_fit", 3, "Strong fit via Process Builder and Remote Functions"),
+          ]),
+          adoption: makeLens("adoption", [
+            makeSub("decision_density", 3, "Dense decisions"),
+            makeSub("financial_signal", 2, "Clear financial signal"),
+            makeSub("impact_order", 1, "Direct impact"),
+            makeSub("rating_confidence", 2, "Confident rating"),
+          ]),
+          value: makeLens("value", [
+            makeSub("value_density", 2, "Solid value concentration"),
+            makeSub("simulation_viability", 3, "Strong candidate"),
+          ]),
+        },
+      }),
+    ];
+
+    const result = formatTier1Report(scored, new Set(["Opp A"]), "Ford", FIXED_DATE);
+    assert.ok(result.includes("Platform Fit (3/3)"));
+    assert.ok(result.includes("Strong fit via Process Builder and Remote Functions"));
+    assert.ok(result.includes("Financial Gravity (2/3)"));
+    assert.ok(result.includes("Impact Proximity (1/3)"));
+    assert.ok(result.includes("Confidence Signal (2/3)"));
+  });
+
+  it("omits data readiness and archetype confidence in two-pass mode", () => {
+    const scored: ScoringResult[] = [
+      makeScoring({
+        l3Name: "Opp A",
+        lenses: {
+          technical: makeLens("technical", [
+            makeSub("platform_fit", 3, "Strong fit via Process Builder and Remote Functions"),
+          ]),
+          adoption: makeLens("adoption", [
+            makeSub("decision_density", 3, "Dense decisions"),
+            makeSub("financial_signal", 2, "Clear financial signal"),
+            makeSub("impact_order", 1, "Direct impact"),
+            makeSub("rating_confidence", 2, "Confident rating"),
+          ]),
+          value: makeLens("value", [
+            makeSub("value_density", 2, "Solid value concentration"),
+            makeSub("simulation_viability", 3, "Strong candidate"),
+          ]),
+        },
+      }),
+    ];
+
+    const result = formatTier1Report(scored, new Set(["Opp A"]), "Ford", FIXED_DATE, "two-pass");
+    assert.ok(!result.includes("Data Readiness"));
+    assert.ok(!result.includes("Archetype Confidence"));
+    assert.ok(result.includes("Platform Fit (3/3)"));
+  });
+
   it("shows Value & Efficiency with total and 2 sub-dimensions", () => {
     const scored: ScoringResult[] = [makeScoring({ l3Name: "Opp A" })];
     const result = formatTier1Report(scored, new Set(["Opp A"]), "Ford", FIXED_DATE);

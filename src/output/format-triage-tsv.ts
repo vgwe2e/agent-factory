@@ -7,12 +7,13 @@
  */
 
 import type { TriageResult } from "../types/triage.js";
+import { isCrossFunctionalTriageResult } from "./cross-functional.js";
 import { tsvRow } from "./tsv-utils.js";
 
 const HEADER = [
   "tier", "l3_name", "l1_name", "l2_name",
   "lead_archetype", "quick_win", "combined_max_value",
-  "flag_count", "flags",
+  "flag_count", "flags", "is_cross_functional",
 ].join("\t");
 
 export function formatTriageTsv(opportunities: TriageResult[]): string {
@@ -35,6 +36,7 @@ export function formatTriageTsv(opportunities: TriageResult[]): string {
     opp.combinedMaxValue,
     opp.redFlags.length,
     opp.redFlags.map(f => f.type).join("; ") || null,
+    isCrossFunctionalTriageResult(opp),
   ]));
 
   return [HEADER, ...rows].join("\n") + "\n";

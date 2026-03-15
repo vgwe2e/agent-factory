@@ -275,7 +275,8 @@ function makeMockSimulationPipeline(options?: { shouldThrow?: boolean }) {
 
     // Create artifact directories with stub files for each input
     for (const input of inputs) {
-      const slug = input.opportunity.l3_name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const subjectName = input.opportunity?.l3_name ?? input.l4Activity?.name ?? "unknown";
+      const slug = subjectName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
       const oppDir = path.join(outputDir, slug);
       fs.mkdirSync(oppDir, { recursive: true });
       fs.writeFileSync(path.join(oppDir, "decision-flow.mmd"), "graph TD\n  A-->B", "utf-8");
@@ -286,8 +287,8 @@ function makeMockSimulationPipeline(options?: { shouldThrow?: boolean }) {
 
     return {
       results: inputs.map((input) => ({
-        l3Name: input.opportunity.l3_name,
-        slug: input.opportunity.l3_name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+        l3Name: input.opportunity?.l3_name ?? input.l4Activity?.name ?? "unknown",
+        slug: (input.opportunity?.l3_name ?? input.l4Activity?.name ?? "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
         artifacts: {
           decisionFlow: "graph TD\n  A-->B",
           componentMap: { streams: [], cortex: [], process_builder: [], agent_teams: [], ui: [] },
@@ -702,7 +703,8 @@ describe("pipeline-runner", () => {
 
     // Check each promoted opportunity has artifact files
     for (const input of calls[0]) {
-      const slug = input.opportunity.l3_name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const subjectName = input.opportunity?.l3_name ?? input.l4Activity?.name ?? "unknown";
+      const slug = subjectName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
       const oppDir = path.join(simDir, slug);
       assert.ok(fs.existsSync(path.join(oppDir, "decision-flow.mmd")), `${slug}/decision-flow.mmd exists`);
       assert.ok(fs.existsSync(path.join(oppDir, "component-map.yaml")), `${slug}/component-map.yaml exists`);
@@ -1512,6 +1514,7 @@ describe("pipeline-runner", () => {
         platform_fit: { score: 2, reason: "Good platform fit" },
         sanity_verdict: "AGREE",
         sanity_justification: "Deterministic scores align with platform assessment",
+        flagged_dimensions: [],
         confidence: "MEDIUM",
       }),
       durationMs: 50,
@@ -1548,6 +1551,208 @@ describe("pipeline-runner", () => {
     // Verify pre-score TSV was written
     const preScoreTsvPath = path.join(tmpDir, "evaluation", "pre-scores.tsv");
     assert.ok(fs.existsSync(preScoreTsvPath), "pre-scores.tsv written in two-pass mode");
+  });
+
+  it("openai-batch backend routes two-pass scoring and simulation through batch adapters", async () => {
+    const fixture = makeFixtureExport();
+    const batchScoringCalls: unknown[] = [];
+    const batchSimulationCalls: SimulationInput[][] = [];
+
+    const runTwoPassScoringOpenAiBatchFn = async () => {
+      batchScoringCalls.push(true);
+      const scored: ScoringResult = {
+        skillId: "skill-Opp-A-Act-A1",
+        skillName: "Skill for Act-A1 in Opp-A",
+        l4Name: "Act-A1",
+        l3Name: "Opp-A",
+        l2Name: "L2-A",
+        l1Name: "L1-A",
+        archetype: "DETERMINISTIC",
+        lenses: {
+          technical: {
+            lens: "technical",
+            subDimensions: [{ name: "platform_fit", score: 2, reason: "Good fit" }],
+            total: 2,
+            maxPossible: 3,
+            normalized: 2 / 3,
+            confidence: "HIGH",
+          },
+          adoption: {
+            lens: "adoption",
+            subDimensions: [{ name: "financial_signal", score: 3, reason: "Strong" }],
+            total: 3,
+            maxPossible: 12,
+            normalized: 0.25,
+            confidence: "HIGH",
+          },
+          value: {
+            lens: "value",
+            subDimensions: [{ name: "value_density", score: 2, reason: "Good" }],
+            total: 2,
+            maxPossible: 6,
+            normalized: 2 / 6,
+            confidence: "HIGH",
+          },
+        },
+        composite: 0.74,
+        overallConfidence: "HIGH",
+        promotedToSimulation: true,
+        scoringDurationMs: 0,
+        sanityVerdict: "AGREE",
+        sanityJustification: "Aligned",
+        preScore: 0.7,
+      };
+
+      return {
+        scored: [scored],
+        errors: [],
+        scoredCount: 1,
+        promotedCount: 1,
+        filterResult: {
+          survivors: [],
+          eliminated: [],
+          stats: {
+            totalCandidates: 9,
+            requestedTopN: 50,
+            actualSurvivors: 1,
+            eliminated: 8,
+            cutoffScore: 0.7,
+            tiesAtBoundary: 0,
+          },
+        },
+      };
+    };
+
+    const runOpenAiBatchSimulationFn = async (inputs: SimulationInput[]) => {
+      batchSimulationCalls.push(inputs);
+      return {
+        results: inputs.map((input) => ({
+          l3Name: input.l4Activity?.name ?? input.opportunity?.l3_name ?? "unknown",
+          slug: "act-a1-test",
+          artifacts: {
+            decisionFlow: "flowchart TD\n  A-->B",
+            componentMap: { streams: [], cortex: [], process_builder: [], agent_teams: [], ui: [] },
+            mockTest: {
+              decision: "Test decision",
+              input: { financial_context: {}, trigger: "Trigger" },
+              expected_output: { action: "Action", outcome: "Outcome" },
+              rationale: "Rationale",
+            },
+            integrationSurface: {
+              source_systems: [],
+              aera_ingestion: [],
+              processing: [],
+              ui_surface: [],
+            },
+          },
+          validationSummary: {
+            confirmedCount: 1,
+            inferredCount: 0,
+            mermaidValid: true,
+          },
+        })),
+        totalSimulated: inputs.length,
+        totalFailed: 0,
+        totalConfirmed: inputs.length,
+        totalInferred: 0,
+      };
+    };
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        archiveThreshold: 100,
+        backend: "openai-batch",
+        openAiBatchConfig: {
+          apiKey: "sk-test",
+          scoringModel: "gpt-5-nano",
+          simulationModel: "gpt-5-mini",
+        },
+        runTwoPassScoringOpenAiBatchFn,
+        runOpenAiBatchSimulationFn,
+        gitCommit: false,
+        scoringMode: "two-pass",
+        topN: 50,
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.equal(batchScoringCalls.length, 1, "batch scoring adapter called once");
+    assert.equal(batchSimulationCalls.length, 1, "batch simulation adapter called once");
+    assert.equal(batchSimulationCalls[0]?.length, 1, "one promoted item simulated");
+    assert.equal(result.scoringMode, "two-pass");
+    assert.equal(result.scoredCount, 1);
+    assert.equal(result.promotedCount, 1);
+    assert.equal(result.simulatedCount, 1);
+    assert.equal(result.errorCount, 0);
+    assert.equal(result.resumedCount, 0, "batch backend should not use checkpoint resume");
+  });
+
+  it("includes cross-functional skills in the two-pass candidate hierarchy", async () => {
+    const fixture = makeFixtureExport();
+    fixture.cross_functional_skills = [
+      makeTestSkill("Cross-Functional", "Cross-Functional", {
+        id: "cf-1",
+        name: "Cross-Plant Production Load Balancing",
+        is_cross_functional: true,
+        source: "value_flow",
+        max_value: 25_000_000,
+        decision_made: "Balance production across plants",
+        cross_functional_scope: {
+          l1_domains: ["Make", "Plan", "Move & Fulfill"],
+        },
+      }),
+    ];
+
+    let receivedHierarchyCount = 0;
+    let receivedSkillCount = 0;
+
+    const runTwoPassScoringOpenAiBatchFn = async (args: Parameters<NonNullable<PipelineOptions["runTwoPassScoringOpenAiBatchFn"]>>[0]) => {
+      receivedHierarchyCount = args.hierarchy.length;
+      receivedSkillCount = args.allSkills.length;
+      return {
+        scored: [],
+        errors: [],
+        scoredCount: 0,
+        promotedCount: 0,
+        filterResult: {
+          survivors: [],
+          eliminated: [],
+          stats: {
+            totalCandidates: args.hierarchy.length,
+            requestedTopN: 50,
+            actualSurvivors: 0,
+            eliminated: args.hierarchy.length,
+            cutoffScore: 0,
+            tiesAtBoundary: 0,
+          },
+        },
+      };
+    };
+
+    const result = await runPipeline(
+      "__fixture__",
+      {
+        outputDir: tmpDir,
+        backend: "openai-batch",
+        openAiBatchConfig: {
+          apiKey: "sk-test",
+          scoringModel: "gpt-5-nano",
+          simulationModel: "gpt-5-mini",
+        },
+        runTwoPassScoringOpenAiBatchFn,
+        gitCommit: false,
+        scoringMode: "two-pass",
+        parseExportFn: async () => ({ success: true as const, data: fixture }),
+      },
+      logger,
+    );
+
+    assert.equal(receivedHierarchyCount, fixture.hierarchy.length + 1);
+    assert.equal(receivedSkillCount, 4);
+    assert.equal(result.preScoredCount, fixture.hierarchy.length + 1);
   });
 
   it("PIPE-03: synthesized LensScore from two-pass produces valid TSV with non-zero values", () => {

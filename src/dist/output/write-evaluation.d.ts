@@ -16,5 +16,5 @@ type WriteResult = {
     success: false;
     error: string;
 };
-export declare function writeEvaluation(outputDir: string, scoredOpportunities: ScoringResult[], triagedOpportunities: TriageResult[], companyName: string, date?: string): Promise<WriteResult>;
+export declare function writeEvaluation(outputDir: string, scoredOpportunities: ScoringResult[], triagedOpportunities: TriageResult[], companyName: string, date?: string, scoringMode?: "two-pass" | "three-lens"): Promise<WriteResult>;
 export {};

@@ -7,4 +7,10 @@
  * Produces evaluation/adoption-risk.md content.
  */
 import type { TriageResult } from "../types/triage.js";
-export declare function formatAdoptionRisk(opportunities: TriageResult[], date?: string): string;
+import type { ScoringResult } from "../types/scoring.js";
+interface FormatAdoptionRiskOptions {
+    date?: string;
+    scored?: ScoringResult[];
+}
+export declare function formatAdoptionRisk(opportunities: TriageResult[], optionsOrDate?: string | FormatAdoptionRiskOptions): string;
+export {};

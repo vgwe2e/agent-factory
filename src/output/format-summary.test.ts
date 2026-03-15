@@ -230,6 +230,38 @@ describe("formatSummary", () => {
     assert.ok(md.includes("| 1 | Advance Opp | 0.90 | DETERMINISTIC | HIGH | Yes | ADVANCE |"));
   });
 
+  it("matches two-pass simulation results by l4Name", () => {
+    const scored = [makeScoring({
+      l3Name: "Parent Opportunity",
+      l4Name: "Two-Pass Subject",
+      skillId: "skill-two-pass",
+      skillName: "Two-Pass Subject",
+      composite: 0.9,
+    })];
+    const triaged = [makeTriage({ l3Name: "Parent Opportunity" })];
+    const simResults = makeSimResults({
+      results: [{
+        l3Name: "Two-Pass Subject",
+        slug: "two-pass-subject",
+        artifacts: {} as any,
+        assessment: {
+          groundednessScore: 82,
+          integrationConfidenceScore: 78,
+          ambiguityRiskScore: 21,
+          implementationReadinessScore: 80,
+          verdict: "ADVANCE",
+          reasons: ["Ready"],
+        },
+        validationSummary: { confirmedCount: 4, inferredCount: 1, mermaidValid: true },
+      }],
+      totalSimulated: 1,
+    });
+
+    const md = formatSummary(scored, triaged, simResults, "Ford", FIXED_DATE, false, "two-pass");
+    assert.ok(md.includes("| Rank | Opportunity | L4 | L3 | Composite | Archetype | Confidence | Simulated | Verdict |"));
+    assert.ok(md.includes("| 1 | Two-Pass Subject | Two-Pass Subject | Parent Opportunity | 0.90 | DETERMINISTIC | HIGH | Yes | ADVANCE |"));
+  });
+
   it("includes tier distribution summary", () => {
     const triaged = [
       makeTriage({ l3Name: "T1", tier: 1 }),

@@ -5,7 +5,8 @@
  * pipeline results. Produces an executive summary with top 10 table,
  * tier distribution, and archetype breakdown.
  */
-export function formatSummary(scored, triaged, simResults, companyName, date) {
+import { countAssessmentVerdicts } from "../simulation/assessment.js";
+export function formatSummary(scored, triaged, simResults, companyName, date, simSkipped, scoringMode) {
     const dateStr = date ?? new Date().toISOString().slice(0, 10);
     const lines = [];
     // Header
@@ -15,7 +16,19 @@ export function formatSummary(scored, triaged, simResults, companyName, date) {
     const promotedCount = scored.filter(s => s.promotedToSimulation).length;
     lines.push(`**Total Evaluated:** ${scored.length}`);
     lines.push(`**Promoted to Simulation:** ${promotedCount}`);
-    lines.push(`**Simulations Completed:** ${simResults.totalSimulated}`);
+    if (simSkipped) {
+        lines.push(`**Simulation: skipped (--skip-sim)**`);
+    }
+    else {
+        lines.push(`**Simulations Completed:** ${simResults.totalSimulated}`);
+        const verdictCounts = countAssessmentVerdicts(simResults.results.map((result) => result.assessment));
+        const totalAssessed = verdictCounts.ADVANCE + verdictCounts.REVIEW + verdictCounts.HOLD;
+        if (totalAssessed > 0) {
+            lines.push(`**Simulation Filter:** ${verdictCounts.ADVANCE} advance / ${verdictCounts.REVIEW} review / ${verdictCounts.HOLD} hold`);
+            lines.push(`**Default Shortlist (ADVANCE):** ${verdictCounts.ADVANCE}`);
+            lines.push(`**Manual Review Queue:** ${verdictCounts.REVIEW + verdictCounts.HOLD}`);
+        }
+    }
     lines.push("");
     if (scored.length === 0) {
         lines.push("No opportunities were scored in this evaluation.");
@@ -27,13 +40,32 @@ export function formatSummary(scored, triaged, simResults, companyName, date) {
     const top = sorted.slice(0, 10);
     lines.push("## Top Opportunities");
     lines.push("");
-    lines.push("| Rank | Name | Composite | Archetype | Confidence | Simulated |");
-    lines.push("|------|------|-----------|-----------|------------|-----------|");
-    const simulatedNames = new Set(simResults.results.map(r => r.l3Name));
+    if (scoringMode === "two-pass") {
+        lines.push("| Rank | Opportunity | L4 | L3 | Composite | Archetype | Confidence | Simulated | Verdict |");
+        lines.push("|------|-------------|----|----|-----------|-----------|------------|-----------|---------|");
+    }
+    else {
+        lines.push("| Rank | Name | Composite | Archetype | Confidence | Simulated | Verdict |");
+        lines.push("|------|------|-----------|-----------|------------|-----------|---------|");
+    }
+    const simulatedIds = new Set(simResults.results.map(r => r.l3Name));
+    const verdicts = new Map(simResults.results
+        .filter((result) => result.assessment)
+        .map((result) => [result.l3Name, result.assessment.verdict]));
     for (let i = 0; i < top.length; i++) {
         const s = top[i];
-        const simulated = simulatedNames.has(s.l3Name) ? "Yes" : "No";
-        lines.push(`| ${i + 1} | ${s.l3Name} | ${s.composite.toFixed(2)} | ${s.archetype} | ${s.overallConfidence} | ${simulated} |`);
+        const displayName = s.skillName ?? s.l3Name;
+        const simulationKeys = [s.l4Name, s.l3Name, s.skillId].filter((key) => typeof key === "string" && key.length > 0);
+        const simulated = simulationKeys.some((key) => simulatedIds.has(key)) ? "Yes" : "No";
+        const verdict = simulationKeys
+            .map((key) => verdicts.get(key))
+            .find((value) => value !== undefined) ?? "-";
+        if (scoringMode === "two-pass") {
+            lines.push(`| ${i + 1} | ${displayName} | ${s.l4Name} | ${s.l3Name} | ${s.composite.toFixed(2)} | ${s.archetype} | ${s.overallConfidence} | ${simulated} | ${verdict} |`);
+        }
+        else {
+            lines.push(`| ${i + 1} | ${displayName} | ${s.composite.toFixed(2)} | ${s.archetype} | ${s.overallConfidence} | ${simulated} | ${verdict} |`);
+        }
     }
     lines.push("");
     // Tier distribution

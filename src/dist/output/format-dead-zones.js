@@ -34,9 +34,33 @@ function groupByL1(items) {
     }
     return groups;
 }
-export function formatDeadZones(triaged, _scored, date) {
+function resolveL4Name(item, scoredBySkillId) {
+    if (item.l4Name) {
+        return item.l4Name;
+    }
+    if (item.skillId) {
+        return scoredBySkillId.get(item.skillId)?.l4Name ?? null;
+    }
+    return null;
+}
+function formatOpportunityLabel(item, scoredBySkillId) {
+    const opportunityName = item.skillName ?? item.l3Name;
+    const details = [
+        resolveL4Name(item, scoredBySkillId)
+            ? `L4: ${resolveL4Name(item, scoredBySkillId)}`
+            : null,
+        `L3: ${item.l3Name}`,
+    ].filter((value) => Boolean(value));
+    return details.length > 0
+        ? `**${opportunityName}** (${details.join("; ")})`
+        : `**${opportunityName}**`;
+}
+export function formatDeadZones(triaged, scored, date) {
     const dateStr = date ?? new Date().toISOString().slice(0, 10);
     const lines = [];
+    const scoredBySkillId = new Map(scored
+        .filter((result) => typeof result.skillId === "string" && result.skillId.length > 0)
+        .map((result) => [result.skillId, result]));
     lines.push("# Dead Zones Report");
     lines.push("");
     lines.push(`**Generated:** ${dateStr}`);
@@ -74,7 +98,7 @@ export function formatDeadZones(triaged, _scored, date) {
                 const flagDescs = item.redFlags
                     .filter(f => f.type === "DEAD_ZONE" || f.type === "PHANTOM")
                     .map(describeFlag);
-                lines.push(`- **${item.l3Name}:** ${flagDescs.join("; ")}`);
+                lines.push(`- ${formatOpportunityLabel(item, scoredBySkillId)}: ${flagDescs.join("; ")}`);
             }
             lines.push("");
         }
@@ -93,7 +117,7 @@ export function formatDeadZones(triaged, _scored, date) {
                 const flagDescs = item.redFlags
                     .filter(f => f.type === "NO_STAKES")
                     .map(describeFlag);
-                lines.push(`- **${item.l3Name}:** ${flagDescs.join("; ")}`);
+                lines.push(`- ${formatOpportunityLabel(item, scoredBySkillId)}: ${flagDescs.join("; ")}`);
             }
             lines.push("");
         }
